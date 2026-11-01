@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared_not_installed_or_natively_validated",
+  "records": [
+    {"table":"sys_script_include","name":"CustomLLMPromptMirror","active":true,"client_callable":false,"access":"public","sourceFile":"scripts/prompt-mirror/CustomLLMPromptMirror.js"},
+    {"table":"sys_script","name":"Custom LLM - Mirror prompt configuration","collection":"sys_generative_ai_config","when":"after","order":100,"active":true,"advanced":true,"action_insert":true,"action_update":true,"action_delete":false,"action_query":false,"sourceFile":"scripts/prompt-mirror/BusinessRule.js"},
+    {"table":"sys_script","name":"Custom LLM - Mirror prompt bindings","collection":"sys_generative_ai_prompt_config","when":"after","order":100,"active":true,"advanced":true,"action_insert":true,"action_update":true,"action_delete":false,"action_query":false,"sourceFile":"scripts/prompt-mirror/BusinessRule.js"},
+    {"table":"sys_script","name":"Custom LLM - Mirror definitions","collection":"sys_one_extend_capability_definition","when":"after","order":100,"active":true,"advanced":true,"action_insert":true,"action_update":true,"action_delete":false,"action_query":false,"sourceFile":"scripts/prompt-mirror/BusinessRule.js"},
+    {"table":"sys_script","name":"Custom LLM - Mirror definition options","collection":"sys_one_extend_definition_config","when":"after","order":100,"active":true,"advanced":true,"action_insert":true,"action_update":true,"action_delete":false,"action_query":false,"sourceFile":"scripts/prompt-mirror/BusinessRule.js"},
+    {"table":"sys_script","name":"Custom LLM - Mirror definition inputs","collection":"sys_one_extend_definition_attribute","when":"after","order":100,"active":true,"advanced":true,"action_insert":true,"action_update":true,"action_delete":false,"action_query":false,"sourceFile":"scripts/prompt-mirror/BusinessRule.js"},
+    {"table":"sys_script","name":"Custom LLM - Mirror request validators","collection":"sys_generative_ai_request_validator","when":"after","order":100,"active":true,"advanced":true,"action_insert":true,"action_update":true,"action_delete":false,"action_query":false,"sourceFile":"scripts/prompt-mirror/BusinessRule.js"},
+    {"table":"sys_script","name":"Custom LLM - Mirror response validators","collection":"sys_generative_ai_response_validator","when":"after","order":100,"active":true,"advanced":true,"action_insert":true,"action_update":true,"action_delete":false,"action_query":false,"sourceFile":"scripts/prompt-mirror/BusinessRule.js"},
+    {"table":"sys_script","name":"Custom LLM - Check shared validators","collection":"sys_generative_ai_validator","when":"after","order":100,"active":true,"advanced":true,"action_insert":true,"action_update":true,"action_delete":false,"action_query":false,"sourceFile":"scripts/prompt-mirror/BusinessRule.js"},
+    {"table":"sys_script_fix","name":"Custom LLM - Synchronize prompts","description":"Dry run by default. Empty capability selection covers all qualified Now LLM Generic capabilities. Adds Custom LLM prompt variants without changing skill selection.","sourceFile":"scripts/prompt-mirror/FixScript.js"}
+  ],
+  "properties": [],
+  "localConfigurationSeeds": [
+    {"name":"custom_llm.prompt_mirror.default_model","value":"","type":"string","is_private":true,"ignore_cache":true,"read_roles":"admin","write_roles":"admin","description":"Local sys_generative_ai_model_config sys_id of the desired Custom LLM mirror standard. Required; no first-active or hardcoded-model fallback. Configure separately on each target instance."},
+    {"name":"custom_llm.prompt_mirror.automation_enabled","value":"false","type":"boolean","is_private":true,"ignore_cache":true,"read_roles":"admin","write_roles":"admin","description":"Enable source prompt after-insert/update reconciliation after local model and native write contract validation."},
+    {"name":"custom_llm.prompt_mirror.apply_enabled","value":"false","type":"boolean","is_private":true,"ignore_cache":true,"read_roles":"admin","write_roles":"admin","description":"Allow product metadata writes after a successful native dry run. Dry runs remain available while false."},
+    {"name":"custom_llm.prompt_mirror.serialized_execution_verified","value":"false","type":"boolean","is_private":true,"ignore_cache":true,"read_roles":"admin","write_roles":"admin","description":"Set true after independently validating deterministic insert-only claim collision/release behavior and normal target writes. Revision checks alone are not atomic."}
+  ],
+  "configurationProvisioning": "Four private local settings are configured on the target through the normal admin UI; their Update Set import is not guaranteed. No runtime property state or property fallback.",
+  "stateSchemaDescriptors": "scripts/prompt-mirror/state-schema-acl-descriptors.json",
+  "nativeDefinitionConfigContract": {
+    "sourceCardinality": "Exactly one source definition configuration; otherwise block before writing.",
+    "generation": "Installed native after-insert rule creates the target child; read and verify its actual sys_id, parent, capability, ownership and nondefault status before recording an origin. Never insert a duplicate configuration or write its readonly capability.",
+    "verifiedGeneratorSHA256": "06aee715244f8a495dce6feed79ae76946c57cd9e38a5fdde3280792702c9e3e",
+    "promptBindingGeneratorSHA256": "334abe1489f494fa8ef6bf46cf71b76c6f84c7862b0e01ed1bc98fca5a280b9b",
+    "promptBindingDefinitionCalculationSHA256": "99e7fc3ac44a635144359b13258e345831c67d9f972fd3b2d632d4a7a15f1963",
+    "promptBindings": "Exactly one source binding per source prompt is currently supported. Native prompt insertion generates its target binding; verify its real ID and calculated readonly definition, then update only filter_properties/filter_type/is_default/order. Ambiguous source cardinality blocks before writes.",
+    "inputs": "Installed native GenAIPreprocessor reads inputs by capability. Read all capability input records as unchanged hash-verified dependencies; never duplicate or write their readonly legacy definition. Input changes fan out through capability to qualified source definitions.",
+    "compatibility": "Unknown native generator recipes or readonly dictionary contracts block safely until reviewed for that platform version.",
+    "selection": "Retain native generated active=true/default=false and all existing AI Control Tower provider selections; only enable_large_input_support and sys_overrides are eligible option writes.",
+    "ownership": "When native newRecord.package is empty, infer persisted package only in the natively proven Global context after reading matching current sys_scope and sys_package records. Never assign ownership fields.",
+    "aliases": "Definition connection follows provider mapping; selected model retains its separate HTTP connection alias. Read and fingerprint both independently."
+  },
+  "forbidden": ["hardcoded source or target model IDs","skill/capability records","provider activation/default changes","state schema creation before complete ACL preflight","ACL bypasses","plain GlideRecord writes","setWorkflow(false)","legacy target adoption without review","runtime state in sys_properties"]
+}

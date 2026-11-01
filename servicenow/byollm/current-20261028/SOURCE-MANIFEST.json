@@ -1,0 +1,558 @@
+{
+  "schemaVersion": 3,
+  "kind": "current_native_script_fields_verified_against_native_exports",
+  "snapshotDate": "2026-10-28",
+  "createdAtUtc": "2026-10-28T06:56:36.743645+00:00",
+  "scopeOfClaim": "Only five observed native records and seven script fields, with selected exact export versions. Six fields are verified against the unchanged native 2.1 base export; the native notice helper is verified against a separate unchanged one-CU native overlay and fresh SDK source evidence. This is not an all-instance source freeze or target acceptance.",
+  "sourceExport": {
+    "file": "release/Custom-LLM-Platform-2.1-20261028.xml",
+    "bytes": 5600083,
+    "sha256": "16bd719d2ed1edc4ed28a8f87e4ac76db7504eb4e7252c519514ccfa58159e8d",
+    "customerUpdates": 868,
+    "uniqueUpdateSets": 36,
+    "serializedHeaders": 37,
+    "nativeExportNotRewritten": true,
+    "protectedCompatibilityPayloadsOpened": false
+  },
+  "nativeRecords": [
+    {
+      "key": "mapping",
+      "table": "sys_generative_ai_provider_mapping",
+      "recordId": "07ca9d94c3550210b0939bc8a840ddeb",
+      "sourceScope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "sourceScopeDisplay": "Generative AI Controller",
+      "sourceRevision": "6",
+      "sourceUpdatedOnUtc": "2026-10-27 21:43:32",
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": "3b9b9cc493dc5f545c8132d47aba1037",
+      "selectedExportCapture": {
+        "customerUpdateName": "sys_generative_ai_provider_mapping_07ca9d94c3550210b0939bc8a840ddeb",
+        "exportCustomerUpdateId": "ab99da0093d013945c8132d47aba10e0",
+        "originalUpdateSetId": "7e0a05ed9308df905c8132d47aba10db",
+        "originalUpdateSetName": "Local LLM Voice - Greeting Context Fix - 2026-10-20",
+        "setApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+        "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+        "sourceScope": "7cc4ec81533121106b38ddeeff7b12ee",
+        "sourceRevision": "6",
+        "sourceUpdatedOnUtc": "2026-10-27 21:43:32",
+        "action": "INSERT_OR_UPDATE",
+        "rawPayloadSHA256": "7f1d85d323bbf0b4094943c5635537406f3ebf944d596d2aa71e402270ac296c",
+        "codeFieldSHA256": {
+          "prompt_transformation_script": "4f524d9bf5504b3b0aa01409d21aa6fa554c33189ecfce1cd4576e8e32b7feba"
+        },
+        "matchesCurrentNativeFields": true
+      },
+      "otherExportVersions": [
+        {
+          "customerUpdateName": "sys_generative_ai_provider_mapping_07ca9d94c3550210b0939bc8a840ddeb",
+          "exportCustomerUpdateId": "c799da0093d013945c8132d47aba103c",
+          "originalUpdateSetId": "ea67e45c93441b505c8132d47aba10dc",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - GenAI",
+          "setApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceScope": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceRevision": "4",
+          "sourceUpdatedOnUtc": "2026-10-16 16:05:52",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "91096afdeae27675b3f7eb6968270ed9a4b964681d361748599fd56d6f08b5e3",
+          "codeFieldSHA256": {
+            "prompt_transformation_script": "9d4dc8b3de202a91e9b23acd9dcae4a21cb5aae288995e918772584f2b4d2d10"
+          },
+          "matchesCurrentNativeFields": false
+        }
+      ]
+    },
+    {
+      "key": "halogen",
+      "table": "sys_generative_ai_custom_llm_transformer",
+      "recordId": "bc126377936f8750e7f2b9fa6aba1012",
+      "sourceScope": "global",
+      "sourceScopeDisplay": "Global",
+      "sourceRevision": "19",
+      "sourceUpdatedOnUtc": "2026-10-27 21:39:50",
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": "6be79a44939013945c8132d47aba1082",
+      "selectedExportCapture": {
+        "customerUpdateName": "sys_generative_ai_custom_llm_transformer_bc126377936f8750e7f2b9fa6aba1012",
+        "exportCustomerUpdateId": "2299960093d013945c8132d47aba1041",
+        "originalUpdateSetId": "0d6fda3b9388db545c8132d47aba10e4",
+        "originalUpdateSetName": "Custom LLM Platform 2.1 - Global context delta 20261027",
+        "setApplication": "global",
+        "captureApplication": "global",
+        "sourceScope": "global",
+        "sourceRevision": "19",
+        "sourceUpdatedOnUtc": "2026-10-27 21:39:50",
+        "action": "INSERT_OR_UPDATE",
+        "rawPayloadSHA256": "944961f5aa0768b9abe4a7f4076148e4834ee01fe7bd64e37ae56bb5f7524724",
+        "codeFieldSHA256": {
+          "request_transformer": "cde90c454787c36869c9fc509584963a07dade596b77ec31b1b7f923b145c250",
+          "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+        },
+        "matchesCurrentNativeFields": true
+      },
+      "otherExportVersions": [
+        {
+          "customerUpdateName": "sys_generative_ai_custom_llm_transformer_bc126377936f8750e7f2b9fa6aba1012",
+          "exportCustomerUpdateId": "8399da0093d013945c8132d47aba102f",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "setApplication": "global",
+          "captureApplication": "global",
+          "sourceScope": "global",
+          "sourceRevision": "18",
+          "sourceUpdatedOnUtc": "2026-10-16 06:57:28",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "697ea2d3238fcde881205e6e7f26400716a4c0e7d4d7847f875a9cfcc4edcc4d",
+          "codeFieldSHA256": {
+            "request_transformer": "f0c455ec9adc255e86d67ef9278b6313c373422dd5b353c215e93ecb00228b14",
+            "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+          },
+          "matchesCurrentNativeFields": false
+        },
+        {
+          "customerUpdateName": "sys_generative_ai_custom_llm_transformer_bc126377936f8750e7f2b9fa6aba1012",
+          "exportCustomerUpdateId": "2f99da0093d013945c8132d47aba10df",
+          "originalUpdateSetId": "7e0a05ed9308df905c8132d47aba10db",
+          "originalUpdateSetName": "Local LLM Voice - Greeting Context Fix - 2026-10-20",
+          "setApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "captureApplication": "global",
+          "sourceScope": "global",
+          "sourceRevision": "19",
+          "sourceUpdatedOnUtc": "2026-10-27 21:39:50",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "944961f5aa0768b9abe4a7f4076148e4834ee01fe7bd64e37ae56bb5f7524724",
+          "codeFieldSHA256": {
+            "request_transformer": "cde90c454787c36869c9fc509584963a07dade596b77ec31b1b7f923b145c250",
+            "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+          },
+          "matchesCurrentNativeFields": true
+        }
+      ]
+    },
+    {
+      "key": "vision",
+      "table": "sys_script_include",
+      "recordId": "90b7371f93bf0b54e7f2b9fa6aba107f",
+      "sourceScope": "global",
+      "sourceScopeDisplay": "Global",
+      "sourceRevision": "4",
+      "sourceUpdatedOnUtc": "2026-10-15 21:05:43",
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": null,
+      "selectedExportCapture": {
+        "customerUpdateName": "sys_script_include_90b7371f93bf0b54e7f2b9fa6aba107f",
+        "exportCustomerUpdateId": "2299960093d013945c8132d47aba1042",
+        "originalUpdateSetId": "0d6fda3b9388db545c8132d47aba10e4",
+        "originalUpdateSetName": "Custom LLM Platform 2.1 - Global context delta 20261027",
+        "setApplication": "global",
+        "captureApplication": "global",
+        "sourceScope": "global",
+        "sourceRevision": "4",
+        "sourceUpdatedOnUtc": "2026-10-15 21:05:43",
+        "action": "INSERT_OR_UPDATE",
+        "rawPayloadSHA256": "2e5749fdf535bfdd4dc8b90b503848576496d70187c4a94e3e29ed857073c1b9",
+        "codeFieldSHA256": {
+          "script": "cf84401f7f5728604a16078f2534b33c70c9bc5ac39bc10e22e463372b5e9094"
+        },
+        "matchesCurrentNativeFields": true
+      },
+      "otherExportVersions": []
+    },
+    {
+      "key": "gemma",
+      "table": "sys_generative_ai_custom_llm_transformer",
+      "recordId": "8842d69593ff43d05c8132d47aba10f1",
+      "sourceScope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "sourceScopeDisplay": "Generative AI Controller",
+      "sourceRevision": "19",
+      "sourceUpdatedOnUtc": "2026-10-24 18:18:14",
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": "7040c4fd934c93d05c8132d47aba10cb",
+      "selectedExportCapture": {
+        "customerUpdateName": "sys_generative_ai_custom_llm_transformer_8842d69593ff43d05c8132d47aba10f1",
+        "exportCustomerUpdateId": "6799da0093d013945c8132d47aba10df",
+        "originalUpdateSetId": "7e0a05ed9308df905c8132d47aba10db",
+        "originalUpdateSetName": "Local LLM Voice - Greeting Context Fix - 2026-10-20",
+        "setApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+        "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+        "sourceScope": "7cc4ec81533121106b38ddeeff7b12ee",
+        "sourceRevision": "19",
+        "sourceUpdatedOnUtc": "2026-10-24 18:18:14",
+        "action": "INSERT_OR_UPDATE",
+        "rawPayloadSHA256": "03d52801b3027bdb91dbf3d3dd8d863cd67688e40a9604596dc5809266a20a10",
+        "codeFieldSHA256": {
+          "request_transformer": "5559c5f4203899318dc5edbda442dbcb1e87732170ed60cdd393bf5c1818d1ca",
+          "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+        },
+        "matchesCurrentNativeFields": true
+      },
+      "otherExportVersions": [
+        {
+          "customerUpdateName": "sys_generative_ai_custom_llm_transformer_8842d69593ff43d05c8132d47aba10f1",
+          "exportCustomerUpdateId": "8f99da0093d013945c8132d47aba1022",
+          "originalUpdateSetId": "47021101930c97905c8132d47aba1006",
+          "originalUpdateSetName": "Custom LLM 1.2 - Gemma model migration 20261018 / 7cc4ec81533121106b38ddeeff7b12",
+          "setApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceScope": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceRevision": "4",
+          "sourceUpdatedOnUtc": "2026-10-18 18:28:24",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "e751775a638ace5618271ddcef96654e946138180e985b7888df5dc74417f2bf",
+          "codeFieldSHA256": {
+            "request_transformer": "b6153b5306d277ebbd489483faf2f280cb49fc94ff7442d3fbfa25c22b6b2429",
+            "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+          },
+          "matchesCurrentNativeFields": false
+        },
+        {
+          "customerUpdateName": "sys_generative_ai_custom_llm_transformer_8842d69593ff43d05c8132d47aba10f1",
+          "exportCustomerUpdateId": "2f991e0093d013945c8132d47aba104b",
+          "originalUpdateSetId": "a7e69cd593809b905c8132d47aba1000",
+          "originalUpdateSetName": "Custom LLM Foundation 1.0 - Custom skill graph 20261018",
+          "setApplication": "global",
+          "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceScope": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceRevision": "12",
+          "sourceUpdatedOnUtc": "2026-10-24 12:02:41",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "1bf2a7a8c94d4d4b8173e651a50c156cceca200bea8a009bacc85fd0cd532892",
+          "codeFieldSHA256": {
+            "request_transformer": "442601d282e80e3b5b69734b8a60a15813c803c83b05b62721332a85be827736",
+            "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+          },
+          "matchesCurrentNativeFields": false
+        },
+        {
+          "customerUpdateName": "sys_generative_ai_custom_llm_transformer_8842d69593ff43d05c8132d47aba10f1",
+          "exportCustomerUpdateId": "8399da0093d013945c8132d47aba103b",
+          "originalUpdateSetId": "ea67e45c93441b505c8132d47aba10dc",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - GenAI",
+          "setApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceScope": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceRevision": "3",
+          "sourceUpdatedOnUtc": "2026-10-16 06:54:10",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "c059fc84d5a2542c2f334d5762dfc9a0c6f542cace0cb851acd6d99f9cdac72e",
+          "codeFieldSHA256": {
+            "request_transformer": "f0c455ec9adc255e86d67ef9278b6313c373422dd5b353c215e93ecb00228b14",
+            "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+          },
+          "matchesCurrentNativeFields": false
+        },
+        {
+          "customerUpdateName": "sys_generative_ai_custom_llm_transformer_8842d69593ff43d05c8132d47aba10f1",
+          "exportCustomerUpdateId": "26995a0093d013945c8132d47aba10bb",
+          "originalUpdateSetId": "0569314193c4d7905c8132d47aba10ff",
+          "originalUpdateSetName": "Custom LLM Voice 1.3 - Model language metadata 20261018",
+          "setApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceScope": "7cc4ec81533121106b38ddeeff7b12ee",
+          "sourceRevision": "7",
+          "sourceUpdatedOnUtc": "2026-10-19 07:52:02",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "c816bf7fe675a728bdef37296d67f4fdab39d70e31965c6d0fe237ebbf6cd7e7",
+          "codeFieldSHA256": {
+            "request_transformer": "f1e1b222cb9dbd4f08c45b336650cb928912f92b478b8e8b847c0e05d58a0f6b",
+            "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+          },
+          "matchesCurrentNativeFields": false
+        }
+      ]
+    },
+    {
+      "key": "native_voice_notice",
+      "table": "sys_script_include",
+      "recordId": "6bf331459344d7905c8132d47aba1008",
+      "sourceScope": "022bd6e9b720a61081fee3fdde11a9df",
+      "sourceScopeDisplay": "ServiceNow Otto for Voice Agents",
+      "sourceRevision": "4",
+      "sourceUpdatedOnUtc": "2026-10-19 16:40:11",
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": null,
+      "selectedExportCapture": {
+        "customerUpdateName": "sys_script_include_6bf331459344d7905c8132d47aba1008",
+        "exportCustomerUpdateId": "cfac62c8931813945c8132d47aba101c",
+        "originalUpdateSetId": "dfb94e1993441f905c8132d47aba10d5",
+        "originalUpdateSetName": "Local LLM Voice - native notice language fix - 2026-10-19",
+        "setApplication": "022bd6e9b720a61081fee3fdde11a9df",
+        "captureApplication": "022bd6e9b720a61081fee3fdde11a9df",
+        "sourceScope": "022bd6e9b720a61081fee3fdde11a9df",
+        "sourceRevision": "4",
+        "sourceUpdatedOnUtc": "2026-10-19 16:40:11",
+        "action": "INSERT_OR_UPDATE",
+        "rawPayloadSHA256": "1df7e31f3dcf0231c0720892a635fabe209fcda16a89c02fddf910d84bb90c41",
+        "codeFieldSHA256": {
+          "script": "669a30b84d69c826827fb32d21dd628cf216fb1db69e415c58945b99fd7a5426"
+        },
+        "matchesCurrentNativeFields": true,
+        "sourceNativeExport": "fresh-instance/native-input/notice-language-fix-native-20261028.xml"
+      },
+      "otherExportVersions": [
+        {
+          "customerUpdateName": "sys_script_include_6bf331459344d7905c8132d47aba1008",
+          "exportCustomerUpdateId": "aa995a0093d013945c8132d47aba10c2",
+          "originalUpdateSetId": "abc27dcd9304d7905c8132d47aba10d6",
+          "originalUpdateSetName": "Custom LLM Voice 1.3 - Voice assistant configuration",
+          "setApplication": "022bd6e9b720a61081fee3fdde11a9df",
+          "captureApplication": "022bd6e9b720a61081fee3fdde11a9df",
+          "sourceScope": "022bd6e9b720a61081fee3fdde11a9df",
+          "sourceRevision": "3",
+          "sourceUpdatedOnUtc": "2026-10-19 08:01:08",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "dd8b10a17f5c1def364881d8fd07d2e7eb7b31148023d9bc9f5d2b7d7a070f6c",
+          "codeFieldSHA256": {
+            "script": "d611d323bb65310aa9aed52d7963d1904ce825b627993a4ad84e8c587b340891"
+          },
+          "matchesCurrentNativeFields": false
+        }
+      ]
+    }
+  ],
+  "sourceObservations": [
+    {
+      "file": "mapping-source-observation.json",
+      "sha256": "30d8dccf38568f1a0b91daadd20e1fd943bfd4c790b9cf954e3c5b62874635f5",
+      "observedDate": "2026-10-28",
+      "nativeTable": "sys_generative_ai_provider_mapping",
+      "nativeRecordId": "07ca9d94c3550210b0939bc8a840ddeb"
+    },
+    {
+      "file": "halogen-transformer-source-observation.json",
+      "sha256": "c197ba2d285ba4d1e7dd8e6d38e34ae8c0a691ca1dab21e5e52fab644c420846",
+      "observedDate": "2026-10-28",
+      "nativeTable": "sys_generative_ai_custom_llm_transformer",
+      "nativeRecordId": "bc126377936f8750e7f2b9fa6aba1012"
+    },
+    {
+      "file": "vision-helper-source-observation.json",
+      "sha256": "0ccdd543bd347ef8e22471e3c0afe7b2f83d981761249a0ff4bac040c8ab58b0",
+      "observedDate": "2026-10-28",
+      "nativeTable": "sys_script_include",
+      "nativeRecordId": "90b7371f93bf0b54e7f2b9fa6aba107f"
+    },
+    {
+      "file": "gemma-transformer-source-observation.json",
+      "sha256": "034e1f8a58b869abe7ded076a1549cc244fd3782732833dfc5a9073b9a97fd3d",
+      "observedDate": "2026-10-28",
+      "nativeTable": "sys_generative_ai_custom_llm_transformer",
+      "nativeRecordId": "8842d69593ff43d05c8132d47aba10f1"
+    },
+    {
+      "file": "fresh-instance/notice-helper-live-source.json",
+      "sha256": "8100ed5e0f44acc63d4654a71af970f3e45af283ac2d2194f08ee6bde6866917",
+      "observedDate": "2026-10-28",
+      "nativeTable": "sys_script_include",
+      "nativeRecordId": "6bf331459344d7905c8132d47aba1008",
+      "method": "fresh native SDK source query supplied by root; exact script and metadata equality to native overlay"
+    }
+  ],
+  "entries": [
+    {
+      "path": "provider-mapping-prompt-transformation.js",
+      "table": "sys_generative_ai_provider_mapping",
+      "recordId": "07ca9d94c3550210b0939bc8a840ddeb",
+      "scope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "field": "prompt_transformation_script",
+      "bytes": 4224,
+      "characters": 4224,
+      "sha256": "4f524d9bf5504b3b0aa01409d21aa6fa554c33189ecfce1cd4576e8e32b7feba",
+      "sourceEvidence": "mapping-source-observation.json",
+      "sourceEvidenceSHA256": "30d8dccf38568f1a0b91daadd20e1fd943bfd4c790b9cf954e3c5b62874635f5",
+      "sourceRevision": "6",
+      "sourceUpdatedOnUtc": "2026-10-27 21:43:32",
+      "exactUtf8NativeFieldCopy": true,
+      "exactExportFieldEquality": true,
+      "noNewlineOrWrapperAdded": true,
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": "3b9b9cc493dc5f545c8132d47aba1037",
+      "exportCustomerUpdateId": "ab99da0093d013945c8132d47aba10e0",
+      "originalUpdateSetId": "7e0a05ed9308df905c8132d47aba10db",
+      "exportPayloadSHA256": "7f1d85d323bbf0b4094943c5635537406f3ebf944d596d2aa71e402270ac296c"
+    },
+    {
+      "path": "halogen-request-transformer.js",
+      "table": "sys_generative_ai_custom_llm_transformer",
+      "recordId": "bc126377936f8750e7f2b9fa6aba1012",
+      "scope": "global",
+      "field": "request_transformer",
+      "bytes": 10187,
+      "characters": 10187,
+      "sha256": "cde90c454787c36869c9fc509584963a07dade596b77ec31b1b7f923b145c250",
+      "sourceEvidence": "halogen-transformer-source-observation.json",
+      "sourceEvidenceSHA256": "c197ba2d285ba4d1e7dd8e6d38e34ae8c0a691ca1dab21e5e52fab644c420846",
+      "sourceRevision": "19",
+      "sourceUpdatedOnUtc": "2026-10-27 21:39:50",
+      "exactUtf8NativeFieldCopy": true,
+      "exactExportFieldEquality": true,
+      "noNewlineOrWrapperAdded": true,
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": "6be79a44939013945c8132d47aba1082",
+      "exportCustomerUpdateId": "2299960093d013945c8132d47aba1041",
+      "originalUpdateSetId": "0d6fda3b9388db545c8132d47aba10e4",
+      "exportPayloadSHA256": "944961f5aa0768b9abe4a7f4076148e4834ee01fe7bd64e37ae56bb5f7524724"
+    },
+    {
+      "path": "halogen-response-transformer.js",
+      "table": "sys_generative_ai_custom_llm_transformer",
+      "recordId": "bc126377936f8750e7f2b9fa6aba1012",
+      "scope": "global",
+      "field": "response_transformer",
+      "bytes": 1616,
+      "characters": 1616,
+      "sha256": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6",
+      "sourceEvidence": "halogen-transformer-source-observation.json",
+      "sourceEvidenceSHA256": "c197ba2d285ba4d1e7dd8e6d38e34ae8c0a691ca1dab21e5e52fab644c420846",
+      "sourceRevision": "19",
+      "sourceUpdatedOnUtc": "2026-10-27 21:39:50",
+      "exactUtf8NativeFieldCopy": true,
+      "exactExportFieldEquality": true,
+      "noNewlineOrWrapperAdded": true,
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": "6be79a44939013945c8132d47aba1082",
+      "exportCustomerUpdateId": "2299960093d013945c8132d47aba1041",
+      "originalUpdateSetId": "0d6fda3b9388db545c8132d47aba10e4",
+      "exportPayloadSHA256": "944961f5aa0768b9abe4a7f4076148e4834ee01fe7bd64e37ae56bb5f7524724"
+    },
+    {
+      "path": "SCCVisionRequestTransformer.js",
+      "table": "sys_script_include",
+      "recordId": "90b7371f93bf0b54e7f2b9fa6aba107f",
+      "scope": "global",
+      "field": "script",
+      "bytes": 11984,
+      "characters": 11984,
+      "sha256": "cf84401f7f5728604a16078f2534b33c70c9bc5ac39bc10e22e463372b5e9094",
+      "sourceEvidence": "vision-helper-source-observation.json",
+      "sourceEvidenceSHA256": "0ccdd543bd347ef8e22471e3c0afe7b2f83d981761249a0ff4bac040c8ab58b0",
+      "sourceRevision": "4",
+      "sourceUpdatedOnUtc": "2026-10-15 21:05:43",
+      "exactUtf8NativeFieldCopy": true,
+      "exactExportFieldEquality": true,
+      "noNewlineOrWrapperAdded": true,
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": null,
+      "exportCustomerUpdateId": "2299960093d013945c8132d47aba1042",
+      "originalUpdateSetId": "0d6fda3b9388db545c8132d47aba10e4",
+      "exportPayloadSHA256": "2e5749fdf535bfdd4dc8b90b503848576496d70187c4a94e3e29ed857073c1b9"
+    },
+    {
+      "path": "gemma-request-transformer.js",
+      "table": "sys_generative_ai_custom_llm_transformer",
+      "recordId": "8842d69593ff43d05c8132d47aba10f1",
+      "scope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "field": "request_transformer",
+      "bytes": 50456,
+      "characters": 50456,
+      "sha256": "5559c5f4203899318dc5edbda442dbcb1e87732170ed60cdd393bf5c1818d1ca",
+      "sourceEvidence": "gemma-transformer-source-observation.json",
+      "sourceEvidenceSHA256": "034e1f8a58b869abe7ded076a1549cc244fd3782732833dfc5a9073b9a97fd3d",
+      "sourceRevision": "19",
+      "sourceUpdatedOnUtc": "2026-10-24 18:18:14",
+      "exactUtf8NativeFieldCopy": true,
+      "exactExportFieldEquality": true,
+      "noNewlineOrWrapperAdded": true,
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": "7040c4fd934c93d05c8132d47aba10cb",
+      "exportCustomerUpdateId": "6799da0093d013945c8132d47aba10df",
+      "originalUpdateSetId": "7e0a05ed9308df905c8132d47aba10db",
+      "exportPayloadSHA256": "03d52801b3027bdb91dbf3d3dd8d863cd67688e40a9604596dc5809266a20a10"
+    },
+    {
+      "path": "gemma-response-transformer.js",
+      "table": "sys_generative_ai_custom_llm_transformer",
+      "recordId": "8842d69593ff43d05c8132d47aba10f1",
+      "scope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "field": "response_transformer",
+      "bytes": 1616,
+      "characters": 1616,
+      "sha256": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6",
+      "sourceEvidence": "gemma-transformer-source-observation.json",
+      "sourceEvidenceSHA256": "034e1f8a58b869abe7ded076a1549cc244fd3782732833dfc5a9073b9a97fd3d",
+      "sourceRevision": "19",
+      "sourceUpdatedOnUtc": "2026-10-24 18:18:14",
+      "exactUtf8NativeFieldCopy": true,
+      "exactExportFieldEquality": true,
+      "noNewlineOrWrapperAdded": true,
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": "7040c4fd934c93d05c8132d47aba10cb",
+      "exportCustomerUpdateId": "6799da0093d013945c8132d47aba10df",
+      "originalUpdateSetId": "7e0a05ed9308df905c8132d47aba10db",
+      "exportPayloadSHA256": "03d52801b3027bdb91dbf3d3dd8d863cd67688e40a9604596dc5809266a20a10"
+    },
+    {
+      "path": "LocalLLMVoiceAssistantSettings.js",
+      "table": "sys_script_include",
+      "recordId": "6bf331459344d7905c8132d47aba1008",
+      "scope": "022bd6e9b720a61081fee3fdde11a9df",
+      "field": "script",
+      "bytes": 16089,
+      "characters": 16089,
+      "sha256": "669a30b84d69c826827fb32d21dd628cf216fb1db69e415c58945b99fd7a5426",
+      "sourceEvidence": "fresh-instance/notice-helper-live-source.json",
+      "sourceEvidenceSHA256": "8100ed5e0f44acc63d4654a71af970f3e45af283ac2d2194f08ee6bde6866917",
+      "sourceRevision": "4",
+      "sourceUpdatedOnUtc": "2026-10-19 16:40:11",
+      "exactUtf8NativeFieldCopy": true,
+      "exactExportFieldEquality": true,
+      "noNewlineOrWrapperAdded": true,
+      "nativeCurrentCustomerUpdateIdFromRootEvidence": null,
+      "exportCustomerUpdateId": "cfac62c8931813945c8132d47aba101c",
+      "originalUpdateSetId": "dfb94e1993441f905c8132d47aba10d5",
+      "exportPayloadSHA256": "1df7e31f3dcf0231c0720892a635fabe209fcda16a89c02fddf910d84bb90c41",
+      "sourceNativeExport": "fresh-instance/native-input/notice-language-fix-native-20261028.xml",
+      "sourceNativeExportSHA256": "a858632bcabecab810dccb6ffc82fb16c60827cdb9e37557f9e1ed8f0298e37f"
+    }
+  ],
+  "captureQualification": {
+    "nativeCustomerUpdateIdsAndExportCustomerUpdateIdsAreSeparateIdentities": true,
+    "halogenSelectedCorrectGlobalNativeCustomerUpdate": "6be79a44939013945c8132d47aba1082",
+    "halogenHistoricalMisScopedNativeCustomerUpdate": "c4ab9cc493dc5f545c8132d47aba1058",
+    "gemmaSelectedLatestNativeCustomerUpdate": "7040c4fd934c93d05c8132d47aba10cb",
+    "staleGraphVersionsAreNotCurrentSources": true,
+    "allSelectedExportFieldsExactlyMatchFreshNativeDOMFields": true,
+    "sourceAndCaptureAndSetApplicationsMatchForSelectedVersions": true,
+    "nativeNoticeOverlayExactlyMatchesFreshSDKSource": true,
+    "nativeNoticeOverlayDoesNotAlterLocalOnlyVoiceExecutionMappings": true
+  },
+  "unchangedHistoricalManifests": [
+    {
+      "path": "servicenow/byollm/SOURCE-MANIFEST.json",
+      "sha256": "590406a13161c5ed3883dd4f980b777ad7e8822ef9a0f3cd097f540f77791592"
+    },
+    {
+      "path": "servicenow/byollm/prompt-mirror/GENERIC-SOURCE-MANIFEST.json",
+      "sha256": "697da2ff4f53c94fd52309699fc2b9549e23d7ffd40a74fa34749f9a680e17e1"
+    }
+  ],
+  "previousCurrentManifest": {
+    "privateFile": "current-source-manifest-before-final-export-20261028.json",
+    "sha256": "c86934985fd9fbb2b3145effe9e584ec3d1c8226b5c7edcbccfbdfaab7d7ece4"
+  },
+  "privateEvidenceDirectoryReference": "server/.local/byollm-consolidation-20261028",
+  "validation": {
+    "nativeRecords": 5,
+    "exactScriptFields": 7,
+    "publicSourceFiles": 7,
+    "allNativeExportAndLocalFieldBytesEqual": true,
+    "privateHostPathCredentialLiteralMatches": 0,
+    "historicalManifestsUnchanged": true,
+    "executableTestsRun": false,
+    "instanceActionsByThisImport": false,
+    "runtimeActions": false
+  },
+  "native21ExportAvailableAndFieldVerified": true,
+  "sourceBatchCompleteStatusNotInferredFromRemoteHeaderStates": true,
+  "targetImport": false,
+  "liveSkillTestedByThisImport": false,
+  "universalApplyProven": false,
+  "nativeOverlayExports": [
+    {
+      "file": "fresh-instance/native-input/notice-language-fix-native-20261028.xml",
+      "bytes": 20950,
+      "sha256": "a858632bcabecab810dccb6ffc82fb16c60827cdb9e37557f9e1ed8f0298e37f",
+      "customerUpdates": 1,
+      "uniqueUpdateSets": 1,
+      "nativeExportNotRewritten": true,
+      "recordId": "6bf331459344d7905c8132d47aba1008",
+      "scriptSHA256": "669a30b84d69c826827fb32d21dd628cf216fb1db69e415c58945b99fd7a5426",
+      "replacesSameIdentityBaseCapture": true,
+      "extraSetNotAddedToDerived36SetBatch": true
+    }
+  ],
+  "previousCurrentManifestBeforeNativeNoticeOverlay": {
+    "privateFile": "fresh-instance/current-source-manifest-before-native-notice-overlay-20261028.json",
+    "sha256": "7837cf237697ab7717e85b29e580809b30342737cfa35b0cc68560c4f76630af"
+  },
+  "native21BaseSixFieldsAndSeparateOverlayOneFieldVerified": true
+}

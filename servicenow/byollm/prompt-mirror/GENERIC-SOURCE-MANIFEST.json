@@ -1,0 +1,1153 @@
+{
+  "schemaVersion": 1,
+  "kind": "generic_prompt_mirror_installed_source_and_historical_transport_inventory",
+  "consolidatedLocallyOn": "2026-10-28",
+  "sourceEvidenceDates": [
+    "2026-10-16",
+    "2026-10-19",
+    "2026-10-28"
+  ],
+  "freshLiveSourceReadByThisCopyScript": false,
+  "referencePublicExportSHA256": "7cce5efc22353bb64f5f3ef36de54d4092c3d7c59dc961bfe8d412647b6e7003",
+  "preservedOriginal17FieldManifestSHA256": "590406a13161c5ed3883dd4f980b777ad7e8822ef9a0f3cd097f540f77791592",
+  "entries": [
+    {
+      "path": "CustomLLMPromptMirror.js",
+      "sourceReference": "documentation-workspace-20261014/scripts/prompt-mirror/CustomLLMPromptMirror.js",
+      "sha256": "adb86cc1463fd0249df3e68a20626c9a001d0a2b024f7ba0f16bb1e4d8de3865",
+      "bytes": 65210,
+      "nativeBindingsInPublicBaseline": [
+        {
+          "table": "sys_script_include",
+          "recordId": "2ab7ecdc93441b505c8132d47aba10b1",
+          "recordName": "CustomLLMPromptMirror",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_include_2ab7ecdc93441b505c8132d47aba10b1",
+          "customerUpdateIdInOriginalExport": "e0fba85993089b905c8132d47aba1096",
+          "originalUpdateSetId": "6108f2189340db505c8132d47aba10a5",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0.1 - Validation",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "7cbd24e802c0709da086b7054347106471db3503c05f74e034a576b6eac194bd",
+          "sourceUpdatedOn": "2026-10-16 17:29:57",
+          "sourceModCount": "5",
+          "codeFieldSHA256": {
+            "script": "adb86cc1463fd0249df3e68a20626c9a001d0a2b024f7ba0f16bb1e4d8de3865"
+          },
+          "field": "script",
+          "businessRule": null
+        }
+      ],
+      "descriptorStatusIsDatedDesignOnly": false
+    },
+    {
+      "path": "BusinessRule.js",
+      "sourceReference": "documentation-workspace-20261014/scripts/prompt-mirror/BusinessRule.js",
+      "sha256": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2",
+      "bytes": 1600,
+      "nativeBindingsInPublicBaseline": [
+        {
+          "table": "sys_script",
+          "recordId": "cbb7a01093841b505c8132d47aba1049",
+          "recordName": "Custom LLM - Mirror prompt bindings",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_cbb7a01093841b505c8132d47aba1049",
+          "customerUpdateIdInOriginalExport": "30fbe85993089b905c8132d47aba101b",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "3366c6adeb3e1412ca7bcf189151fb7c6f89418071fdeb76c180f524ef0799ae",
+          "sourceUpdatedOn": "2026-10-16 06:55:32",
+          "sourceModCount": "0",
+          "codeFieldSHA256": {
+            "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+          },
+          "field": "script",
+          "businessRule": {
+            "collection": "sys_generative_ai_prompt_config",
+            "active": "true",
+            "when": "after",
+            "order": "100",
+            "action_insert": "true",
+            "action_update": "true",
+            "action_delete": "false",
+            "action_query": "false"
+          }
+        },
+        {
+          "table": "sys_script",
+          "recordId": "47b7e01093841b505c8132d47aba1062",
+          "recordName": "Custom LLM - Mirror response validators",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_47b7e01093841b505c8132d47aba1062",
+          "customerUpdateIdInOriginalExport": "34fbe85993089b905c8132d47aba1019",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "ee2b98bcdaf47ceca8d34aa773ee1fe589975af98cfc99214ffb2d285b0f40cb",
+          "sourceUpdatedOn": "2026-10-16 06:55:33",
+          "sourceModCount": "0",
+          "codeFieldSHA256": {
+            "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+          },
+          "field": "script",
+          "businessRule": {
+            "collection": "sys_generative_ai_response_validator",
+            "active": "true",
+            "when": "after",
+            "order": "100",
+            "action_insert": "true",
+            "action_update": "true",
+            "action_delete": "false",
+            "action_query": "false"
+          }
+        },
+        {
+          "table": "sys_script",
+          "recordId": "8bb7e01093841b505c8132d47aba1059",
+          "recordName": "Custom LLM - Mirror request validators",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_8bb7e01093841b505c8132d47aba1059",
+          "customerUpdateIdInOriginalExport": "78fbe85993089b905c8132d47aba101a",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "2c4b3deff97050c06218c83ac191f8ec0382c12420fd65c639a721230b1b7429",
+          "sourceUpdatedOn": "2026-10-16 06:55:32",
+          "sourceModCount": "0",
+          "codeFieldSHA256": {
+            "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+          },
+          "field": "script",
+          "businessRule": {
+            "collection": "sys_generative_ai_request_validator",
+            "active": "true",
+            "when": "after",
+            "order": "100",
+            "action_insert": "true",
+            "action_update": "true",
+            "action_delete": "false",
+            "action_query": "false"
+          }
+        },
+        {
+          "table": "sys_script",
+          "recordId": "43b7e01093841b505c8132d47aba10c2",
+          "recordName": "Custom LLM - Check shared validators",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_43b7e01093841b505c8132d47aba10c2",
+          "customerUpdateIdInOriginalExport": "7cfbe85993089b905c8132d47aba1018",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "be34e60ca367b1c46df1d77d2056a8a648713576299772df20f2ddef382b661a",
+          "sourceUpdatedOn": "2026-10-16 06:55:33",
+          "sourceModCount": "0",
+          "codeFieldSHA256": {
+            "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+          },
+          "field": "script",
+          "businessRule": {
+            "collection": "sys_generative_ai_validator",
+            "active": "true",
+            "when": "after",
+            "order": "100",
+            "action_insert": "true",
+            "action_update": "true",
+            "action_delete": "false",
+            "action_query": "false"
+          }
+        },
+        {
+          "table": "sys_script",
+          "recordId": "8bb7e01093841b505c8132d47aba1012",
+          "recordName": "Custom LLM - Mirror definition inputs",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_8bb7e01093841b505c8132d47aba1012",
+          "customerUpdateIdInOriginalExport": "b0fbe85993089b905c8132d47aba101a",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "e3aa206a1092ec2f3e4e7eebe0ef468ec81bd3ed1fd34b17798c12c1ff399d6e",
+          "sourceUpdatedOn": "2026-10-16 06:55:32",
+          "sourceModCount": "0",
+          "codeFieldSHA256": {
+            "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+          },
+          "field": "script",
+          "businessRule": {
+            "collection": "sys_one_extend_definition_attribute",
+            "active": "true",
+            "when": "after",
+            "order": "100",
+            "action_insert": "true",
+            "action_update": "true",
+            "action_delete": "false",
+            "action_query": "false"
+          }
+        },
+        {
+          "table": "sys_script",
+          "recordId": "07b7ecdc93441b505c8132d47aba10f8",
+          "recordName": "Custom LLM - Mirror prompt configuration",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_07b7ecdc93441b505c8132d47aba10f8",
+          "customerUpdateIdInOriginalExport": "b4fbe85993089b905c8132d47aba1018",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "5ff5844328b8e44766c1cad6708562066e60a0541ce847db84e595c5fe9b83a0",
+          "sourceUpdatedOn": "2026-10-16 06:55:32",
+          "sourceModCount": "0",
+          "codeFieldSHA256": {
+            "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+          },
+          "field": "script",
+          "businessRule": {
+            "collection": "sys_generative_ai_config",
+            "active": "true",
+            "when": "after",
+            "order": "100",
+            "action_insert": "true",
+            "action_update": "true",
+            "action_delete": "false",
+            "action_query": "false"
+          }
+        },
+        {
+          "table": "sys_script",
+          "recordId": "cbb7a01093841b505c8132d47aba10a9",
+          "recordName": "Custom LLM - Mirror definitions",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_cbb7a01093841b505c8132d47aba10a9",
+          "customerUpdateIdInOriginalExport": "f4fbe85993089b905c8132d47aba101b",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "3e23ad169a109ba4d2b7f83c1c9f64174be32743f9d4d30ce3658d9622cc99a8",
+          "sourceUpdatedOn": "2026-10-16 06:55:32",
+          "sourceModCount": "0",
+          "codeFieldSHA256": {
+            "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+          },
+          "field": "script",
+          "businessRule": {
+            "collection": "sys_one_extend_capability_definition",
+            "active": "true",
+            "when": "after",
+            "order": "100",
+            "action_insert": "true",
+            "action_update": "true",
+            "action_delete": "false",
+            "action_query": "false"
+          }
+        },
+        {
+          "table": "sys_script",
+          "recordId": "8bb7a01093841b505c8132d47aba10b2",
+          "recordName": "Custom LLM - Mirror definition options",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_8bb7a01093841b505c8132d47aba10b2",
+          "customerUpdateIdInOriginalExport": "f8fbe85993089b905c8132d47aba1019",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "730af0c7487113d4d21280499c63c2e4d3abf3e86d018668366b1fc36076f82d",
+          "sourceUpdatedOn": "2026-10-16 06:55:32",
+          "sourceModCount": "0",
+          "codeFieldSHA256": {
+            "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+          },
+          "field": "script",
+          "businessRule": {
+            "collection": "sys_one_extend_definition_config",
+            "active": "true",
+            "when": "after",
+            "order": "100",
+            "action_insert": "true",
+            "action_update": "true",
+            "action_delete": "false",
+            "action_query": "false"
+          }
+        }
+      ],
+      "descriptorStatusIsDatedDesignOnly": false
+    },
+    {
+      "path": "FixScript.js",
+      "sourceReference": "documentation-workspace-20261014/scripts/prompt-mirror/FixScript.js",
+      "sha256": "b0ddaaaac0516fb40f3bf975dcd19068b4d6888e9727f6104b92bbb73c341b5b",
+      "bytes": 646,
+      "nativeBindingsInPublicBaseline": [
+        {
+          "table": "sys_script_fix",
+          "recordId": "47b7e01093841b505c8132d47aba10f0",
+          "recordName": "Custom LLM - Synchronize prompts",
+          "scopeFromSource": "global",
+          "captureApplication": "global",
+          "customerUpdateName": "sys_script_fix_47b7e01093841b505c8132d47aba10f0",
+          "customerUpdateIdInOriginalExport": "bcfbe85993089b905c8132d47aba101b",
+          "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+          "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+          "action": "INSERT_OR_UPDATE",
+          "rawPayloadSHA256": "2d78d03457896d35bbc274d362f2c67d32d51140ffc25ad526d4d991342b6074",
+          "sourceUpdatedOn": "2026-10-16 06:55:33",
+          "sourceModCount": "0",
+          "codeFieldSHA256": {
+            "script": "b0ddaaaac0516fb40f3bf975dcd19068b4d6888e9727f6104b92bbb73c341b5b"
+          },
+          "field": "script",
+          "businessRule": null
+        }
+      ],
+      "descriptorStatusIsDatedDesignOnly": false
+    },
+    {
+      "path": "native-record-descriptors.20261016.json",
+      "sourceReference": "documentation-workspace-20261014/scripts/prompt-mirror/native-record-descriptors.json",
+      "sha256": "6beae72375c8bc78d07bf51fa4e5ea1a1065228a8e6fde23c568716fa9c50a1b",
+      "bytes": 7204,
+      "nativeBindingsInPublicBaseline": [],
+      "descriptorStatusIsDatedDesignOnly": true
+    }
+  ],
+  "genericNativeCodeRecordsBound": 10,
+  "infrastructureBaselineVersions": 39,
+  "validationFollowupVersions": 1,
+  "distinctMetadataRecords": 39,
+  "originalRoot": {
+    "id": "933568d093441b505c8132d47aba101d",
+    "name": "Custom LLM Infrastructure 1.0"
+  },
+  "validationSet": {
+    "id": "6108f2189340db505c8132d47aba10a5",
+    "name": "Custom LLM Infrastructure 1.0.1 - Validation"
+  },
+  "tableCountsIn39VersionBaseline": {
+    "sys_generative_ai_custom_llm_transformer": 2,
+    "sys_alias": 2,
+    "sys_generative_ai_provider_mapping": 1,
+    "sys_generative_ai_model_config": 2,
+    "sys_dictionary": 4,
+    "sys_script": 8,
+    "sys_security_acl_role": 6,
+    "sys_security_acl": 6,
+    "sys_documentation": 4,
+    "sys_script_include": 1,
+    "sys_db_object": 1,
+    "sys_script_fix": 1,
+    "sys_index": 1
+  },
+  "transportInventory": [
+    {
+      "table": "sys_generative_ai_custom_llm_transformer",
+      "recordId": "8842d69593ff43d05c8132d47aba10f1",
+      "recordName": "",
+      "scopeFromSource": "7cc4ec81533121106b38ddeeff7b12ee",
+      "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+      "customerUpdateName": "sys_generative_ai_custom_llm_transformer_8842d69593ff43d05c8132d47aba10f1",
+      "customerUpdateIdInOriginalExport": "38fbe85993089b905c8132d47aba1023",
+      "originalUpdateSetId": "ea67e45c93441b505c8132d47aba10dc",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - GenAI",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "c059fc84d5a2542c2f334d5762dfc9a0c6f542cace0cb851acd6d99f9cdac72e",
+      "sourceUpdatedOn": "2026-10-16 06:54:10",
+      "sourceModCount": "3",
+      "codeFieldSHA256": {
+        "request_transformer": "f0c455ec9adc255e86d67ef9278b6313c373422dd5b353c215e93ecb00228b14",
+        "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+      }
+    },
+    {
+      "table": "sys_alias",
+      "recordId": "a7b19ad193ff43d05c8132d47aba10c7",
+      "recordName": "Custom_LLM_Gemma",
+      "scopeFromSource": "7cc4ec81533121106b38ddeeff7b12ee",
+      "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+      "customerUpdateName": "sys_alias_a7b19ad193ff43d05c8132d47aba10c7",
+      "customerUpdateIdInOriginalExport": "70fbe85993089b905c8132d47aba1023",
+      "originalUpdateSetId": "ea67e45c93441b505c8132d47aba10dc",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - GenAI",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "d30f6e4ca05da9cfbfb7184c7e227c6edb1157d21819bd866765a32b180faccf",
+      "sourceUpdatedOn": "2026-10-16 06:54:09",
+      "sourceModCount": "1",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_generative_ai_provider_mapping",
+      "recordId": "07ca9d94c3550210b0939bc8a840ddeb",
+      "recordName": "Custom LLM",
+      "scopeFromSource": "7cc4ec81533121106b38ddeeff7b12ee",
+      "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+      "customerUpdateName": "sys_generative_ai_provider_mapping_07ca9d94c3550210b0939bc8a840ddeb",
+      "customerUpdateIdInOriginalExport": "7cfbe85993089b905c8132d47aba1024",
+      "originalUpdateSetId": "ea67e45c93441b505c8132d47aba10dc",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - GenAI",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "91096afdeae27675b3f7eb6968270ed9a4b964681d361748599fd56d6f08b5e3",
+      "sourceUpdatedOn": "2026-10-16 16:05:52",
+      "sourceModCount": "4",
+      "codeFieldSHA256": {
+        "function_call_response_transformation_script": "6bc43eb1a4f72b880935bdffb60cf3fe5666dc5ed367e4348b13ce4062c22681",
+        "function_call_transformation_script": "c551fd59434f443146f7535d28cf0c380efd9b6f5664641919fcefc256c2f3a3",
+        "prompt_transformation_script": "9d4dc8b3de202a91e9b23acd9dcae4a21cb5aae288995e918772584f2b4d2d10"
+      }
+    },
+    {
+      "table": "sys_generative_ai_model_config",
+      "recordId": "ff74fcef93a70350e7f2b9fa6aba10ea",
+      "recordName": "halogen-v2",
+      "scopeFromSource": "7cc4ec81533121106b38ddeeff7b12ee",
+      "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+      "customerUpdateName": "sys_generative_ai_model_config_ff74fcef93a70350e7f2b9fa6aba10ea",
+      "customerUpdateIdInOriginalExport": "b4fbe85993089b905c8132d47aba1024",
+      "originalUpdateSetId": "ea67e45c93441b505c8132d47aba10dc",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - GenAI",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "b45a458f39d98263644271918b5b50748cbfa6dde3599b9942c7c00c56660cba",
+      "sourceUpdatedOn": "2026-10-16 06:54:10",
+      "sourceModCount": "2",
+      "codeFieldSHA256": {
+        "request_transformation_script": "e8366200238a87c6e0398578b2498a6cc6a8c4e54eb6f54d2965dd1c100e8c4f"
+      }
+    },
+    {
+      "table": "sys_alias",
+      "recordId": "7040f46393a70350e7f2b9fa6aba1083",
+      "recordName": "Custom_LLM_Halogen",
+      "scopeFromSource": "7cc4ec81533121106b38ddeeff7b12ee",
+      "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+      "customerUpdateName": "sys_alias_7040f46393a70350e7f2b9fa6aba1083",
+      "customerUpdateIdInOriginalExport": "b8fbe85993089b905c8132d47aba1022",
+      "originalUpdateSetId": "ea67e45c93441b505c8132d47aba10dc",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - GenAI",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "fa9438586a426c96a9467e0c5775da6919c4af783a3377244053de4c02b61026",
+      "sourceUpdatedOn": "2026-10-16 06:54:08",
+      "sourceModCount": "2",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_generative_ai_model_config",
+      "recordId": "d451165193ff43d05c8132d47aba109c",
+      "recordName": "Gemma 4 26B-A4B",
+      "scopeFromSource": "7cc4ec81533121106b38ddeeff7b12ee",
+      "captureApplication": "7cc4ec81533121106b38ddeeff7b12ee",
+      "customerUpdateName": "sys_generative_ai_model_config_d451165193ff43d05c8132d47aba109c",
+      "customerUpdateIdInOriginalExport": "fcfbe85993089b905c8132d47aba1023",
+      "originalUpdateSetId": "ea67e45c93441b505c8132d47aba10dc",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - GenAI",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "9f9732187757eee4cb834434835237ec26c7ad7d3354403309067a5f0c94cfc7",
+      "sourceUpdatedOn": "2026-10-16 06:54:10",
+      "sourceModCount": "3",
+      "codeFieldSHA256": {
+        "request_transformation_script": "e8366200238a87c6e0398578b2498a6cc6a8c4e54eb6f54d2965dd1c100e8c4f"
+      }
+    },
+    {
+      "table": "sys_script_include",
+      "recordId": "2ab7ecdc93441b505c8132d47aba10b1",
+      "recordName": "CustomLLMPromptMirror",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_include_2ab7ecdc93441b505c8132d47aba10b1",
+      "customerUpdateIdInOriginalExport": "e0fba85993089b905c8132d47aba1096",
+      "originalUpdateSetId": "6108f2189340db505c8132d47aba10a5",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0.1 - Validation",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "7cbd24e802c0709da086b7054347106471db3503c05f74e034a576b6eac194bd",
+      "sourceUpdatedOn": "2026-10-16 17:29:57",
+      "sourceModCount": "5",
+      "codeFieldSHA256": {
+        "script": "adb86cc1463fd0249df3e68a20626c9a001d0a2b024f7ba0f16bb1e4d8de3865"
+      }
+    },
+    {
+      "table": "sys_dictionary",
+      "recordId": "0a1e7cd4930c1b505c8132d47aba10cf",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_dictionary_u_custom_llm_prompt_mirror_state_null",
+      "customerUpdateIdInOriginalExport": "30fbe85993089b905c8132d47aba1014",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "7122c86fa5fa20860873ecc92dde9d1a0c26517a1a973a4cf785f37d423a6ad2",
+      "sourceUpdatedOn": "2026-10-16 08:33:14",
+      "sourceModCount": null,
+      "codeFieldSHA256": {
+        "dynamic_creation_script": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "table": "sys_script",
+      "recordId": "cbb7a01093841b505c8132d47aba1049",
+      "recordName": "Custom LLM - Mirror prompt bindings",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_cbb7a01093841b505c8132d47aba1049",
+      "customerUpdateIdInOriginalExport": "30fbe85993089b905c8132d47aba101b",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "3366c6adeb3e1412ca7bcf189151fb7c6f89418071fdeb76c180f524ef0799ae",
+      "sourceUpdatedOn": "2026-10-16 06:55:32",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+      }
+    },
+    {
+      "table": "sys_script",
+      "recordId": "47b7e01093841b505c8132d47aba1062",
+      "recordName": "Custom LLM - Mirror response validators",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_47b7e01093841b505c8132d47aba1062",
+      "customerUpdateIdInOriginalExport": "34fbe85993089b905c8132d47aba1019",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "ee2b98bcdaf47ceca8d34aa773ee1fe589975af98cfc99214ffb2d285b0f40cb",
+      "sourceUpdatedOn": "2026-10-16 06:55:33",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+      }
+    },
+    {
+      "table": "sys_security_acl_role",
+      "recordId": "38bb95a029f13b0da2d3a46a2afd76c4",
+      "recordName": "u_custom_llm_prompt_mirror_state.*.admin",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_role_38bb95a029f13b0da2d3a46a2afd76c4",
+      "customerUpdateIdInOriginalExport": "34fbe85993089b905c8132d47aba1020",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "5f7a12f214fd67f372627b5efe14c92b4c19fc319f8016c7f84efb23c40182be",
+      "sourceUpdatedOn": "2026-10-16 08:40:37",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_generative_ai_custom_llm_transformer",
+      "recordId": "bc126377936f8750e7f2b9fa6aba1012",
+      "recordName": "",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_generative_ai_custom_llm_transformer_bc126377936f8750e7f2b9fa6aba1012",
+      "customerUpdateIdInOriginalExport": "38fbe85993089b905c8132d47aba1017",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "697ea2d3238fcde881205e6e7f26400716a4c0e7d4d7847f875a9cfcc4edcc4d",
+      "sourceUpdatedOn": "2026-10-16 06:57:28",
+      "sourceModCount": "18",
+      "codeFieldSHA256": {
+        "request_transformer": "f0c455ec9adc255e86d67ef9278b6313c373422dd5b353c215e93ecb00228b14",
+        "response_transformer": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+      }
+    },
+    {
+      "table": "sys_security_acl",
+      "recordId": "bee788b5eaa250c5de68afe6fd2a8396",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_bee788b5eaa250c5de68afe6fd2a8396",
+      "customerUpdateIdInOriginalExport": "38fbe85993089b905c8132d47aba101e",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "5b998d3d6392f5f7377b46e9a871ccba217e9a110f0739a718688afbea3624dc",
+      "sourceUpdatedOn": "2026-10-16 08:40:35",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "8c27c3f6f86caadbdba84fb705458a2f66f3ccb4c24d97815599d2d55a4c43c9"
+      }
+    },
+    {
+      "table": "sys_documentation",
+      "recordId": "51cfb890934c1b505c8132d47aba1086",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_documentation_u_custom_llm_prompt_mirror_state_u_key_en",
+      "customerUpdateIdInOriginalExport": "3cfbe85993089b905c8132d47aba1015",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "1012ef0a52ff0bc9251faa469c7b4826aef926e4727bdc4aead207cb3e6cbce5",
+      "sourceUpdatedOn": "2026-10-16 08:40:33",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {},
+      "nativeCompositeKey": {
+        "name": "u_custom_llm_prompt_mirror_state",
+        "element": "u_key",
+        "language": "en"
+      }
+    },
+    {
+      "table": "sys_security_acl",
+      "recordId": "1211e3fc4f924ed662c5806d4ba81c55",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_1211e3fc4f924ed662c5806d4ba81c55",
+      "customerUpdateIdInOriginalExport": "3cfbe85993089b905c8132d47aba101c",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "8112d8ba0765b7e4b1fce109c078969f0f249171795d198b536ddcfda848f065",
+      "sourceUpdatedOn": "2026-10-16 08:40:35",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "8c27c3f6f86caadbdba84fb705458a2f66f3ccb4c24d97815599d2d55a4c43c9"
+      }
+    },
+    {
+      "table": "sys_documentation",
+      "recordId": "da1e7cd4930c1b505c8132d47aba10ff",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_documentation_u_custom_llm_prompt_mirror_state__en",
+      "customerUpdateIdInOriginalExport": "70fbe85993089b905c8132d47aba1017",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "c3a6b2705f62c29480cd67c6f56ab2ae2cbd37e2801a466c12c434ec7c4aa2b3",
+      "sourceUpdatedOn": "2026-10-16 08:33:15",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {},
+      "nativeCompositeKey": {
+        "name": "u_custom_llm_prompt_mirror_state",
+        "element": "",
+        "language": "en"
+      }
+    },
+    {
+      "table": "sys_security_acl",
+      "recordId": "bb6ea891d65b7ad84cb4b82aa01385da",
+      "recordName": "u_custom_llm_prompt_mirror_state.*",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_bb6ea891d65b7ad84cb4b82aa01385da",
+      "customerUpdateIdInOriginalExport": "70fbe85993089b905c8132d47aba101e",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "c754233c4852f8c7de9fd8a1a0f6490ec1b7c76a0fb29dce237a4db55c8b5c10",
+      "sourceUpdatedOn": "2026-10-16 08:40:36",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "8c27c3f6f86caadbdba84fb705458a2f66f3ccb4c24d97815599d2d55a4c43c9"
+      }
+    },
+    {
+      "table": "sys_dictionary",
+      "recordId": "2a4112e7b714a8e062e3343fb68f2723",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_dictionary_u_custom_llm_prompt_mirror_state_u_payload",
+      "customerUpdateIdInOriginalExport": "74fbe85993089b905c8132d47aba1015",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "e42efadd553dab4507fe8d68b5de266bdcb7d39e9100255d8205fa8523841dcc",
+      "sourceUpdatedOn": "2026-10-16 08:40:34",
+      "sourceModCount": null,
+      "codeFieldSHA256": {
+        "dynamic_creation_script": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "table": "sys_script_include",
+      "recordId": "2ab7ecdc93441b505c8132d47aba10b1",
+      "recordName": "CustomLLMPromptMirror",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_include_2ab7ecdc93441b505c8132d47aba10b1",
+      "customerUpdateIdInOriginalExport": "74fbe85993089b905c8132d47aba101c",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "01c1275a194f50814f1a2adef5dadad9b86b0c206d1d93b4e88d497c62c7f9de",
+      "sourceUpdatedOn": "2026-10-16 16:09:47",
+      "sourceModCount": "4",
+      "codeFieldSHA256": {
+        "script": "2a631eece44a6448e03380e380b8f14f78d46a341fc33a8e36ccc7af335572ce"
+      }
+    },
+    {
+      "table": "sys_db_object",
+      "recordId": "93ded299a23cc7dcf75ce13da5291bf5",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_db_object_93ded299a23cc7dcf75ce13da5291bf5",
+      "customerUpdateIdInOriginalExport": "78fbe85993089b905c8132d47aba1013",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "429621cce2b00f2be61aee1c5bedac616b9ac4333ba6a7ea733d7fab2efcc5e1",
+      "sourceUpdatedOn": "2026-10-16 08:33:14",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_script",
+      "recordId": "8bb7e01093841b505c8132d47aba1059",
+      "recordName": "Custom LLM - Mirror request validators",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_8bb7e01093841b505c8132d47aba1059",
+      "customerUpdateIdInOriginalExport": "78fbe85993089b905c8132d47aba101a",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "2c4b3deff97050c06218c83ac191f8ec0382c12420fd65c639a721230b1b7429",
+      "sourceUpdatedOn": "2026-10-16 06:55:32",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+      }
+    },
+    {
+      "table": "sys_security_acl_role",
+      "recordId": "e651c624a7398a374fad0dfc008c8c4e",
+      "recordName": "u_custom_llm_prompt_mirror_state.admin",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_role_e651c624a7398a374fad0dfc008c8c4e",
+      "customerUpdateIdInOriginalExport": "78fbe85993089b905c8132d47aba1021",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "71641ae55fb3636a69089ee1113dbf9b98209dce2e644f0463be0dab388436ce",
+      "sourceUpdatedOn": "2026-10-16 08:40:36",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_script",
+      "recordId": "43b7e01093841b505c8132d47aba10c2",
+      "recordName": "Custom LLM - Check shared validators",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_43b7e01093841b505c8132d47aba10c2",
+      "customerUpdateIdInOriginalExport": "7cfbe85993089b905c8132d47aba1018",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "be34e60ca367b1c46df1d77d2056a8a648713576299772df20f2ddef382b661a",
+      "sourceUpdatedOn": "2026-10-16 06:55:33",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+      }
+    },
+    {
+      "table": "sys_security_acl_role",
+      "recordId": "2eebc0ddda8e6aaf9b63b853290ea768",
+      "recordName": "u_custom_llm_prompt_mirror_state.*.admin",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_role_2eebc0ddda8e6aaf9b63b853290ea768",
+      "customerUpdateIdInOriginalExport": "7cfbe85993089b905c8132d47aba101f",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "0e9177206a4363c8fd9812c77ec2f2b4a9c54954903674bee75d74e78071a4fe",
+      "sourceUpdatedOn": "2026-10-16 08:40:37",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_script",
+      "recordId": "8bb7e01093841b505c8132d47aba1012",
+      "recordName": "Custom LLM - Mirror definition inputs",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_8bb7e01093841b505c8132d47aba1012",
+      "customerUpdateIdInOriginalExport": "b0fbe85993089b905c8132d47aba101a",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "e3aa206a1092ec2f3e4e7eebe0ef468ec81bd3ed1fd34b17798c12c1ff399d6e",
+      "sourceUpdatedOn": "2026-10-16 06:55:32",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+      }
+    },
+    {
+      "table": "sys_security_acl_role",
+      "recordId": "b6d9d3c05a9c07da5cc107c49651f3bc",
+      "recordName": "u_custom_llm_prompt_mirror_state.admin",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_role_b6d9d3c05a9c07da5cc107c49651f3bc",
+      "customerUpdateIdInOriginalExport": "b0fbe85993089b905c8132d47aba1021",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "1f4be422be26f37caac7dd5a796d5c016061de49dc4aafebf7ceb8484f84c38f",
+      "sourceUpdatedOn": "2026-10-16 08:40:37",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_script",
+      "recordId": "07b7ecdc93441b505c8132d47aba10f8",
+      "recordName": "Custom LLM - Mirror prompt configuration",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_07b7ecdc93441b505c8132d47aba10f8",
+      "customerUpdateIdInOriginalExport": "b4fbe85993089b905c8132d47aba1018",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "5ff5844328b8e44766c1cad6708562066e60a0541ce847db84e595c5fe9b83a0",
+      "sourceUpdatedOn": "2026-10-16 06:55:32",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+      }
+    },
+    {
+      "table": "sys_security_acl_role",
+      "recordId": "1cbf59fc708f2ef63f1ebf9d7ff2327e",
+      "recordName": "u_custom_llm_prompt_mirror_state.admin",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_role_1cbf59fc708f2ef63f1ebf9d7ff2327e",
+      "customerUpdateIdInOriginalExport": "b4fbe85993089b905c8132d47aba101f",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "8d791606fe0448f8e4a746c1f4f5b9562bbcd3068511aec1faba4d051ef8ad6b",
+      "sourceUpdatedOn": "2026-10-16 08:40:36",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_documentation",
+      "recordId": "25cfb890934c1b505c8132d47aba10f4",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_documentation_u_custom_llm_prompt_mirror_state_u_payload_en",
+      "customerUpdateIdInOriginalExport": "b8fbe85993089b905c8132d47aba1016",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "5542716570048cd18d49da776a02c6787ddef106de412160fb5329576542d4ab",
+      "sourceUpdatedOn": "2026-10-16 08:40:34",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {},
+      "nativeCompositeKey": {
+        "name": "u_custom_llm_prompt_mirror_state",
+        "element": "u_payload",
+        "language": "en"
+      }
+    },
+    {
+      "table": "sys_security_acl",
+      "recordId": "7f126eec19d4ba4b547b128976985ee9",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_7f126eec19d4ba4b547b128976985ee9",
+      "customerUpdateIdInOriginalExport": "b8fbe85993089b905c8132d47aba101d",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "f63444869f549e7363d9d323f9321f1e712a35299946dacf0abe61b5c2c0e90e",
+      "sourceUpdatedOn": "2026-10-16 08:40:35",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "8c27c3f6f86caadbdba84fb705458a2f66f3ccb4c24d97815599d2d55a4c43c9"
+      }
+    },
+    {
+      "table": "sys_dictionary",
+      "recordId": "a880672c33d4239751519bb00196562e",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_dictionary_u_custom_llm_prompt_mirror_state_u_kind",
+      "customerUpdateIdInOriginalExport": "bcfbe85993089b905c8132d47aba1014",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "d30e58a3507f6c3e441efb76581ff10592fa0901153e5eb5d20e4b406b532275",
+      "sourceUpdatedOn": "2026-10-16 08:40:34",
+      "sourceModCount": null,
+      "codeFieldSHA256": {
+        "dynamic_creation_script": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "table": "sys_script_fix",
+      "recordId": "47b7e01093841b505c8132d47aba10f0",
+      "recordName": "Custom LLM - Synchronize prompts",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_fix_47b7e01093841b505c8132d47aba10f0",
+      "customerUpdateIdInOriginalExport": "bcfbe85993089b905c8132d47aba101b",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "2d78d03457896d35bbc274d362f2c67d32d51140ffc25ad526d4d991342b6074",
+      "sourceUpdatedOn": "2026-10-16 06:55:33",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "b0ddaaaac0516fb40f3bf975dcd19068b4d6888e9727f6104b92bbb73c341b5b"
+      }
+    },
+    {
+      "table": "sys_documentation",
+      "recordId": "e9cfb890934c1b505c8132d47aba10cb",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_documentation_u_custom_llm_prompt_mirror_state_u_kind_en",
+      "customerUpdateIdInOriginalExport": "f0fbe85993089b905c8132d47aba1016",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "66b350787e415b7167dc57406e45efe6e7779aea2f788a45b2b822c7f983b3bd",
+      "sourceUpdatedOn": "2026-10-16 08:40:34",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {},
+      "nativeCompositeKey": {
+        "name": "u_custom_llm_prompt_mirror_state",
+        "element": "u_kind",
+        "language": "en"
+      }
+    },
+    {
+      "table": "sys_security_acl",
+      "recordId": "780600864e49b3319c03b44a8b56b999",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_780600864e49b3319c03b44a8b56b999",
+      "customerUpdateIdInOriginalExport": "f0fbe85993089b905c8132d47aba101d",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "6dab17f404414aa2650401b91c59496ff2d321805c06b68ac50341c248aef19d",
+      "sourceUpdatedOn": "2026-10-16 08:40:34",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "8c27c3f6f86caadbdba84fb705458a2f66f3ccb4c24d97815599d2d55a4c43c9"
+      }
+    },
+    {
+      "table": "sys_dictionary",
+      "recordId": "915ae262e2be7768591488e3cc4d4c28",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_dictionary_u_custom_llm_prompt_mirror_state_u_key",
+      "customerUpdateIdInOriginalExport": "f4fbe85993089b905c8132d47aba1014",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "53b249aa33495f628be7c3fff43f39421394dbf9f055f5eec80d49998327eb98",
+      "sourceUpdatedOn": "2026-10-16 08:40:33",
+      "sourceModCount": null,
+      "codeFieldSHA256": {
+        "dynamic_creation_script": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "table": "sys_script",
+      "recordId": "cbb7a01093841b505c8132d47aba10a9",
+      "recordName": "Custom LLM - Mirror definitions",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_cbb7a01093841b505c8132d47aba10a9",
+      "customerUpdateIdInOriginalExport": "f4fbe85993089b905c8132d47aba101b",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "3e23ad169a109ba4d2b7f83c1c9f64174be32743f9d4d30ce3658d9622cc99a8",
+      "sourceUpdatedOn": "2026-10-16 06:55:32",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+      }
+    },
+    {
+      "table": "sys_script",
+      "recordId": "8bb7a01093841b505c8132d47aba10b2",
+      "recordName": "Custom LLM - Mirror definition options",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_script_8bb7a01093841b505c8132d47aba10b2",
+      "customerUpdateIdInOriginalExport": "f8fbe85993089b905c8132d47aba1019",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "730af0c7487113d4d21280499c63c2e4d3abf3e86d018668366b1fc36076f82d",
+      "sourceUpdatedOn": "2026-10-16 06:55:32",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "2f1a30e9aa39dac231a9f3bbf6ad6053f1b480f92d428c30266b222dedaaaea2"
+      }
+    },
+    {
+      "table": "sys_security_acl_role",
+      "recordId": "69cdf5d090e0bd45ef4b76800d3cc548",
+      "recordName": "u_custom_llm_prompt_mirror_state.admin",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_role_69cdf5d090e0bd45ef4b76800d3cc548",
+      "customerUpdateIdInOriginalExport": "f8fbe85993089b905c8132d47aba1020",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "43f6b50cbba3524f84bc809bb782215c3ee8c707aba50fc34b910e4a51581355",
+      "sourceUpdatedOn": "2026-10-16 08:40:36",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_index",
+      "recordId": "013d52949340db94e7f2b9fa6aba1079",
+      "recordName": "u_custom_llm_prompt_mirror_state",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_index_u_custom_llm_prompt_mirror_state_u_key",
+      "customerUpdateIdInOriginalExport": "fcfbe85993089b905c8132d47aba1017",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "cac8aa345b3e5c7904cc6a0010332385e168a0aca219d4e08e15412a2b3a547c",
+      "sourceUpdatedOn": "2026-10-16 15:28:46",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {}
+    },
+    {
+      "table": "sys_security_acl",
+      "recordId": "bf5eadf948760ce1e94eead782636ef1",
+      "recordName": "u_custom_llm_prompt_mirror_state.*",
+      "scopeFromSource": "global",
+      "captureApplication": "global",
+      "customerUpdateName": "sys_security_acl_bf5eadf948760ce1e94eead782636ef1",
+      "customerUpdateIdInOriginalExport": "fcfbe85993089b905c8132d47aba101e",
+      "originalUpdateSetId": "d73568d093441b505c8132d47aba101d",
+      "originalUpdateSetName": "Custom LLM Infrastructure 1.0 - Global",
+      "action": "INSERT_OR_UPDATE",
+      "rawPayloadSHA256": "d720d988d095c0f9dcc051c4cddd2e8589d6b4530698eae0f49490f1aff29b44",
+      "sourceUpdatedOn": "2026-10-16 08:40:35",
+      "sourceModCount": "0",
+      "codeFieldSHA256": {
+        "script": "8c27c3f6f86caadbdba84fb705458a2f66f3ccb4c24d97815599d2d55a4c43c9"
+      }
+    }
+  ],
+  "historicalControls": {
+    "automation_enabled": false,
+    "apply_enabled": false,
+    "serialized_execution_verified": false,
+    "localConfigurationExported": false,
+    "freshLiveStateClaim": false
+  },
+  "rootNativeObservation20261028": {
+    "helperScriptSHA256": "adb86cc1463fd0249df3e68a20626c9a001d0a2b024f7ba0f16bb1e4d8de3865",
+    "helperScriptChars": 65210,
+    "helperActive": true,
+    "helperGlobalServerOnly": true,
+    "allThreeExecutionGatesFalse": true,
+    "defaultModelIsAdministrativeTemplateNotProviderSelection": true,
+    "helperObservationFileSHA256": "c5d253cdfd94bc1f187f116eb2fc6b43ad97d3c068cf110fba6d9c467f0eb1fb",
+    "propertiesObservationFileSHA256": "faba876cad5727efbb4f7b980c0dcb1eacf375585ac4a27668183289c56c15b1",
+    "businessRuleBodiesFreshlyVerified": false,
+    "executedMirror": false,
+    "privateEvidenceReference": "server/.local/byollm-consolidation-20261028/mirror-live-observation.json"
+  },
+  "mechanism": "Additional provider-specific definition/prompt/binding graph for existing capabilities; no skill/capability cloning and no active provider selection change.",
+  "descriptorWarning": "prepared_not_installed_or_natively_validated is the unchanged descriptor's earlier design status, not the later installation status. Native bindings and completed export inventory above are separate dated evidence.",
+  "laterRepairHistoryAndCurrentEvidence": {
+    "candidateChangedFields": [
+      {
+        "table": "sys_generative_ai_provider_mapping",
+        "recordId": "07ca9d94c3550210b0939bc8a840ddeb",
+        "field": "prompt_transformation_script"
+      },
+      {
+        "table": "sys_generative_ai_custom_llm_transformer",
+        "recordId": "bc126377936f8750e7f2b9fa6aba1012",
+        "field": "request_transformer"
+      }
+    ],
+    "reportedDeletedDuplicateMapping": "832dea5f9377c754e7f2b9fa6aba109e",
+    "historicalDocumentation27OctReportedCaptureGap": true,
+    "rootNativeSourceCaptureFieldComparisons28Oct": [
+      {
+        "source": "mapping",
+        "record": "07ca9d94c3550210b0939bc8a840ddeb",
+        "customer_update": "3b9b9cc493dc5f545c8132d47aba1037",
+        "payload_sha256": "7f1d85d323bbf0b4094943c5635537406f3ebf944d596d2aa71e402270ac296c",
+        "scope": "7cc4ec81533121106b38ddeeff7b12ee",
+        "revision": "6",
+        "updated_on_utc": "2026-10-27 21:43:32",
+        "fields": {
+          "prompt_transformation_script": {
+            "equal": true,
+            "source_length": 4224,
+            "source_sha256": "4f524d9bf5504b3b0aa01409d21aa6fa554c33189ecfce1cd4576e8e32b7feba",
+            "capture_sha256": "4f524d9bf5504b3b0aa01409d21aa6fa554c33189ecfce1cd4576e8e32b7feba"
+          }
+        }
+      },
+      {
+        "source": "halogen",
+        "record": "bc126377936f8750e7f2b9fa6aba1012",
+        "customer_update": "c4ab9cc493dc5f545c8132d47aba1058",
+        "payload_sha256": "944961f5aa0768b9abe4a7f4076148e4834ee01fe7bd64e37ae56bb5f7524724",
+        "scope": "global",
+        "revision": "19",
+        "updated_on_utc": "2026-10-27 21:39:50",
+        "fields": {
+          "request_transformer": {
+            "equal": true,
+            "source_length": 10187,
+            "source_sha256": "cde90c454787c36869c9fc509584963a07dade596b77ec31b1b7f923b145c250",
+            "capture_sha256": "cde90c454787c36869c9fc509584963a07dade596b77ec31b1b7f923b145c250"
+          },
+          "response_transformer": {
+            "equal": true,
+            "source_length": 1616,
+            "source_sha256": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6",
+            "capture_sha256": "4cf888866db8c19788d721fdaec132ab0a41c3fee4682356f64cb1e094abeae6"
+          }
+        }
+      }
+    ],
+    "currentComparisonFileSHA256": "f19026ef8816f560d44e8099b2944b6cab35a2b683307d7dc6c058f513eb42e1",
+    "completeCurrentBatchAndTargetAcceptanceEstablishedByThisManifest": false,
+    "basis": "documentation-workspace-20261014/docs/revision-20261027/REPAIR-DELTA-PLAN.json"
+  },
+  "targetImport": false,
+  "universalApplyProven": false,
+  "communityRelease": false
+}

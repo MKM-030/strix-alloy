@@ -4,7 +4,7 @@ Connecting an LLM endpoint is one part of a ServiceNow BYOLLM setup. A usable co
 
 **ServiceNow supports custom LLMs only partially.** Available routes depend on the release, installed applications, and individual capability. Technical knowledge of APIs, authentication, JavaScript transformations, and ServiceNow configuration is needed. This approach does not promise that every Now Assist feature, AI Agent, or voice interaction can use an arbitrary model. ServiceNow's [external LLM support guide](https://www.servicenow.com/community/servicenow-otto-articles/using-external-llms-with-now-assist-including-byok-byollm/ta-p/3218103) distinguishes those cases.
 
-The following method brings the platform configuration layers together. It describes configuration and verification, without claiming a completed platform-wide migration. Documentation and instance observations were reviewed on 27 October 2026; check the corresponding documentation for your release.
+The following method brings the platform configuration layers together, including a customer-developed way to add provider configurations to existing skills without creating skill clones. It does not claim a completed platform-wide migration. This draft consolidates documentation reviewed on 27–28 October 2026; the policy observation below is dated 27 October. Check the documentation for your release. The companion [English master manual](./master-manual.md) and [prompt-mirror implementation guide](./prompt-mirror.md) provide the detailed procedures and evidence boundaries.
 
 ## Start with the right connection type
 
@@ -50,23 +50,29 @@ For advanced inspection, check the model's provider reference in `sys_generative
 
 [Screenshot 2: Custom model, connection alias, and transformers]
 
-## 3. Provide Custom LLM Provider prompts for eligible skills
+## 3. Add provider prompts to existing skills, or use the documented clone workflow
 
-A registered model does not create a compatible prompt for every skill. Start with one custom skill or one eligible ServiceNow skill, then expand coverage deliberately.
+A registered model does not create compatible prompts for every skill. ServiceNow documents [creating custom skills](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/create-new-skill.html) and [cloning eligible ServiceNow skills](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/clone-and-edit-servicenow-skill.html). Those UI workflows remain separate from the customer customization described here.
 
-For a new skill, choose the custom provider and provider API as described in [Create a skill](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/create-new-skill.html). For an existing ServiceNow skill, use the supported [clone-and-edit workflow](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/clone-and-edit-servicenow-skill.html) when available. Preserve the required inputs, outputs, and deployment behavior.
+The historical installed implementation uses a Script Include named **CustomLLMPromptMirror**, eight narrow after-insert/update Business Rules, and the **Custom LLM - Synchronize prompts** Fix Script. It retains the existing skill/capability and adds a Custom-LLM provider-specific configuration graph alongside the original provider graph. **No skill clone does not mean no configuration copying:** provider-specific definitions, prompts, bindings, and relevant relationships still need to be created or remapped.
 
-Under **Custom LLM Provider → Prompts**, or the equivalent prompt view in your version, review each target prompt's model, input placeholders, usage conditions, output format, and default status. The [prompt configuration documentation](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/configure-skill-prompt.html) describes model settings and usage conditions. Do not assume a prompt written for another model will satisfy the same output contract unchanged.
+The earlier [final capability-based manual copier](./capability-prompt-copy.md) is also preserved separately. Its recorded repeat run covered 14 capabilities with zero writes, 292 unchanged records and 13 existing validator relations. The final correction excluded the computed `request_tokens` field from both copying and change detection. That source has no dry-run switch and can change defaults; it is historical implementation evidence, not a universal installation script or the later Mirror.
 
-Coverage can target **selected skills** or **all eligible skills**. All eligible means the reviewed set that permits this customization; it does not mean every platform capability.
+The implementation preserves shared capability inputs and existing validator implementations. Native after-insert generators create the DefinitionConfig and PromptBinding child records after their parents are inserted. The mirror reads and verifies those generated relationships instead of manually copying protected child references. This is version-dependent customer code, not an additional officially documented cloning mode. Its target instance must satisfy the recorded dictionary, generator, permission, and dependency contracts.
 
-For each candidate, compare the source and custom-provider prompt side by side. Preserve required input names and the output keys consumed by the calling experience. Test usage conditions with matching and nonmatching inputs. If the caller expects JSON, validate the returned keys and types before accepting the prompt. A readable answer that breaks a downstream parser still needs work.
+[Screenshot 3: Existing skill and additional provider-specific prompt graph]
 
-If you use prompt mirroring to maintain that set, make it an explicit opt-in operation. The companion mirroring automation is disabled by default; keep it disabled until qualified for the target instance. Before enabling it, review a preview showing the source prompt, target skill, intended provider, defaults, conditions, and proposed changes. Start with selected skills, make repeated runs safe, and protect deliberate custom edits. Expanding to all eligible skills requires another coverage review. Do not bulk-delete original prompts or bypass provider policy to make a test pass.
+For the initial or later backfill, the Fix Script calls the same service as the BRs. Its recorded preview controls are `APPLY=false` and `CAPABILITY_IDS=[]`. An empty selection discovers all eligible existing capability variants; supply an explicit selection to start narrowly. Review the plan for identities, dependencies, model, defaults, conditions, and conflicts before considering application. Eligible means compatible with the reviewed custom contract, not every platform skill.
 
-After testing, [finalize the prompt and publish the skill](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/publish-skill.html). Then have an administrator [activate it through AI Admin Hub](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/activate-skill.html) in the correct application scope. Complete any required data-steward review and approval before activation. Publishing alone does not make the skill available to users.
+Keep `custom_llm.prompt_mirror.automation_enabled`, `custom_llm.prompt_mirror.apply_enabled`, and `custom_llm.prompt_mirror.serialized_execution_verified` false until target qualification. These are separate gates; enabling a flag does not prove serialization or compatibility. `custom_llm.prompt_mirror.default_model` supplies an administrative model template for new provider configurations. It does not select the active skill provider or override every prompt's model. Follow the [prompt-mirror guide](./prompt-mirror.md) for the qualification sequence.
 
-[Screenshot 3: Custom-provider prompt coverage and conditions]
+Require repeated unchanged runs to avoid duplicate graphs and unnecessary updates. Preserve deliberate target edits, report ambiguous relationships as conflicts, and retain the original provider graph. The mirror must not silently switch ACT policy, Admin defaults, deployments, or skill activation. Do not bulk-delete original prompts or disable validators to force compatibility.
+
+[Screenshot 4: Disabled automation and selected-skill backfill preview]
+
+Under **Custom LLM Provider → Prompts**, or its version-specific equivalent, check the concrete prompt's model, inputs, conditions, output schema, and default status. The [prompt settings procedure](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/configure-skill-prompt.html) explains the authoring controls. Test matching and nonmatching conditions, required output keys, and validator behavior; a readable answer can still break its caller's contract.
+
+For authoring workflows that require publication, [finalize the tested prompt and publish the skill](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/publish-skill.html), then have an administrator [activate it through AI Admin Hub](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/activate-skill.html). Complete required review and approval. For the same-skill custom graph, preserve existing deployment state and verify its actual selection lifecycle; creating configuration records is not permission to activate the product automatically.
 
 ## 4. Align instance, skill-group, and skill defaults
 
@@ -76,7 +82,7 @@ Apply changes at the intended scope and review the resulting impact and failures
 
 Also inspect the prompt that will actually be selected. Multiple prompts and usage conditions can change execution; see [Create a prompt](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/create-prompt-template.html). Separately built flows or scripts may use Generative AI Controller capability defaults. Those have their own [provider configuration procedure](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/generative-ai-controller/configure-a-provider-for-a-generative-ai-capability.html). Review the relevant route instead of assuming one administrative default controls them all.
 
-[Screenshot 4: Instance and scoped provider defaults]
+[Screenshot 5: Instance and scoped provider defaults]
 
 ## 5. Treat the AI Agent Skills group separately
 
@@ -86,9 +92,7 @@ The official [AI Agent provider selection procedure](https://www.servicenow.com/
 
 The employee support guide excludes BYOLLM from its supported out-of-box and custom AI Agent configurations. A custom-model skill called as a tool is therefore a different claim from replacing the agent's own orchestration model. Any deeper customization needs separate support assessment and runtime evidence.
 
-See [AI Agents and custom LLM routing — planned follow-up](./ai-agents-follow-up.md).
-
-[Screenshot 5: AI Agent group default and affected capabilities]
+See [AI Agents and custom LLM routing — companion article draft](./ai-agents-follow-up.md).
 
 ## 6. Keep AI Voice's LLM and audio stages distinct
 
@@ -96,7 +100,7 @@ Voice assistants combine speech-to-text, an LLM, and text-to-speech; the [voice-
 
 The [AI Voice deployment documentation](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/deploy-ai-agents-for-voice.html) lists supported LLM providers. It does not establish arbitrary Custom LLM Provider compatibility. A successful text response cannot demonstrate audio quality, caller authentication, tool execution, or live-agent transfer.
 
-See [AI Voice: LLM routing, STT, and TTS — planned follow-up](./ai-voice-follow-up.md).
+See [AI Voice: LLM routing, STT, and TTS — companion article draft](./ai-voice-follow-up.md).
 
 ## 7. Verify execution, then make the configuration portable
 
@@ -109,6 +113,8 @@ Correlate the execution time and capability with available ServiceNow logs and e
 [Screenshot 7: Runtime provider/model evidence]
 
 Keep a coverage list with one result per entry point: verified, unsupported, or still untested. Include negative tests for unavailable endpoints and confirm the intended fallback behavior. Evaluate representative examples for output correctness and schema compliance before expanding coverage.
+
+Historical installation, a successful resolver check, and a later mapping repair are different evidence. None alone establishes a successful post-repair skill invocation, complete agent orchestration, or voice acceptance.
 
 For example, track incident summarization in its record UI separately from the same skill called by a flow. Record the expected route, observed route, result, and remaining issue for each. Check access using the intended user roles as well as the builder account. If a route fails, investigate policy, eligibility, prompt selection, and transformations in that order; changing several layers together makes the cause harder to establish.
 

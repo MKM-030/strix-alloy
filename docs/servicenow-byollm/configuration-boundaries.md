@@ -1,6 +1,6 @@
 # ServiceNow BYOLLM configuration boundaries
 
-Reviewed 27 October 2026. Use this with the [Community overview](community-post.md), [source register](sources.md), and [batch status](batch-status.md). Product labels and available controls vary with the platform release and installed Store application versions.
+Reviewed 28 October 2026. Use this with the [master manual](master-manual.md), [Community overview](community-post.md), [source register](sources.md), and [batch status](batch-status.md). Product labels and available controls vary with the platform release and installed Store application versions.
 
 ## Configuration responsibilities
 
@@ -18,11 +18,11 @@ Allowing Custom LLM Provider does not itself approve each model asset or establi
 
 Set the instance provider first, then apply intended skill/group customizations. Those customizations override the instance choice, but a **later instance-level provider update overwrites existing skill/group customizations**. Recheck scoped selections after any broad change. This precedence and the impact review are documented in [Manage model providers](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/edit-model-providers.html).
 
-Model registration does not generate a compatible prompt for every capability. Configure and test each selected eligible skill, finalize its prompt, publish the skill, and activate it in Admin Hub before checking the deployed UI route. Required approvals and access controls still apply. See [publish a skill](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/publish-skill.html) and [activate a skill](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/activate-skill.html).
+Model registration does not generate a compatible prompt for every capability. The documented authoring path finalizes prompts, publishes skills and activates them in Admin Hub; see [publish a skill](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/publish-skill.html) and [activate a skill](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/activate-skill.html). The separate [custom existing-skill path](prompt-mirror.md) retains the skill/capability identity and adds a provider-specific graph. Its native generators, lifecycle and deployed route need release-specific verification. Required approvals, permissions and validators remain applicable to both paths.
 
 The documented model-management feature begins with Admin version 6.2 and Yokohama Patch 6. Relevant roles include `sn_ai_governance.ai_steward`, `sn_skill_builder.admin`, `sn_skill_builder.sb_model_admin`, and the applicable Admin roles. Verify task-specific permissions in the linked release documentation; authoring and activating are separate responsibilities.
 
-The companion prompt-mirroring automation is disabled by default and must remain disabled until qualified for the target instance. This describes the intended default, not a fresh live-state check. A future opt-in run needs a reviewed preview, explicit eligible-skill coverage, safe repeated execution, and protection for deliberate edits. Its administrative model template does not select the active platform provider. No bulk mutation of OOTB prompts or provider policy is implied.
+The installed `CustomLLMPromptMirror` serves eight Business Rules and a manual Fix Script. The helper and three false execution gates were read on 28 October; its code matches the final Validation 1.0.1 revision. Keep the gates false until the target instance is qualified. A selected-capability or all-eligible dry run needs reviewed coverage, safe repeated execution and protection for deliberate edits. `custom_llm.prompt_mirror.default_model` supplies an administrative copy template; it does not select the active provider or the concrete model of every prompt. See the [operation and evidence limits](prompt-mirror.md).
 
 ## Technical inspection ledger
 
@@ -30,10 +30,11 @@ These are observations from the examined configuration and preserved source docu
 
 | Table / field | Recorded boundary |
 | --- | --- |
-| `sys_gen_ai_routing_selection.selected_providers` | The read-only 27 October observation showed Custom LLM Provider only. |
+| `sys_gen_ai_routing_selection.selected_providers` | The 27 and 28 October native observations showed Custom LLM Provider only; the actual policy row is absent from the exported batch and must be configured on the target. |
 | `sys_gen_ai_routing_selection.fallback` | The observed field was `fallback`, with value false. Do not substitute an assumed field name. |
 | `sys_gen_ai_routing_selection.selected_routing` | The observed display value was Global. This does not prove local-only processing. |
 | `sys_gen_ai_provider.integration_type` | Inspect the installed dictionary and supported integration UI. Do not infer model eligibility from this field alone. |
+| `sys_gen_ai_control_setting_data` | The two captured versions concern the Gen AI metadata-updated flag, both true. They do not transport the ACT provider allowlist, fallback or routing-region policy. |
 | `sys_generative_ai_provider_mapping` | Inspect the relevant mapping, including Active and External Visibility, against the native UI and capability graph. Matching display names are insufficient. |
 | `sys_generative_ai_model_config.provider` | Preserved examination identified the actual provider-mapping reference as the model membership relationship. Confirm it on the target release. |
 | Mapping `model_configs` | Earlier examination found it unreliable as an inventory source: it can be empty or stale. Public documentation reviewed here does not establish a universal deprecation contract. |
@@ -46,4 +47,4 @@ The AI Agent Skills / AI agents group deserves its own review. The official [age
 
 Voice adds speech recognition, synthesis, assistant settings, authentication, and a media/telephony path. The generic connector's text-generation support does not qualify those stages. Use the [AI Voice follow-up](ai-voice-follow-up.md) for that separate work; the [voice deployment documentation](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/deploy-ai-agents-for-voice.html) defines its product-specific choices.
 
-Update sets transport captured ServiceNow metadata. They do not supply model weights, host services, credentials, or compatible product entitlements. A completed source batch does not establish successful target preview/import or runtime acceptance. The 19 October baseline and later working 2.1 changes have distinct evidence and release status, recorded in [batch status](batch-status.md).
+Update sets transport captured ServiceNow metadata. They do not supply model weights, host services, credentials, or compatible product entitlements. A completed source batch does not establish successful target preview/import or runtime acceptance. The 19 October baseline and the 28 October completed 2.1 candidate have distinct evidence and release status, recorded in [batch status](batch-status.md).

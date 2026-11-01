@@ -1,48 +1,97 @@
-# Planned article brief: AI Agents and custom LLM routing
+# ServiceNow AI Agents and BYOLLM: Skills, Model Routing, and Practical Limits
 
-**Status: planning brief, not a published article or a completed validation report.** No agent migration, runtime test, or supported custom-orchestrator configuration is established by this document.
+An AI Agent can use a model to decide its next step and call a skill that uses another model. Understanding those two routes is essential when introducing a custom LLM. A successful custom skill does not establish which model planned the work or whether every tool can execute safely.
 
-Working title: **ServiceNow AI Agents and BYOLLM: Skill Tools, Group Defaults, and Orchestration Limits**
+**ServiceNow supports arbitrary custom LLMs only partially.** Agent provider choices, skill customization, and supported channels depend on the release and installed applications. This work requires technical knowledge of ServiceNow capabilities, APIs, prompt contracts, permissions, and execution traces. The employee [external-LLM support guide](https://www.servicenow.com/community/servicenow-otto-articles/using-external-llms-with-now-assist-including-byok-byollm/ta-p/3218103) distinguishes custom skills from supported AI Agent provider configurations.
 
-## Scope
+This article explains the configuration method and the limits of the project's customer-developed integration. It does not claim a completed agent migration or current parallel execution. The companion [platform overview](./community-post.md), [master manual](./master-manual.md), and [Voice article](./ai-voice-follow-up.md) cover the surrounding configuration and channel work.
 
-Explain the distinction between an agent calling a custom-model skill as a tool and the model used by the agent orchestration engine. Cover provider policy, the AI Agent Skills / AI agents group default, capability eligibility, scoped overrides, and runtime verification. Use the actual UI labels and supported providers for the tested release.
+## 1. Identify the model roles before changing anything
 
-The [official agent-provider procedure](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/select-aia-llm.html) documents global agent/workflow selection and provider-specific requirements. The employee [external-LLM support guide](https://www.servicenow.com/community/servicenow-otto-articles/using-external-llms-with-now-assist-including-byok-byollm/ta-p/3218103) excludes BYOLLM from supported custom and out-of-box AI Agent configurations. Any deeper custom routing must be assessed separately and described with its support limits. It must not be presented as a generally supported engine option.
+Start with a concrete scenario, such as an agent reading a synthetic incident, retrieving relevant knowledge, and preparing a proposed resolution. Map its execution before choosing a provider.
 
-## Planned structure
+| Layer | Decision to establish |
+| --- | --- |
+| Governance | Which providers are allowed, whether fallback is permitted, and which assets need approval. |
+| Orchestration | Which model selects the agent's next step and tools. |
+| Tool skill | Which prompt and concrete model process the tool's inputs. |
+| Adapter | Which endpoint receives the request and how its response is transformed. |
+| Business execution | Which identity and permissions authorize the resulting operation. |
 
-1. Map the execution: user entry point, orchestration, tool selection, skill invocation, and final response.
-2. Compare the documented supported-provider path with a custom-model skill used as a tool.
-3. Inspect policy, group defaults, and overrides. Explain that an instance-level change can replace existing customizations.
-4. Walk through one controlled scenario using synthetic data, if later authorized and verified.
-5. Present the evidence, unsupported paths, remaining gaps, and rollback approach.
+Record the release, patch, app versions, agent, tools, entry point, and expected outcome. Distinguish a record UI, a conversational experience, and a background trigger. The same skill name can participate in several routes with different configuration and access boundaries.
 
-## Evidence required before writing the finished article
+Keep a coverage ledger with one row per route. Mark each row verified, unsupported, or untested. This makes a limited successful example useful without turning it into a claim about every installed agent.
 
-- Record the release, patch, app versions, entitlements, relevant roles, agent type, and entry point.
-- Capture the permitted providers, fallback setting, approval state, affected-system impact, and intended group/skill defaults. Compare with [Manage model providers](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/edit-model-providers.html).
-- Identify the selected orchestration provider separately from any custom-model skill's provider, model, prompt, conditions, and tool configuration.
-- Correlate agent execution, tool invocation, capability/prompt metadata, and receiving-endpoint evidence. Establish which request reached which model; a provider label alone is insufficient.
-- Verify the business outcome and tool side effects with the intended user permissions. Include an unavailable-endpoint case and check the intended fallback behavior.
-- Keep a coverage table marking each route verified, unsupported, or untested. Obtain required reviews before publication. Do not infer universal support from a single successful scenario.
+## 2. Establish the supported orchestration path
 
-These are evidence requirements for future work, not instructions to run tests as part of this brief.
+Use the release's native agent-provider configuration first. The Zurich [provider-selection procedure](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/select-aia-llm.html) describes global selection for agents and agentic workflows, lists named providers, and requires retesting after changes. Some agents have specific provider requirements. It does not document a universal arbitrary-custom-model selector for each agent.
 
-## Proposed screenshots
+Inspect the **AI Agent Skills / AI agents** group using the label on your installation. Review the instance default and scoped overrides, the affected-agent list, and available provider choices. Do not infer engine compatibility from a Custom LLM entry elsewhere in Skill Kit.
 
-| Image | Capture after verification | What it should establish |
-| --- | --- | --- |
-| 1 | Supported-provider choices and affected agents for the tested release | The actual supported menu and its limitations. |
-| 2 | AI Agent Skills / AI agents group and relevant overrides | The intended administrative selection and scope. |
-| 3 | A custom-model skill configured as an agent tool | The tool's provider is distinct from the orchestration provider. |
-| 4 | Controlled execution trace with tool calls | Which stages executed and how they relate to the scenario. |
-| 5 | Sanitized model/capability metadata and final result | Runtime evidence for the specific route and outcome. |
+The [Admin provider-management procedure](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/edit-model-providers.html) explains scoped customization and warns that a later instance-level provider change replaces existing skill/group customizations. Save the intended exceptions before a broad change and recheck them afterward.
 
-Use synthetic records and neutral names. Remove instance URLs, identities, sys_ids, credentials, confidential prompts, and internal endpoint details. Keep failures that explain a limitation visible after redaction. Do not claim performance improvements without a defined, separately reportable evaluation.
+[Agent Screenshot 1: Supported agent providers, group default, and impact]
 
-## Publication and link replacement
+Review ACT policy independently. Provider allowlisting and formal asset approval are separate controls; fallback can retain a previous provider. With fallback disabled, unsupported active systems must be deactivated. Use the [ServiceNow AI settings procedure](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/aict-configure-servicenow-ai-settings.html) and inspect the resulting impact rather than assuming every request moved.
 
-The repository overview links here with **planned follow-up** in its link text. Keep that label while this remains a brief. When pasting the overview into ServiceNow Community before the follow-up exists, replace the local Markdown link with plain text saying the article is planned; local file links are not publication URLs.
+## 3. Add a custom-model skill without confusing it with orchestration
 
-After the finished follow-up is reviewed and published by the author, copy its real canonical Community URL. Replace the overview's relative link with that verified URL and remove the planned label. Check the published link and add a reciprocal link to the overview. Do not invent a future public URL or publish this planning brief as if it were the validated article.
+Register the custom model, connection alias, and transformations through the applicable [model setup](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/servicenow-large-language-model-now-llm/create-model.html). Test its endpoint contract separately. A model display name alone does not prove the receiving endpoint.
+
+For the skill itself, ServiceNow documents [creating a custom skill](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/create-new-skill.html) and [cloning eligible existing skills](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/clone-and-edit-servicenow-skill.html). The project also has a distinct customer-developed route: **CustomLLMPromptMirror** adds provider-specific configuration beneath an existing skill/capability while retaining its identity.
+
+The historical installed mechanism has eight narrow after-insert/update BR callers and a manual backfill Fix Script using the same service. Native generators create the definition-option and prompt-binding children. The mirror verifies those relationships instead of manually writing protected references. This copies supporting configuration; it is not a skill clone or a declaration of official support for every OOTB agent.
+
+Use a selected-capability preview before considering broader coverage. Keep automation, apply, and serialized-execution gates false until target qualification. Preserve source prompts, shared inputs, validators, manual target edits, and deployment choices. The [prompt-mirror guide](./prompt-mirror.md) describes the exact interfaces and prerequisites.
+
+[Agent Screenshot 2: Existing skill, custom-provider prompt, and agent tool]
+
+A prepared provider graph does not select the agent's orchestration model. Verify separately that the agent can call this particular skill as a tool through the intended supported configuration.
+
+## 4. Preserve the prompt and tool contracts
+
+Select the actual prompt and inspect its concrete model, input placeholders, conditions, defaults, token limits, and output shape. [Prompt configuration](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/configure-skill-prompt.html) describes these authoring controls. Different prompts in the same skill can retain different model assignments.
+
+For an incident tool, define what the input contains and what the caller expects back: for example, a summary and proposed resolution with required keys. Test missing data, empty results, malformed JSON, truncation, and provider errors. Preserve the validator and postprocessor contract rather than forcing every capability into one generic response wrapper.
+
+Native function/tool calling and prompt-driven structured action text are different protocols. An adapter that returns valid text or ReAct-style JSON does not thereby implement the engine's native function-call contract. Preserve tool identifiers and argument schemas, and report unsupported response forms explicitly.
+
+Keep business instructions with the skill or agent wherever possible. Some preserved project adapter logic also contains caller and execution-context behavior. Retain that behavior until a reviewed refactor moves it with regression evidence; replacing the adapter with a minimal generic example could remove necessary controls.
+
+For skills using the authoring lifecycle, [finalize and publish](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/publish-skill.html), then have an administrator [activate the skill](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/activate-skill.html), completing required reviews. The mirror itself does not activate products.
+
+## 5. Keep execution authority in the platform
+
+The proposed action, authorized action, submitted operation, and confirmed result are separate states. A model-generated sentence such as a success message is not evidence that a record was changed or a request completed.
+
+Use the intended execution identity and normal record/field permissions. Test access with a representative user rather than relying only on an authoring administrator. If a tool needs explicit user confirmation, keep that confirmation tied to the actual proposed action and current inputs.
+
+The project's caller-context helper can carry supplementary user notes into an existing conversation. Its inclusion receipt means that the text was included in a returned prompt. It is not proof of understanding, business approval, or successful execution. Corrections to a name or request must not silently authorize a new action.
+
+[Agent Screenshot 3: Tool permissions, confirmation, and authoritative result]
+
+Preserve correlation between conversation, execution plan, tool request, and result. On an ambiguous timeout, establish the submitted operation's outcome before retrying. A second model request must not duplicate a business write whose first outcome is unknown.
+
+## 6. Treat background work and parallel models as separate engineering
+
+A responsive dialogue model, an agent planner, and a specialized tool model can have different requirements. Registering all three models does not establish independent scheduling, sufficient capacity, or correct result delivery.
+
+Historical project snapshots used a selected backend and caller-context logic expecting one active plan per conversation. Those are dated constraints, not a fresh diagnosis of the running host. A separate responsive-conversation runtime has since been prepared in source, but its documentation keeps independent qualification and activation open. Source checks do not establish a live cutover or concurrent operation.
+
+For a future background route, define a stable job identity and its conversation, turn, model, and authorization binding. Bound the queue and capacity. Handle results arriving after later user turns, duplicated callbacks, disconnects, and uncertain operations. Keep a completion result separate from its notification or spoken delivery.
+
+[Agent Screenshot 4: Correlated execution and background-state evidence]
+
+A request scratchpad, model list, or background-channel setting cannot supply those contracts by itself. Qualify the actual combined implementation before claiming parallel multimodel support.
+
+## 7. Verify the route and prepare the target
+
+Run a harmless scenario through the deployed entry point. Use [prompt testing](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/now-assist-skill-kit/test-prompt-template.html) to inspect grounded inputs, then correlate the agent execution with its tool invocation and endpoint evidence. The [controller reference](https://www.servicenow.com/docs/r/zurich/intelligent-experiences/generative-ai-controller/reference-for-generative-ai-controller.html) identifies useful logs and model metadata.
+
+Record the expected and observed orchestration provider, tool prompt/model, result schema, validator status, permissions, and business outcome. Include an unavailable endpoint and a rejected or unsupported tool response. A successful resolver check or mapping repair is not a successful live skill test.
+
+[Agent Screenshot 5: Runtime provider/model evidence and checked outcome]
+
+For a fresh target, select the **Fresh Instance NO-DELETE** delivery identified by the current installation guide and manifest. Review app, native-flow, validator, parent-configuration, and scope prerequisites before native preview. Configure target-local credentials, ACT policy, mirror settings, and operational bindings. Keep gates off until the selected route is qualified.
+
+Preserve raw logs privately and publish sanitized evidence for the specific demonstrated scenario. The source integration provides a method to investigate and configure these routes; full agent orchestration, Vision, parallel execution, and target acceptance require their own results.
