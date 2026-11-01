@@ -244,7 +244,7 @@ class Gateway:
                  body_bytes=16*1024**2, request_seconds=1800, console_trace=False,
                  queue_limit=0, queue_seconds=120, demo_no_thinking_model='',
                  voice_contract_diagnostics=False, native_sdk_proxy=False,
-                 controller_consumer=False, controller_aliases=()):
+                 controller_consumer=False, controller_aliases=(), controller_model_aliases=None):
         if not isinstance(secret,str) or len(secret)<32:
             raise ValueError('At least 32 characters of API key material required')
         if not 1<=concurrency<=16 or not 1024<=body_bytes<=64*1024**2:
@@ -261,16 +261,25 @@ class Gateway:
             raise ValueError('voice_contract_diagnostics must be a boolean')
         if type(native_sdk_proxy) is not bool:
             raise ValueError('native_sdk_proxy must be a boolean')
+        model_aliases={} if controller_model_aliases is None else controller_model_aliases
+        if (type(model_aliases) is not dict or len(model_aliases)>32
+                or any(type(alias) is not str or not 1<=len(alias)<=200
+                       or any(ord(char)<32 for char in alias)
+                       or type(model) is not str or not re.fullmatch(r'[A-Za-z0-9._-]{1,96}',model)
+                       for alias,model in model_aliases.items())
+                or model_aliases and not controller_consumer):
+            raise ValueError('Fixed model aliases require explicit canonical controller model identifiers')
         if (type(controller_consumer) is not bool
                 or not isinstance(controller_aliases,(list,tuple)) or len(controller_aliases)>32
                 or any(type(alias) is not str or not 1<=len(alias)<=200
                        or any(ord(char)<32 for char in alias) for alias in controller_aliases)
                 or len(set(controller_aliases))!=len(controller_aliases)
+                or set(controller_aliases)&set(model_aliases)
                 or controller_aliases and not controller_consumer
                 or controller_consumer and len(backend_secret)<32):
             raise ValueError('Explicit authenticated controller consumer and unique logical aliases required')
         if (not isinstance(demo_no_thinking_model,str) or
-                demo_no_thinking_model not in ('',backend.identifier,*controller_aliases)):
+                demo_no_thinking_model not in ('',backend.identifier,*controller_aliases,*model_aliases)):
             raise ValueError('demo_no_thinking_model must be empty or the selected public model alias')
         self.demo_no_thinking_model=demo_no_thinking_model
         self.backend=backend; self.secret=secret; self.backend_secret=backend_secret
@@ -284,6 +293,7 @@ class Gateway:
         self.native_sdk_proxy=native_sdk_proxy
         self.controller_consumer=controller_consumer
         self.controller_aliases=tuple(controller_aliases)
+        self.controller_model_aliases=dict(model_aliases)
         self.controller_backend=None
         self.controller_health=None
         self.app=web.Application(client_max_size=body_bytes,
@@ -668,7 +678,16 @@ class Gateway:
                 if request.path not in backend.routes:
                     status=501
                     return web.json_response({'error':{'message':'Route unsupported by selected backend'}},status=status)
-            if body.get('model') not in (backend.identifier,backend.model,*self.controller_aliases):
+            requested_model=body.get('model')
+            fixed_model=(self.controller_model_aliases.get(requested_model)
+                         if isinstance(requested_model,str) else None)
+            if fixed_model is not None and fixed_model!=backend.identifier:
+                status=409
+                return web.json_response({'error':{
+                    'code':'model_selection_mismatch',
+                    'message':'Requested model is not the centrally active model; no inference submitted',
+                    'required_model':fixed_model,'active_model':backend.identifier}},status=status)
+            if requested_model not in (backend.identifier,backend.model,*self.controller_aliases) and fixed_model is None:
                 raise web.HTTPBadRequest(text='Select a model returned by /v1/models')
             # Explicit demo mode affects only the configured inbound public alias.
             # It is intentionally shared by all callers of that alias, never prompt-matched.
@@ -775,7 +794,8 @@ def load_config(path):
                    voice_contract_diagnostics=value.get('voice_contract_diagnostics',False),
                    native_sdk_proxy=value.get('native_sdk_proxy',False),
                    controller_consumer=value.get('controller_consumer',False),
-                   controller_aliases=value.get('controller_aliases',()))
+                   controller_aliases=value.get('controller_aliases',()),
+                   controller_model_aliases=value.get('controller_model_aliases'))
 
 
 async def serve(gateway, port, stop_event=None):

@@ -1503,13 +1503,14 @@ class NativeDuplex:
                 and processing.get('messages')):
             label = processing['messages'][-1]
             prefix = 'ServiceNow meldet: '
-            # Use the complete source sentence; never truncate a possible result.
-            if (type(label) is str and len(prefix + label) <= 120
-                    and re.fullmatch(r'[^.!?\r\n]+[.!?]', label)):
+            # Keep the complete source label; add only missing end punctuation.
+            if type(label) is str and re.fullmatch(r'[^.!?\r\n]+[.!?]?', label):
+                sentence = label if label.endswith(('.', '!', '?')) else label + '.'
                 key = _progress_key(label)
-                if key and key not in self._automatic_progress_seen and not _generic_processing_label(key):
+                if (len(prefix + sentence) <= 120 and key
+                        and key not in self._automatic_progress_seen and not _generic_processing_label(key)):
                     self._automatic_progress_seen.add(key)
-                    return prefix + label, observed_at + 30
+                    return prefix + sentence, observed_at + 30
         return None, None
 
     async def _update_loop(self):
