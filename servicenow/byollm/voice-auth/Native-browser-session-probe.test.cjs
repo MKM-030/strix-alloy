@@ -16,7 +16,9 @@ const ACCOUNT = '22222222222222222222222222222222';
 const CONVERSATION = '33333333333333333333333333333333';
 const CHANNEL = '44444444444444444444444444444444';
 const OTHER = '55555555555555555555555555555555';
-const UUIDS = [1, 2, 3, 4, 5, 6, 7, 8].map(n => '00000000-0000-4000-8000-' + String(n).padStart(12, '0'));
+const UUIDS = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => '00000000-0000-4000-8000-' + String(n).padStart(12, '0'));
+const prepared = args => ({version: 1, ...args, allowed: true, existingSessionIds: [], existingConversationIds: []});
+const verified = args => ({version: 1, ...args, callerOwns: true, profileMatches: true, deviceMatches: true, fresh: true});
 const session = changes => ({sessionId: SID, consumerAccountId: ACCOUNT,
   conversationId: CONVERSATION, channelId: '/cs/messages/' + CHANNEL,
   guestSessionIdentifier: null, serialNumber: 10, ...changes});
@@ -31,7 +33,7 @@ const reply = (value, status = 200) => new Response(JSON.stringify(wire(value)),
 function setup({created = session(), syncs = [{messages: [finished()], lastReadMessageSerialNum: 11}],
   endStatus = 200, onFetch, config = {}} = {}) {
   assert.equal(typeof createNativeSessionProbe, 'function', 'portable probe capability exists');
-  const requests = []; let clock = 0, id = 0, polls = 0;
+  const requests = [], proofCalls = []; let clock = 0, id = 0, polls = 0;
   const fetchImpl = async (url, options) => {
     const request = {url: new URL(url), ...options, abortedAtFetch: options.signal.aborted,
       parsedBody: options.body === undefined ? undefined : JSON.parse(options.body)};
@@ -44,15 +46,18 @@ function setup({created = session(), syncs = [{messages: [finished()], lastReadM
   };
   const probe = createNativeSessionProbe({origin: ORIGIN, csrfToken: CSRF, fetchImpl,
     uuid: () => UUIDS[id++], now: () => 1793620800000,
-    monotonic: () => clock, sleep: async ms => {clock += ms;}, ...config});
-  return {probe, requests};
+    monotonic: () => clock, sleep: async ms => {clock += ms;},
+    prepareAttempt: async (args, options) => {proofCalls.push({phase: 'prepare', args, options}); return prepared(args);},
+    verifyCreatedBinding: async (args, options) => {proofCalls.push({phase: 'verify', args, options}); return verified(args);},
+    ...config});
+  return {probe, requests, proofCalls};
 }
 function noSecrets(value) {
   assert.equal(util.inspect(value, {depth: 8}).includes(CSRF), false);
   assert.equal(JSON.stringify(value).includes(CSRF), false);
 }
 test('authenticated diagnostic emits only native create, bound EndChat and false-initialization GET sync', async () => {
-  const {probe, requests} = setup(); const result = await probe.run();
+  const {probe, requests, proofCalls} = setup(); const result = await probe.run();
   assert.equal(result.passed, true); assert.equal(result.authenticated, true);
   assert.equal(result.version, 1); assert.equal(result.failureCode, null);
   assert.deepEqual(result.binding, {sessionId: SID, consumerAccountId: ACCOUNT,
@@ -76,10 +81,14 @@ test('authenticated diagnostic emits only native create, bound EndChat and false
   assert.deepEqual(requests[1].parsedBody, {type: 'actionMessage', source: 'client', data: {
     actionMessage: {topicId: CONVERSATION, systemActionName: 'endChat', type: 'EndChat'},
     conversationId: CONVERSATION, deviceType: 'mweb', sessionId: SID,
-    messageId: UUIDS[1], direction: 'inbound', sendTime: 1793620800000}});
+    messageId: UUIDS[2], direction: 'inbound', sendTime: 1793620800000}});
   assert.equal(requests[2].method, 'GET'); assert.equal(requests[2].body, undefined);
   assert.deepEqual(Object.fromEntries(requests[2].url.searchParams), {serialNumber: '10',
-    iefix: UUIDS[2], shouldInitializeConversation: 'false', conversationId: CONVERSATION});
+    iefix: UUIDS[3], shouldInitializeConversation: 'false', conversationId: CONVERSATION});
+  assert.deepEqual(proofCalls.map(call => call.phase), ['prepare', 'verify']);
+  assert.deepEqual(proofCalls[0].args, {requestId: UUIDS[1], deviceId: UUIDS[0]});
+  assert.deepEqual(proofCalls[1].args, {requestId: UUIDS[1], deviceId: UUIDS[0],
+    sessionId: SID, consumerAccountId: ACCOUNT, conversationId: CONVERSATION});
   assert.equal(requests[2].headers['Session-Id'], SID);
   assert.equal(requests[2].headers['Guest-Session-Identifier'], 'null');
   assert.ok(result.phases.length >= 3);
@@ -95,7 +104,7 @@ test('loading CommonJS and browser global never accesses fetch or credentials', 
 });
 for (const [name, changes] of [
   ['missing session', {sessionId: undefined}], ['missing conversation', {conversationId: undefined}],
-  ['missing account', {consumerAccountId: undefined}], ['wrong channel', {channelId: '/other/' + CHANNEL}],
+  ['missing account', {consumerAccountId: undefined}], ['empty channel', {channelId: ''}],
   ['unsafe channel', {channelId: '/cs/messages/../x'}],
   ['contradictory accounts', {consumerAcctId: OTHER}],
   ['missing authentication', {guestSessionIdentifier: undefined}],
@@ -273,5 +282,134 @@ for (const config of [{origin: 'https://example.invalid'}, {origin: ORIGIN + '/e
   test('invalid configuration fails closed before any request: ' + Object.keys(config)[0], async () => {
     const {probe, requests} = setup({config}); const result = await probe.run();
     assert.equal(result.failureCode, 'INVALID_CONFIG'); assert.equal(requests.length, 0); noSecrets(result);
+  });
+}
+
+for (const field of ['prepareAttempt', 'verifyCreatedBinding']) test('mandatory ' + field + ' cannot be absent', async () => {
+  const {probe, requests} = setup({config: {[field]: undefined}});
+  const result = await probe.run(); assert.equal(result.failureCode, 'INVALID_CONFIG');
+  assert.equal(requests.length, 0); assert.equal(result.passed, false);
+});
+for (const [name, change] of [
+  ['refused', {allowed: false}], ['incomplete', {existingSessionIds: undefined}],
+  ['wrong request', {requestId: OTHER}], ['wrong device', {deviceId: OTHER}],
+  ['duplicate snapshot', {existingSessionIds: [SID, SID]}],
+  ['sparse snapshot', {existingSessionIds: new Array(1)}],
+  ['unsafe snapshot', {existingConversationIds: [CSRF]}],
+  ['oversized snapshot', {existingSessionIds: Array.from({length: 513}, (_, i) => 'snapshot_' + i)}],
+  ['truncated snapshot', {truncated: true}], ['denied snapshot', {denied: true}],
+  ['wrong version', {version: 2}]
+]) test('precheck ' + name + ' never permits native creation', async () => {
+  const {probe, requests} = setup({config: {prepareAttempt: args => ({...prepared(args), ...change})}});
+  const result = await probe.run(); assert.equal(result.passed, false);
+  assert.equal(requests.length, 0); assert.equal(result.cleanup.attempted, false); noSecrets(result);
+});
+test('a complete 512-ID snapshot is accepted and copied before native creation', async () => {
+  const {probe} = setup({config: {prepareAttempt: args => ({...prepared(args),
+    existingSessionIds: Array.from({length: 512}, (_, i) => 'session_' + i),
+    existingConversationIds: Array.from({length: 512}, (_, i) => 'conversation_' + i)})}});
+  assert.equal((await probe.run()).passed, true);
+});
+test('mutating a returned snapshot during creation cannot erase its existing-ID guard', async () => {
+  const ids = [SID];
+  const {probe, requests} = setup({config: {prepareAttempt: args => ({...prepared(args), existingSessionIds: ids})},
+    onFetch() {ids.length = 0;}});
+  const result = await probe.run(); assert.equal(result.cleanup.attempted, false);
+  assert.equal(requests.length, 1); assert.equal(result.failureCode, 'EXISTING_CONVERSATION');
+});
+for (const [field, nativeCount] of [['prepareAttempt', 0], ['verifyCreatedBinding', 1]]) {
+  test(field + ' exception cannot publish or disclose callback diagnostics', async () => {
+    const {probe, requests} = setup({config: {[field]: () => {throw new Error(CSRF);}}});
+    const result = await probe.run(); assert.equal(result.cleanup.attempted, false);
+    assert.equal(result.passed, false); assert.equal(requests.length, nativeCount); noSecrets(result);
+  });
+}
+test('verification remains independent of user cancellation after creation', async () => {
+  const controller = new AbortController(); let proofSignalAborted;
+  const {probe} = setup({onFetch(request, n) {if (n === 1) controller.abort(CSRF);}, config: {
+    verifyCreatedBinding: (args, {signal}) => {proofSignalAborted = signal.aborted; return verified(args);}
+  }});
+  const result = await probe.run({signal: controller.signal});
+  assert.equal(proofSignalAborted, false); assert.equal(result.cleanup.completed, true);
+  assert.equal(result.failureCode, 'CANCELLED'); assert.equal(result.passed, false);
+});
+test('verification consumes rather than restarts the cleanup reserve', async () => {
+  let clock = 0;
+  const {probe, requests} = setup({config: {monotonic: () => clock,
+    verifyCreatedBinding: args => {clock += 15001; return verified(args);}}});
+  const result = await probe.run(); assert.equal(result.failureCode, 'TIMEOUT');
+  assert.equal(result.cleanup.attempted, false); assert.equal(requests.length, 1);
+});
+for (const [name, changes] of [
+  ['lastMessage', {lastMessage: {conversationId: CONVERSATION, serialNumber: 10}}],
+  ['history', {messages: {conversations: [{conversationId: CONVERSATION}]}}],
+  ['live state', {conversationState: 'LIVE_CHAT_IN_PROGRESS'}],
+  ['completed state', {conversationState: 'CONVERSATION_COMPLETE'}]
+]) test('explicit resume ' + name + ' skips verification and refuses EndChat', async () => {
+  const {probe, requests, proofCalls} = setup({created: session(changes)});
+  const result = await probe.run(); assert.equal(result.passed, false);
+  assert.equal(result.cleanup.attempted, false); assert.equal(result.cleanup.uncertain, true);
+  assert.equal(requests.length, 1); assert.equal(proofCalls.length, 1);
+});
+for (const [key, id] of [['existingSessionIds', SID], ['existingConversationIds', CONVERSATION]]) {
+  test('a returned pre-existing ' + key + ' refuses verification and EndChat', async () => {
+    const {probe, requests, proofCalls} = setup({config: {prepareAttempt: args => ({...prepared(args), [key]: [id]})}});
+    const result = await probe.run(); assert.equal(result.passed, false);
+    assert.equal(result.cleanup.attempted, false); assert.equal(requests.length, 1);
+    assert.equal(proofCalls.length, 0);
+  });
+}
+for (const [name, change] of [
+  ['wrong caller', {callerOwns: false}], ['wrong profile', {profileMatches: false}],
+  ['wrong device', {deviceMatches: false}], ['stale', {fresh: false}],
+  ['incomplete', {fresh: undefined}], ['wrong request', {requestId: OTHER}],
+  ['wrong device correlation', {deviceId: OTHER}], ['wrong session', {sessionId: OTHER}],
+  ['wrong account', {consumerAccountId: OTHER}], ['wrong conversation', {conversationId: OTHER}],
+  ['extra identity field', {userId: CSRF}]
+]) test('verification ' + name + ' never authorizes EndChat even without lastMessage', async () => {
+  const {probe, requests} = setup({config: {verifyCreatedBinding: args => ({...verified(args), ...change})}});
+  const result = await probe.run(); assert.equal(result.passed, false);
+  assert.equal(result.cleanup.attempted, false); assert.equal(result.cleanup.uncertain, true);
+  assert.equal(requests.length, 1); noSecrets(result);
+});
+for (const raw of [CHANNEL, '/cs/messages/' + CHANNEL, '/native/returned/path/' + CHANNEL]) {
+  test('source-backed last-segment extraction accepts raw channel ' + raw, async () => {
+    const {probe, requests} = setup({created: session({channelId: raw})});
+    const result = await probe.run(); assert.equal(result.passed, true);
+    assert.equal(requests[1].headers['amb-channel'], '/cs/messages/' + CHANNEL);
+  });
+}
+for (const raw of ['/' + CHANNEL + '/', '/a//'+CHANNEL, '/a/../'+CHANNEL, 'https://example.invalid/'+CHANNEL,
+  '/a/' + CHANNEL + '?q=1', 'a'.repeat(513)]) {
+  test('bounded channel syntax rejects unsafe raw form ' + raw.slice(0, 50), async () => {
+    const {probe, requests} = setup({created: session({channelId: raw})});
+    const result = await probe.run(); assert.equal(result.cleanup.attempted, false);
+    assert.equal(requests.length, 1);
+  });
+}
+test('cancelled precheck aborts its callback signal and cannot create after late proof', async () => {
+  const controller = new AbortController(); let resolveProof, callbackSignal;
+  const {probe, requests} = setup({config: {prepareAttempt: (args, {signal}) => {
+    callbackSignal = signal; return new Promise(resolve => {resolveProof = () => resolve(prepared(args));});
+  }}});
+  const pending = probe.run({signal: controller.signal});
+  await new Promise(resolve => setImmediate(resolve)); controller.abort(CSRF);
+  const result = await pending; resolveProof(); await new Promise(resolve => setImmediate(resolve));
+  assert.equal(result.failureCode, 'CANCELLED'); assert.equal(callbackSignal.aborted, true);
+  assert.equal(requests.length, 0); noSecrets(result);
+});
+for (const [field, deadline, nativeCount] of [['prepareAttempt', 10001, 0], ['verifyCreatedBinding', 6001, 1]]) {
+  test(field + ' timeout rejects late proof and aborts callback signal', async t => {
+    t.mock.timers.enable({apis: ['setTimeout']}); let resolveProof, callbackSignal;
+    const {probe, requests} = setup({config: {[field]: (args, {signal}) => {
+      callbackSignal = signal; return new Promise(resolve => {
+        resolveProof = () => resolve(field === 'prepareAttempt' ? prepared(args) : verified(args));
+      });
+    }}});
+    const pending = probe.run(); await new Promise(resolve => setImmediate(resolve));
+    t.mock.timers.tick(deadline); const result = await pending;
+    resolveProof(); await new Promise(resolve => setImmediate(resolve));
+    assert.equal(result.failureCode, 'TIMEOUT'); assert.equal(result.cleanup.attempted, false);
+    assert.equal(callbackSignal.aborted, true); assert.equal(requests.length, nativeCount);
   });
 }
