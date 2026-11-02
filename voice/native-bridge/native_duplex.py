@@ -147,8 +147,22 @@ def _name_control(boundary):
         and not re.search(r'\b(?:bestell\w*|abschick\w*|absend\w*)\b',
                           _progress_key(boundary['label']))
         and bool(re.search(
-            r'\b(?:name\w*|vorname\w*|nachname\w*|schreibweise|buchstab\w*)\b',
+            r'\b(?:name\w*|vorname\w*|nachname\w*|schreibweise|buchstab\w*|'
+            r'wie (?:heißt|heisst|heißen|heissen)\b.*\b(?:mitarbeiter\w*|person|kolleg\w*))\b',
             _progress_key(boundary['label']))))
+
+
+def _person_name_control(boundary):
+    """A genuine free-text person-name control, never a product/account name."""
+    if (not _name_control(boundary) or boundary.get('controlType') != 'InputText'
+            or _polar(boundary['label'])):
+        return False
+    label = _progress_key(boundary['label'])
+    person = re.search(r'\b(?:name\w*|vorname\w*|nachname\w*|mitarbeiter\w*|person|kolleg\w*)\b', label)
+    return bool(person) and not re.search(r'\b(?:gerät\w*|geraet\w*|produkt\w*|modell\w*|datei\w*|'
+        r'firm\w*|unternehmen\w*|benutzername\w*|nutzername\w*|account\w*|'
+        r'computer\w*|server\w*|drucker\w*|software\w*|anwendung\w*|'
+        r'device\w*|product\w*|model\w*|file\w*|company|username)\b', label)
 
 
 def _mixed_negative(text):
@@ -397,6 +411,7 @@ class NativeDuplex:
         self._supplements = deque()
         self._correction_request = None
         self._name_correction_context = None
+        self._name_candidate = None
         self._input_questions = {}
         self._raw = deque()
         self._outputs = deque()
@@ -409,6 +424,8 @@ class NativeDuplex:
         self._passive_question_reasked = None
         self._synthesis_task = None
         self._backend = None
+        self._bootstrap_state = 'ready'
+        self._bootstrap_onset = None
         self._incoming_turn = None
         self._backend_unavailable = False
         self._automatic_progress_seen = set()
@@ -421,7 +438,14 @@ class NativeDuplex:
 
     @property
     def busy(self):
-        return self._backend is not None or bool(self._pending)
+        # Startup counts as owned activity for Native's inactivity timer, not
+        # as proof that a caller's business request has been submitted.
+        return (self.bootstrap_pending or self._backend is not None
+                or bool(self._pending) and not self._backend_unavailable)
+
+    @property
+    def bootstrap_pending(self):
+        return self._bootstrap_state == 'pending'
 
     @property
     def pending_count(self):
@@ -448,6 +472,8 @@ class NativeDuplex:
             return False
         if state['source'] == 'greeting':
             return self._request == 0
+        if self._bootstrap_state != 'ready':
+            return False
         boundary = getattr(self.call.dialog, 'input_boundary', None)
         return (state['source'] in ('servicenow_input_control', 'local_clarification')
             and not (state['source'] == 'servicenow_input_control'
@@ -587,7 +613,7 @@ class NativeDuplex:
                      self.conversation.is_current(item.identity)))
 
     def _current_public_findings(self):
-        if self._pending:
+        if self._pending or self._bootstrap_state != 'ready':
             return ()
         if self._request:
             return tuple(item for item in self._public_findings
@@ -600,7 +626,8 @@ class NativeDuplex:
         return ()
 
     def _current_question(self):
-        if self._pending or self._reply_revision != self.task_revision:
+        if (self._pending or self._reply_revision != self.task_revision
+                or self._bootstrap_state != 'ready'):
             return ''
         if self._request:
             if self._correction_request == self._request:
@@ -612,6 +639,13 @@ class NativeDuplex:
 
     def _status(self):
         dialog = self.call.dialog
+        if self.bootstrap_pending:
+            return ('Die Verbindung zu ServiceNow wird noch vorbereitet. Wir können Ihr Anliegen schon besprechen. '
+                    'Ihre Angaben bleiben bis zur Bereitschaft lokal vorgemerkt.' if self._pending or self._supplements else
+                    'Die Verbindung zu ServiceNow wird noch vorbereitet. Wir können Ihr Anliegen schon besprechen.')
+        if self._bootstrap_state == 'failed':
+            return ('Die Verbindung zu ServiceNow konnte nicht vorbereitet werden. Wir können Ihr Anliegen '
+                    'weiter besprechen. Ihre Angaben werden nicht automatisch erneut gesendet.')
         if getattr(dialog, 'conversation_ended', False):
             return ('ServiceNow hat den Dialog beendet. Ich kann die letzte Rückmeldung mit Ihnen klären. '
                     'Es wird nichts erneut gesendet. '
@@ -721,8 +755,20 @@ class NativeDuplex:
         boundary = getattr(self.call.dialog, 'input_boundary', None)
         label = (boundary.get('label', '') if type(boundary) is dict
                  and boundary.get('source') == 'servicenow_input_control' else '')
+        if self._answer_name_readback(turn, onset):
+            return
         bound_name_rejection = (_name_control(boundary)
             and (_mixed_negative(text) or _progress_key(text) == 'nein'))
+        if (_person_name_control(boundary) and not self.busy
+                and (_polar_answer(text) or bound_name_rejection or _missing_name_rejection(text))):
+            # Yes/no without a held name is neither a person name nor business
+            # approval. Keep the free-text name question local and explicit.
+            self.call.turn_contexts.pop(number, None)
+            if bound_name_rejection or _missing_name_rejection(text):
+                self._remember_name_correction(turn, self._request)
+                self._correction_request = self._request
+            self._reask_control(turn)
+            return
         if self._request and _polar_answer(text) and (
                 self._correction_request == self._request or label and _polar(label)):
             ready = (type(boundary) is dict and bool(label)
@@ -780,7 +826,7 @@ class NativeDuplex:
             return
         rejected_name = _missing_name_rejection(text) or bound_name_rejection
         clarification = self._correction_question()
-        if self._backend_unavailable:
+        if self._backend_unavailable and not (self._bootstrap_state == 'failed' and kind is not None):
             self.call.turn_contexts.pop(number, None)
             repeat = re.sub(r'[\s?!.,]+', ' ', text.casefold()).strip() in {
                 'wiederhole bitte die letzte rückmeldung', 'bitte wiederhole die letzte antwort',
@@ -799,6 +845,15 @@ class NativeDuplex:
             else:
                 self._local_questions.put_nowait((turn, kind, self.epoch))
             return
+        if self.bootstrap_pending:
+            # The first intent waits for real readiness. Further early data is
+            # context, never an answer to a question that has not arrived yet.
+            if self._pending:
+                self._retain_supplement(turn)
+            else:
+                self._bootstrap_onset = onset
+                self._pending.append(turn)
+            return
         if self._backend is not None and not self._backend.done():
             if _name_correction(text) or bound_name_rejection:
                 self._remember_name_correction(turn, self._request)
@@ -807,6 +862,11 @@ class NativeDuplex:
             self._retain_supplement(turn)
             if _name_correction(text) or bound_name_rejection:
                 self._enqueue(clarification, turn, kind='local')
+            return
+        if _person_name_control(boundary) and not _polar_answer(text) and not rejected_name:
+            # ASR supplies no verified person-name confidence. Every first name
+            # follows the same exact readback rule, regardless of its spelling.
+            self._hold_name_candidate(turn)
             return
         corrective = (_name_correction(text) or bool(re.match(
             r'\s*nein\b[\s,:;]+\S+', text, re.IGNORECASE)))
@@ -817,6 +877,9 @@ class NativeDuplex:
             self._retain_supplement(turn)
             self._reask_control(turn)
             return
+        self._queue_business_input(turn, rejected_name=rejected_name)
+
+    def _queue_business_input(self, turn, *, rejected_name=False):
         self._spoken_question = self._interrupted_speech = None
         if rejected_name:
             self._remember_name_correction(turn, self._request + 1)
@@ -836,7 +899,62 @@ class NativeDuplex:
             # input to a busy VA; the optional context channel is separate.
             self._queue_context_update(turn)
         if rejected_name:
-            self._enqueue(clarification, turn, kind='local')
+            self._enqueue(self._correction_question(), turn, kind='local')
+
+    def _hold_name_candidate(self, turn):
+        boundary = self.call.dialog.input_boundary
+        previous = self._name_candidate
+        if previous is not None:
+            self.call.turn_contexts.pop(previous['turn'][2], None)
+        question = 'Ich habe „' + turn[1] + '“ verstanden. Ist das genau richtig?'
+        binding = dict(question=question, control_label=boundary['label'],
+            source='local_clarification', binding=boundary.get('businessRequestId', ''),
+            task_revision=self.task_revision)
+        # Keep the original locally. Neither the name nor a later yes is a
+        # supplement/context update before this exact readback is confirmed.
+        self._name_candidate = dict(turn=turn, question_binding=binding)
+        self._enqueue(question, turn, kind='local', question_binding=binding)
+
+    def _answer_name_readback(self, turn, onset):
+        candidate = self._name_candidate
+        if candidate is None:
+            return False
+        text = turn[1]
+        binding = candidate['question_binding']
+        current = (_person_name_control(getattr(self.call.dialog, 'input_boundary', None))
+                   and self._question_current(binding))
+        negative = (bool(re.match(r'^nein(?: |$)', _progress_key(text))) or _name_correction(text)
+                    or _missing_name_rejection(text))
+        if not current:
+            self._name_candidate = None
+            self.call.turn_contexts.pop(candidate['turn'][2], None)
+            if _polar_answer(text) or negative:
+                self.call.turn_contexts.pop(turn[2], None)
+                self._reask_control(turn)
+                return True
+            return False
+        if negative:
+            self._name_candidate = None
+            self.call.turn_contexts.pop(candidate['turn'][2], None)
+            self.call.turn_contexts.pop(turn[2], None)
+            self._remember_name_correction(turn, self._request)
+            self._correction_request = self._request
+            self._reask_control(turn)
+            return True
+        if not _polar_answer(text):
+            return False
+        self.call.turn_contexts.pop(turn[2], None)
+        ready = (onset == (binding['question'], 'local_clarification', True,
+                           binding['binding'], binding['task_revision'])
+                 and self._question_current(self._spoken_question)
+                 and self._speech is self._spoken_question
+                 and self._spoken_question['question'] == binding['question'])
+        if not ready:
+            self._enqueue(binding['question'], turn, kind='local', question_binding=binding)
+            return True
+        self._name_candidate = None
+        self._queue_business_input(candidate['turn'])
+        return True
 
     @staticmethod
     def _correction_question():
@@ -876,6 +994,10 @@ class NativeDuplex:
                  self.call.call_id, turn[2], self._request)
 
     def _reask_control(self, turn):
+        if self._bootstrap_state != 'ready':
+            # Partial startup controls cannot become valid queued questions
+            # merely because readiness changes while another output plays.
+            return
         boundary = getattr(self.call.dialog, 'input_boundary', None)
         if type(boundary) is not dict or boundary.get('source') != 'servicenow_input_control':
             if self._correction_request == self._request:
@@ -1151,7 +1273,60 @@ class NativeDuplex:
             LOG.warning('Voice independent worker call=%s stage=ended worker=%s',
                         self.call.call_id, task.get_name())
 
-    async def run(self):
+    def _settle_bootstrap(self, opening):
+        """Observe the call-owned task once; never create, retry or cancel it."""
+        try:
+            replies = opening.result()
+            if type(replies) is not list or any(type(reply) is not str for reply in replies):
+                raise ValueError('Invalid owned startup result')
+        except (asyncio.CancelledError, Exception) as error:
+            self._bootstrap_state = 'failed'
+            self._backend_unavailable = True
+            self._reply_revision = None
+            self.interrupt()
+            self._enqueue(self._status(), kind='recovery')
+            LOG.warning('Voice independent startup call=%s stage=unavailable type=%s local_dialogue=retained',
+                        self.call.call_id, type(error).__name__)
+            return
+        self._bootstrap_state = 'ready'
+        LOG.info('Voice independent startup call=%s stage=ready pending=%d supplements=%d',
+                 self.call.call_id, len(self._pending), len(self._supplements))
+        # New caller intent supersedes startup output. Original early data
+        # remains in its FIFO/context storage until genuine consumption proof.
+        early_input = bool(self._pending or self._supplements)
+        boundary = getattr(self.call.dialog, 'input_boundary', None)
+        onset, self._bootstrap_onset = self._bootstrap_onset, None
+        if self._pending and _person_name_control(boundary):
+            original = self._pending.popleft()
+            solicited_name = (onset is not None and onset[1] == 'greeting' and onset[2]
+                and not _polar_answer(original[1])
+                and _person_name_control(dict(source='servicenow_input_control',
+                    controlType='InputText', label=onset[0])))
+            if solicited_name:
+                # A fully emitted earlier name question can support readback;
+                # the new actual input boundary still requires explicit yes.
+                self._hold_name_candidate(original)
+            else:
+                # Never turn an earlier intent/unprompted datum into an answer
+                # to a new name field. Retain it and ask the actual question.
+                self._supplements.appendleft((original, self.call.turn_contexts.get(original[2])))
+                self._enqueue(boundary['label'], kind='backend')
+        if not early_input:
+            introduction = getattr(self.call.config, 'greeting', '')
+            selection = getattr(self.call.call_settings, 'selection_prompt', '')
+            own_intro = ' '.join(part for part in (introduction, selection) if part)
+            seen = {value for value in (introduction, own_intro) if value}
+            for reply in replies:
+                if reply and reply not in seen:
+                    seen.add(reply)
+                    self._enqueue(reply, kind='backend')
+        self._queue_dialogue_observation()
+
+    async def run(self, *, bootstrap_task=None):
+        if bootstrap_task is not None and not isinstance(bootstrap_task, asyncio.Future):
+            raise ValueError('Startup must be an existing call-owned task')
+        opening = bootstrap_task
+        self._bootstrap_state = 'pending' if opening is not None else 'ready'
         for name, coroutine in (('speaker', self._speak_loop()), ('dialogue', self._local_loop()),
                                 ('updates', self._update_loop())):
             self._start_worker(name, coroutine)
@@ -1160,7 +1335,11 @@ class NativeDuplex:
         incoming = None
         try:
             while self._live():
-                if not self._backend_unavailable and self._backend is None and self._pending:
+                if opening is not None and opening.done():
+                    self._settle_bootstrap(opening)
+                    opening = None
+                if (not self.bootstrap_pending and not self._backend_unavailable
+                        and self._backend is None and self._pending):
                     self._backend = asyncio.create_task(self._business(self._pending.popleft()))
                 if incoming is None:
                     incoming = asyncio.create_task(self.call.wait_for_user_turn())
@@ -1168,7 +1347,12 @@ class NativeDuplex:
                 waiting = {incoming}
                 if self._backend is not None:
                     waiting.add(self._backend)
+                if opening is not None:
+                    waiting.add(opening)
                 ready, _ = await asyncio.wait(waiting, return_when=asyncio.FIRST_COMPLETED)
+                if opening is not None and opening in ready:
+                    self._settle_bootstrap(opening)
+                    opening = None
                 if self._backend is not None and self._backend in ready:
                     try:
                         self._backend.result()
@@ -1232,7 +1416,7 @@ class NativeDuplex:
         backend_closed = bool(getattr(self.call.dialog, 'conversation_ended', False))
         snapshot = conversational_snapshot(snapshot, question=actual_question,
             question_source=question_source,
-            busy=self.busy and not backend_closed and not self._backend_unavailable)
+            busy=self.busy and not self.bootstrap_pending and not backend_closed and not self._backend_unavailable)
         if self._interrupted_speech is not None:
             snapshot['capability_limits'] += (
                 'Die vorige Sprachausgabe wurde unterbrochen. Behandle deren ungesprochenen '
@@ -1240,6 +1424,9 @@ class NativeDuplex:
                 'keine bestätigte Wiedergabe am Telefon. Antworte auf die neue Eingabe im '
                 'aktuellen Zusammenhang; setze alten Text nicht blind fort.',)
         snapshot['capability_limits'] += (
+            'Die ServiceNow-Verbindung wird vorbereitet. Noch keine fachliche Eingabe wurde übermittelt; '
+            'besprich das Anliegen, ohne eine laufende Bearbeitung oder Kontextübernahme zu behaupten.'
+            if self.bootstrap_pending else
             'ServiceNow hat diesen Dialog beendet. Behaupte keine laufende Bearbeitung und keine '
             'weitere Übermittlung in diesen Dialog; erkläre nur die vorhandene Rückmeldung.' if backend_closed else
             'Die Anfrage ist derzeit nicht verfügbar; eine weitere Bearbeitung ist nicht belegt.'
@@ -1269,7 +1456,8 @@ class NativeDuplex:
                 observed_at=reply.observed_at, text=reply.text, superseded=False)
             snapshot['public_findings'] += (fact,)
         processing = getattr(self.call.dialog, 'processing', None)
-        if (isinstance(processing, dict) and processing.get('messages') and not self._pending
+        if (self._bootstrap_state == 'ready' and isinstance(processing, dict)
+                and processing.get('messages') and not self._pending
                 and not backend_closed and not self._backend_unavailable):
             fact = {name: key[name] for name in ('call_id', 'task_id', 'task_revision',
                     'context_revision', 'observation_revision')}
@@ -1279,9 +1467,9 @@ class NativeDuplex:
                 text=processing['messages'][-1], superseded=False)
             snapshot['public_findings'] += (fact,)
         snapshot = append_servicenow_context(snapshot, build_servicenow_voice_context(
-            self.call.call_settings, dict(business_available=not self._backend_unavailable,
-                business_busy=self.busy, backend_closed=backend_closed,
-                context_updates_enabled=self._context_publisher is not None,
+            self.call.call_settings, dict(business_available=not self._backend_unavailable and not self.bootstrap_pending,
+                business_busy=self.busy and not self.bootstrap_pending, backend_closed=backend_closed,
+                context_updates_enabled=self._context_publisher is not None and not self.bootstrap_pending,
                 pending_count=len(self._pending), supplement_count=len(self._supplements),
                 question_source=question_source)))
         return key, snapshot, observation
@@ -1492,6 +1680,8 @@ class NativeDuplex:
                  self._valid(item) and generation == self.call.playback.generation)
 
     def _automatic_update(self):
+        if self._bootstrap_state != 'ready':
+            return None, None
         processing = getattr(self.call.dialog, 'processing', None)
         observed_at = getattr(self.call.dialog, 'processing_observed_at', None)
         if (not self._pending and type(processing) is dict

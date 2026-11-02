@@ -2,6 +2,7 @@ import asyncio
 import unittest
 from array import array
 from fractions import Fraction
+from unittest.mock import patch
 
 from av import AudioFrame
 from native_bridge import Config, NativeCall
@@ -76,8 +77,29 @@ class Dialog:
         pass
 
 
+class PassThroughDenoiser:
+    """The DC fixture expresses speech timing; acoustic qualification is separate."""
+    active = False
+    fallback_reason = None
+    pending_samples = 0
+
+    def feed(self, pcm):
+        return [pcm]
+
+    def finish(self):
+        return []
+
+    def close(self):
+        pass
+
+
 class AudioPauseTests(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
+        # These unit tests own pauses, ASR queues and barge-in. Their constant
+        # DC frames are not speech and real RNNoise correctly removes them.
+        denoiser = patch('native_bridge.StreamingPCM16Denoiser', PassThroughDenoiser)
+        denoiser.start()
+        self.addCleanup(denoiser.stop)
         self.speech, self.dialog, self.microphone = Speech(), Dialog(), Microphone()
         self.call = NativeCall(Config(), self.speech, self.dialog)
         self.call.spawn(self.call.microphone(self.microphone))

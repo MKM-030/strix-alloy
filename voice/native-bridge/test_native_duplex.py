@@ -127,6 +127,13 @@ class DuplexTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([turn[0][1] for turn in self.lane._supplements], [raw])
         fresh = 'L, ü, h, d, e, r, s!'
         self.call.feed(fresh, 3)
+        await self.until(lambda: self.lane.question_context()[1:] == ('local_clarification', True)
+                         and fresh in self.lane.question_context()[0])
+        self.assertEqual(self.call.dialog.calls, ['Mara Lueders'])
+        # This text-only fixture has no microphone envelope. Stamp the fresh
+        # confirmation onset after the complete readback, as Native ASR does.
+        self.lane._input_questions[self.call.playback.generation] = self.lane._input_question_snapshot()
+        self.call.feed('Ja', 4)
         self.assertEqual(await self.next_business(), fresh)
         self.call.dialog.release.put_nowait('Meinen Sie Mara Lühders?')
         await self.until(lambda: not self.lane.busy)

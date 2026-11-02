@@ -79,7 +79,7 @@ class NeuralNativeInputTests(unittest.IsolatedAsyncioTestCase):
         import numpy as np
 
         profile = load_speech_activity_file(HERE / 'speech-activity.profile.json')
-        reference = Path(r'C:/Projects/strix-alloy-scc-voice/voice/assets/scc-demo/reference.wav')
+        reference = HERE.parent / 'assets/scc-demo/reference.wav'
         chunks = []
         converter = AudioResampler(format='s16', layout='mono', rate=16000)
         with av.open(str(reference)) as source:

@@ -16,6 +16,7 @@ import math
 from pathlib import Path
 import re
 import time
+from types import SimpleNamespace
 from urllib.parse import urlsplit
 import uuid
 import wave
@@ -1570,12 +1571,73 @@ class NativeCall:
                 await self.responsive_attachment.detach()
             self.turns_settled.set()
 
+    async def _speak_startup(self, messages, *, kind='greeting', fallback=False):
+        """Speak startup output without turning a real VA input into a greeting."""
+        generation = self.playback.generation
+        for greeting_index, greeting in enumerate(messages):
+            if self.input_lost or self.closed or self.closing:
+                LOG.info('Voice greeting call=%s stage=greeting_skip reason=input_lost greeting_index=%d generation=%d',
+                         self.call_id, greeting_index, self.playback.generation)
+                break
+            self.emit('transcript', {'role':'assistant','content':greeting,
+                'message_id':uuid.uuid4().hex,'caller_turn_id':'','turn_num':0})
+            if fallback:
+                self.dialog.record_greeting(greeting)
+            if generation or self.input_started:
+                LOG.info('Voice greeting call=%s stage=greeting_skip reason=%s greeting_index=%d input_started=%s generation=%d',
+                         self.call_id, 'prior_generation' if generation else 'prior_input',
+                         greeting_index, self.input_started, generation)
+                continue
+            self.synthesis_active = True
+            tts_started = time.monotonic()
+            tts_bytes = accepted_bytes = chunks = 0
+            outcome = 'complete'
+            speech_state = None
+            if self.duplex is not None:
+                speech_state = (self.duplex.begin_greeting(greeting) if kind == 'greeting' else
+                    self.duplex._begin_speech(SimpleNamespace(
+                        text=greeting, kind=kind, question_binding=None)))
+            LOG.info('Voice greeting call=%s stage=greeting_tts_begin greeting_index=%d generation=%d kind=%s',
+                     self.call_id, greeting_index, generation, kind)
+            try:
+                async for chunk in self.speech.synthesize(greeting):
+                    tts_bytes += len(chunk)
+                    chunks += 1
+                    if chunks == 1:
+                        LOG.info('Voice greeting call=%s stage=greeting_tts_first_chunk greeting_index=%d elapsed_ms=%d bytes=%d generation=%d current_generation=%d',
+                                 self.call_id, greeting_index, int((time.monotonic()-tts_started)*1000),
+                                 len(chunk), generation, self.playback.generation)
+                    if generation != self.playback.generation:
+                        outcome = 'interrupted'
+                        break
+                    while len(self.playback.data) > 48000 and generation == self.playback.generation:
+                        await asyncio.sleep(.02)
+                    if self.playback.put(chunk, generation):
+                        accepted_bytes += len(chunk)
+            except asyncio.CancelledError:
+                outcome = 'cancelled'
+                raise
+            except Exception:
+                outcome = 'error'
+                raise
+            finally:
+                self.synthesis_active = False
+                if outcome == 'complete':
+                    outcome = ('interrupted' if generation != self.playback.generation else
+                               'empty' if tts_bytes == 0 else 'complete')
+                if speech_state is not None:
+                    self.duplex._finish_speech(speech_state, complete=outcome == 'complete')
+                LOG.info('Voice greeting call=%s stage=greeting_tts_end greeting_index=%d elapsed_ms=%d bytes=%d accepted_bytes=%d chunks=%d outcome=%s generation=%d current_generation=%d kind=%s',
+                         self.call_id, greeting_index, int((time.monotonic()-tts_started)*1000),
+                         tts_bytes, accepted_bytes, chunks, outcome, generation, self.playback.generation, kind)
+
     async def process_turns(self):
         if self.responsive_attachment_factory is not None:
             return await self.process_responsive_turns()
         self.turns_settled.clear()
         self.asr_task = self.spawn(self.recognize_turns())
-        try:
+        opening = None
+        async def open_dialog():
             dialog_started = time.monotonic()
             LOG.info('Voice greeting call=%s stage=dialog_open_begin input_started=%s generation=%d input_lost=%s',
                      self.call_id, self.input_started, self.playback.generation, self.input_lost)
@@ -1583,78 +1645,45 @@ class NativeCall:
             LOG.info('Voice greeting call=%s stage=dialog_open_end elapsed_ms=%d greeting_count=%d input_started=%s generation=%d input_lost=%s',
                      self.call_id, int((time.monotonic()-dialog_started)*1000), len(greetings),
                      self.input_started, self.playback.generation, self.input_lost)
-            fallback_greeting = False
-            selection_prompt = getattr(self.call_settings,'selection_prompt','')
-            if (selection_prompt and not greetings and self.playback.generation == 0
-                    and not self.input_started and not self.input_lost):
-                # This is the native configured phrase, only when multiple languages exist.
-                greetings = [('' + self.config.greeting + ' ' if self.config.greeting else '') + selection_prompt]
-                fallback_greeting = True
-            if (not greetings and self.config.greeting and self.playback.generation == 0
-                    and not self.input_started and not self.input_lost):
-                greetings = [self.config.greeting]
-                fallback_greeting = True
-                LOG.info('Voice greeting call=%s stage=greeting_fallback generation=%d',
-                         self.call_id, self.playback.generation)
-            elif not greetings:
-                reason = ('not_configured' if not self.config.greeting else
-                          'input_lost' if self.input_lost else
-                          'prior_generation' if self.playback.generation else 'prior_input')
-                LOG.info('Voice greeting call=%s stage=greeting_skip reason=%s input_started=%s generation=%d input_lost=%s',
-                         self.call_id, reason, self.input_started, self.playback.generation, self.input_lost)
-            generation = self.playback.generation
-            for greeting_index, greeting in enumerate(greetings):
-                if self.input_lost:
-                    LOG.info('Voice greeting call=%s stage=greeting_skip reason=input_lost greeting_index=%d generation=%d',
-                             self.call_id, greeting_index, self.playback.generation)
-                    break
-                self.emit('transcript', {'role':'assistant','content':greeting,
-                    'message_id':uuid.uuid4().hex,'caller_turn_id':'','turn_num':0})
-                if fallback_greeting:
-                    self.dialog.record_greeting(greeting)
-                if generation or self.input_started:
-                    LOG.info('Voice greeting call=%s stage=greeting_skip reason=%s greeting_index=%d input_started=%s generation=%d',
-                             self.call_id, 'prior_generation' if generation else 'prior_input',
-                             greeting_index, self.input_started, generation)
-                    continue
-                self.synthesis_active = True
-                tts_started = time.monotonic()
-                tts_bytes = accepted_bytes = chunks = 0
-                outcome = 'complete'
-                greeting_speech = self.duplex.begin_greeting(greeting) if self.duplex is not None else None
-                LOG.info('Voice greeting call=%s stage=greeting_tts_begin greeting_index=%d generation=%d',
-                         self.call_id, greeting_index, generation)
-                try:
-                    async for chunk in self.speech.synthesize(greeting):
-                        tts_bytes += len(chunk)
-                        chunks += 1
-                        if chunks == 1:
-                            LOG.info('Voice greeting call=%s stage=greeting_tts_first_chunk greeting_index=%d elapsed_ms=%d bytes=%d generation=%d current_generation=%d',
-                                     self.call_id, greeting_index, int((time.monotonic()-tts_started)*1000),
-                                     len(chunk), generation, self.playback.generation)
-                        if generation != self.playback.generation:
-                            outcome = 'interrupted'
-                            break
-                        while len(self.playback.data) > 48000 and generation == self.playback.generation:
-                            await asyncio.sleep(.02)
-                        if self.playback.put(chunk, generation):
-                            accepted_bytes += len(chunk)
-                except asyncio.CancelledError:
-                    outcome = 'cancelled'
-                    raise
-                except Exception:
-                    outcome = 'error'
-                    raise
-                finally:
-                    self.synthesis_active = False
-                    if outcome == 'complete':
-                        outcome = ('interrupted' if generation != self.playback.generation else
-                                   'empty' if tts_bytes == 0 else 'complete')
-                    if greeting_speech is not None:
-                        self.duplex.finish_greeting(greeting_speech, complete=outcome == 'complete')
-                    LOG.info('Voice greeting call=%s stage=greeting_tts_end greeting_index=%d elapsed_ms=%d bytes=%d accepted_bytes=%d chunks=%d outcome=%s generation=%d current_generation=%d',
-                             self.call_id, greeting_index, int((time.monotonic()-tts_started)*1000),
-                             tts_bytes, accepted_bytes, chunks, outcome, generation, self.playback.generation)
+            return greetings
+        try:
+            if self.call_settings is not None:
+                # The native introduction is authoritative. Its audio need not
+                # wait for CREATE/START/topic readiness, but the same owned
+                # bootstrap must settle before any real VA input can be sent.
+                opening = self.spawn(open_dialog())
+                await asyncio.sleep(0)
+                selection = getattr(self.call_settings, 'selection_prompt', '')
+                introduction = ' '.join(part for part in (self.config.greeting, selection) if part)
+                if (introduction and not self.input_started and not self.playback.generation
+                        and not self.input_lost and not self.closed and not self.closing):
+                    # Profile-bound CREATE has its own native history. Never
+                    # inject this locally spoken introduction as a Bot message.
+                    await self._speak_startup([introduction])
+                if self.duplex is not None:
+                    # Local dialogue can now run while this same bootstrap
+                    # settles. Duplex owns its one result and readiness gate.
+                    return await self.duplex.run(bootstrap_task=opening)
+                greetings = await opening
+                # Topic selection can return a genuine business question. Keep
+                # its input-control/request binding, separate from the intro.
+                await self._speak_startup(greetings, kind='backend_reply')
+            else:
+                greetings = await open_dialog()
+                fallback_greeting = False
+                if (not greetings and self.config.greeting and self.playback.generation == 0
+                        and not self.input_started and not self.input_lost):
+                    greetings = [self.config.greeting]
+                    fallback_greeting = True
+                    LOG.info('Voice greeting call=%s stage=greeting_fallback generation=%d',
+                             self.call_id, self.playback.generation)
+                elif not greetings:
+                    reason = ('not_configured' if not self.config.greeting else
+                              'input_lost' if self.input_lost else
+                              'prior_generation' if self.playback.generation else 'prior_input')
+                    LOG.info('Voice greeting call=%s stage=greeting_skip reason=%s input_started=%s generation=%d input_lost=%s',
+                             self.call_id, reason, self.input_started, self.playback.generation, self.input_lost)
+                await self._speak_startup(greetings, fallback=fallback_greeting)
             if self.duplex is not None:
                 return await self.duplex.run()
             while not self.closed and not self.failed and not self.input_lost and not self.closing:
@@ -1744,6 +1773,10 @@ class NativeCall:
             await self.report_backend_failure()
         finally:
             # Includes failures and cancellation, after submitted-turn observation.
+            if opening is not None:
+                if not opening.done():
+                    opening.cancel()
+                await asyncio.gather(opening, return_exceptions=True)
             self.turns_settled.set()
 
     async def close(self):
@@ -1760,49 +1793,73 @@ class NativeCall:
         await asyncio.shield(self.close_task)
 
     async def finish_close(self):
-        cleanup_acknowledged = not getattr(self.dialog,'_call_owned',False)
+        peer_closed = cleanup_acknowledged = False
+        cleanup_started = time.monotonic()
+        LOG.info('Voice cleanup call=%s stage=begin workers=%d input_lost=%s turns_settled=%s',
+                 self.call_id, len(self.tasks), self.input_lost, self.turns_settled.is_set())
+
+        async def observe_phase(phase, operation):
+            # Fixed phase names and numeric timing only. A blocked await leaves
+            # its begin marker; no timeout, cancellation or capacity policy changes.
+            started = time.monotonic()
+            LOG.info('Voice cleanup call=%s stage=%s_begin', self.call_id, phase)
+            try:
+                result = await operation
+            except BaseException as error:
+                LOG.warning('Voice cleanup call=%s stage=%s_failed type=%s elapsed_ms=%d',
+                            self.call_id, phase, type(error).__name__,
+                            int((time.monotonic()-started)*1000))
+                raise
+            LOG.info('Voice cleanup call=%s stage=%s_end elapsed_ms=%d',
+                     self.call_id, phase, int((time.monotonic()-started)*1000))
+            return result
+
         try:
             if self.input_lost and self.responsive_attachment_factory is None:
                 # Even an independent client disconnect must preserve the
                 # submitted turn after terminal input loss has committed.
-                await self.turns_settled.wait()
+                await observe_phase('turns_settled', self.turns_settled.wait())
             self.closed = True
             self.playback.interrupt()
             tasks = tuple(self.tasks)
             for task in tasks:
                 task.cancel()
-            await asyncio.gather(*tasks, return_exceptions=True)
+            await observe_phase('workers', asyncio.gather(*tasks, return_exceptions=True))
             self.drain_queue(self.turns)
             self.drain_queue(self.recognized_turns)
             self._notify_input_changed()
             self.turn_contexts.clear()
             self.turn_controls.clear()
             try:
-                await self.peer.close()
+                await observe_phase('peer_close', self.peer.close())
+                peer_closed = True
                 clear_session_ice(self._session_ice_servers,self.peer)
             finally:
                 if self.responsive_attachment is not None:
-                    await self.responsive_attachment.detach()
-                    await self.responsive_output.close()
+                    await observe_phase('responsive_detach', self.responsive_attachment.detach())
+                    await observe_phase('responsive_output', self.responsive_output.close())
                     # The process worker owns observation and END. This waiter
                     # cannot cancel it, and capacity remains reserved until ACK.
-                    await self.responsive_attachment.wait_closed()
+                    await observe_phase('responsive_settled', self.responsive_attachment.wait_closed())
                     if getattr(self.dialog, '_call_owned', False):
-                        await self.dialog.shutdown()
+                        await observe_phase('dialog_shutdown', self.dialog.shutdown())
                 else:
                     if self.responsive_output is not None:
-                        await self.responsive_output.close()
-                    await self.dialog.close()
+                        await observe_phase('responsive_output', self.responsive_output.close())
+                    await observe_phase('dialog_close', self.dialog.close())
                     if getattr(self.dialog,'_call_owned',False):
                         if self.dialog.must_reset:
-                            await self.dialog.wait_owned_cleanup()
-                        await self.dialog.shutdown()
+                            await observe_phase('owned_cleanup', self.dialog.wait_owned_cleanup())
+                        await observe_phase('dialog_shutdown', self.dialog.shutdown())
                 cleanup_acknowledged = True
         finally:
-            if cleanup_acknowledged:
+            if peer_closed and cleanup_acknowledged:
                 self.close_complete.set()
+                LOG.info('Voice cleanup call=%s stage=complete elapsed_ms=%d',
+                         self.call_id, int((time.monotonic()-cleanup_started)*1000))
             else:
-                LOG.warning('Voice cleanup call=%s stage=unresolved capacity_reserved=True',self.call_id)
+                LOG.warning('Voice cleanup call=%s stage=unresolved peer_closed=%s backend_acknowledged=%s capacity_reserved=True',
+                            self.call_id, peer_closed, cleanup_acknowledged)
 
 
 async def authorize(request, config, http, with_settings=False):

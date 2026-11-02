@@ -24,7 +24,7 @@ except ModuleNotFoundError:
 HERE = Path(__file__).resolve().parent
 LIBRARY = Path(r'C:\AI\build\whisper.cpp\build\bin\whisper.dll')
 MODEL = Path(r'C:\AI\build\whisper.cpp\models\for-tests-silero-v6.2.0-ggml.bin')
-SPEECH = Path(r'C:\Projects\strix-alloy-scc-voice\voice\assets\scc-demo\reference.wav')
+SPEECH = HERE.parent / 'assets/scc-demo/reference.wav'
 LIBRARY_SHA = 'a64bc7d6914a96694e3c1ffabb82c7551c4eedb331590044983bfe7b4c76fd8b'
 MODEL_SHA = '2aa269b785eeb53a82983a20501ddf7c1d9c48e33ab63a41391ac6c9f7fb6987'
 

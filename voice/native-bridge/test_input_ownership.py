@@ -2,8 +2,10 @@ import asyncio
 from array import array
 from fractions import Fraction
 import unittest
+from unittest.mock import patch
 from av import AudioFrame
 from conversation_router import Route
+from test_input_lifecycle import PassThroughDenoiser
 import test_responsive_native as fixtures
 
 
@@ -30,7 +32,14 @@ class Track:
 
 
 class InputOwnershipTests(unittest.IsolatedAsyncioTestCase):
-    asyncSetUp = fixtures.NativeResponsiveTests.asyncSetUp
+    async def asyncSetUp(self):
+        # DC frames establish only an input ownership boundary. Real RNNoise
+        # suppresses DC, and its acoustic behavior has independent coverage.
+        denoiser = patch('native_bridge.StreamingPCM16Denoiser', PassThroughDenoiser)
+        denoiser.start()
+        self.addCleanup(denoiser.stop)
+        await fixtures.NativeResponsiveTests.asyncSetUp(self)
+
     asyncTearDown = fixtures.NativeResponsiveTests.asyncTearDown
     attach = fixtures.NativeResponsiveTests.attach
     call = fixtures.NativeResponsiveTests.call

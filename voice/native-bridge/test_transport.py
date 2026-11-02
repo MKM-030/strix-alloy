@@ -15,6 +15,12 @@ LIVE_WAV = ''
 class TransportTests(unittest.IsolatedAsyncioTestCase):
     async def test_native_deferred_offer_trickle_audio_and_transcripts(self):
         self.assertIsNotNone(create_app, 'native WebRTC adapter is missing')
+        if not LIVE_WAV:
+            from unittest.mock import patch
+            from test_input_lifecycle import PassThroughDenoiser
+            # A pure sine establishes the RTP/ASR wiring contract; RNNoise can
+            # suppress it. Real-WAV probes retain the production acoustic path.
+            self.enterContext(patch('native_bridge.StreamingPCM16Denoiser', PassThroughDenoiser))
         from aiohttp import ClientSession, web
         from aiortc import RTCPeerConnection, RTCConfiguration, RTCSessionDescription, AudioStreamTrack
         from av import AudioFrame

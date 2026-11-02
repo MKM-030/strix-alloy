@@ -890,7 +890,9 @@ class GroundedIntegration(unittest.IsolatedAsyncioTestCase):
 class NativeGroundedOwnership(unittest.IsolatedAsyncioTestCase):
     import test_responsive_native as fixtures
     from test_input_ownership import InputOwnershipTests as ownership
-    asyncSetUp = fixtures.NativeResponsiveTests.asyncSetUp
+    # Reused synthetic DC onsets require the owning fixture's scoped denoiser
+    # isolation too; production RNNoise acoustic coverage remains independent.
+    asyncSetUp = ownership.asyncSetUp
     asyncTearDown = fixtures.NativeResponsiveTests.asyncTearDown
     attach = fixtures.NativeResponsiveTests.attach
     call = fixtures.NativeResponsiveTests.call
