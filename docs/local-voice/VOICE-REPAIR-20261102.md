@@ -1,9 +1,9 @@
 # Voice repair — 2 November 2026
 
 The direct failure report supersedes the earlier wait for a phone-test result.
-The repair is active in the local native adapter. The separate ServiceNow model
-maintenance requires the specific pending approval; complete live acceptance is
-not yet established.
+The adapter repair is active. The approved ServiceNow VA Input and two Planner
+model corrections are applied and independently read back; complete live
+acceptance is not yet established.
 
 ## Demonstrated causes
 
@@ -17,10 +17,11 @@ The processing failure has a separate configuration cause. **VA Input Response
 Generation** (`aca5634f4312121038520464dbb8f236`) resolves through the Custom LLM
 definition `e0f1b0cb9373cf14e7f2b9fa6aba1073` and prompt binding
 `24f1b0cb9373cf14e7f2b9fa6aba1076` to active published AI configuration
-`e8f1b0cb9373cf14e7f2b9fa6aba1074`. That configuration still requests
-`Gemma 4 26B-A4B`. The local Gateway correctly rejects this fixed model when
-Halogen is selected. Failed GenAI executions and Gateway409 corroborate this;
-successful ReAct executions do not validate VA Input.
+`e8f1b0cb9373cf14e7f2b9fa6aba1074`. At failure time it requested
+`Gemma 4 26B-A4B`. The local Gateway correctly rejects that fixed model when
+Halogen is selected. Failed GenAI executions and Gateway409 corroborated this.
+After its repair, the actual VA Input invocation succeeded on Halogen; separate
+successful ReAct executions alone would not establish that result.
 
 This conversational dependency is outside the 66 Agent prompts. It is also not
 the controller of every audio frame. The current local conversation follows
@@ -71,12 +72,29 @@ mistake and has been explicitly corrected in the private evidence.
 
 The target/model ACLs deny ordinary writes. Its native form remains disabled,
 and this platform capability has no demonstrated eligible SkillKit entry
-(`type` empty, no SkillConfig). A separate reviewed administrative proposal
-changes only this owned custom configuration's model to `halogen-v2`, with normal
-business rules, secure reads, a separate no-delete Update Set, one Customer
-Update and rollback recording. **Specific approval is pending; the maintenance
-has not been executed.** No role, ACL, protected manufacturer source, completed
-2.3 Agent batch or sealed 2.2 package is changed by the proposal.
+(`type` empty, no SkillConfig). Marcel explicitly approved the administrative
+capability repair. The owned default configuration now selects `halogen-v2`,
+revision 4. Native calculated `request_tokens` changed from 28,422 to 257,798;
+the script did not write that calculated field. Prompt, schema and all 39
+surrounding guard rows remain unchanged.
+
+The completed repair has one `INSERT_OR_UPDATE` Customer Update in its separate
+scope-correct WIP Update Set. Native header application ACL behavior and capture
+context required guarded continuations; submitted artifacts were never replayed.
+The final continuation moved only the newly generated capture, with its payload
+unchanged, and restored/preserved the original current-set context. Fresh typed
+readback verified all 1,030 fields on 40 rows, seven exact relationship
+memberships, the header contract and the one-record no-delete XML payload.
+No role, ACL, protected manufacturer source, completed 2.3 Agent batch or sealed
+2.2 package changed.
+
+Reusable [capability model maintenance scripts](../servicenow-byollm/capability-model-management.md)
+provide preview-first switching and additive model alternatives with independent
+prompt lineage. Their current complete byollm test run passed 231/231. Native
+Switch, Add-existing and Add-new-draft previews also passed with zero writes;
+no reusable bulk apply was run.
+It intentionally reports a broader active/published selection than this repair,
+including the separate nondefault Gemma prompt left unchanged here.
 
 ## Verification and remaining acceptance
 
@@ -131,10 +149,35 @@ Funnel/NAT, real microphone/noise quality, positive name submission or business
 context/progress acceptance. No old bearer, fake authorization or historical
 settings substituted for the native contract.
 
-Remaining: obtain the pending specific approval, execute the model correction
-once, verify its source/capture readbacks and actual VA Input invocation, and
-exercise a positively confirmed harmless name at the same input binding. Then
-verify one genuine, bounded ServiceNow context/progress sequence. Raw caller context requires matching
+After the metadata repair, one new genuine SDK/RTC probe received the configured
+introduction and actual name question, read back the exact raw synthetic-name
+ASR, and waited for full current TTS completion, conservative queued-audio drain
+and fresh received PCM quiet before sending one name-only `Ja`. No later input
+was sent. The next backend response did not arrive within 40 seconds, so the
+probe failed. Correlation through the actual native conversation subsequently
+proved VA Input succeeded on `halogen-v2`, accepted the exact raw name and
+returned control to the agent (7,307ms, no error). Two downstream capability
+invocations then failed with error `200000`: the current default prompts for
+AIA Unified Planner Quick and AIA Unified Planner still selected Gemma. Their
+definitions were absent from the earlier four-definition Agent allowlist.
+The first host-time-based query missed these records because the native table
+clock is approximately 88 seconds behind the host. Match actual conversation
+and payload identity, rather than assuming synchronized clocks. Cleanup was
+acknowledged in 1.078 seconds and capacity returned to zero.
+
+The approved targeted continuation now changes only those two Planner prompt
+models to Halogen. A separate scope-correct WIP header contains their exact two
+no-delete Customer Updates; source revisions advanced 4→5 and 6→7. Fresh external
+typed readback compared 97 original rows, 2,726 fields and all unchanged query
+memberships, with no unexpected difference. The two captured XML payloads match
+every source field except native calculated `request_tokens`, which was never
+manually written. Original application/current-set selection is restored.
+The new bounded post-repair positive-name observation is separate from the
+failed receipt; its full continuation must still be established.
+
+Remaining: verify the downstream post-name Planner continuation, then
+verify one genuine, bounded ServiceNow
+context/progress sequence. Raw caller context requires matching
 request identity plus `contextStored`, `inputBoundaryConfirmed`, `promptIncluded`
 and `ingested` before retirement. Progress must reflect fresh ServiceNow work.
 Common NativeCall/SDK contracts cover all clients; physical iPhone/Android
