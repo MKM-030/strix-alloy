@@ -273,28 +273,32 @@ Private investigation receipts live under
 `server/.local/voice-repair-20261102/`; source and technical documentation contain
 no OAuth tokens or private conversation dumps. Current handoff is TASK81.
 
-## Original-caller CREATE prepared; separate permission pending
+## Original-caller CREATE installed; VA session authentication remains open
 
 The V4 native records now prove guest/guest execution, one failed child-agent
 access-verification task, and zero GenAI/tools. Completing the account-link
-topic can mean only that a stored profile already exists. The original caller
-must enter the conversation-creation transaction itself.
+topic can mean only that a stored profile already exists. Entering CREATE as
+the original HTTP caller was tested as a correction hypothesis; V5 shows that
+it does not by itself authenticate the later VA worker.
 
-The proposed own route is `POST /api/sn_voice_aia/local_voice_caller/create`.
-Seven new API/scope/policy records would grant the existing native Voice Agent
-client that exact additional endpoint. This affects its already issued tokens
-at runtime, and requires a separate explicit security approval. No record in
-that seven-record proposal has been saved. Existing client/profile/source rows,
-their original relationships, generic B2B policy and roles remain unchanged.
+Marcel explicitly approved the prepared seven-record package. The own route
+`POST /api/sn_voice_aia/local_voice_caller/create` and its exact endpoint grant
+are installed through the normal UI in a separate Voice AIA working update set.
+Independent readback and a second local audit checked 37 complete typed rows,
+17 complete query groups, seven captures and all 151 captured source fields.
+Old source rows, captures and the original client/profile relationships remain
+unchanged; only the two approved additional relationships were added. The
+policy's displayed Version is ordinary update history, not an eighth security
+record. Native description truncation and script CRLF normalization were
+verified without repeating a save.
 
-The prepared source accepts only three private correlation IDs and version1,
+The installed source accepts only three private correlation IDs and version1,
 requires the original authenticated GS administrator and fixed SCC service,
 obtains its own user/email and central settings, then performs one normal public
 synchronous empty CREATE. It requires genuine complete native IDs and normal
 stored ownership proof. A success ACK without IDs cannot release START.
 
-The local two-file change is integrated in source, with its config selection
-default empty and no runtime activation. It forwards the original credential
+The local change is active with the exact own path selected. It forwards the original credential
 once to only the exact own instance/path under the existing 45-second ticket,
 binds the direct result to the private pending request/cookie/caller, and keeps
 the distinct normal refresh. There is no anonymous fallback or retry. WS/SDK
@@ -303,7 +307,32 @@ front-end authentication and media behavior stay common.
 Independent review found and closed exact-host and Bearer-scheme-case cases.
 Fresh canonical checks passed 692/692 byollm tests and 75/75 Bridge/caller tests.
 The new native source's 218 cases are included in that 692 total. These source
-checks do not prove the future native CREATE or asynchronous principal. The
-next live test waits for explicit approval, native creation/readback and exact
-idle activation. See the [design](../superpowers/specs/2026-11-02-local-caller-create-design.md)
-and [plan](../superpowers/plans/2026-11-02-local-caller-create.md).
+checks do not prove the asynchronous principal. One idle Bot/Native cutover
+preserved the model/controller, Gateway, ASR and own TTS generations. One fresh
+normal Voice Agent PKCE and one immutable V5 SDK/RTC test followed.
+
+V5 created the conversation through the strict own endpoint and completed its
+normal refresh/START transition, but failed before any name or confirmation
+input. Actual native records prove that both worker user fields still equal
+`guest`; the original SCC child fails ACL verification, with zero GenAI and
+zero tools. First audio took 9.969 seconds including full client ICE gathering.
+Acknowledged cleanup took 0.438 seconds and left native capacity zero. No order
+or later data input was sent. This is an unsuccessful repair result, not a
+passing authentication test.
+
+The next investigation is the supported channel sign-in protocol and its
+completion boundary. HTTP caller authentication, stored account ownership and
+VA worker authentication are separate evidence. Do not repeat CREATE/START
+experiments, alter roles/ACLs or substitute identity fields for an actual
+native sign-in completion.
+
+The V5 temporary token file remains in its restricted local test directory:
+automatic approval review rejected both the combined cleanup and a single-file
+delete with only `blocked by policy`. No alternate deletion method was used.
+Its token expires approximately 21:58 UTC; file cleanup remains outstanding.
+Private V5 installation, activation, test and runtime receipts are retained under
+`server/.local/voice-repair-20261102/entry-workflow/`.
+
+See the [design](../superpowers/specs/2026-11-02-local-caller-create-design.md)
+and [plan](../superpowers/plans/2026-11-02-local-caller-create.md). Full Voice and
+physical-device acceptance remain open.

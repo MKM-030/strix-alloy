@@ -40,7 +40,7 @@
 - [x] Implement only the owned resource candidate; preserve all existing sources.
 - [x] Run focused source/syntax tests and inspect results.
 - [x] Complete exact names/path collision checks and actual UI creation-field/default contract for seven new records; prepare review, parameters and reversal.
-- [ ] Root independent review; present one concrete security approval with the seven-record scope. No write before the answer.
+- [x] Root independent review; explicit seven-record security approval received before native writes.
 
 ## Task 2 — private original-caller synchronous CREATE transport
 
@@ -57,20 +57,22 @@
 
 ## Task 3 — approved native creation and independent readback
 
-- [ ] Record actual approval before any new security/UI Save.
-- [ ] Select own Voice AIA WIP in both UI and SDK; preserve previous contexts.
-- [ ] Create only the seven reviewed records using normal UI/context for read-only-derived fields and normal rights for writable fields. Stop/read back any uncertain result; do not replay.
-- [ ] Independently compare complete old/new source rows, exact old memberships and new relation IDs, same-application captures and no deletes.
-- [ ] Integrate verified owned source/tests and new local path config; keep current runtime code untouched until idle activation.
+- [x] Record actual approval before any new security/UI Save.
+- [x] Select own Voice AIA WIP in both UI and SDK; preserve previous contexts.
+- [x] Create only the seven reviewed records using normal UI/context for read-only-derived fields and normal rights for writable fields. Uncertain policy-save observation was independently read back; no save was repeated.
+- [x] Independently compare complete old/new source rows, exact old memberships and new relation IDs, same-application captures and no deletes.
+- [x] Integrate verified owned source/tests and new local path config; keep current runtime code untouched until idle activation.
 
 ## Task 4 — bounded real proof and durable completion
 
-- [ ] Exact idle activation of affected adapter only through normal venv launcher; preserve all other service/model generations.
-- [ ] New normal native Voice Agent PKCE in a fresh restricted folder, one new frozen SDK/RTC name-only probe with all updated source/config pins.
+- [x] Exact idle activation of affected adapter only through normal venv launcher; preserve all other service/model generations.
+- [x] New normal native Voice Agent PKCE in a fresh restricted folder, one new frozen SDK/RTC name-only probe with all updated source/config pins. V5 failed before any caller input; immutable failed receipt retained.
 - [ ] Correlate actual conversation/plan/user/root/child/model/tool records using clock-adjusted native window; prove original caller and normal continuation, not merely CREATE/refresh acknowledgement.
 - [ ] Require cleanup ACK/capacity0 and remove own temporary bearer; no order consent.
 - [ ] Update docs/checkpoint, commit verified owned changes and restore both UI and SDK app/set contexts. Report physical-device limits separately.
 
-Root integration: owned source d4b925b0..., final integrated checks692/692 byollm +75/75 Python pass. Separate async security approval asked; no answer yet. No native security save, config path selection, adapter activation or new Voice probe.
+Root integration: owned source d4b925b0..., integrated checks692/692 byollm +75/75 Python pass. Marcel approved Voice sign-in; all seven records and seven captures passed independent full readback and a second local audit. WIP6b0e4fb59314d3185c8132d47aba1090. Bot21648/Native26496 activated once, all other services/model generations preserved. V5 own CREATE succeeded, but its actual VA worker remained guest/guest and denied the original SCC child before any GenAI/tools or caller input. HTTP caller creation did not solve native channel session sign-in. No further probe without a concrete supported-protocol correction.
+
+V5 cleanup ACK/capacity0 passed. Temporary token-file deletion was rejected twice by automatic approval review (including the exact single-file command); the restricted file remains and is not retried through another tool. Its token expires approximately21:58UTC. Full native sign-in, later continuation, context/progress, physical-device acceptance and final context restoration remain open.
 
 Ruling: Strict v1 requires real complete response IDs plus ordinary stored ownership proof. The public native builder may return an empty success ACK; that remains uncertain/refused, with no stored-ID fallback or retry.
