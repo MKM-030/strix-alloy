@@ -49,6 +49,8 @@ class ContextLaneTests(unittest.IsolatedAsyncioTestCase):
         state = await (await self.ui.get('/api/session')).json()
         self.headers = {'Origin': self.bridge.origin, 'X-CSRF-Token': state['csrf']}
         self.session = next(iter(self.bridge.sessions.values()))
+        self.session.caller_user_id = '1' * 32
+        self.session.caller_email = 'owned@example.invalid'
         self.session.started = self.session.busy = True
         self.session.pending_since = __import__('time').monotonic()
         self.session.requests.append('active-business-request')

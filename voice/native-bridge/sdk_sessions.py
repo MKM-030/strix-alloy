@@ -268,10 +268,12 @@ class _PendingCreate:
 
 
 class SDKSessionManager:
-    def __init__(self, config, active, make_call, admit, context_call_factory=None, before_create=None):
+    def __init__(self, config, active, make_call, admit, context_call_factory=None, before_create=None,
+                 bind_call_authorization=None):
         self.config, self.active, self.make_call, self.admit = config, active, make_call, admit
         self.context_call_factory = context_call_factory
         self.before_create = before_create
+        self.bind_call_authorization = bind_call_authorization
         self.policy = getattr(config,'sdk_policy',None)
         self.sessions = {}
         self.stopping = False
@@ -391,6 +393,13 @@ class SDKSessionManager:
             self.active.add(call)
         session = None
         try:
+            if self.bind_call_authorization is not None:
+                authorization = next(value for name,value in _raw_headers(request)
+                                     if name.lower() == 'authorization')
+                try:
+                    self.bind_call_authorization(call, authorization)
+                finally:
+                    authorization = None
             self._prune()
             session_id = secrets.token_hex(16)
             while session_id in self.sessions:
@@ -650,7 +659,7 @@ class SDKSessionManager:
 
 
 def register_sdk_routes(app, config, active, make_call, admit_sdk_session, *,
-                        context_call_factory=None, before_create=None):
+                        context_call_factory=None, before_create=None, bind_call_authorization=None):
     """Register inactive candidate routes; return an owned shutdown manager.
 
     The caller must disable aiohttp access logging (Bearer may be in rejected
@@ -661,7 +670,7 @@ def register_sdk_routes(app, config, active, make_call, admit_sdk_session, *,
     context; the legacy make_call() contract is unchanged when it is omitted.
     """
     manager = SDKSessionManager(config,active,make_call,admit_sdk_session,context_call_factory,
-                                before_create)
+                                before_create,bind_call_authorization)
     def route(handler):
         async def guarded(request):
             try:

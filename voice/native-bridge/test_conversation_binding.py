@@ -30,8 +30,11 @@ class ConversationBindingTests(unittest.IsolatedAsyncioTestCase):
         await self.callback(creation, [control], userId='wrong-user', expected_status=400)
         await self.callback(creation, [control], userId=None)
         self.assertNotIn('conversationBinding', await readback())
-        # The missing identity keeps normal CREATE handling intact; use a fresh
-        # owned cookie for the exact binding path instead of replaying CREATE.
+        # Missing identity cannot authorize refresh or START; only the later
+        # fully correlated callback may supply that same CREATE binding.
+        await asyncio.sleep(.02)
+        self.assertEqual(len(self.sent),1)
+        await self.callback(creation,[control])
         await self.wait_for_sent(2, opening)
         await self.callback(self.sent[-1], [{'uiType': 'InputText'}])
         await asyncio.wait_for(opening, 2)
@@ -43,10 +46,14 @@ class ConversationBindingTests(unittest.IsolatedAsyncioTestCase):
                           dict(control, conversationId=7), dict(control, interactionId='INVALID')):
             opening, creation = await self.begin_create()
             await self.callback(creation, [malformed])
+            await asyncio.sleep(.02)
+            self.assertEqual(len(self.sent),1)
+            self.assertNotIn('conversationBinding', await readback())
+            await self.callback(creation,[control])
             await self.wait_for_sent(2, opening)
             await self.callback(self.sent[-1], [{'uiType': 'InputText'}])
             self.assertEqual(await asyncio.wait_for(opening, 2), [])
-            self.assertNotIn('conversationBinding', await readback())
+            self.assertIn('conversationBinding', await readback())
             await self.dialog.close()
             self.sent.clear()
 

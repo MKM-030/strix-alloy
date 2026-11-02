@@ -21,15 +21,20 @@ import wave
 from aiohttp import ClientSession, ClientTimeout, FormData, web
 
 if __package__:
+    from .caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
+        valid_authorization, resolve_native_caller, refresh_native_caller_session)
     from .callback_progress import CallbackProgress
     from .context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
 else:
+    from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
+        valid_authorization, resolve_native_caller, refresh_native_caller_session)
     from callback_progress import CallbackProgress
     from context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
 
 STATIC = Path(__file__).parent / 'static'
 MAX_WAV = 20 * 1024 * 1024
 TERMINAL_DRAIN_SECONDS = 2.0
+CALLER_BOOTSTRAP_SECONDS = 45
 LOG = logging.getLogger('voice-bridge')
 
 
@@ -52,6 +57,8 @@ class Settings:
     turn_seconds: int = 180
     max_sessions: int = 8
     instance_url: str = ''
+    caller_binding_service_id: str = ''
+    caller_binding_agent_id: str = ''
 
 
 @dataclass(frozen=True)
@@ -74,6 +81,11 @@ class ConversationBinding:
 @dataclass
 class Conversation:
     user_id: str = ''
+    caller_user_id: str = field(default='', repr=False)
+    caller_email: str = field(default='', repr=False)
+    caller_bootstrap: object | None = field(default=None, repr=False)
+    caller_refresh_started: bool = field(default=False, repr=False)
+    caller_authorization_task: object | None = field(default=None, repr=False)
     sid: str = field(default_factory=lambda: uuid.uuid4().hex)
     csrf: str = field(default_factory=lambda: secrets.token_urlsafe(32))
     created: float = field(default_factory=time.monotonic)
@@ -276,6 +288,9 @@ class Bridge:
         if not audio_token or (settings.service_now_enabled and (not settings.user_id or not sn_token or not callback_token)):
             raise ValueError('Server identity and all three credentials are required')
         self.settings = settings
+        binding_ids = (settings.caller_binding_service_id, settings.caller_binding_agent_id)
+        if any(binding_ids) and not all(type(v) is str and re.fullmatch(r'[0-9a-f]{32}', v) for v in binding_ids):
+            raise ValueError('Caller binding requires exact service and agent identifiers')
         if settings.session_language and not re.fullmatch(r'[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*', settings.session_language):
             raise ValueError('Invalid configured session language')
         self.callback_diagnostics_remaining = max(0, min(100, settings.callback_metadata_log_limit))
@@ -300,16 +315,23 @@ class Bridge:
         self.http = ClientSession(timeout=ClientTimeout(total=180), trust_env=False)
         yield
         self.stopping = True
+        for session in self.sessions.values():
+            self.retire_caller_bootstrap(session)
         if self.bootstrap_tasks:
             LOG.warning('Bridge startup shutdown unresolved=%d', len(self.bootstrap_tasks))
         await self.http.close()
         if self.bootstrap_tasks:
             await asyncio.gather(*list(self.bootstrap_tasks), return_exceptions=True)
+        for session in self.sessions.values():
+            self.retire_caller_bootstrap(session)
+            session.caller_user_id = session.caller_email = ''
 
     def expire(self):
         now = time.monotonic()
         for sid, session in list(self.sessions.items()):
             if now - session.created > self.settings.session_seconds:
+                self.retire_caller_bootstrap(session)
+                session.caller_user_id = session.caller_email = ''
                 del self.sessions[sid]
             elif session.completion_deadline:
                 if now >= session.completion_deadline:
@@ -422,30 +444,75 @@ class Bridge:
         context = validated_voice_context(data['voice_context']) if 'voice_context' in data else {}
         session = request._voice_session
         async with session.lock:
-            if session.started:
+            if session.started or session.failed or session.ending or session.ended:
                 raise web.HTTPConflict(text='Conversation already started')
+            if 'global_context_profile' in context:
+                if not self.settings.caller_binding_service_id or not self.settings.caller_binding_agent_id:
+                    raise web.HTTPServiceUnavailable(text='Caller binding is not configured')
+                credentials = request.headers.getall(CALLER_HEADER, [])
+                if len(credentials) != 1 or not valid_authorization(credentials[0]):
+                    raise web.HTTPUnauthorized(text='Authenticated caller required')
+                if context.get('voice_assistant') != self.settings.caller_binding_service_id:
+                    raise web.HTTPForbidden(text='Caller binding unavailable')
+                def expired():
+                    if self.sessions.get(session.sid) is session and session.caller_bootstrap is ticket:
+                        session.caller_bootstrap = None
+                        self.retire_caller_bootstrap(session)
+                        if not self.stopping and not session.ending and not session.ended:
+                            session.failed = True
+                            session.busy = False
+                            session.emit('ServiceNow konnte den Dialog nicht starten.', 'error')
+                ticket = CallerBootstrapCredential(credentials[0], seconds=CALLER_BOOTSTRAP_SECONDS,
+                                                    on_expire=expired)
+                session.caller_bootstrap = ticket
+                session.caller_authorization_task = asyncio.current_task()
+                try:
+                    caller = await resolve_native_caller(self.settings.instance_url,
+                        self.settings.caller_binding_service_id, self.settings.caller_binding_agent_id,
+                        context['global_context_profile'], credentials[0])
+                    if (not ticket.available or session.failed or session.ending or session.ended
+                            or self.stopping or self.sessions.get(session.sid) is not session):
+                        raise ValueError('Caller bootstrap unavailable')
+                except asyncio.CancelledError:
+                    self.retire_caller_bootstrap(session)
+                    raise
+                except Exception:
+                    self.retire_caller_bootstrap(session)
+                    raise web.HTTPForbidden(text='Caller binding unavailable') from None
+                finally:
+                    session.caller_authorization_task = None
+                session.caller_user_id, session.caller_email = caller.user_id, caller.email
+            elif CALLER_HEADER in request.headers:
+                raise web.HTTPForbidden(text='Caller binding unavailable')
             session.voice_context = context
             session.started = True
-            if 'global_context_profile' in context:
-                # Native Voice creates, then starts, before the first utterance.
-                session.bootstrap_stage = 'creating'
-                await self.send(session, '', True, 'CREATE_CONVERSATION')
-            elif self.settings.defer_start_until_message:
-                # Preserve the legacy first-text creation contract.
-                session.change.set()
-            else:
-                await self.send(session, '', True, 'START_CONVERSATION')
+            try:
+                if 'global_context_profile' in context:
+                    # Native Voice creates, refreshes its owned linked session,
+                    # then starts before the first utterance.
+                    session.bootstrap_stage = 'creating'
+                    await self.send(session, '', True, 'CREATE_CONVERSATION')
+                elif self.settings.defer_start_until_message:
+                    session.change.set()
+                else:
+                    await self.send(session, '', True, 'START_CONVERSATION')
+            except BaseException:
+                self.retire_caller_bootstrap(session)
+                raise
         return web.json_response({'accepted': True}, status=202)
 
     async def reset(self, request):
         await self.json(request)
         old = request._voice_session
         old.ending = True
+        self.retire_caller_bootstrap(old)
         async with old.lock:
             if old.started and old.requests and not old.ended:
                 # Explicit reset ends the VA session, even if the previous turn timed out.
                 await self.send(old, '', True, 'END_CONVERSATION')
             self.sessions.pop(old.sid, None)
+            self.retire_caller_bootstrap(old)
+            old.caller_user_id = old.caller_email = ''
         request._voice_session = None
         return await self.session(request)
 
@@ -453,6 +520,7 @@ class Bridge:
         await self.json(request)
         session = request._voice_session
         session.ending = True
+        self.retire_caller_bootstrap(session)
         async with session.lock:
             if session.started and session.requests and not session.ended:
                 # End only the authenticated cookie's conversation. Keep it if
@@ -460,6 +528,7 @@ class Bridge:
                 await self.send(session, '', True, 'END_CONVERSATION')
             self.sessions.pop(session.sid, None)
             session.ended = True
+            session.caller_user_id = session.caller_email = ''
         response = web.json_response({'ended': True})
         response.del_cookie('scc_voice', path='/')
         return response
@@ -670,10 +739,13 @@ class Bridge:
             await self._send_locked(session, text, typed, action, history)
 
     async def _send_locked(self, session, text, typed, action='', history=None):
+        if ('global_context_profile' in session.voice_context
+                and (not session.caller_user_id or not session.caller_email)):
+            raise ValueError('Authenticated caller binding required')
         request_id = uuid.uuid4().hex
         payload = {'requestId': request_id, 'appInboundId': self.settings.inbound_id,
             'clientSessionId': session.sid, 'userId': session.user_id,
-            'emailId': self.settings.email, 'message': {'text': text, 'typed': typed,
+            'emailId': session.caller_email or self.settings.email, 'message': {'text': text, 'typed': typed,
             'clientMessageId': uuid.uuid4().hex}, 'clientVariables': {'voiceSessionId': session.sid}}
         if session.voice_context:
             payload['contextVariables'] = dict(session.voice_context)
@@ -798,6 +870,8 @@ class Bridge:
                     session.sequence += 1
                     session.change.set()
                 self.consume(session, data)
+                if session.failed or session.ended or session.ending:
+                    self.retire_caller_bootstrap(session)
                 self.queue_start_created(session, data['requestId'])
         # No audio synthesis, downstream HTTP or long-running work in this handler.
         return web.json_response({'ok': True})
@@ -822,12 +896,16 @@ class Bridge:
                 continue
             if candidate is not None:
                 if ((candidate.conversation_id, candidate.creation_message_id) != tuple(ids)
-                        or interaction and candidate.interaction_id != interaction):
+                        or interaction and candidate.interaction_id and candidate.interaction_id != interaction):
                     raise web.HTTPBadRequest(text='Conversation binding conflict')
+                if (interaction and not candidate.interaction_id and session.pending_action == 'CREATE_CONVERSATION'
+                        and session.bootstrap_stage in ('creating','created')
+                        and data['requestId'] == candidate.create_request_id):
+                    candidate = ConversationBinding(*ids, data['requestId'], interaction)
             elif (session.pending_action == 'CREATE_CONVERSATION'
-                    and session.bootstrap_stage == 'creating'):
+                    and session.bootstrap_stage in ('creating','created')):
                 candidate = ConversationBinding(*ids, data['requestId'], interaction)
-        if binding is None and candidate is not None:
+        if candidate is not None and candidate != binding:
             session.conversation_binding = candidate
             session.sequence += 1
             session.change.set()
@@ -836,6 +914,12 @@ class Bridge:
         if (self.stopping or session.ending or session.failed or session.ended
                 or session.bootstrap_stage != 'created'):
             return
+        if 'global_context_profile' in session.voice_context:
+            binding = session.conversation_binding
+            if (binding is None or binding.create_request_id != create_request_id
+                    or not binding.interaction_id or session.caller_bootstrap is None
+                    or not session.caller_bootstrap.available):
+                return
         # Claim this transition before scheduling, fencing duplicate CREATE callbacks.
         session.bootstrap_stage = 'starting'
         task = asyncio.create_task(self.start_created(session, create_request_id))
@@ -858,9 +942,43 @@ class Bridge:
                     or session.bootstrap_stage != 'starting'
                     or not session.requests or session.requests[-1] != create_request_id
                     or session.pending_action != 'CREATE_CONVERSATION'):
+                self.retire_caller_bootstrap(session)
                 return
             try:
+                if 'global_context_profile' in session.voice_context:
+                    binding = session.conversation_binding
+                    ticket = session.caller_bootstrap
+                    if (binding is None or binding.create_request_id != create_request_id
+                            or not binding.interaction_id or ticket is None or session.caller_refresh_started):
+                        raise ValueError('Caller bootstrap unavailable')
+                    session.caller_refresh_started = True
+                    authorization, remaining, deadline = ticket.take()
+                    session.caller_bootstrap = None
+                    session.caller_authorization_task = asyncio.current_task()
+                    caller = CallerBinding(session.caller_user_id,session.caller_email)
+                    try:
+                        await refresh_native_caller_session(self.settings.instance_url,
+                            self.settings.caller_binding_service_id, self.settings.caller_binding_agent_id,
+                            session.voice_context['global_context_profile'], authorization,
+                            {'conversation_id':binding.conversation_id,'interaction_id':binding.interaction_id,
+                             'create_message_id':binding.creation_message_id},
+                            caller,
+                            timeout_seconds=min(10,remaining))
+                    finally:
+                        authorization = None
+                        ticket.clear()
+                        session.caller_authorization_task = None
+                    if (time.monotonic() >= deadline or self.stopping or session.ending or session.failed or session.ended
+                            or self.sessions.get(session.sid) is not session or session.conversation_binding != binding
+                            or CallerBinding(session.caller_user_id,session.caller_email) != caller
+                            or session.bootstrap_stage != 'starting' or session.pending_action != 'CREATE_CONVERSATION'
+                            or not session.requests or session.requests[-1] != create_request_id):
+                        raise ValueError('Caller bootstrap changed')
                 await self.send(session, '', True, 'START_CREATED_CONVERSATION')
+            except asyncio.CancelledError:
+                session.failed = True
+                session.busy = False
+                raise
             except web.HTTPException:
                 # send already marks uncertain delivery failed; never retry startup.
                 return
@@ -879,6 +997,17 @@ class Bridge:
                     session.busy = False
                     session.sequence += 1
                     session.change.set()
+            finally:
+                self.retire_caller_bootstrap(session)
+
+    @staticmethod
+    def retire_caller_bootstrap(session):
+        if session.caller_bootstrap is not None:
+            session.caller_bootstrap.clear()
+            session.caller_bootstrap = None
+        task = session.caller_authorization_task
+        if task is not None and task is not asyncio.current_task() and not task.done():
+            task.cancel()
 
     def consume(self, session, data):
         active_message = (session.busy and not session.pending_action
@@ -967,6 +1096,8 @@ class Bridge:
             session.busy = False
         if data.get('completed') is True:
             session.ended = True
+            self.retire_caller_bootstrap(session)
+            session.caller_user_id = session.caller_email = ''
             # End input immediately, but keep the native reader alive briefly
             # for reordered final OutputText from this same MESSAGE request.
             session.completion_deadline = (time.monotonic() + TERMINAL_DRAIN_SECONDS

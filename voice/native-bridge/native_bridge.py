@@ -12,6 +12,7 @@ from fractions import Fraction
 import io
 import json
 import logging
+from startup_reason import open_with_startup_diagnostics, startup_reason
 import math
 from pathlib import Path
 import re
@@ -269,6 +270,29 @@ class Speech:
                 raise RuntimeError('TTS returned incomplete PCM sample')
 
 
+class _CallerBootstrap:
+    """One-use original caller credential; never admission state or a DTO."""
+    __slots__ = ('_value',)
+
+    def __init__(self, value):
+        if (type(value) is not str or len(value) > 8192
+                or not re.fullmatch(r'Bearer [A-Za-z0-9._~+/-]+=*', value, re.I)):
+            raise ValueError('Invalid caller bootstrap')
+        self._value = value
+
+    def __repr__(self):
+        return '_CallerBootstrap(redacted)'
+
+    def take(self):
+        value, self._value = self._value, ''
+        if not value:
+            raise RuntimeError('Caller bootstrap was already consumed')
+        return value
+
+    def clear(self):
+        self._value = ''
+
+
 class Dialog:
     """Use the existing loopback bridge; its authenticated callbacks stay intact."""
     def __init__(self, config, call_settings=None):
@@ -291,6 +315,28 @@ class Dialog:
         self._context_receipt = None
         self.conversation_ended = False
         self._initial_topic_attempted = False
+        self._caller_bootstrap = None
+        self._caller_bootstrap_bound = False
+
+    def bind_caller_authorization(self, authorization):
+        if self._caller_bootstrap_bound or self.http is not None:
+            raise RuntimeError('Caller bootstrap is already bound')
+        self._caller_bootstrap = _CallerBootstrap(authorization)
+        self._caller_bootstrap_bound = True
+
+    def _require_caller_loopback(self):
+        try:
+            value = self.config.backend_url
+            if type(value) is not str or any(ord(c) <= 32 or ord(c) == 127 for c in value):
+                raise ValueError()
+            target = urlsplit(value)
+            if (target.scheme != 'http' or target.hostname not in ('127.0.0.1', '::1')
+                    or target.username or target.password or target.path not in ('', '/')
+                    or target.query or target.fragment
+                    or target.port is not None and not 1 <= target.port <= 65535):
+                raise ValueError()
+        except ValueError:
+            raise RuntimeError('Caller bootstrap requires a loopback bridge') from None
 
     def observe_state(self, state, *, sampled_at=None):
         """Retain scoped presentation and private CREATE IDs, never thoughts."""
@@ -300,12 +346,11 @@ class Dialog:
             self.observation_revision += 1
         binding = state.get('conversationBinding')
         if (type(binding) is dict and binding.get('source') == 'servicenow_create_conversation'
-                and set(binding) in ({'source', 'conversationId', 'creationMessageId', 'createRequestId'},
-                    {'source', 'conversationId', 'creationMessageId', 'createRequestId', 'interactionId'})
+                and set(binding) == {'source', 'conversationId', 'creationMessageId', 'createRequestId', 'interactionId'}
                 and all(type(binding.get(key)) is str and re.fullmatch(r'[0-9a-f]{32}', binding[key])
-                    for key in ('conversationId', 'creationMessageId', 'createRequestId'))
-                and ('interactionId' not in binding or type(binding['interactionId']) is str
-                    and re.fullmatch(r'[0-9a-f]{32}', binding['interactionId']))):
+                    for key in ('conversationId', 'creationMessageId', 'createRequestId', 'interactionId'))):
+            # CREATE may arrive in two authenticated callbacks. Publish only
+            # its complete immutable tuple, so a poll cannot freeze a partial ID.
             metadata = {'conversation_id': binding['conversationId'],
                 'interaction_id': binding.get('interactionId', ''),
                 'creation_message_id': binding['creationMessageId'],
@@ -355,8 +400,16 @@ class Dialog:
             self.current_question = reply if '?' in reply and not self.conversation_ended else ''
             self.observation_revision += 1
 
-    async def request(self, method, path, **kwargs):
+    async def request(self, method, path, *, caller_authorization=None, **kwargs):
         headers = {'Origin':self.config.backend_url, 'X-CSRF-Token':self.csrf}
+        if caller_authorization is not None:
+            if method != 'POST' or path != '/api/start':
+                raise RuntimeError('Caller credential is bootstrap only')
+            self._require_caller_loopback()
+            if (type(caller_authorization) is not str or len(caller_authorization) > 8192
+                    or not re.fullmatch(r'Bearer [A-Za-z0-9._~+/-]+=*', caller_authorization, re.I)):
+                raise RuntimeError('Invalid caller bootstrap')
+            headers['X-SCC-Voice-Authorization'] = caller_authorization
         async with self.http.request(method, self.config.backend_url + path, headers=headers,
                                      allow_redirects=False, **kwargs) as response:
             if path == '/api/end' and response.status == 401:
@@ -367,6 +420,18 @@ class Dialog:
             return await response.json()
 
     async def open(self):
+        bootstrap, self._caller_bootstrap = self._caller_bootstrap, None
+        if self._caller_bootstrap_bound and bootstrap is None:
+            raise RuntimeError('Caller bootstrap was already consumed')
+        try:
+            if bootstrap is not None:
+                self._require_caller_loopback()
+            return await self._open_with_caller(bootstrap)
+        finally:
+            if bootstrap is not None:
+                bootstrap.clear()
+
+    async def _open_with_caller(self, bootstrap):
         if self.http is None:
             self.http = ClientSession(cookie_jar=CookieJar(unsafe=True), trust_env=False,
                                       timeout=ClientTimeout(total=35))
@@ -380,9 +445,16 @@ class Dialog:
                                          and 'global_context_profile' not in voice_context)
         if not info.get('serviceNowEnabled'):
             raise RuntimeError('ServiceNow conversation is disabled')
+        if bootstrap is not None and info.get('started'):
+            raise RuntimeError('Caller bootstrap requires a new conversation')
         if not info.get('started'):
-            await self.request('POST', '/api/start', json=(
-                {'voice_context':voice_context} if voice_context else {}))
+            options = {'json':{'voice_context':voice_context} if voice_context else {}}
+            if bootstrap is not None:
+                options['caller_authorization'] = bootstrap.take()
+            try:
+                await self.request('POST', '/api/start', **options)
+            finally:
+                options.clear()
         # Startup is an enqueue ACK; wait for an actual creation/input-ready callback.
         # Legacy deferred-start deployments are immediately ready here.
         greetings = []
@@ -597,6 +669,9 @@ class Dialog:
         LOG.info('Owned conversation cleanup stage=acknowledged attempts=%d',attempt)
 
     async def shutdown(self):
+        if self._caller_bootstrap is not None:
+            self._caller_bootstrap.clear()
+            self._caller_bootstrap = None
         if self.http:
             await self.http.close()
             self.http = None
@@ -1442,7 +1517,8 @@ class NativeCall:
         except asyncio.CancelledError:
             raise
         except Exception as error:
-            LOG.warning('Voice responsive call=%s stage=startup_failed type=%s', self.call_id, type(error).__name__)
+            LOG.warning('Voice responsive call=%s stage=startup_failed type=%s reason=%s',
+                        self.call_id, type(error).__name__, startup_reason(error))
             self._responsive_failure_feedback = True
             self.failed = True
             self._notify_input_changed()
@@ -1641,7 +1717,7 @@ class NativeCall:
             dialog_started = time.monotonic()
             LOG.info('Voice greeting call=%s stage=dialog_open_begin input_started=%s generation=%d input_lost=%s',
                      self.call_id, self.input_started, self.playback.generation, self.input_lost)
-            greetings = await self.dialog.open() or []
+            greetings = await open_with_startup_diagnostics(self.dialog, LOG, self.call_id) or []
             LOG.info('Voice greeting call=%s stage=dialog_open_end elapsed_ms=%d greeting_count=%d input_started=%s generation=%d input_lost=%s',
                      self.call_id, int((time.monotonic()-dialog_started)*1000), len(greetings),
                      self.input_started, self.playback.generation, self.input_lost)
@@ -2088,6 +2164,13 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             options['ice_servers'] = ice_servers
         return NativeCall(config,speech,dialog,call_settings=settings,**options)
 
+    def bind_authenticated_caller(call, authorization):
+        if config.auth_mode == 'servicenow' and not config.development_token:
+            binder = getattr(call.dialog, 'bind_caller_authorization', None)
+            if not callable(binder):
+                raise RuntimeError('Authenticated caller bootstrap unavailable')
+            binder(authorization)
+
     async def connect(request):
         admission = await authorize(request, config, app[HTTP_KEY], with_settings=True)
         if not admission:
@@ -2115,6 +2198,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             if not call.closed:
                 await ws.close()
         try:
+            bind_authenticated_caller(call, 'Bearer ' + request.query.get('auth_token', ''))
             await ws.prepare(request)
             LOG.info('Native signaling admission status=101 call=%s', call.call_id)
             call.spawn(call.process_turns())
@@ -2149,6 +2233,8 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             raise
         except Exception as error:
             LOG.warning('Signaling ended type=%s', type(error).__name__)
+            if not ws.prepared:
+                raise web.HTTPServiceUnavailable(text='Voice startup unavailable') from None
         finally:
             try:
                 if input_coordinator:
@@ -2166,7 +2252,8 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                         # A second handler cancellation may detach its shielded
                         # close await. Capacity still belongs to owned cleanup.
                         call.close_task.add_done_callback(lambda task: active.discard(call) if call.close_complete.is_set() else None)
-                    await ws.close()
+                    if ws.prepared:
+                        await ws.close()
         return ws
 
     async def launch(request):
@@ -2234,7 +2321,8 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         # One immutable startup policy binds admission and all session operations.
         register_sdk_routes(app, config, active, lambda: make_call(),
                             partial(admit_sdk_session,policy=config.sdk_policy,assistant_settings_version=1),
-                            context_call_factory=make_sdk_call, before_create=before_create)
+                            context_call_factory=make_sdk_call, before_create=before_create,
+                            bind_call_authorization=bind_authenticated_caller)
         LOG.info('Native SDK HTTP session routes enabled; shared browser capacity')
     return app
 

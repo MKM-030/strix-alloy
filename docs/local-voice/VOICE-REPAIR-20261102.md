@@ -185,20 +185,79 @@ The configured picker choice is a promoted standalone-agent skill. Native
 that standalone entry supplies neither a typed task nor that workflow binding.
 A dedicated native workflow containing the same SCC agent is prepared, with
 an explicit ReActive Planner strategy and central `promoted_skill_objective`.
-The actual modern AIUX Save also creates new ACL/data-access records; this is
-held for separate explicit security approval. The unsaved form restricts callers
-to admin and preserves SCC's existing approved data roles, itil and
-scc_voice_context_reader. No user role assignments or existing ACL changes are
-planned. See the [entry design](../superpowers/specs/2026-11-02-voice-entry-context-design.md).
+Marcel approved the finite native workflow/security/profile/test scope. One
+normal modern AIUX Save created the own SCC Laptop Onboarding Voice Workflow,
+its dedicated team with the original SCC agent, published V1, one proper
+workflow execution ACL with an admin link, and dynamic identity restricted to
+the existing itil and scc_voice_context_reader data roles. Both existing
+agent ACLs and their role links are unchanged. The native ReActive Planner
+strategy was already correct. The initial ten Customer Updates landed in the
+previous Global set because the browser and SDK capture contexts differed;
+the exact unchanged-payload reconciliation is complete. The central objective,
+generated skill/configuration and sole added Voice-profile membership are also
+complete and independently verified. The Global set contains sixteen captures,
+including one ordinary native metadata-dirty flag. The skill's displayed name
+is virtual and must not be manually populated to match its older capture. See the
+[entry design](../superpowers/specs/2026-11-02-voice-entry-context-design.md).
 
-The revised frozen diagnostic additionally rejects the actual native error and
-automatic-retry phrases immediately; its 20 offline guards pass. It has not
-been run. Earlier failed probes remain immutable, and their temporary OAuth
-token file was removed. Further live validation is held until the prepared
-entry repair can be applied.
+The revised V3 diagnostic rejects the actual native error and automatic-retry
+phrases immediately. Its one live run failed before any caller input: the new
+workflow was advertised and selected with the correct objective/team, but native
+access verification ran as guest and rejected the original SCC agent. No GenAI
+or tools ran. First audio was 10.578 seconds including full client ICE gathering;
+owned cleanup was acknowledged in 0.766 seconds and capacity returned to zero.
 
-Remaining: obtain the additional new-resource security approval, establish the
-supported native entry/root-task context, prove normal post-name continuation,
+The channel profile already points to the verified caller, and the interaction
+is already verified. Replacing static email alone is therefore not a demonstrated
+cure. The normal native Voice manager performs an additional own-session sign-in
+after CREATE. Direct local B2B CREATE followed by START_CREATED omitted that step.
+The repair uses the original Voice caller bearer and that native routine, without
+assigning a user identity, changing ACLs or using the SDK administrator as a proxy.
+
+The existing authorized-agent resource now has an explicit private caller-binding
+opt-in, based on the authenticated GS user and an unambiguous native email mapping.
+It was deployed normally in the own Voice AIA set and verified using the original
+Voice bearer. The token's subject is a user name, not an email. The Voice token
+cannot use ordinary Table API; its scope must not be broadened for this repair.
+
+The active local transport forwards the original credential once to the
+loopback Bridge, independently resolves the caller, and keeps a private ticket
+for at most 45 seconds across CREATE. The authenticated CREATE callback must
+bind the pending request, private cookie, conversation, interaction and creation
+message. One distinct native refresh is required before START_CREATED. Returned
+identity and all bindings are rechecked after the await. Failure, cancellation,
+reset, end, expiry and shutdown retire the ticket. No identity or credential
+enters public SDK state, model context or logs. Fresh focused local checks passed
+55 Bridge/caller/refresh plus 94 Native/SDK/lifecycle tests. Independent review
+found a partial-CREATE observation race: a poll could freeze incomplete metadata
+and reject its later interaction ID. Native now publishes only a complete
+immutable tuple. The new regression failed before the fix and passed afterward.
+
+The server resource's owned-session refresh opt-in is deployed at revision 17.
+One normal update produced a complete automatic capture in the same working
+Customer Update. The wrapper stopped because native history replaced its current
+entry rather than prepending it. Fresh readback proves exact source/capture,
+all six older history entries and all unrelated records/captures preserved.
+No repeated update or additional manual capture was needed. The full current
+tracked byollm test run passed 474/474.
+
+One exact idle cutover activated only Bot and Native plus two Bridge settings.
+Model/controller, Gateway, ASR and own TTS generations stayed unchanged. The new
+V4 probe ran once and again failed before caller input. Its native refresh
+response allowed START_CREATED, but the initial selected workflow did not reach
+its input control. Correct introduction arrived after 9.078 seconds including
+full client ICE gathering; acknowledged cleanup took 0.453 seconds, leaving
+capacity zero. No name, confirmation or later input was sent. Its temporary
+bearer was removed. Actual native identity/access and helper logs remain under
+investigation; this result does not establish an authenticated runtime.
+
+A refresh response means only that the native routine was requested. It cannot
+prove the running VA session is authenticated. A future bounded probe must prove
+actual access verification and a root Orchestrator task before the SCC child,
+then name-only confirmation and normal continuation on Halogen. Previous failed
+receipts are immutable. No order consent or later question answer is allowed.
+
+Remaining: diagnose the failed native own-session handoff, prove normal post-name continuation,
 then verify one genuine, bounded ServiceNow
 context/progress sequence. Raw caller context requires matching
 request identity plus `contextStored`, `inputBoundaryConfirmed`, `promptIncluded`

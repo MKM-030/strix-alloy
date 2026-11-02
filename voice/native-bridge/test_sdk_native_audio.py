@@ -21,6 +21,9 @@ GREETING = 'Guten Tag. Dies ist die Sprachprobe.'
 
 class _Dialog:
     metadata = {'conversation_id':'', 'interaction_id':''}
+    def bind_caller_authorization(self, authorization):
+        if authorization != 'Bearer sdk-audio-fixture':
+            raise AssertionError('Wrong original SDK caller')
     async def open(self):
         return []
     def record_greeting(self, text):

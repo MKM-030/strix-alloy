@@ -191,6 +191,32 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(answer.status, 200)
         self.assertEqual(await answer.json(), {"sdp": {"type": "answer", "sdp": SDP}})
 
+    async def test_private_caller_bootstrap_receives_original_credential_after_admission(self):
+        handed = []
+        self.manager.bind_call_authorization = lambda call, credential: handed.append((call, credential))
+        response = await self.create()
+        self.assertEqual(response.status, 200)
+        self.assertEqual(handed, [(self.calls[0], 'Bearer ' + TOKEN)])
+        self.assertNotIn(TOKEN, await response.text())
+        self.assertNotIn(TOKEN, repr(self.manager.sessions))
+
+    async def test_private_caller_bootstrap_not_called_after_denied_admission(self):
+        handed = []
+        self.manager.bind_call_authorization = lambda *args: handed.append(args)
+        self.denied = True
+        self.assertEqual((await self.create()).status, 403)
+        self.assertEqual(handed, [])
+        self.assertEqual(self.calls, [])
+
+    async def test_failed_caller_binding_owns_cleanup_and_exposes_no_credential(self):
+        def fail(*args): raise ValueError('private credential: ' + TOKEN)
+        self.manager.bind_call_authorization = fail
+        response = await self.create()
+        self.assertEqual(response.status, 503)
+        self.assertNotIn(TOKEN, await response.text())
+        await asyncio.wait_for(self.calls[0].close_complete.wait(), 1)
+        self.assertEqual(self.active, set())
+
     async def test_exact_create_wire_and_raw_admission_input(self):
         response = await self.create()
         self.assertEqual(response.status, 200)

@@ -39,19 +39,20 @@ workflow will fix every downstream error. Prepare exact owned metadata,
 capture and reversal evidence before applying.
 
 The actual modern AIUX form differs from the classic guided setup. Normal
-Save requires roles and creates two new execute ACLs, their admin-role links,
-and a dynamic-user data-access configuration. These are additional security
-records, beyond the already approved model corrections; first Save is held
-for explicit action-time approval. The prepared selection preserves the
+Save requires roles and creates own execute ACLs, their admin-role links,
+and a dynamic-user data-access configuration. Actual Save created one proper
+workflow ACL and one admin link; no redundant agent ACL is added. These are additional security
+records, beyond the already approved model corrections. Marcel explicitly
+approved the complete finite V4 workflow/security/profile/test scope on
+2 November; no second model or plan approval is required. The selection preserves the
 existing SCC restrictions: caller role `admin`, approved data roles `itil`
 and `scc_voice_context_reader`, and only the existing SCC agent. No role is
-granted to any user. The new distinct name is `SCC Laptop Onboarding Voice
-Workflow`.
+granted to any user. The new distinct name is `SCC Laptop Onboarding Voice Workflow`.
 
 Native Save creates a published V1 and an active backend configuration; it is
 not a draft. Channels remain off until separately verified promotion to the
-one existing Voice profile. An unsaved native form and exact modern source
-manifest are prepared before asking for the additional security approval.
+one existing Voice profile. The exact modern source manifest and action-time
+approval were recorded before the one native Save.
 Global ownership, capture, the published ReActive Planner strategy and the
 central objective property must be verified before any Voice entry change.
 

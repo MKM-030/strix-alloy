@@ -9,6 +9,7 @@ from collections import deque
 from dataclasses import dataclass, replace
 import importlib.util
 import logging
+from startup_reason import startup_reason
 import math
 from pathlib import Path
 import re
@@ -1285,8 +1286,8 @@ class NativeDuplex:
             self._reply_revision = None
             self.interrupt()
             self._enqueue(self._status(), kind='recovery')
-            LOG.warning('Voice independent startup call=%s stage=unavailable type=%s local_dialogue=retained',
-                        self.call.call_id, type(error).__name__)
+            LOG.warning('Voice independent startup call=%s stage=unavailable type=%s reason=%s local_dialogue=retained',
+                        self.call.call_id, type(error).__name__, startup_reason(error))
             return
         self._bootstrap_state = 'ready'
         LOG.info('Voice independent startup call=%s stage=ready pending=%d supplements=%d',

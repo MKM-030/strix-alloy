@@ -13,6 +13,7 @@ from aiohttp.test_utils import TestClient, TestServer
 from assistant_settings import CallSettings
 from native_bridge import Config, Dialog
 from test_assistant_settings import authorized_settings, SERVICE, AGENT
+from test_native_caller_fixture import TOKEN, configure_caller_authority
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from voice.bridge import Bridge, Settings
@@ -43,6 +44,7 @@ class VoiceBootstrapTests(unittest.IsolatedAsyncioTestCase):
             user_id='fixture-user', defer_start_until_message=True,
             wait_for_input_control=True), 'fixture-bot', 'fixture-audio', 'fixture-callback')
         self.bridge.bot_url = str(self.bot.make_url('/bot'))
+        configure_caller_authority(self, self.bridge)
         self.ui = TestClient(TestServer(self.bridge.ui_app()), cookie_jar=CookieJar(unsafe=True))
         await self.ui.start_server()
         self.bridge.origin = str(self.ui.make_url('/')).rstrip('/')
@@ -78,6 +80,7 @@ class VoiceBootstrapTests(unittest.IsolatedAsyncioTestCase):
             'Native profile startup must enqueue its empty CREATE before becoming ready')
 
     async def begin_bootstrap(self):
+        self.dialog.bind_caller_authorization(TOKEN)
         opening = self.spawn(self.dialog.open())
         await self.wait_for_sent(1, opening)
         creation = self.sent[0]
@@ -103,9 +106,9 @@ class VoiceBootstrapTests(unittest.IsolatedAsyncioTestCase):
     async def ready(self, opening, creation):
         await self.callback(creation,
             [{'uiType': 'ActionMsg', 'actionType': 'CreateConversation',
-              'conversationId': 'native-conversation-fixture',
-              'interactionId': 'native-interaction-fixture',
-              'messageId': 'native-create-message-fixture'}])
+              'conversationId': 'a'*32,
+              'interactionId': 'c'*32,
+              'messageId': 'b'*32}])
         await self.wait_for_sent(2, opening)
         starting = self.sent[1]
         self.assertEqual(starting['action'], 'START_CREATED_CONVERSATION')
@@ -246,6 +249,7 @@ class VoiceBootstrapTests(unittest.IsolatedAsyncioTestCase):
     async def test_uncertain_create_ack_retains_cookie_and_retries_only_owned_end(self):
         self.create_ack_error = True
         self.end_ack_failures = 1
+        self.dialog.bind_caller_authorization(TOKEN)
         with self.assertLogs('voice-bridge', level='WARNING') as bot_logs:
             with self.assertRaises(RuntimeError):
                 await asyncio.wait_for(self.dialog.open(), 2)

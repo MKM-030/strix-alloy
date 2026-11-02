@@ -12,6 +12,7 @@ from assistant_settings import CallSettings
 from aiortc import RTCConfiguration
 from native_bridge import Config, Dialog, NativeCall
 from test_assistant_settings import authorized_settings, SERVICE, AGENT
+from test_native_caller_fixture import TOKEN, configure_caller_authority
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from voice.bridge import Bridge, Settings
@@ -44,6 +45,7 @@ class CreatedLifecycleTests(unittest.IsolatedAsyncioTestCase):
             user_id='owned-fixture-user', defer_start_until_message=True,
             wait_for_input_control=True), 'fixture-bot', 'fixture-audio', 'fixture-callback')
         self.bridge.bot_url = str(self.bot.make_url('/bot'))
+        configure_caller_authority(self, self.bridge)
         self.ui = TestClient(TestServer(self.bridge.ui_app()), cookie_jar=CookieJar(unsafe=True))
         await self.ui.start_server()
         self.bridge.origin = str(self.ui.make_url('/')).rstrip('/')
@@ -88,6 +90,10 @@ class CreatedLifecycleTests(unittest.IsolatedAsyncioTestCase):
         await response.read()
 
     async def begin_create(self):
+        if self.dialog._caller_bootstrap_bound:
+            await self.dialog.shutdown()
+            self.dialog = Dialog(Config(backend_url=self.bridge.origin), self.call_settings)
+        self.dialog.bind_caller_authorization(TOKEN)
         opening = self.spawn(self.dialog.open())
         await self.wait_for_sent(1, opening)
         creation = self.sent[0]
@@ -100,7 +106,7 @@ class CreatedLifecycleTests(unittest.IsolatedAsyncioTestCase):
 
     async def create_confirmed(self, opening, creation):
         await self.callback(creation, [{'uiType': 'ActionMsg', 'actionType': 'CreateConversation',
-            'conversationId': 'native-conversation-fixture', 'interactionId': 'native-interaction-fixture'}])
+            'conversationId': 'a'*32, 'interactionId': 'c'*32, 'messageId':'b'*32}])
         await self.wait_for_sent(2, opening)
         startup = self.sent[1]
         self.assertEqual(startup.get('action'), 'START_CREATED_CONVERSATION')
@@ -185,7 +191,8 @@ class CreatedLifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.create_ack_gate.clear()
         opening, creation = await self.begin_create()
         await asyncio.wait_for(self.callback(creation,
-            [{'uiType': 'ActionMsg', 'actionType': 'CreateConversation'}]), .5)
+            [{'uiType': 'ActionMsg', 'actionType': 'CreateConversation',
+              'conversationId':'a'*32,'interactionId':'c'*32,'messageId':'b'*32}]), .5)
         await asyncio.wait_for(self.callback(creation,
             [{'uiType': 'ActionMsg', 'actionType': 'CreateConversation', 'messageId': 'another-create-marker'}]), .5)
         await asyncio.sleep(.02)
@@ -201,7 +208,8 @@ class CreatedLifecycleTests(unittest.IsolatedAsyncioTestCase):
         opening, creation = await self.begin_create()
         owned = next(iter(self.bridge.sessions.values()))
         await asyncio.wait_for(self.callback(creation,
-            [{'uiType': 'ActionMsg', 'actionType': 'CreateConversation'}]), .5)
+            [{'uiType': 'ActionMsg', 'actionType': 'CreateConversation',
+              'conversationId':'a'*32,'interactionId':'c'*32,'messageId':'b'*32}]), .5)
         ending = self.spawn(self.dialog.close())
         for _ in range(100):
             if getattr(owned, 'ending', False):
@@ -374,6 +382,7 @@ class CreatedLifecycleTests(unittest.IsolatedAsyncioTestCase):
             async def transcribe(self, pcm):
                 raise AssertionError('This test submits no microphone audio')
         speech = CapturingSpeech()
+        self.dialog.bind_caller_authorization(TOKEN)
         with patch('native_bridge.RTCConfiguration', side_effect=lambda **kw: RTCConfiguration(iceServers=[])):
             call = NativeCall(Config(backend_url=self.bridge.origin, greeting='Unselected host intro.'),
                               speech, self.dialog, self.call_settings)

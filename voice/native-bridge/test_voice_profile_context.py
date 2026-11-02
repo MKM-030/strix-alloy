@@ -6,6 +6,7 @@ from aiohttp import CookieJar, web
 from aiohttp.test_utils import TestClient, TestServer
 from assistant_settings import CallSettings
 from test_assistant_settings import authorized_settings, SERVICE, AGENT, PROFILE
+from test_native_caller_fixture import TOKEN, configure_caller_authority
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]))
 from voice.bridge import Bridge, Settings
 
@@ -21,6 +22,7 @@ class VoiceProfileContextTests(unittest.IsolatedAsyncioTestCase):
         self.bridge=Bridge(Settings(instance_url='https://instance.example.test',user_id='fixture',
             defer_start_until_message=True),'unit-bot','unit-audio','unit-callback')
         self.bridge.bot_url=str(self.bot.make_url('/bot'))
+        configure_caller_authority(self, self.bridge)
         self.ui=TestClient(TestServer(self.bridge.ui_app()),cookie_jar=CookieJar(unsafe=True))
         await self.ui.start_server()
         self.bridge.origin=str(self.ui.make_url('/')).rstrip('/')
@@ -30,10 +32,17 @@ class VoiceProfileContextTests(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.ui.close(); await self.bot.close()
     async def post(self,path,value):
-        return await self.ui.post(path,json=value,headers=self.headers)
+        headers = dict(self.headers)
+        if path == '/api/start' and 'global_context_profile' in value.get('voice_context', {}):
+            headers['X-SCC-Voice-Authorization'] = TOKEN
+        return await self.ui.post(path,json=value,headers=headers)
     async def creation_ready(self):
         session=next(iter(self.bridge.sessions.values()))
-        self.bridge.consume(session,{'body':[{'uiType':'ActionMsg','actionType':'CreateConversation'}]})
+        data={'requestId':self.sent[0]['requestId'],'clientSessionId':session.sid,'userId':session.user_id,
+            'body':[{'uiType':'ActionMsg','actionType':'CreateConversation',
+                     'conversationId':'a'*32,'messageId':'b'*32,'interactionId':'c'*32}]}
+        self.bridge.observe_conversation_binding(session,data)
+        self.bridge.consume(session,data)
         task=self.bridge.queue_start_created(session,self.sent[0]['requestId'])
         await task
         self.bridge.consume(session,{'body':[{'uiType':'InputText'}]})
