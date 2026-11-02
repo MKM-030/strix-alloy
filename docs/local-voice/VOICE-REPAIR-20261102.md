@@ -173,10 +173,33 @@ memberships, with no unexpected difference. The two captured XML payloads match
 every source field except native calculated `request_tokens`, which was never
 manually written. Original application/current-set selection is restored.
 The new bounded post-repair positive-name observation is separate from the
-failed receipt; its full continuation must still be established.
+first failed receipt. It received backend content after the name confirmation,
+but then the native completion-error text and an automatic retry announcement.
+The overall probe remained failed. Actual conversation correlation proved all
+six model invocations successful on Halogen. Native application logs instead
+identify an undefined subtask/cache value in `AgentReActivePlannerUtil`.
 
-Remaining: verify the downstream post-name Planner continuation, then
-verify one genuine, bounded ServiceNow
+The initial native plan and first task already contain objective `undefined`.
+The configured picker choice is a promoted standalone-agent skill. Native
+`InvokerUtil` has a central objective fallback for a selected workflow, while
+that standalone entry supplies neither a typed task nor that workflow binding.
+A dedicated native workflow containing the same SCC agent is prepared, with
+an explicit ReActive Planner strategy and central `promoted_skill_objective`.
+The actual modern AIUX Save also creates new ACL/data-access records; this is
+held for separate explicit security approval. The unsaved form restricts callers
+to admin and preserves SCC's existing approved data roles, itil and
+scc_voice_context_reader. No user role assignments or existing ACL changes are
+planned. See the [entry design](../superpowers/specs/2026-11-02-voice-entry-context-design.md).
+
+The revised frozen diagnostic additionally rejects the actual native error and
+automatic-retry phrases immediately; its 20 offline guards pass. It has not
+been run. Earlier failed probes remain immutable, and their temporary OAuth
+token file was removed. Further live validation is held until the prepared
+entry repair can be applied.
+
+Remaining: obtain the additional new-resource security approval, establish the
+supported native entry/root-task context, prove normal post-name continuation,
+then verify one genuine, bounded ServiceNow
 context/progress sequence. Raw caller context requires matching
 request identity plus `contextStored`, `inputBoundaryConfirmed`, `promptIncluded`
 and `ingested` before retirement. Progress must reflect fresh ServiceNow work.
