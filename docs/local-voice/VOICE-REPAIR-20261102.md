@@ -329,7 +329,10 @@ native sign-in completion.
 The V5 temporary token file remains in its restricted local test directory:
 automatic approval review rejected both the combined cleanup and a single-file
 delete with only `blocked by policy`. No alternate deletion method was used.
-Its token expires approximately 21:58 UTC; file cleanup remains outstanding.
+The single owned token was instead revoked once through ServiceNow's documented
+issuer endpoint at 21:46 UTC. A subsequent ordinary read-only authorization
+request returned 401, confirming that the retained credential is invalid.
+Local file cleanup remains outstanding.
 Private V5 installation, activation, test and runtime receipts are retained under
 `server/.local/voice-repair-20261102/entry-workflow/`.
 
