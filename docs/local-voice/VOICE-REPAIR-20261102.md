@@ -272,3 +272,38 @@ identities must not silently become aliases for Halogen.
 Private investigation receipts live under
 `server/.local/voice-repair-20261102/`; source and technical documentation contain
 no OAuth tokens or private conversation dumps. Current handoff is TASK81.
+
+## Original-caller CREATE prepared; separate permission pending
+
+The V4 native records now prove guest/guest execution, one failed child-agent
+access-verification task, and zero GenAI/tools. Completing the account-link
+topic can mean only that a stored profile already exists. The original caller
+must enter the conversation-creation transaction itself.
+
+The proposed own route is `POST /api/sn_voice_aia/local_voice_caller/create`.
+Seven new API/scope/policy records would grant the existing native Voice Agent
+client that exact additional endpoint. This affects its already issued tokens
+at runtime, and requires a separate explicit security approval. No record in
+that seven-record proposal has been saved. Existing client/profile/source rows,
+their original relationships, generic B2B policy and roles remain unchanged.
+
+The prepared source accepts only three private correlation IDs and version1,
+requires the original authenticated GS administrator and fixed SCC service,
+obtains its own user/email and central settings, then performs one normal public
+synchronous empty CREATE. It requires genuine complete native IDs and normal
+stored ownership proof. A success ACK without IDs cannot release START.
+
+The local two-file change is integrated in source, with its config selection
+default empty and no runtime activation. It forwards the original credential
+once to only the exact own instance/path under the existing 45-second ticket,
+binds the direct result to the private pending request/cookie/caller, and keeps
+the distinct normal refresh. There is no anonymous fallback or retry. WS/SDK
+front-end authentication and media behavior stay common.
+
+Independent review found and closed exact-host and Bearer-scheme-case cases.
+Fresh canonical checks passed 692/692 byollm tests and 75/75 Bridge/caller tests.
+The new native source's 218 cases are included in that 692 total. These source
+checks do not prove the future native CREATE or asynchronous principal. The
+next live test waits for explicit approval, native creation/readback and exact
+idle activation. See the [design](../superpowers/specs/2026-11-02-local-caller-create-design.md)
+and [plan](../superpowers/plans/2026-11-02-local-caller-create.md).

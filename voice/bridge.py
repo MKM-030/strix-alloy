@@ -22,12 +22,16 @@ from aiohttp import ClientSession, ClientTimeout, FormData, web
 
 if __package__:
     from .caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
-        valid_authorization, resolve_native_caller, refresh_native_caller_session)
+        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID,
+        valid_authorization, resolve_native_caller, refresh_native_caller_session,
+        create_native_caller_conversation, validated_created)
     from .callback_progress import CallbackProgress
     from .context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
 else:
     from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
-        valid_authorization, resolve_native_caller, refresh_native_caller_session)
+        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID,
+        valid_authorization, resolve_native_caller, refresh_native_caller_session,
+        create_native_caller_conversation, validated_created)
     from callback_progress import CallbackProgress
     from context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
 
@@ -59,6 +63,7 @@ class Settings:
     instance_url: str = ''
     caller_binding_service_id: str = ''
     caller_binding_agent_id: str = ''
+    caller_create_api_path: str = ''
 
 
 @dataclass(frozen=True)
@@ -86,6 +91,7 @@ class Conversation:
     caller_bootstrap: object | None = field(default=None, repr=False)
     caller_refresh_started: bool = field(default=False, repr=False)
     caller_authorization_task: object | None = field(default=None, repr=False)
+    caller_create_request_id: str = field(default='', repr=False)
     sid: str = field(default_factory=lambda: uuid.uuid4().hex)
     csrf: str = field(default_factory=lambda: secrets.token_urlsafe(32))
     created: float = field(default_factory=time.monotonic)
@@ -288,6 +294,8 @@ class Bridge:
         if not audio_token or (settings.service_now_enabled and (not settings.user_id or not sn_token or not callback_token)):
             raise ValueError('Server identity and all three credentials are required')
         self.settings = settings
+        if settings.caller_create_api_path not in ('', CALLER_CREATE_PATH):
+            raise ValueError('Only the fixed own caller CREATE path is allowed')
         binding_ids = (settings.caller_binding_service_id, settings.caller_binding_agent_id)
         if any(binding_ids) and not all(type(v) is str and re.fullmatch(r'[0-9a-f]{32}', v) for v in binding_ids):
             raise ValueError('Caller binding requires exact service and agent identifiers')
@@ -454,6 +462,12 @@ class Bridge:
                     raise web.HTTPUnauthorized(text='Authenticated caller required')
                 if context.get('voice_assistant') != self.settings.caller_binding_service_id:
                     raise web.HTTPForbidden(text='Caller binding unavailable')
+                if self.settings.caller_create_api_path and (
+                        self.settings.caller_binding_service_id != CALLER_SERVICE_ID
+                        or self.settings.caller_binding_agent_id != CALLER_AGENT_ID
+                        or context['global_context_profile'] != CALLER_PROFILE_ID
+                        or self.settings.inbound_id != 'scc-local-voice'):
+                    raise web.HTTPForbidden(text='Caller CREATE binding unavailable')
                 def expired():
                     if self.sessions.get(session.sid) is session and session.caller_bootstrap is ticket:
                         session.caller_bootstrap = None
@@ -482,6 +496,8 @@ class Bridge:
                 finally:
                     session.caller_authorization_task = None
                 session.caller_user_id, session.caller_email = caller.user_id, caller.email
+                if self.settings.caller_create_api_path:
+                    session.user_id = 'voice-' + session.sid
             elif CALLER_HEADER in request.headers:
                 raise web.HTTPForbidden(text='Caller binding unavailable')
             session.voice_context = context
@@ -771,6 +787,9 @@ class Bridge:
         session.choices = []
         session.input_label = ''
         try:
+            if action == 'CREATE_CONVERSATION' and self.settings.caller_create_api_path:
+                await self.send_owned_create(session, payload)
+                return
             async with self.http.post(self.bot_url, json=payload, headers={'token': self.sn_token,
                     'Accept': 'application/json'}, allow_redirects=False, timeout=ClientTimeout(total=30)) as response:
                 raw = await read_limited(response.content, 65536)
@@ -789,9 +808,65 @@ class Bridge:
         except Exception:
             session.busy = False
             session.failed = True
+            self.retire_caller_bootstrap(session)
             session.emit('ServiceNow hat die Anfrage nicht bestätigt. Bitte einen neuen Dialog starten.', 'error')
             LOG.warning('Bot request failed; no credentials or payload logged')
             raise web.HTTPBadGateway(text='ServiceNow request failed; delivery may be uncertain')
+
+    async def send_owned_create(self, session, payload):
+        request_id = payload['requestId']
+        caller = CallerBinding(session.caller_user_id,session.caller_email)
+        ticket = session.caller_bootstrap
+        context = dict(session.voice_context)
+        source = (self.settings.instance_url,self.settings.caller_create_api_path,
+                  self.settings.caller_binding_service_id,self.settings.caller_binding_agent_id,
+                  self.settings.inbound_id)
+        if (self.settings.caller_create_api_path != CALLER_CREATE_PATH
+                or self.settings.caller_binding_service_id != CALLER_SERVICE_ID
+                or self.settings.caller_binding_agent_id != CALLER_AGENT_ID
+                or session.voice_context.get('voice_assistant') != CALLER_SERVICE_ID
+                or session.voice_context.get('global_context_profile') != CALLER_PROFILE_ID
+                or self.settings.inbound_id != 'scc-local-voice'
+                or self.sessions.get(session.sid) is not session
+                or session.user_id != 'voice-'+session.sid or session.caller_create_request_id
+                or session.failed or session.ending or session.ended or self.stopping
+                or session.bootstrap_stage != 'creating' or session.pending_action != 'CREATE_CONVERSATION'
+                or session.conversation_binding is not None or ticket is None):
+            raise ValueError('Native caller CREATE unavailable')
+        authorization,remaining,deadline = ticket.claim_create()
+        session.caller_create_request_id = request_id
+        session.caller_authorization_task = asyncio.current_task()
+        request = {'version':1,'requestId':request_id,'clientSessionId':session.sid,
+                   'clientMessageId':payload['message']['clientMessageId']}
+        try:
+            created = await create_native_caller_conversation(self.settings.instance_url,
+                self.settings.caller_create_api_path,self.sn_token,authorization,dict(request),
+                timeout_seconds=min(30,remaining))
+        except asyncio.CancelledError:
+            session.failed = True
+            session.busy = False
+            raise
+        finally:
+            authorization = None
+            session.caller_authorization_task = None
+        if (time.monotonic() >= deadline or not ticket.available or session.caller_bootstrap is not ticket
+                or self.sessions.get(session.sid) is not session or self.stopping
+                or session.failed or session.ending or session.ended
+                or CallerBinding(session.caller_user_id,session.caller_email) != caller
+                or session.voice_context != context
+                or (self.settings.instance_url,self.settings.caller_create_api_path,
+                    self.settings.caller_binding_service_id,self.settings.caller_binding_agent_id,
+                    self.settings.inbound_id) != source
+                or session.user_id != 'voice-'+session.sid or session.bootstrap_stage != 'creating'
+                or session.pending_action != 'CREATE_CONVERSATION'
+                or not session.requests or session.requests[-1] != request_id
+                or session.conversation_binding is not None):
+            raise ValueError('Native caller CREATE changed')
+        # Revalidate even an injected/helper return before using existing binding logic.
+        created = validated_created({'result':{'status':'success','created':created}},request)
+        self.observe_conversation_binding(session,created)
+        self.consume(session,created)
+        self.queue_start_created(session,request_id)
 
     async def events(self, request):
         session = request._voice_session
@@ -849,6 +924,10 @@ class Bridge:
         if (session and matched_request_id
                 and not session.ending and not session.failed
                 and (not session.ended or session.completion_deadline)):
+            if session.caller_create_request_id and any(isinstance(control,dict)
+                    and control.get('actionType') == 'CreateConversation' for control in data.get('body',[])):
+                # Only the direct own-API response can bind this selected CREATE.
+                return web.json_response({'ok':True})
             if (data.get('userId') not in (None, '', session.user_id)
                     or is_alias and data.get('userId') != session.user_id):
                 raise web.HTTPBadRequest(text='Identity mismatch')
