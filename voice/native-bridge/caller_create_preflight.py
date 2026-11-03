@@ -6,8 +6,10 @@ This is an admission check, never a receipt for a later real CREATE outcome.
 import asyncio
 from contextlib import asynccontextmanager
 import json
+import logging
 import math
 import re
+import time
 
 import aiohttp
 
@@ -22,12 +24,44 @@ _JSON_TYPE = re.compile(r'application/json(?:\s*;\s*charset=utf-8)?\Z', re.I)
 _DENIAL = {'result': {'status': 'failure', 'detail': 'Local caller create unavailable'}}
 MAX_RESPONSE_BYTES = 4096
 REQUEST_TIMEOUT_SECONDS = 10
+LOG = logging.getLogger('native-voice')
+_DIAGNOSTIC_STAGES = frozenset(('local_request', 'metadata_http', 'metadata_body',
+    'settings', 'metadata_close', 'caller_preflight', 'caller_preflight_request',
+    'caller_preflight_http', 'caller_preflight_body', 'caller_preflight_close'))
+_DIAGNOSTIC_OUTCOMES = frozenset(('denied', 'http_denied', 'invalid', 'timeout',
+                                'transport', 'cancelled'))
+
+
+def log_admission_failure(transport, stage, outcome, public_status, upstream_status, started):
+    """One fixed terminal event; neither values nor logger failure affect access."""
+    transport = transport if type(transport) is str and transport in ('sdk', 'wss') else 'unknown'
+    stage = stage if type(stage) is str and stage in _DIAGNOSTIC_STAGES else 'unknown'
+    outcome = outcome if type(outcome) is str and outcome in _DIAGNOSTIC_OUTCOMES else 'unknown'
+    public_status = public_status if type(public_status) is int and 100 <= public_status <= 599 else 0
+    upstream_status = upstream_status if type(upstream_status) is int and 100 <= upstream_status <= 599 else 0
+    elapsed = (time.monotonic() - started if type(started) in (int, float)
+               and math.isfinite(started) else 0)
+    elapsed_ms = int(max(0, min(10000, elapsed * 1000))) if math.isfinite(elapsed) else 0
+    try:
+        LOG.warning('Voice admission transport=%s stage=%s outcome=%s public_status=%d upstream_status=%d elapsed_ms=%d',
+                    transport, stage, outcome, public_status, upstream_status, elapsed_ms)
+    except Exception:
+        pass  # A diagnostic sink cannot change the authorization result.
+
+
+def admission_outcome(error):
+    if isinstance(error, TimeoutError):
+        return 'timeout'
+    return 'invalid' if isinstance(error, (ValueError, UnicodeError, RecursionError)) else 'transport'
 
 
 class CallerCreatePreflightDenied(Exception):
     """Only a fixed public denial crosses this boundary; no upstream detail."""
-    def __init__(self, status):
+    def __init__(self, status, *, stage='caller_preflight', upstream_status=0, outcome='denied'):
         self.status = 401 if status == 401 else 403
+        self.stage = stage if type(stage) is str and stage in _DIAGNOSTIC_STAGES else 'caller_preflight'
+        self.upstream_status = upstream_status if type(upstream_status) is int and 100 <= upstream_status <= 599 else 0
+        self.outcome = outcome if type(outcome) is str and outcome in _DIAGNOSTIC_OUTCOMES else 'denied'
         super().__init__('unauthorized' if self.status == 401 else 'forbidden')
 
 
@@ -122,25 +156,31 @@ async def require_caller_create_access(authorization, *, http_factory=None, dead
     headers = {'Authorization': authorization, 'Content-Type': 'application/json',
                'Accept': 'application/json', 'Accept-Encoding': 'identity'}
     status = 0
+    stage = 'caller_preflight_request'
     try:
         client = factory(cookie_jar=aiohttp.DummyCookieJar(), trust_env=False,
             auto_decompress=False, skip_auto_headers={'Accept-Encoding'},
             timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT_SECONDS))
         async with deadline_bound_context(client, deadline) as http:
+            stage = 'caller_preflight_http'
             request = http.post(_URL, data=b'{}', headers=headers, allow_redirects=False)
             async with deadline_bound_context(request, deadline) as response:
                 status = response.status
                 if status == 400:
+                    stage = 'caller_preflight_body'
                     async with asyncio.timeout_at(deadline):
                         await _read_denial(response)
+                stage = 'caller_preflight_close'
         if asyncio.get_running_loop().time() >= deadline:
-            raise CallerCreatePreflightDenied(403)
+            raise CallerCreatePreflightDenied(403, stage=stage, upstream_status=status, outcome='timeout')
         if status != 400:
-            raise CallerCreatePreflightDenied(401 if status == 401 else 403)
+            raise CallerCreatePreflightDenied(401 if status == 401 else 403,
+                stage='caller_preflight_http', upstream_status=status, outcome='http_denied')
     except CallerCreatePreflightDenied:
         raise
-    except Exception:
-        raise CallerCreatePreflightDenied(403) from None
+    except Exception as error:
+        raise CallerCreatePreflightDenied(403, stage=stage, upstream_status=status,
+                                         outcome=admission_outcome(error)) from None
     finally:
         headers.clear()
         authorization = None

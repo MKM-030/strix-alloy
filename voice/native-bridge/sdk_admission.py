@@ -10,6 +10,7 @@ import asyncio
 from dataclasses import dataclass, field
 import json
 import re
+import time
 from urllib.parse import parse_qsl
 
 import aiohttp
@@ -18,6 +19,7 @@ from core import authorized_agents
 from caller_create_preflight import (
     CallerCreatePreflightDenied, requires_caller_create_preflight, require_caller_create_access,
     deadline_bound_context,
+    log_admission_failure, admission_outcome,
 )
 from sdk_deployment import SDKDeploymentPolicy
 from sdk_admission_policy import (
@@ -211,18 +213,24 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
     Version 1 explicitly requires the bounded, service-bound settings projection;
     omitting the version preserves the legacy authorization response contract.
     """
-    if type(policy) is not SDKDeploymentPolicy:
-        raise AdmissionDenied(403)
-    if assistant_settings_version is not None and (
-            type(assistant_settings_version) is not int or assistant_settings_version != 1):
-        raise AdmissionDenied(403)
-    authorization = _validate_request(raw_headers, body, query_string, policy)
+    started = time.monotonic()
+    try:
+        if type(policy) is not SDKDeploymentPolicy:
+            raise AdmissionDenied(403)
+        if assistant_settings_version is not None and (
+                type(assistant_settings_version) is not int or assistant_settings_version != 1):
+            raise AdmissionDenied(403)
+        authorization = _validate_request(raw_headers, body, query_string, policy)
+    except AdmissionDenied as error:
+        log_admission_failure('sdk', 'local_request', 'denied', error.status, 0, started)
+        raise
     payload = {"serviceId": policy.assistant_id}
     if assistant_settings_version == 1:
         payload["assistantSettingsVersion"] = 1
     call_settings = None
     factory = aiohttp.ClientSession if http_factory is None else http_factory
     deadline = asyncio.get_running_loop().time() + AUTHORIZATION_TIMEOUT_SECONDS
+    stage, upstream_status = 'metadata_http', 0
     try:
         async with asyncio.timeout_at(deadline):
             client = factory(
@@ -238,27 +246,41 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
                              "Accept-Encoding": "identity"},
                     allow_redirects=False)
                 async with deadline_bound_context(request, deadline) as response:
-                    if response.status != 200:
-                        raise AdmissionDenied(401 if response.status == 401 else 403)
-                    data = await _bounded_response(response)
-                    if assistant_settings_version == 1:
-                        from assistant_settings import CallSettings
-                        call_settings = CallSettings.from_authorized_response(
-                            data, service_id=policy.assistant_id, agent_id=policy.voice_agent_id)
-                    elif not authorized_agents(data, policy.voice_agent_id):
-                        raise AdmissionDenied(403)
+                    upstream_status = response.status
+                    if upstream_status == 200:
+                        stage = 'metadata_body'
+                        data = await _bounded_response(response)
+                        stage = 'settings'
+                        if assistant_settings_version == 1:
+                            from assistant_settings import CallSettings
+                            call_settings = CallSettings.from_authorized_response(
+                                data, service_id=policy.assistant_id, agent_id=policy.voice_agent_id)
+                        elif not authorized_agents(data, policy.voice_agent_id):
+                            raise AdmissionDenied(403)
+                    stage = 'metadata_close'
+            if upstream_status != 200:
+                stage = 'metadata_http'
+                raise AdmissionDenied(401 if upstream_status == 401 else 403)
             if call_settings is not None and requires_caller_create_preflight(
                     policy.instance_url, policy.assistant_id, call_settings.context_profile,
                     policy.voice_agent_id):
+                stage, upstream_status = 'caller_preflight', 0
                 await require_caller_create_access(authorization,
                                                   http_factory=http_factory, deadline=deadline)
-    except AdmissionDenied:
+    except AdmissionDenied as error:
+        outcome = 'http_denied' if stage == 'metadata_http' and upstream_status else 'invalid'
+        log_admission_failure('sdk', stage, outcome, error.status, upstream_status, started)
         raise
     except CallerCreatePreflightDenied as error:
+        log_admission_failure('sdk', error.stage, error.outcome, error.status, error.upstream_status, started)
         raise AdmissionDenied(error.status) from None
-    except Exception:
+    except asyncio.CancelledError:
+        log_admission_failure('sdk', stage, 'cancelled', 0, upstream_status, started)
+        raise
+    except Exception as error:
         # Suppress platform/network/parser details; caller cancellation still
         # propagates because CancelledError is a BaseException, not Exception.
+        log_admission_failure('sdk', stage, admission_outcome(error), 403, upstream_status, started)
         raise AdmissionDenied(403) from None
     if assistant_settings_version == 1:
         return _VerifiedSettingsContext(policy.instance_url, policy.assistant_id,

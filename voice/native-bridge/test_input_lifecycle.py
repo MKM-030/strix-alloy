@@ -22,6 +22,8 @@ from managed_turn import clear_session_ice
 from model_health import require_model_ready
 from noise_guard import SpeechNoiseGuard
 from startup_reason import open_with_startup_diagnostics, startup_reason, caller_create_failure_notice
+from caller_create_preflight import (CallerCreatePreflightDenied, log_admission_failure,
+                                     admission_outcome)
 
 ROOT = Path(__file__).parent
 spec = importlib.util.spec_from_file_location('input_lifecycle_core', ROOT / 'core.py')
@@ -144,6 +146,8 @@ class Dialog:
 
 
 namespace = dict(asyncio=asyncio, time=time, uuid=uuid, json=json, math=math,
+    CallerCreatePreflightDenied=CallerCreatePreflightDenied,
+    log_admission_failure=log_admission_failure, admission_outcome=admission_outcome,
     open_with_startup_diagnostics=open_with_startup_diagnostics, startup_reason=startup_reason,
     caller_create_failure_notice=caller_create_failure_notice,
     dataclass=dataclass, SpeechNoiseGuard=SpeechNoiseGuard,

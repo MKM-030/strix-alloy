@@ -32,6 +32,7 @@ from sdk_deployment import SDKDeploymentPolicy, valid_call_duration
 from sdk_admission_policy import AUTHORIZATION_TIMEOUT_SECONDS
 from caller_create_preflight import (
     requires_caller_create_preflight, require_caller_create_access, deadline_bound_context,
+    CallerCreatePreflightDenied, log_admission_failure, admission_outcome,
 )
 from spoken_output import spoken_text
 from assistant_settings import CallSettings
@@ -2008,23 +2009,29 @@ class NativeCall:
 
 
 async def authorize(request, config, http, with_settings=False):
-    if request.query.get('instance_name') != config.instance_name or request.query.get('voice_service_id') != config.voice_service_id:
+    started = time.monotonic()
+    def denied(stage='local_request', outcome='denied', upstream_status=0):
+        log_admission_failure('wss', stage, outcome, 401, upstream_status, started)
         return False
+    if request.query.get('instance_name') != config.instance_name or request.query.get('voice_service_id') != config.voice_service_id:
+        return denied()
     token = request.query.get('auth_token', '')
     if len(token) > 8192:
-        return False
+        return denied()
     if config.development_token:
-        return local_auth(token, config.development_token, request.remote or '')
+        accepted = local_auth(token, config.development_token, request.remote or '')
+        return accepted if accepted else denied()
     if config.auth_mode != 'servicenow' or request.headers.get('Origin') != config.instance_url:
-        return False
+        return denied()
     # Same bounded bearer syntax as the original-caller binder and SDK path;
     # both opaque OAuth and JWT still require native ServiceNow validation.
     authorization = 'Bearer ' + token
     if (len(authorization) > 8192
             or not re.fullmatch(r'Bearer [A-Za-z0-9._~+/-]+=*', authorization)):
-        return False
+        return denied()
     url = config.instance_url + '/api/sn_voice_aia/ai_voice_agent/agents_authorized'
     deadline = asyncio.get_running_loop().time() + AUTHORIZATION_TIMEOUT_SECONDS
+    stage, upstream_status = 'metadata_http', 0
     try:
         async with asyncio.timeout_at(deadline):
             operation = http.post(url, json={'serviceId':config.voice_service_id,'clientApp':'admin_test',
@@ -2034,27 +2041,36 @@ async def authorize(request, config, http, with_settings=False):
                                  **({'auto_decompress':False} if with_settings else {}),
                                  allow_redirects=False, timeout=ClientTimeout(total=10))
             async with deadline_bound_context(operation, deadline) as response:
-                if response.status != 200:
-                    LOG.warning('Native OAuth verification denied status=%s', response.status)
-                    return False
-                if with_settings:
-                    from sdk_admission import _bounded_response
-                    data = await _bounded_response(response)
-                    settings = CallSettings.from_authorized_response(
-                        data, config.voice_service_id, config.required_agent_id)
-                else:
-                    data = await response.json()
-                    accepted = authorized_agents(data, config.required_agent_id)
-                    if not accepted:
-                        result = data.get('result') if isinstance(data, dict) else None
-                        LOG.warning('Native OAuth verification envelope/agent denied result_type=%s', type(result).__name__)
-                    return accepted
+                upstream_status = response.status
+                if upstream_status == 200:
+                    stage = 'metadata_body'
+                    if with_settings:
+                        from sdk_admission import _bounded_response
+                        data = await _bounded_response(response)
+                        stage = 'settings'
+                        settings = CallSettings.from_authorized_response(
+                            data, config.voice_service_id, config.required_agent_id)
+                    else:
+                        data = await response.json()
+                        stage = 'settings'
+                        accepted = authorized_agents(data, config.required_agent_id)
+                stage = 'metadata_close'
+            if upstream_status != 200:
+                return denied('metadata_http', 'http_denied', upstream_status)
+            if not with_settings:
+                return accepted if accepted else denied('settings', 'invalid', upstream_status)
             if requires_caller_create_preflight(config.instance_url, config.voice_service_id,
                                                settings.context_profile, config.required_agent_id):
+                stage, upstream_status = 'caller_preflight', 0
                 await require_caller_create_access(authorization, deadline=deadline)
             return settings
-    except Exception:
-        return False
+    except CallerCreatePreflightDenied as error:
+        return denied(error.stage, error.outcome, error.upstream_status)
+    except asyncio.CancelledError:
+        log_admission_failure('wss', stage, 'cancelled', 0, upstream_status, started)
+        raise
+    except Exception as error:
+        return denied(stage, admission_outcome(error), upstream_status)
 
 
 def _grounded_readiness_module():

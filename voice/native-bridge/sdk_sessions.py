@@ -22,6 +22,7 @@ import time
 from aiohttp import web
 from sdk_deployment import SDKDeploymentPolicy, valid_call_duration
 from sdk_admission_policy import SDK_AGENT_ID
+from caller_create_preflight import log_admission_failure
 from mobile_relay import MobileRelayRegistry, MobileRelayUnavailable
 from managed_turn import (ManagedTurnBootstrap, ManagedTurnUnavailable,
                           session_host_ice, clear_session_ice)
@@ -347,12 +348,17 @@ class SDKSessionManager:
             self.creating.discard(operation)
 
     async def create(self, request):
-        if not self._enabled():
-            raise _Rejected(403)
-        if self.stopping:
-            raise _Rejected(503)
-        fingerprint = _validated_headers(request, self.policy, json_body=True)
-        body = await _body(request,MAX_CREATE_BYTES)
+        started = time.monotonic()
+        try:
+            if not self._enabled():
+                raise _Rejected(403)
+            if self.stopping:
+                raise _Rejected(503)
+            fingerprint = _validated_headers(request, self.policy, json_body=True)
+            body = await _body(request,MAX_CREATE_BYTES)
+        except _Rejected as error:
+            log_admission_failure('sdk', 'local_request', 'denied', error.status, 0, started)
+            raise
         try:
             async with asyncio.timeout(ADMISSION_SECONDS):
                 context = await self.admit(_raw_headers(request),body,
