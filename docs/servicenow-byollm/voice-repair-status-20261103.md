@@ -23,6 +23,35 @@ Die native VA-Verarbeitung lief dabei unter dem ursprünglichen Benutzer. Für d
 
 ## Verbleibende Abnahme
 
+Der ursprüngliche Voice-OAuth-Token kann die öffentliche Konfiguration mit dem
+richtigen Benutzer lesen. Eine zusätzliche native Leseabfrage war ebenfalls
+erfolgreich. Der getrennt geprüfte Sitzungstest bestätigt jedoch keine
+authentifizierte native Unterhaltung: Die Erstellung antwortete mit HTTP 200,
+erfüllte die native Authentifizierungsbedingung aber nicht. Die vollständigen
+Metadaten zeigten zwei neue Datensätze außerhalb der Eigentümerbeziehungen des
+angemeldeten Benutzers. Seine eigenen aktiven oder unbekannten Gespräche
+blieben bei null. Ein nachfolgender begrenzter Leseversuch zur genaueren
+Eigentümerzuordnung wurde durch die geltenden Leserechte verweigert. Eine
+tatsächliche Gastzuordnung und Aktivität auf diesen fremden Datensätzen sind
+damit weiterhin unbekannt; die früher belegte Gast-Ausführung der B2B-Strecke
+ist ein gesonderter Befund.
+
+Dieser Test sendete keine Initialisierung, Texteingabe, Mikrofonaufnahme oder
+Bestellung. Ohne bestätigte Eigentümerbindung wurde kein Gesprächsabbruch
+erfunden. Der kurzzeitig im Speicher gehaltene Token wurde beim Aussteller
+widerrufen (HTTP 200) und anschließend mit demselben Token durch HTTP 401 als
+ungültig bestätigt. Die 1,63 Sekunden der nativen Erstellung und die zusätzlichen Metadatenlesezeiten
+sind keine Messung des vollständigen Voice-Verbindungsaufbaus.
+
+Ein erster Diagnoseversuch scheiterte bereits vor Token-Ausstellung und
+Sitzungserstellung an einer zu früh geschlossenen Antwortverbindung im
+Testprogramm. Die getrennte Korrektur besteht 86 gezielte Prüfungen mit echten,
+an Abbruchsignale gebundenen Antwortströmen; ursprüngliche Dateien und beide
+Laufergebnisse wurden erhalten. Das ändert keine laufende Voice-Komponente.
+Die nächste Untersuchung betrifft die dokumentierte Provider-Kontoverknüpfung
+und die Identitätsübergabe an den asynchronen Agentenlauf. Zusätzliche Rollen,
+ACL-Regeln oder spekulative API-Freigaben wurden nicht angelegt.
+
 - Die lokale B2B-Voice-Strecke muss die ursprüngliche Benutzeridentität bis zum tatsächlichen AIA-Worker erhalten. Der vorherige V5-Lauf blieb dort `guest`.
 - Der Verarbeitungsfehler der allgemeinen nativen Suche benötigt einen tatsächlichen Fehler- oder Callback-Nachweis; weitere Modell-, ACL- oder Suchkonfigurationsänderungen sind daraus bislang nicht begründet.
 - Root→SCC→Halogen, gebundene Namensfortsetzung, Kontextfortschritt und begrenzter Gesprächsabbruch müssen gemeinsam nachgewiesen werden.
