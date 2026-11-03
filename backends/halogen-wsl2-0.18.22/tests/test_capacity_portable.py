@@ -27,6 +27,65 @@ FIXTURES = Path(__file__).resolve().parent / 'fixtures'
 
 
 class CapacityTests(unittest.TestCase):
+    def test_capacity_requires_cacheoff_in_options_and_validation(self):
+        for slots, pool in ((2, None), (1, 32768), (1, 65536), (2, 65536)):
+            flags = ['--context-size', '32768', '--disable-vision', '--slots', str(slots)]
+            if pool is not None:
+                flags += ['--kv-pool-positions', str(pool)]
+            self.assertEqual(service.options(flags).prompt_cache, 'Off')
+            for cache in ('Exact', 'Flexible'):
+                with self.subTest(slots=slots, pool=pool, cache=cache, boundary='options'), \
+                        self.assertRaisesRegex(ValueError, 'CacheOff'):
+                    service.options(flags + ['--prompt-cache', cache])
+                options = service.options(flags)
+                options.prompt_cache = cache
+                with self.subTest(slots=slots, pool=pool, cache=cache, boundary='validation'), \
+                        self.assertRaisesRegex(ValueError, 'CacheOff'):
+                    service.validate_options(options)
+        for cache in ('Off', 'Exact', 'Flexible'):
+            self.assertEqual(service.options(['--prompt-cache', cache]).prompt_cache, cache)
+
+    def test_capacity_requires_cacheoff_in_direct_environment(self):
+        for slots, pool in ((2, None), (1, 32768), (1, 65536), (2, 65536)):
+            kwargs = dict(slots=slots, kv_pool_positions=pool, disable_vision=True)
+            self.assertEqual(service.environment(32768, prompt_cache='Off', **kwargs)
+                             ['HALOGEN_PROMPT_CACHE'], '0')
+            for cache in ('Exact', 'Flexible'):
+                with self.subTest(slots=slots, pool=pool, cache=cache), \
+                        self.assertRaisesRegex(ValueError, 'CacheOff'):
+                    service.environment(32768, prompt_cache=cache, **kwargs)
+        for cache, encoded in (('Off', '0'), ('Exact', '1'), ('Flexible', '2')):
+            self.assertEqual(service.environment(32768, prompt_cache=cache)
+                             ['HALOGEN_PROMPT_CACHE'], encoded)
+
+    def test_capacity_requires_cacheoff_in_persisted_manifest(self):
+        capacity = importlib.import_module('capacity_policy')
+        for slots in (1, 2):
+            environment = dict(HALOGEN_CTX='32768', HALOGEN_KV_SLOTS=str(slots),
+                               HALOGEN_KV_POOL_POSITIONS='65536', HALOGEN_PROMPT_CACHE='0')
+            manifest = dict(context=32768, slots=slots, checkpoint='v2',
+                            kv_pool_positions=65536, environment=environment)
+            capacity.validate_manifest(manifest)
+            service.reject_unqualified_manifest_overrides(manifest)
+            for cache in ('<missing>', None, '', 'Off', '1', '2', 0, False, 'unknown'):
+                altered = deepcopy(manifest)
+                if cache == '<missing>':
+                    del altered['environment']['HALOGEN_PROMPT_CACHE']
+                else:
+                    altered['environment']['HALOGEN_PROMPT_CACHE'] = cache
+                with self.subTest(slots=slots, cache=cache), \
+                        self.assertRaisesRegex(ValueError, 'CacheOff'):
+                    capacity.validate_manifest(altered)
+            if slots == 1:
+                del manifest['kv_pool_positions']
+                manifest['environment']['HALOGEN_KV_POOL_POSITIONS'] = '32768'
+                for cache in (None, '0', '1', '2'):
+                    if cache is None:
+                        manifest['environment'].pop('HALOGEN_PROMPT_CACHE')
+                    else:
+                        manifest['environment']['HALOGEN_PROMPT_CACHE'] = cache
+                    capacity.validate_manifest(manifest)
+
     def test_explicit_manifest_requires_an_exact_integer_pool(self):
         capacity = importlib.import_module('capacity_policy')
         for context, slots, vision in ((32768, 2, False), (32768, 1, False),

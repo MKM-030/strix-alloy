@@ -36,6 +36,8 @@ def validate_manifest(manifest):
     resolved = resolve(manifest.get('context'), manifest.get('checkpoint', 'v2'),
         slots=slots, kv_pool_positions=pool,
         disable_vision=env.get('HALOGEN_VISION_TOWER') in (None, '', '0'))
+    if explicit and env.get('HALOGEN_PROMPT_CACHE') != '0':
+        raise ValueError('Capacity opt-in requires CacheOff (HALOGEN_PROMPT_CACHE=0)')
     for key, value in (('HALOGEN_CTX', resolved['context']),
                        ('HALOGEN_KV_SLOTS', resolved['slots']),
                        ('HALOGEN_KV_POOL_POSITIONS', resolved['kv_pool_positions'])):
