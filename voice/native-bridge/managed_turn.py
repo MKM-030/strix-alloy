@@ -1,4 +1,4 @@
-"""Session-scoped ServiceNow TURN discovery; never forwards SDP, media or prompts."""
+"""Validated ServiceNow TURN destinations; never forwards SDP, media or prompts."""
 from dataclasses import dataclass, field
 import asyncio
 import json
@@ -31,6 +31,13 @@ class ManagedTurnUnavailable(Exception):
 def _host(value):
     if not isinstance(value,str) or _HOST.fullmatch(value) is None:
         raise ValueError('Invalid ServiceNow voice destination')
+    return value
+
+
+def _turn_url(value,allowed):
+    match = _TURNS.fullmatch(value) if isinstance(value,str) and len(value)<=512 else None
+    if match is None or match.group(1) not in allowed:
+        raise ValueError('Unapproved managed TURN destination')
     return value
 
 
@@ -97,10 +104,11 @@ class ManagedTurnConfiguration:
     base_origin: str | None = field(default=None,repr=False)
     signaling_hosts: tuple = field(default=(),repr=False)
     turn_hosts: tuple = field(default=(),repr=False)
+    static_ice_urls: tuple | None = field(default=None,repr=False)
 
     def __post_init__(self):
         if self.base_origin is None:
-            if self.signaling_hosts or self.turn_hosts:
+            if self.signaling_hosts or self.turn_hosts or self.static_ice_urls is not None:
                 raise ValueError('Disabled managed TURN cannot contain destinations')
             return
         for hosts in (self.signaling_hosts,self.turn_hosts):
@@ -112,6 +120,13 @@ class ManagedTurnConfiguration:
                 raise ValueError('Duplicate managed TURN destination')
         if _origin(self.base_origin,self.signaling_hosts)!=self.base_origin:
             raise ValueError('Managed TURN base origin must be canonical HTTPS')
+        if self.static_ice_urls is not None:
+            if type(self.static_ice_urls) is not tuple or not 1<=len(self.static_ice_urls)<=4:
+                raise ValueError('Static managed ICE requires bounded explicit URLs')
+            for url in self.static_ice_urls:
+                _turn_url(url,self.turn_hosts)
+            if len(set(self.static_ice_urls))!=len(self.static_ice_urls):
+                raise ValueError('Duplicate static managed ICE URL')
 
     @property
     def enabled(self):
@@ -125,12 +140,18 @@ def load_managed_turn_file(filename):
         if len(data)>MAX_CONFIG_BYTES:
             raise ValueError()
         raw = _json(data)
-        if set(raw)!={'base_origin','signaling_hosts','turn_hosts'}:
+        required = {'base_origin','signaling_hosts','turn_hosts'}
+        if set(raw) not in (required,required|{'static_ice_urls'}):
             raise ValueError()
         if type(raw['signaling_hosts']) is not list or type(raw['turn_hosts']) is not list:
             raise ValueError()
+        static = None
+        if 'static_ice_urls' in raw:
+            if type(raw['static_ice_urls']) is not list or not 1<=len(raw['static_ice_urls'])<=4:
+                raise ValueError()
+            static = tuple(raw['static_ice_urls'])
         return ManagedTurnConfiguration(raw['base_origin'],tuple(raw['signaling_hosts']),
-                                        tuple(raw['turn_hosts']))
+                                        tuple(raw['turn_hosts']),static)
     except (OSError,TypeError,UnicodeError,ValueError,RecursionError):
         raise ValueError('Managed TURN configuration cannot be read or is invalid') from None
 
@@ -155,9 +176,7 @@ class ManagedTurnBootstrap:
             if not 1<=len(row['urls'])<=4:
                 raise ValueError('Invalid managed ICE URL count')
             for url in row['urls']:
-                match = _TURNS.fullmatch(url) if isinstance(url,str) and len(url)<=512 else None
-                if match is None or match.group(1) not in allowed:
-                    raise ValueError('Unapproved managed TURN destination')
+                _turn_url(url,allowed)
                 if url not in urls:
                     urls.append(url)
         # The SDK derives instance:service:OAuth / oauth itself. Never return
@@ -185,6 +204,10 @@ class ManagedTurnBootstrap:
                 or not isinstance(instance,str) or _INSTANCE.fullmatch(instance) is None
                 or not isinstance(service,str) or _SERVICE.fullmatch(service) is None):
             raise ManagedTurnUnavailable()
+        if self.config.static_ice_urls is not None:
+            # Only nonsecret destinations are reused. Caller admission and the
+            # fresh per-call OAuth TURN identity are resolved by the call owner.
+            return [{'urls':[url]} for url in self.config.static_ice_urls]
         headers = {'Authorization':'Bearer '+token,'Accept':'application/json',
                    'Accept-Encoding':'identity'}
         session_id = None

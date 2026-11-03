@@ -1,0 +1,13 @@
+# Optional explicit Voice ICE destinations
+
+The current managed TURN bootstrap awaits a cloud metadata Voice-session CREATE and its matching DELETE solely to obtain nonsecret ICE URLs. The proposed optional configuration can omit those discovery requests when an operator explicitly selects validated URLs. Fresh caller admission and per-call OAuth TURN identity remain unchanged.
+
+Three approaches were considered. Explicit static URLs have no token/session cache and no detached cleanup; their limitation is that each chosen endpoint requires independent authorization and end-to-end qualification. Caching discovery responses risks treating caller-specific authorization side effects or temporary routing as reusable data. Detaching discovery/deletion would change the existing ownership and completion contract. This source change chooses explicit static URLs and leaves legacy discovery as the default.
+
+`ManagedTurnConfiguration.static_ice_urls` is `None` when omitted. An explicit value must be an immutable tuple of one to four unique ordered URLs, each exactly `turns:<existing-allowlisted-host>:443?transport=tcp`. No userinfo, credentials, alternate port, transport, query, duplicate or unknown host is accepted. Disabled configuration cannot contain a static selection. The private-file loader accepts exactly the original three fields, optionally plus `static_ice_urls`; an explicitly present JSON value must be a nonempty bounded list. Explicit null is invalid.
+
+After the existing token, instance and service syntax checks, static mode returns fresh URL-only dictionaries and lists without constructing an HTTP client. Omission retains the existing CREATE, response validation and awaited exact DELETE. There is no automatic fallback between modes. Admission, shared capacity, caller identity, SDK/WSS wire handling, per-call OAuth derivation and credential clearing are outside the production edit.
+
+This is isolated speculative source only. No active configuration or service is changed. A fixed YCG candidate can be selected later only after the fresh-caller TURN discriminator and an actual qualified SDK startup. Neither has run as part of this work. URL order is deliberate; the installed backend selects its first acceptable TURN server, so this does not promise multi-region failover. Offline tests cannot establish device playback, endpoint authorization or latency savings.
+
+Verification covers legacy omission and awaited deletion, strict constructor/file validation, zero HTTP in static mode, fresh return copies, unchanged per-call validation, native OAuth identity and clearing, and existing SDK/WSS admission/capacity contracts. Baseline focused configuration/managed TURN tests passed 43/43 at e8c2688 before changes.
