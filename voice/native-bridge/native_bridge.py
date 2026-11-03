@@ -1948,14 +1948,17 @@ async def authorize(request, config, http, with_settings=False):
         return local_auth(token, config.development_token, request.remote or '')
     if config.auth_mode != 'servicenow' or request.headers.get('Origin') != config.instance_url:
         return False
-    # Syntax guard only; trust comes exclusively from native ServiceNow validation.
-    if len(token.split('.')) != 3 or not all(token.split('.')):
+    # Same bounded bearer syntax as the original-caller binder and SDK path;
+    # both opaque OAuth and JWT still require native ServiceNow validation.
+    authorization = 'Bearer ' + token
+    if (len(authorization) > 8192
+            or not re.fullmatch(r'Bearer [A-Za-z0-9._~+/-]+=*', authorization)):
         return False
     url = config.instance_url + '/api/sn_voice_aia/ai_voice_agent/agents_authorized'
     try:
         async with http.post(url, json={'serviceId':config.voice_service_id,'clientApp':'admin_test',
                                    **({'assistantSettingsVersion':1} if with_settings else {})},
-                             headers={'Authorization':'Bearer '+token,'Accept':'application/json',
+                             headers={'Authorization':authorization,'Accept':'application/json',
                                       **({'Accept-Encoding':'identity'} if with_settings else {})},
                              **({'auto_decompress':False} if with_settings else {}),
                              allow_redirects=False, timeout=ClientTimeout(total=10)) as response:
