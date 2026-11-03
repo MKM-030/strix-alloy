@@ -992,6 +992,7 @@ class Bridge:
                 or session.bootstrap_stage != 'creating' or session.pending_action != 'CREATE_CONVERSATION'
                 or not session.requests or session.requests[-1] != request['requestId']
                 or session.conversation_binding is not None):
+            LOG.warning('Caller CREATE failed stage=owner_result_changed http_status=200 dispatch_state=response_received')
             raise ValueError('Native caller CREATE changed')
         # Valid late results establish cleanup ownership, never renewed authority.
         created = validated_created({'result':{'status':'success','created':created}},request)

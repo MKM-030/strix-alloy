@@ -7,6 +7,7 @@ logs, caches or persists it.
 import asyncio
 from dataclasses import dataclass, field
 import json
+import logging
 import re
 import time
 import aiohttp
@@ -21,6 +22,25 @@ _ID = re.compile(r'[0-9a-f]{32}\Z')
 _BEARER = re.compile(r'Bearer [A-Za-z0-9._~+/-]+=*\Z', re.I)
 _FIELDS = {'version', 'service_id', 'context_profile', 'user_id', 'user_name',
            'email', 'email_mapping_unique'}
+
+
+_CREATE_FAILURE_STAGES = frozenset({
+    'pre_dispatch_validation', 'client_open', 'request_transport', 'http_status',
+    'response_encoding', 'response_type', 'response_read', 'response_oversize',
+    'response_json', 'transport_close', 'created_tuple_invalid', 'cancelled', 'unexpected'})
+_CREATE_DISPATCH_STATES = frozenset({'not_dispatched', 'may_have_dispatched', 'response_received'})
+_CREATE_LOG = logging.getLogger('voice-bridge')
+
+
+def _log_create_failure(stage, http_status, dispatch_state):
+    if type(stage) is not str or stage not in _CREATE_FAILURE_STAGES:
+        stage = 'unexpected'
+    if type(http_status) is not int or not 100 <= http_status <= 599:
+        http_status = 0  # No valid HTTP status was observed.
+    if type(dispatch_state) is not str or dispatch_state not in _CREATE_DISPATCH_STATES:
+        dispatch_state = 'may_have_dispatched'
+    _CREATE_LOG.warning('Caller CREATE failed stage=%s http_status=%d dispatch_state=%s',
+                        stage, http_status, dispatch_state)
 
 
 @dataclass(frozen=True)
@@ -122,28 +142,48 @@ async def create_native_caller_conversation(instance_url, api_path, provider_tok
             or any(type(request[k]) is not str or not _ID.fullmatch(request[k])
                    for k in ('requestId','clientSessionId','clientMessageId'))
             or type(timeout_seconds) not in (int,float) or not 0 < timeout_seconds <= 30):
+        _log_create_failure('pre_dispatch_validation', 0, 'not_dispatched')
         raise ValueError(error)
     factory = aiohttp.ClientSession if http_factory is None else http_factory
     headers = {'Authorization':authorization,'token':provider_token,'Accept':'application/json',
                'Content-Type':'application/json','Accept-Encoding':'identity'}
+    stage, http_status, dispatch_state = 'client_open', 0, 'not_dispatched'
     try:
         async with asyncio.timeout(timeout_seconds):
             async with factory(cookie_jar=aiohttp.DummyCookieJar(),trust_env=False,
                     auto_decompress=False,skip_auto_headers={'Accept-Encoding'},
                     timeout=aiohttp.ClientTimeout(total=timeout_seconds)) as http:
+                stage, dispatch_state = 'request_transport', 'may_have_dispatched'
                 async with http.post(instance_url+api_path,json=request,headers=headers,
                                      allow_redirects=False) as response:
-                    if (response.status != 200 or response.headers.get('Content-Encoding')
-                            or not re.match(r'application/json(?:;|$)', response.headers.get('Content-Type',''),re.I)):
+                    http_status, dispatch_state = response.status, 'response_received'
+                    stage = 'http_status'
+                    if response.status != 200:
                         raise ValueError(error)
+                    stage = 'response_encoding'
+                    if response.headers.get('Content-Encoding'):
+                        raise ValueError(error)
+                    stage = 'response_type'
+                    if not re.match(r'application/json(?:;|$)', response.headers.get('Content-Type',''),re.I):
+                        raise ValueError(error)
+                    stage = 'response_read'
                     raw=bytearray()
                     async for chunk in response.content.iter_chunked(8192):
                         raw.extend(chunk)
-                        if len(raw)>65536:raise ValueError(error)
+                        if len(raw)>65536:
+                            stage = 'response_oversize'
+                            raise ValueError(error)
+                    stage = 'response_json'
                     data=json.loads(raw.decode('utf-8'),object_pairs_hook=_pairs,
                         parse_constant=lambda _: (_ for _ in ()).throw(ValueError(error)))
+                    stage = 'transport_close'
+        stage = 'created_tuple_invalid'
         return validated_created(data,request)
+    except asyncio.CancelledError:
+        _log_create_failure('cancelled', http_status, dispatch_state)
+        raise
     except Exception:
+        _log_create_failure(stage, http_status, dispatch_state)
         raise ValueError(error) from None
     finally:
         headers.clear()

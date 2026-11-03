@@ -1,41 +1,41 @@
 # Voice repair — 2 November 2026
 
-Update 3 November: the documented synchronous `START_CREATED_CONVERSATION`
-contract is now active (commit `1fa700c`, Native25004/Bot3800). Full native
-startup controls and empty acknowledgements are handled separately; actual
-controls must match the pending request/user/session and valid offered choices.
-Callbacks share deduplication and state handling. Normal later turns remain
-asynchronous. The last correction passed 86 focused tests and independent
-source review. Existing broad-suite errors were independently reproduced on
-the unchanged baseline; the interrupted broad run is not a passing suite.
+Status update, 3 November 2026: the generic own-voice welcome is restored.
+VA Input Response Generation and the two downstream Planner defaults were
+corrected to Halogen. The outer role-mask repair subsequently allowed both
+the native workflow and its SCC child through access checks; the earlier
+Guest diagnosis alone did not explain the complete execution failure.
 
-The reload changed no settings and preserved the controller, Halogen, Gateway,
-ASR and own TTS generations. Both native greeting profiles were repaired earlier
-to `Hallo und willkommen. Wie kann ich Ihnen helfen?`. Actual worker identity,
-positive-name continuation and device/latency acceptance remain open. The next
-bounded live probe is still in preparation while its cancellation/cleanup
-handling is corrected; no fresh authentication or test call has run for this
-source reload.
+The bounded V10 name test passed: it retained the exact raw synthetic-name
+ASR, completed the local readback and accepted one local name-only Ja.
+ServiceNow then asked its separate required name-confirmation question.
+That local Ja was not replayed against the later backend question. V11,
+which can answer that fresh backend name question once and then observe the
+next concrete field question, remains unrun.
 
-The first actual post-reload test has now run once (V7). It received the correct
-generic greeting, then failed before name input. Native session cleanup was
-acknowledged in 0.672 seconds; the test token was revoked (issuer200 plus the
-same-token401) and its temporary file removed. Its 9.781-second first-audio
-measurement includes the SDK client's complete ICE gathering and does not
-measure phone/browser startup.
+The managed-ICE WSS V3 probe observed its first voiced PCM at 3.484 seconds
+and an offer/answer interval of 1.015 seconds. These are measurements from a
+synthetic host-only client, not physical phone/browser startup or full
+introduction-playback acceptance.
 
-Independent exact native evidence identifies the remaining cause: workflow
-`2f3c8a39931093185c8132d47aba1014` terminated with `security_violation`; two
-conversation/interaction/provider-bound worker contexts had both effective and
-logged-in user `guest`, including an ACL denial. No GenAI/tool rows were visible
-for that execution. Keep the execution access rules intact and repair the user
-handoff before another Voice test. The completed greeting/model/startup changes
-do not constitute full Voice acceptance.
+The verified combined reload receipt c93527e5… loaded owned-CREATE draining,
+exact END-completion handling and complete four-ID metadata publication.
+That dated receipt preserved the controller, Halogen, Gateway, ASR and own
+TTS. Its process IDs are historical generation evidence, not restart recipes.
 
-The direct failure report supersedes the earlier wait for a phone-test result.
-The adapter repair is active. The approved ServiceNow VA Input and two Planner
-model corrections are applied and independently read back; complete live
-acceptance is not yet established.
+A different subsequent SDK call (e770…) reserved capacity after a failed
+CREATE-only operation. Its client and peer closed; no ASR, queued speech,
+START or END was observed. Remote allocation remains unknown. A negative
+visibility read does not establish that no remote conversation exists.
+The safe fixed-stage CREATE diagnostics are promoted to canonical source,
+but their runtime activation is pending. The failed CREATE has not been
+replayed, and V11 preflight refused the occupied slot without starting V11.
+
+The full Voice goal remains open: physical iPhone/Android/desktop parity,
+real microphone/noise/name-correction and repeated-call behavior, requester
+context, native business execution and sustained progress still require
+acceptance evidence. The sections below retain earlier dated diagnoses and
+results; this update supersedes their stale runtime and blocker descriptions.
 
 ## Demonstrated causes
 
