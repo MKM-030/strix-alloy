@@ -1,5 +1,68 @@
 # Voice repair — 2 November 2026
 
+Current update, 3 November 2026, after the independent host reboot and new
+authentication repair: the bounded local SDK/RTC conversation passed again.
+The current Native bridge checks the original caller's access to the separate
+CREATE API before allocating a peer, audio, model capacity or business context.
+The harmless probe sends literal `{}` with the original Bearer and accepts only
+the exact, normally closed malformed-request400 contract. SDK401 refresh remains
+available before allocation. A later uncertain CREATE still remains unknown and
+is never automatically replayed. ServiceNow's own CREATE resource now also emits
+the reviewed, exactly correlated pre-handler403 noncreation receipt.
+
+The new test used one fresh Voice Agent token, one SDK session and local
+own-voice fixtures in RAM. It completed the generic welcome, `Mara Testfeld`,
+the exact local readback, a local `Ja`, a distinct `Ja` to ServiceNow's real name
+confirmation, and the genuine date question. No date, order or fourth input was
+sent. It passed in171.219seconds, including8.328seconds of acknowledged cleanup;
+Native capacity returned to zero. The actual RTC process exited normally, the
+fresh token was revoked, same-token authorization returned401 and its private
+handoff file was removed.
+
+Independent ordinary ServiceNow reads verified the completed conversation,
+closed interaction, exact route/profile/provider chain and stored Create/name/
+`Ja.` records. All11 conversation-bound Halogen executions succeeded and their
+actual prompt bindings select current Halogen configurations. The plan contains
+13successful and3cancelled tasks; the successful SCC agent and its read-only
+context tool were observed. No order tool execution was visible in that plan.
+Effective asynchronous worker identity and global absence of unrelated changes
+remain unproved; denied or omitted fields were not bypassed.
+
+Measured local test intervals:
+
+| Observation | Seconds from child start |
+| --- | ---: |
+| SDK session response | 3.704 |
+| Peer connected | 4.875 |
+| First received voiced PCM | 5.094 |
+| First genuine name question fully drained | 49.016 |
+| Local name readback fully drained | 60.969 |
+| Backend name confirmation fully drained | 108.157 |
+| Date question fully drained | 162.782 |
+| Owned cleanup complete | 171.219 |
+
+These include local fixture synthesis and conservative audio-drain waits.
+The SDK creation request itself took2.266seconds; Native's backend initialization
+took38.405seconds. Exact local name readback began about62ms after the recognized
+name, and the local confirmation acknowledgement about63ms after recognized `Ja`.
+The synthetic client used host-only ICE and real WebRTC/ASR/TTS, with no microphone
+or client cloud relay. These are not physical iPhone/Android/browser timings.
+
+The original welcome/error regression is repaired for this bounded path.
+Backend latency and continuous conversation remain open: the current central
+Halogen runtime still has one slot. The existing finite short-Voice/long-AIA
+overlap qualification is being prepared; no two-slot serving or automatic model
+change has been adopted. Own TTS, ASR, Gateway and Bot generations were preserved
+during the Native-only activation. Older failed/spent receipts and the pre-reboot
+remote-unknown call remain unchanged and are never replayed.
+
+Private evidence is under `server/.local/voice-repair-20261102/halogen-memory-stop-recovery-20261103/voice-sdk-acceptance-20261103/`:
+`execution-one-shot/child-result.private.json`, `driver-result.json`, and
+`independent-postcall-readonly-once/independent-postcall-proof.v3.private.json`.
+The full Voice goal remains open, including physical-device parity, real
+microphone/noise/barge-in and repeated-call acceptance. This update supersedes
+older runtime/blocker statements below; the dated evidence is retained.
+
 Status update, 3 November 2026: the generic own-voice welcome is restored.
 VA Input Response Generation and the two downstream Planner defaults were
 corrected to Halogen. The outer role-mask repair subsequently allowed both
