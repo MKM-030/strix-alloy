@@ -61,6 +61,11 @@ owned chain is verified again. Observe native terminal conversation/session and
 plan status afterward. Conversation closure is not cancellation of a running
 tool. If correlation is unavailable, retain uncertain cleanup state and genuine
 IDs for a targeted follow-up; never close guessed or foreign conversations.
+The startup deadline and observation errors also enter this same cleanup path:
+reverify the exact returned-plan-derived chain, close once if verified, then
+perform bounded terminal readback. Never strand a verified owned conversation
+merely because its first question did not arrive. If the native dispatch reply
+was lost and no real plan is known, cleanup remains explicitly uncertain.
 
 Record a new exclusive local attempt before dispatch; preserve exact source
 hashes, native SDK receipt/history, returned plan ID, metadata and cleanup
