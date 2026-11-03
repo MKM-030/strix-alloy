@@ -9,12 +9,15 @@ import json
 import logging
 from pathlib import Path
 import re
+import time
 import types
 import unittest
 import uuid
 
 from aiohttp import ClientSession, ClientTimeout, WSServerHandshakeError, web
 from aiohttp.test_utils import make_mocked_request
+from caller_create_preflight import (CallerCreatePreflightDenied, log_admission_failure,
+                                     admission_outcome)
 
 
 ROOT = Path(__file__).parent
@@ -25,7 +28,9 @@ selected = [node for node in source.body
             or (isinstance(node, ast.Assign)
                 and any(isinstance(target, ast.Name) and target.id.startswith('QWEN_ASR_')
                         for target in node.targets))]
-namespace = dict(asyncio=asyncio, uuid=uuid, json=json, Path=Path,
+namespace = dict(asyncio=asyncio, time=time, uuid=uuid, json=json, Path=Path,
+    CallerCreatePreflightDenied=CallerCreatePreflightDenied,
+    log_admission_failure=log_admission_failure, admission_outcome=admission_outcome,
     LOG=logging.getLogger('native-voice'), ClientSession=ClientSession,
     ClientTimeout=ClientTimeout, web=web, HTTP_KEY=web.AppKey('http', ClientSession))
 exec(compile(ast.Module(body=selected, type_ignores=[]), '<actual-native-source>', 'exec'), namespace)

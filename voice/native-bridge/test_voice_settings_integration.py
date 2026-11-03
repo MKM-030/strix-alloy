@@ -285,8 +285,10 @@ class NativeBrowserSettingsAdmissionTests(unittest.IsolatedAsyncioTestCase):
         with self.assertLogs('native-voice',level='WARNING') as logs:
             self.assertFalse(await authorize(self.request(config),config,
                 self.http(authorized_settings(),401),with_settings=True))
-        self.assertEqual([record.getMessage() for record in logs.records],
-                         ['Native OAuth verification denied status=401'])
+        self.assertEqual(len(logs.records), 1)
+        self.assertRegex(logs.records[0].getMessage(),
+            r'^Voice admission transport=wss stage=metadata_http outcome=http_denied '
+            r'public_status=401 upstream_status=401 elapsed_ms=[0-9]+$')
         # Opaque tokens are valid syntax; illegal Bearer bytes fail before HTTP.
         for query in [{'auth_token':'invalid token'},{'instance_name':'other'},{'voice_service_id':'f'*32}]:
             http=self.http(authorized_settings())
