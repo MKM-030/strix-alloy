@@ -19,6 +19,9 @@ CurrentText32K selects the configured 0.18.22 text preset: 32K context/pool,
 8K chunk/arena, adaptive gate 0.90, Cache Off, Vision Off, Thinking Off/low
 and prefetch off. It uses the existing stable ServiceNow token and rejects
 conflicting explicit settings. Performance qualification is documented separately.
+Opt-in private concurrency tests may add -Slots 1 or 2, -Concurrency 2 and
+-KvPoolPositions 32768 or 65536 to CurrentText32K. These selectors do not
+change defaults or establish a measured two-request speed gain.
 FollowupText32K explicitly selects the same 0.18.22 text policy with Flexible
 prefix cache for follow-up latency on repeated stable context. This opt-in
 reduces repeated input work; it does not promise faster GPU kernel throughput.
@@ -78,7 +81,10 @@ param(
     [ValidateSet('Auto', 'Fixed2', 'Confidence90')]
     [string]$MtpPolicy = 'Fixed2',
     [ValidateSet('Off', 'Exact', 'Flexible')]
-    [string]$PromptCache = 'Off'
+    [string]$PromptCache = 'Off',
+    [ValidateSet(1, 2)][int]$Slots = 1,
+    [ValidateSet(32768, 65536)][int]$KvPoolPositions,
+    [ValidateSet(1, 2)][int]$Concurrency = 1
 )
 
 $ErrorActionPreference = 'Stop'
@@ -89,6 +95,11 @@ if (@($PrintOnly.IsPresent, $Status.IsPresent, $Stop.IsPresent |
 }
 if ($Port -eq 8731) {
     throw 'The public port must differ from the Halogen backend port 8731.'
+}
+if (($PSBoundParameters.ContainsKey('Slots') -or
+     $PSBoundParameters.ContainsKey('KvPoolPositions') -or
+     $PSBoundParameters.ContainsKey('Concurrency')) -and $Profile -ne 'CurrentText32K') {
+    throw 'Capacity selectors require CurrentText32K.'
 }
 
 $repository = Split-Path -Parent $PSScriptRoot
@@ -147,9 +158,13 @@ $profileCode = @'
 import json, sys
 sys.path.insert(0, sys.argv[1])
 from manage import make_profile
-print(json.dumps(make_profile('Halogen', 'v2', int(sys.argv[4]), sys.argv[3], sys.argv[2])))
+capacity = {}
+if sys.argv[5:] != ['1', 'none', '1']:
+    capacity = dict(slots=int(sys.argv[5]), kv_pool_positions=None if sys.argv[6] == 'none' else int(sys.argv[6]), concurrency=int(sys.argv[7]))
+print(json.dumps(make_profile('Halogen', 'v2', int(sys.argv[4]), sys.argv[3], sys.argv[2], **capacity)))
 '@
-$profileJson = & $python -u -B -c $profileCode $server $HalogenVersion $PromptCache $contextCapacity
+$poolArgument = if ($PSBoundParameters.ContainsKey('KvPoolPositions')) { [string]$KvPoolPositions } else { 'none' }
+$profileJson = & $python -u -B -c $profileCode $server $HalogenVersion $PromptCache $contextCapacity $Slots $poolArgument $Concurrency
 if ($LASTEXITCODE -ne 0) {
     throw 'The installed Halogen profile could not be prepared; no engine was launched.'
 }
@@ -200,7 +215,11 @@ if ($isPinned32KProfile) {
 $configuration | Add-Member -NotePropertyName 'console_trace' `
     -NotePropertyValue ([bool]$ConsoleTrace.IsPresent) -Force
 
-Write-Host ('Profile: {0}; Halogen {1} v2; MTP policy {2}; PLD 3,3; cache {3}; one request.' -f $Profile, $HalogenVersion, $MtpPolicy, $PromptCache)
+$capacityDescription = if ($configuration.concurrency -eq 1) { 'one request' } else { 'up to 2 requests' }
+Write-Host ('Profile: {0}; Halogen {1} v2; MTP policy {2}; PLD 3,3; cache {3}; {4}.' -f $Profile, $HalogenVersion, $MtpPolicy, $PromptCache, $capacityDescription)
+if ($configuration.concurrency -eq 2) {
+    Write-Host ('Opt-in gateway concurrency: 2; native slots: {0}; KV pool: {1}. Aggregate performance is unqualified.' -f $configuration.engine.slots, $configuration.engine.kv_pool_positions)
+}
 if ($Profile -eq 'FollowupText32K') {
     Write-Host 'Opt-in follow-up latency profile: Flexible prefix reuse requires stable repeated context; any benefit must be qualified for that request shape.'
 }

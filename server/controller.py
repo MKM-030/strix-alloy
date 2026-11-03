@@ -287,6 +287,80 @@ def halogen_vision_arguments(engine,directory):
     return ['--disable-vision']
 
 
+def halogen_capacity_module(directory):
+    supported = ROOT.parent / 'backends/halogen-wsl2-0.18.22'
+    if directory.resolve() != supported.resolve():
+        raise ValueError('Capacity controls require the pinned Halogen 0.18.22 backend')
+    source = directory / 'scripts/capacity_policy.py'
+    if source.is_symlink() or not source.is_file():
+        raise ValueError('Selected backend has no bounded capacity policy')
+    spec = importlib.util.spec_from_file_location('alloy_halogen_capacity', source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def halogen_capacity_arguments(engine, directory):
+    if not any(key in engine for key in ('slots', 'kv_pool_positions')):
+        return []
+    if any(key in engine and engine[key] is None for key in ('slots', 'kv_pool_positions')):
+        raise ValueError('Explicit capacity controls must be integers, not null')
+    if engine.get('prompt_cache', 'Off') != 'Off':
+        raise ValueError('Capacity opt-in requires Cache Off')
+    if engine.get('kind') != 'halogen' or engine.get('launcher', 'powershell') != 'python':
+        raise ValueError('Capacity opt-in requires the managed Python Halogen service')
+    if engine.get('disable_vision') is not True:
+        raise ValueError('Explicit capacity controls require text-only serving')
+    if engine.get('context') != 32768:
+        raise ValueError('Explicit capacity controls require context 32768')
+    value = halogen_capacity_module(directory).resolve(engine.get('context'),
+        engine.get('checkpoint'), slots=engine.get('slots', 1),
+        kv_pool_positions=engine.get('kv_pool_positions'),
+        disable_vision=engine.get('disable_vision', False))
+    return ['-Slots', str(value['slots']), '-KvPoolPositions', str(value['kv_pool_positions'])]
+
+
+def validate_halogen_capacity_profile(configuration, repo):
+    engine = configuration.get('engine', {})
+    explicit = any(key in engine for key in ('slots', 'kv_pool_positions'))
+    concurrency = configuration.get('concurrency', 1)
+    if not explicit and type(concurrency) is int and concurrency == 1:
+        return
+    # Other backend profiles retain their existing gateway policy and scope.
+    if engine.get('kind') != 'halogen':
+        if explicit: raise ValueError('Capacity controls apply only to Halogen')
+        return
+    directory = (repo / engine.get('directory', '')).resolve()
+    if not explicit and directory != (ROOT.parent / 'backends/halogen-wsl2-0.18.22').resolve():
+        return  # Historical backends retain their existing gateway policy.
+    if type(concurrency) is not int or concurrency not in (1, 2):
+        raise ValueError('Halogen capacity requires integer concurrency 1 or 2')
+    if configuration.get('minimum_reserve_gib') != 18:
+        raise ValueError('Capacity opt-in requires the unchanged 18 GiB reserve')
+    if engine.get('context') != 32768:
+        raise ValueError('Capacity opt-in requires context 32768')
+    halogen_capacity_arguments(engine, directory)
+    if engine.get('prompt_cache', 'Off') != 'Off':
+        raise ValueError('Capacity opt-in requires Cache Off')
+    value = halogen_capacity_module(directory).resolve(engine.get('context'),
+        engine.get('checkpoint'), slots=engine.get('slots', 1),
+        kv_pool_positions=engine.get('kv_pool_positions'),
+        disable_vision=engine.get('disable_vision', False))
+    if engine.get('launcher', 'powershell') != 'python' or engine.get('disable_vision') is not True:
+        raise ValueError('Capacity opt-in requires the text-only Python service')
+    if value['slots'] == 2 and concurrency != 2:
+        raise ValueError('Two engine slots require gateway concurrency 2')
+    backend = configuration.get('backend', {})
+    expected = backend.get('expected', {})
+    if backend.get('context') != value['context'] or backend.get('checkpoint') != 'v2':
+        raise ValueError('Capacity backend identity differs')
+    for key, wanted in (('context', value['context']), ('slot_ctx', value['context']),
+                        ('slots', value['slots']), ('kv_pool_positions', value['kv_pool_positions']),
+                        ('vision.enabled', False), ('capability_probe', 'ok')):
+        if type(expected.get(key)) is not type(wanted) or expected.get(key) != wanted:
+            raise ValueError('Capacity health expectation differs: ' + key)
+
+
 def validate_engine(engine, repo):
     if engine.get('kind')=='halogen':
         halogen_draft_arguments(engine)
@@ -298,6 +372,7 @@ def validate_engine(engine, repo):
         if type(engine.get('context')) is not int or not 4096<=engine['context']<=262144:
             raise ValueError('Invalid context')
         if not (directory/'Start.ps1').is_file(): raise ValueError('Backend launcher missing')
+        halogen_capacity_arguments(engine,directory)
         validate_halogen_launcher_controls(engine,repo)
         halogen_kernel_arguments(engine,directory)
         halogen_speculation_arguments(engine,directory)
@@ -307,6 +382,8 @@ def validate_engine(engine, repo):
         halogen_private_hsa_arguments(engine,directory)
         halogen_vision_arguments(engine,directory)
         return directory
+    if any(key in engine for key in ('slots', 'kv_pool_positions')):
+        raise ValueError('Managed capacity controls apply only to Halogen')
     if 'disable_vision' in engine:
         raise ValueError('Managed vision control applies only to Halogen')
     if 'kernel_controls' in engine:
@@ -348,6 +425,7 @@ def validate_engine(engine, repo):
 
 def halogen_launch_command(engine, directory):
     controls = halogen_draft_arguments(engine)
+    controls += halogen_capacity_arguments(engine, directory)
     controls += halogen_kernel_arguments(engine, directory)
     controls += halogen_speculation_arguments(engine, directory)
     controls += halogen_api_defaults_arguments(engine, directory)
@@ -371,7 +449,8 @@ def halogen_launch_command(engine, directory):
             not executable.is_file() or executable.resolve() != Path(sys.executable).resolve()):
         raise ValueError('Direct Halogen service requires the current project Python and pinned backend')
     # Translate only controls already validated by the normal managed path.
-    flags = {'-DraftTokens': '--draft-tokens', '-PrefillChunk': '--prefill-chunk',
+    flags = {'-Slots': '--slots', '-KvPoolPositions': '--kv-pool-positions',
+             '-DraftTokens': '--draft-tokens', '-PrefillChunk': '--prefill-chunk',
              '-MaxPrefillTokens': '--max-prefill-tokens', '-AdmitTicks': '--admit-ticks',
              '-PrefillKeepTrunk': '--prefill-keep-trunk',
              '-KernelControlsJson': '--kernel-controls-json',
@@ -523,6 +602,7 @@ async def run(config_path, port):
     profile_bytes=Path(config_path).read_bytes()
     configuration=json.loads(profile_bytes.decode('utf-8-sig'))
     reserve=memory_reserve_gib(configuration)
+    validate_halogen_capacity_profile(configuration, ROOT.parent)
     if 'private_hsa' in configuration['engine'] and (
             reserve != 18 or configuration.get('concurrency', 1) != 1 or
             configuration['backend'].get('identifier') != 'halogen-v2' or
