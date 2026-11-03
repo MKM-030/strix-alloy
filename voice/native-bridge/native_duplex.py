@@ -715,12 +715,20 @@ class NativeDuplex:
         ends = [match.end() for match in re.finditer(r'[.!?](?:\s|$)', text[:limit])]
         return (text[:ends[-1]].strip() if ends else ''), False
 
-    def _help_fallback(self):
+    def _enqueue_help_fallback(self, turn, *, reason='unavailable'):
         question = self._current_question()
+        LOG.info('Voice independent help call=%s stage=fallback reason=%s', self.call.call_id, reason)
         base = ('Ich kann Angaben mit Ihnen klären und vorhandene Rückmeldungen verständlich erklären. '
                 'ServiceNow führt den Vorgang und fragt notwendige Bestätigungen ab.')
-        return base + (' Die aktuelle Rückfrage lautet: „' + question + '“' if question and len(question) <= 350 else
-                       ' Welche Angabe oder welchen Schritt möchten Sie besprechen?')
+        if question and len(question) <= 350:
+            # The capability explanation carries no mutable backend fact.
+            # Only the separate question quote depends on this observation.
+            self._enqueue(base, turn, kind='local')
+            self._enqueue('Die aktuelle Rückfrage lautet: „' + question + '“', turn, kind='local',
+                observation=getattr(self.call.dialog, 'observation_revision', 0))
+        else:
+            self._enqueue(base + ' Welche Angabe oder welchen Schritt möchten Sie besprechen?',
+                turn, kind='local')
 
     def _repeat_last_reply(self):
         replies = self._current_public_findings()
@@ -1430,7 +1438,11 @@ class NativeDuplex:
             except Exception as error:
                 LOG.warning('Voice independent dialogue stage=optional_failed type=%s', type(error).__name__)
                 if epoch == self.epoch:
-                    self._enqueue(self._status() if kind == 'status' else self._help_fallback(), turn)
+                    if kind == 'status':
+                        self._enqueue(self._status(), turn, kind='status',
+                            observation=getattr(self.call.dialog, 'observation_revision', 0))
+                    else:
+                        self._enqueue_help_fallback(turn)
             finally:
                 self._local_busy = False
                 self._local_questions.task_done()
@@ -1574,12 +1586,10 @@ class NativeDuplex:
             self._enqueue(text, turn, kind='local',
                 observation=getattr(self.call.dialog, 'observation_revision', 0))
             return
-        fallback = self._status if kind == 'status' else self._help_fallback
-        def emit_fallback():
-            self._enqueue(fallback(), turn, kind='status' if kind == 'status' else 'local',
-                observation=getattr(self.call.dialog, 'observation_revision', 0))
+        def emit_fallback(reason='unavailable'):
+            self._enqueue_help_fallback(turn, reason=reason)
         if self._model_failed:
-            emit_fallback()
+            emit_fallback('model_failed')
             return
         try:
             if self._invalidations:
@@ -1613,14 +1623,15 @@ class NativeDuplex:
                 self._revoke_dialogue_output(turn)
                 if candidate.failure == 'superseded':
                     return
-                if getattr(getattr(self.conversation, 'controller_transport', None), 'transient_busy', False):
+                busy = getattr(getattr(self.conversation, 'controller_transport', None), 'transient_busy', False)
+                if busy:
                     # Admission429 ends only this optional model attempt. A new
                     # user question may use a fresh session; never retry input.
                     await self.conversation.close()
                     self.conversation = None
                 else:
                     self._model_failed = True
-                emit_fallback()
+                emit_fallback('controller_busy' if busy else 'unavailable')
                 return
             if not streaming and not self._admit_conversation(candidate, turn, epoch, observation, snapshot):
                 emit_fallback()
@@ -1630,14 +1641,15 @@ class NativeDuplex:
             raise
         except Exception as error:
             self._revoke_dialogue_output(turn)
-            if getattr(getattr(self.conversation, 'controller_transport', None), 'transient_busy', False):
+            busy = getattr(getattr(self.conversation, 'controller_transport', None), 'transient_busy', False)
+            if busy:
                 await self.conversation.close()
                 self.conversation = None
             else:
                 self._model_failed = True
             LOG.warning('Voice independent dialogue stage=unavailable type=%s', type(error).__name__)
             if epoch == self.epoch:
-                emit_fallback()
+                emit_fallback('controller_busy' if busy else 'unavailable')
 
     async def _speak_loop(self):
         while self._live():
