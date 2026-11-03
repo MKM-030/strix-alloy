@@ -80,6 +80,11 @@ ID, linked consumer or successful HTTP response is insufficient. The probe
 does not prove Voice OAuth grants, input continuation, concurrent isolation,
 device audio/latency, native Voice transcript integration or business completion.
 Those remain subsequent steps after the identity boundary is established.
+The initial missing-name boundary must also show zero native business-tool
+executions in a complete, ordinarily readable plan/task/tool projection. A
+tool execution before any supplied name is a failed boundary, even if a name
+question follows. Stop and close the owned conversation; do not advance input.
+Absent/denied tool metadata means this condition is unknown, never zero.
 
 Offline tests must cover preflight denial, falsey readable fields, malformed or
 lost submission response, duplicate dispatch, changed principal/target/session,
