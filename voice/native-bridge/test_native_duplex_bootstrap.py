@@ -96,6 +96,16 @@ class BootstrapDialogueTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(self.lane.bootstrap_pending)
         self.assertTrue(self.lane.busy, 'Native inactivity must not expire during owned startup')
 
+    async def test_structural_auth_rejection_gets_fixed_feedback_without_business_dispatch(self):
+        from startup_reason import NativeStartupError
+        self.boot_error = NativeStartupError('servicenow_caller_create_unauthorized')
+        self.gate.set()
+        await self.until(lambda: not self.lane.bootstrap_pending)
+        self.assertIn('Anmeldung', self.lane._status())
+        self.assertNotIn('abgelaufen', self.lane._status())
+        self.assertEqual(self.call.dialog.calls, [])
+        self.assertEqual(self.open_count, 1)
+
     async def test_early_intent_is_dispatched_once_only_after_success(self):
         self.call.feed('Bitte einen Mitarbeiter vorbereiten.')
         await self.consumed()

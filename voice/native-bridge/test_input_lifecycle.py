@@ -21,6 +21,7 @@ from aiohttp import ClientSession, ClientTimeout, WSMsgType, WSServerHandshakeEr
 from managed_turn import clear_session_ice
 from model_health import require_model_ready
 from noise_guard import SpeechNoiseGuard
+from startup_reason import open_with_startup_diagnostics, startup_reason, caller_create_failure_notice
 
 ROOT = Path(__file__).parent
 spec = importlib.util.spec_from_file_location('input_lifecycle_core', ROOT / 'core.py')
@@ -143,6 +144,8 @@ class Dialog:
 
 
 namespace = dict(asyncio=asyncio, time=time, uuid=uuid, json=json, math=math,
+    open_with_startup_diagnostics=open_with_startup_diagnostics, startup_reason=startup_reason,
+    caller_create_failure_notice=caller_create_failure_notice,
     dataclass=dataclass, SpeechNoiseGuard=SpeechNoiseGuard,
     StreamingPCM16Denoiser=PassThroughDenoiser, require_model_ready=require_model_ready,
     LOG=logging.getLogger('native-voice'), AudioResampler=Resampler,

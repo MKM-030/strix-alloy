@@ -18,6 +18,7 @@ CALLER_CREATE_PATH = '/api/sn_voice_aia/local_voice_caller/create'
 CALLER_SERVICE_ID = '8aa131d793f787105c8132d47aba1095'
 CALLER_AGENT_ID = 'a6337ddf93f787105c8132d47aba1058'
 CALLER_PROFILE_ID = 'c623e20f93374354e7f2b9fa6aba1081'
+CALLER_CREATE_FAILURE_CONTRACT = 'scc_local_caller_create_v1'
 _ID = re.compile(r'[0-9a-f]{32}\Z')
 _BEARER = re.compile(r'Bearer [A-Za-z0-9._~+/-]+=*\Z', re.I)
 _FIELDS = {'version', 'service_id', 'context_profile', 'user_id', 'user_name',
@@ -30,6 +31,104 @@ _CREATE_FAILURE_STAGES = frozenset({
     'response_json', 'transport_close', 'created_tuple_invalid', 'cancelled', 'unexpected'})
 _CREATE_DISPATCH_STATES = frozenset({'not_dispatched', 'may_have_dispatched', 'response_received'})
 _CREATE_LOG = logging.getLogger('voice-bridge')
+
+
+def _create_request_ids(request):
+    if (type(request) is not dict
+            or set(request) != {'version','requestId','clientSessionId','clientMessageId'}
+            or type(request['version']) is not int or request['version'] != 1):
+        return ('', '', '')
+    values = tuple(request[k] for k in ('requestId','clientSessionId','clientMessageId'))
+    if (any(type(value) is not str or not _ID.fullmatch(value) for value in values)
+            or len(set(values)) != 3):
+        return ('', '', '')
+    return values
+
+
+@dataclass(frozen=True)
+class CallerCreateFailureReceipt:
+    """Bounded transport facts; an auth refusal alone never proves absence."""
+    reason: str
+    outcome: str
+    stage: str
+    http_status: int
+    dispatch_state: str
+    close_completed: bool
+    contract: str
+    request_id: str = field(repr=False)
+    client_session_id: str = field(repr=False)
+    client_message_id: str = field(repr=False)
+
+    def __post_init__(self):
+        ids = (self.request_id, self.client_session_id, self.client_message_id)
+        correlated = (all(type(value) is str and _ID.fullmatch(value) for value in ids)
+                      and len(set(ids)) == 3)
+        empty = ids == ('', '', '')
+        if (type(self.reason) is not str or self.reason not in {
+                'caller_create_unauthorized','caller_create_access_denied','caller_create_unavailable'}
+                or type(self.outcome) is not str or self.outcome not in {'unknown','not_created'}
+                or type(self.stage) is not str or self.stage not in _CREATE_FAILURE_STAGES
+                or type(self.http_status) is not int or not (self.http_status == 0 or 100 <= self.http_status <= 599)
+                or type(self.dispatch_state) is not str or self.dispatch_state not in _CREATE_DISPATCH_STATES
+                or type(self.close_completed) is not bool or not (correlated or empty)
+                or type(self.contract) is not str):
+            raise ValueError('Invalid caller CREATE failure receipt')
+        expected_reason = ('caller_create_unauthorized' if self.http_status == 401 else
+                           'caller_create_access_denied' if self.http_status == 403 else
+                           'caller_create_unavailable')
+        no_dispatch = self.dispatch_state == 'not_dispatched' and self.http_status == 0
+        rejected = self.dispatch_state == 'response_received' and self.http_status == 403 and self.close_completed
+        if (self.reason != expected_reason
+                or self.outcome == 'unknown' and self.contract != ''
+                or self.outcome == 'not_created' and (not correlated
+                    or self.contract != CALLER_CREATE_FAILURE_CONTRACT or not (no_dispatch or rejected))):
+            raise ValueError('Invalid caller CREATE failure receipt')
+
+
+class CallerCreateFailure(ValueError):
+    """Fixed public error plus an immutable, private structural receipt."""
+    def __init__(self, receipt):
+        if type(receipt) is not CallerCreateFailureReceipt:
+            raise ValueError('Invalid caller CREATE failure receipt')
+        self.receipt = receipt
+        super().__init__('Native caller CREATE unavailable')
+
+
+def _create_failure(request, stage, http_status, dispatch_state, close_completed=False,
+                    *, negative_proof=False):
+    ids = _create_request_ids(request)
+    if type(http_status) is not int or not 100 <= http_status <= 599:
+        http_status = 0
+    reason = ('caller_create_unauthorized' if http_status == 401 else
+              'caller_create_access_denied' if http_status == 403 else
+              'caller_create_unavailable')
+    no_dispatch = dispatch_state == 'not_dispatched' and http_status == 0
+    rejected = (negative_proof and dispatch_state == 'response_received'
+                and http_status == 403 and close_completed)
+    not_created = bool(ids[0]) and (no_dispatch or rejected)
+    receipt = CallerCreateFailureReceipt(reason, 'not_created' if not_created else 'unknown',
+        stage, http_status, dispatch_state, close_completed,
+        CALLER_CREATE_FAILURE_CONTRACT if not_created else '', *ids)
+    _log_create_failure(stage, http_status, dispatch_state)
+    return CallerCreateFailure(receipt)
+
+
+def _validated_create_denial(data, request):
+    """Only our exact pre-handler envelope can prove a received denial."""
+    if (type(data) is not dict or set(data) != {'result'} or type(data['result']) is not dict
+            or set(data['result']) != {'status','failure'} or data['result']['status'] != 'failure'):
+        return False
+    failure = data['result']['failure']
+    required = {'contract','version','outcome','reason','requestId','clientSessionId',
+                'clientMessageId','serviceId','contextProfile'}
+    return (type(failure) is dict and set(failure) == required
+        and failure['contract'] == CALLER_CREATE_FAILURE_CONTRACT
+        and type(failure['version']) is int and failure['version'] == 1
+        and failure['outcome'] == 'not_created' and failure['reason'] == 'access_denied'
+        and failure['requestId'] == request['requestId']
+        and failure['clientSessionId'] == request['clientSessionId']
+        and failure['clientMessageId'] == request['clientMessageId']
+        and failure['serviceId'] == CALLER_SERVICE_ID and failure['contextProfile'] == CALLER_PROFILE_ID)
 
 
 def _log_create_failure(stage, http_status, dispatch_state):
@@ -137,17 +236,14 @@ async def create_native_caller_conversation(instance_url, api_path, provider_tok
             or instance_url != CALLER_INSTANCE_URL
             or type(provider_token) is not str or not 0 < len(provider_token) <= 8192
             or any(ord(c) < 32 or ord(c) == 127 for c in provider_token)
-            or type(request) is not dict or set(request) != {'version','requestId','clientSessionId','clientMessageId'}
-            or type(request['version']) is not int or request['version'] != 1
-            or any(type(request[k]) is not str or not _ID.fullmatch(request[k])
-                   for k in ('requestId','clientSessionId','clientMessageId'))
+            or not _create_request_ids(request)[0]
             or type(timeout_seconds) not in (int,float) or not 0 < timeout_seconds <= 30):
-        _log_create_failure('pre_dispatch_validation', 0, 'not_dispatched')
-        raise ValueError(error)
+        raise _create_failure(request, 'pre_dispatch_validation', 0, 'not_dispatched')
     factory = aiohttp.ClientSession if http_factory is None else http_factory
     headers = {'Authorization':authorization,'token':provider_token,'Accept':'application/json',
                'Content-Type':'application/json','Accept-Encoding':'identity'}
     stage, http_status, dispatch_state = 'client_open', 0, 'not_dispatched'
+    close_completed, negative_proof = False, False
     try:
         async with asyncio.timeout(timeout_seconds):
             async with factory(cookie_jar=aiohttp.DummyCookieJar(),trust_env=False,
@@ -158,33 +254,40 @@ async def create_native_caller_conversation(instance_url, api_path, provider_tok
                                      allow_redirects=False) as response:
                     http_status, dispatch_state = response.status, 'response_received'
                     stage = 'http_status'
-                    if response.status != 200:
-                        raise ValueError(error)
-                    stage = 'response_encoding'
-                    if response.headers.get('Content-Encoding'):
-                        raise ValueError(error)
-                    stage = 'response_type'
-                    if not re.match(r'application/json(?:;|$)', response.headers.get('Content-Type',''),re.I):
-                        raise ValueError(error)
-                    stage = 'response_read'
-                    raw=bytearray()
-                    async for chunk in response.content.iter_chunked(8192):
-                        raw.extend(chunk)
-                        if len(raw)>65536:
-                            stage = 'response_oversize'
+                    if response.status in (200, 403):
+                        stage = 'response_encoding'
+                        if response.headers.get('Content-Encoding'):
                             raise ValueError(error)
-                    stage = 'response_json'
-                    data=json.loads(raw.decode('utf-8'),object_pairs_hook=_pairs,
-                        parse_constant=lambda _: (_ for _ in ()).throw(ValueError(error)))
+                        stage = 'response_type'
+                        if not re.match(r'application/json(?:;|$)', response.headers.get('Content-Type',''),re.I):
+                            raise ValueError(error)
+                        stage = 'response_read'
+                        raw=bytearray()
+                        limit = 4096 if response.status == 403 else 65536
+                        async for chunk in response.content.iter_chunked(min(8192,limit)):
+                            raw.extend(chunk)
+                            if len(raw)>limit:
+                                stage = 'response_oversize'
+                                raise ValueError(error)
+                        stage = 'response_json'
+                        data=json.loads(raw.decode('utf-8'),object_pairs_hook=_pairs,
+                            parse_constant=lambda _: (_ for _ in ()).throw(ValueError(error)))
+                        if response.status == 403:
+                            negative_proof = _validated_create_denial(data,request)
                     stage = 'transport_close'
+        close_completed = True
+        if http_status != 200:
+            raise _create_failure(request, 'http_status', http_status, dispatch_state,
+                                  close_completed, negative_proof=negative_proof)
         stage = 'created_tuple_invalid'
         return validated_created(data,request)
+    except CallerCreateFailure:
+        raise
     except asyncio.CancelledError:
         _log_create_failure('cancelled', http_status, dispatch_state)
         raise
     except Exception:
-        _log_create_failure(stage, http_status, dispatch_state)
-        raise ValueError(error) from None
+        raise _create_failure(request, stage, http_status, dispatch_state, close_completed) from None
     finally:
         headers.clear()
         authorization = None

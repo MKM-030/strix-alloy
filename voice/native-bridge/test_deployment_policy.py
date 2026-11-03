@@ -38,6 +38,8 @@ class FakeCall:
         self.input_ended = asyncio.Event()
         self.turns_settled = asyncio.Event()
         self.close_complete = asyncio.Event()
+        self.bound_authorizations = []
+        self.dialog = SimpleNamespace(bind_caller_authorization=self.bound_authorizations.append)
 
     async def close(self):
         self.close_complete.set()
@@ -230,8 +232,9 @@ class ConfiguredBridgeTests(unittest.IsolatedAsyncioTestCase):
             return await admit_sdk_session(headers,body,query_string=query_string,
                 policy=policy,http_factory=http.factory,
                 assistant_settings_version=assistant_settings_version)
+        call = FakeCall()
         with patch('sdk_admission.admit_sdk_session',side_effect=authorize), \
-                patch('native_bridge.NativeCall',return_value=FakeCall()):
+                patch('native_bridge.NativeCall',return_value=call):
             client = TestClient(TestServer(create_app(self.config,dialog_factory=lambda:None)))
             await client.start_server()
             try:
@@ -242,6 +245,7 @@ class ConfiguredBridgeTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(http.calls[0][0],self.config.sdk_policy.authorization_url)
                 self.assertEqual(http.calls[0][1]['json'],
                     {'serviceId':SECOND['assistant_id'],'assistantSettingsVersion':1})
+                self.assertEqual(call.bound_authorizations,['Bearer synthetic-first-instance-token'])
             finally:
                 await client.close()
 

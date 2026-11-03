@@ -4,6 +4,7 @@ Access denial must be supplied as a typed reason by a trusted structural owner.
 No callback shape is assumed here; arbitrary error/bot text never proves denial.
 """
 import asyncio
+import re
 
 
 KNOWN_MESSAGES = {
@@ -20,7 +21,40 @@ KNOWN_MESSAGES = {
 REASONS = frozenset(KNOWN_MESSAGES.values()) | {
     'servicenow_access_denied', 'servicenow_transport_deadline',
     'servicenow_startup_cancelled', 'servicenow_startup_failed',
+    'servicenow_caller_create_unauthorized', 'servicenow_caller_create_access_denied',
+    'servicenow_caller_create_unavailable',
 }
+
+
+def caller_create_failure(data):
+    """Only the fixed private bridge protocol can assert these bounded reasons."""
+    if type(data) is not dict or set(data) != {'error'} or type(data['error']) is not dict:
+        return None
+    error = data['error']
+    if (set(error) != {'source', 'version', 'reason', 'creationOutcome', 'receiptId'}
+            or error['source'] != 'scc_local_caller_create_v1'
+            or type(error['version']) is not int or error['version'] != 1
+            or error['reason'] not in ('caller_create_unauthorized', 'caller_create_access_denied',
+                                      'caller_create_unavailable')
+            or error['creationOutcome'] not in ('unknown', 'not_created')
+            or type(error['receiptId']) is not str):
+        return None
+    if error['creationOutcome'] == 'not_created':
+        if error['reason'] == 'caller_create_unauthorized' or not re.fullmatch(r'[0-9a-f]{32}', error['receiptId']):
+            return None
+    elif error['receiptId']:
+        return None
+    return 'servicenow_'+error['reason'], error['receiptId']
+
+
+def caller_create_failure_notice(reason):
+    if reason == 'servicenow_caller_create_unauthorized':
+        return ('ServiceNow hat die Anmeldung für diesen Dialog nicht akzeptiert. '
+                'Der Dialog konnte nicht gestartet werden. Ihre Angaben werden nicht automatisch erneut gesendet.')
+    if reason == 'servicenow_caller_create_access_denied':
+        return ('ServiceNow hat den Zugriff für diesen Dialog nicht freigegeben. '
+                'Ihre Angaben werden nicht automatisch erneut gesendet.')
+    return ''
 
 
 class NativeStartupError(RuntimeError):

@@ -76,7 +76,9 @@ class TransportTests(unittest.IsolatedAsyncioTestCase):
                                       for j in range(480)]).tobytes()
 
         class Dialog:
-            metadata = {'conversation_id':'transport-only', 'interaction_id':''}
+            # The transport publishes only a complete, validated CREATE tuple.
+            metadata = {'conversation_id':'1'*32, 'interaction_id':'2'*32,
+                        'creation_message_id':'3'*32, 'create_request_id':'4'*32}
             async def open(self):
                 pass
             async def turn(self, text, on_reply=None):
@@ -159,7 +161,9 @@ class TransportTests(unittest.IsolatedAsyncioTestCase):
                     else:
                         self.assertEqual(dialog.received, 'Test ohne Bestellung')
                     self.assertGreater(len(speech.input), 10000)
-                    self.assertTrue(any(m['type']=='metadata' for m in messages))
+                    self.assertEqual([m['data'] for m in messages if m['type']=='metadata'],
+                        [{'conversation_id':'1'*32, 'interaction_id':'2'*32,
+                          'creation_message_id':'3'*32, 'create_request_id':'4'*32}])
                     roles = [m['data']['role'] for m in messages if m['type']=='transcript']
                     # A real fixture may contain pauses longer than the endpoint
                     # timeout and legitimately create multiple conversational turns.

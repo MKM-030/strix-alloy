@@ -16,6 +16,15 @@
         response.setStatus(status);
         response.setBody({status:'failure',detail:'Local caller create unavailable'});
     }
+    function failNotCreated() {
+        // Only explicit validated pre-constructor denials call this helper.
+        // Generic failures, alias conflicts and every post-constructor path
+        // remain uncertain; HTTP status alone is never a negative receipt.
+        response.setStatus(403);
+        response.setBody({status:'failure',failure:{contract:'scc_local_caller_create_v1',version:1,
+            outcome:'not_created',reason:'access_denied',requestId:requestId,clientSessionId:sessionId,
+            clientMessageId:clientMessageId,serviceId:SERVICE,contextProfile:PROFILE}});
+    }
     function own(object, key) { return Object.prototype.hasOwnProperty.call(object,key); }
     function string(value) { return value === null || typeof value === 'undefined' ? '' : String(value); }
     function samePrincipal() {
@@ -165,11 +174,11 @@
         if (typeof authorization !== 'string' || authorization.length > 8192 ||
             !/^Bearer [A-Za-z0-9._~+\/-]+=*$/i.test(authorization) ||
             typeof providerToken !== 'string' || !/^[\x21-\x7e]{1,8192}$/.test(providerToken)) {
-            fail(403); return;
+            failNotCreated(); return;
         }
         originalUser = String(gs.getUserID() || '');
         originalName = String(gs.getUserName() || '');
-        if (!GUID.test(originalUser) || !originalName || originalName === 'guest' || !samePrincipal()) { fail(403); return; }
+        if (!GUID.test(originalUser) || !originalName || originalName === 'guest' || !samePrincipal()) { failNotCreated(); return; }
         // A fixed server-owned view supplies only the existing native service argument.
         // Native checks still receive the unmodified original Bearer and the real GS caller.
         var nativeRequest = {body:{data:{serviceId:SERVICE}},getHeader:function(name) {
@@ -178,23 +187,23 @@
         var nativeSink = {setStatus:function() {},setBody:function() {}};
         var voiceRest = new VoiceRestUtils();
         if (voiceRest.validateServiceId(nativeRequest,nativeSink) !== true ||
-            voiceRest.validateServiceAuthorization(nativeRequest,nativeSink) !== true) { fail(403); return; }
+            voiceRest.validateServiceAuthorization(nativeRequest,nativeSink) !== true) { failNotCreated(); return; }
         var agents = new VoiceAgentUtils().getAuthorizedAgentIds(SERVICE,false), includesRequired = false;
-        if (!Array.isArray(agents) || agents.length < 1 || agents.length > 256) { fail(403); return; }
+        if (!Array.isArray(agents) || agents.length < 1 || agents.length > 256) { failNotCreated(); return; }
         for (var i = 0; i < agents.length; i++) {
-            if (typeof agents[i] !== 'string' || !GUID.test(agents[i])) { fail(403); return; }
+            if (typeof agents[i] !== 'string' || !GUID.test(agents[i])) { failNotCreated(); return; }
             if (agents[i] === REQUIRED_AGENT) includesRequired = true;
         }
-        if (!includesRequired) { fail(403); return; }
+        if (!includesRequired) { failNotCreated(); return; }
         var caller = principal();
-        if (caller === null) { fail(403); return; }
+        if (caller === null) { failNotCreated(); return; }
         var settings = new LocalLLMVoiceAssistantSettings().getSettings(SERVICE);
         if (!validSettings(settings)) { fail(503); return; }
         var language = settings.language;
         if (!newAlias(alias)) { fail(409); return; }
         var rechecked = principal();
         if (!samePrincipal() || rechecked === null || JSON.stringify(caller) !== JSON.stringify(rechecked) ||
-            !validSettings(settings) || settings.language !== language) { fail(403); return; }
+            !validSettings(settings) || settings.language !== language) { failNotCreated(); return; }
         var nativePayload = {requestId:requestId,appInboundId:INBOUND,clientSessionId:sessionId,userId:alias,
             emailId:caller.email,action:'CREATE_CONVERSATION',syncResponse:true,
             message:{text:'',typed:true,clientMessageId:clientMessageId},clientVariables:{voiceSessionId:sessionId},

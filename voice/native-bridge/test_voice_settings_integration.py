@@ -287,7 +287,8 @@ class NativeBrowserSettingsAdmissionTests(unittest.IsolatedAsyncioTestCase):
                 self.http(authorized_settings(),401),with_settings=True))
         self.assertEqual([record.getMessage() for record in logs.records],
                          ['Native OAuth verification denied status=401'])
-        for query in [{'auth_token':'invalid'},{'instance_name':'other'},{'voice_service_id':'f'*32}]:
+        # Opaque tokens are valid syntax; illegal Bearer bytes fail before HTTP.
+        for query in [{'auth_token':'invalid token'},{'instance_name':'other'},{'voice_service_id':'f'*32}]:
             http=self.http(authorized_settings())
             self.assertFalse(await authorize(self.request(config,**query),config,http,with_settings=True))
             self.assertEqual(http.posts,[])
@@ -295,6 +296,23 @@ class NativeBrowserSettingsAdmissionTests(unittest.IsolatedAsyncioTestCase):
         http=self.http(authorized_settings())
         self.assertFalse(await authorize(request,config,http,with_settings=True))
         self.assertEqual(http.posts,[])
+
+    async def test_opaque_caller_token_requires_fresh_native_authorization(self):
+        from test_assistant_settings import authorized_settings
+        from assistant_settings import CallSettings
+        config = self.config()
+        token = 'opaque-caller-token_without-jwt-separators'
+        allowed = self.http(authorized_settings())
+        settings = await authorize(self.request(config,auth_token=token),config,allowed,with_settings=True)
+        self.assertIsInstance(settings,CallSettings)
+        self.assertEqual(len(allowed.posts),1)
+        self.assertEqual(allowed.posts[0]['headers']['Authorization'],'Bearer '+token)
+        self.assertEqual(allowed.posts[0]['json']['serviceId'],config.voice_service_id)
+        denied = self.http(authorized_settings(),401)
+        with self.assertLogs('native-voice',level='WARNING'):
+            self.assertFalse(await authorize(self.request(config,auth_token=token),config,denied,with_settings=True))
+        self.assertEqual(len(denied.posts),1)
+        self.assertEqual(denied.posts[0]['headers']['Authorization'],'Bearer '+token)
 
     async def test_browser_dtmf_choice_is_explicit_unsupported_before_peer_allocation(self):
         from test_assistant_settings import authorized_settings

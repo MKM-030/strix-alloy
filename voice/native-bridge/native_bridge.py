@@ -12,7 +12,8 @@ from fractions import Fraction
 import io
 import json
 import logging
-from startup_reason import open_with_startup_diagnostics, startup_reason
+from startup_reason import (open_with_startup_diagnostics, startup_reason, NativeStartupError,
+                           caller_create_failure, caller_create_failure_notice)
 import math
 from pathlib import Path
 import re
@@ -318,6 +319,7 @@ class Dialog:
         self._initial_topic_attempted = False
         self._caller_bootstrap = None
         self._caller_bootstrap_bound = False
+        self._create_failure_receipt_id = ''
 
     def bind_caller_authorization(self, authorization):
         if self._caller_bootstrap_bound or self.http is not None:
@@ -417,8 +419,40 @@ class Dialog:
                 # Only the trusted loopback owner can declare its cookie expired.
                 return {'ended':True,'expired':True}
             if response.status not in (200, 202):
-                raise RuntimeError('ServiceNow conversation bridge unavailable')
-            return await response.json()
+                failure = None
+                if (method == 'POST' and path == '/api/start' and response.status == 502
+                        and self._caller_bootstrap_bound):
+                    self._require_caller_loopback()
+                    try:
+                        if (response.headers.get('Content-Encoding')
+                                or not re.match(r'application/json(?:;|$)',
+                                    response.headers.get('Content-Type', ''), re.I)):
+                            raise ValueError('Invalid private startup receipt')
+                        raw = bytearray()
+                        async for chunk in response.content.iter_chunked(4096):
+                            raw.extend(chunk)
+                            if len(raw) > 4096:
+                                raise ValueError('Private startup receipt too large')
+                        def pairs(items):
+                            value = {}
+                            for key, item in items:
+                                if key in value:
+                                    raise ValueError('Duplicate receipt field')
+                                value[key] = item
+                            return value
+                        failure = caller_create_failure(json.loads(raw.decode('utf-8'), object_pairs_hook=pairs))
+                    except Exception:
+                        failure = None
+                if failure is None:
+                    raise RuntimeError('ServiceNow conversation bridge unavailable') from None
+            else:
+                return await response.json()
+        # Bind no negative receipt until the loopback response closes normally.
+        reason, receipt_id = failure
+        if self._create_failure_receipt_id and self._create_failure_receipt_id != receipt_id:
+            raise RuntimeError('ServiceNow conversation bridge unavailable')
+        self._create_failure_receipt_id = receipt_id
+        raise NativeStartupError(reason)
 
     async def open(self):
         bootstrap, self._caller_bootstrap = self._caller_bootstrap, None
@@ -635,8 +669,15 @@ class Dialog:
 
     async def reset_owned_session(self):
         info = await self.request('POST', '/api/end', json={})
-        if info.get('ended') is not True:
+        absent = (type(info) is dict
+            and set(info) == {'ended', 'localTerminal', 'creationOutcome', 'cleanup', 'receiptId'}
+            and info['ended'] is False and info['localTerminal'] is True
+            and info['creationOutcome'] == 'not_created' and info['cleanup'] == 'not_required'
+            and type(info['receiptId']) is str and bool(self._create_failure_receipt_id)
+            and info['receiptId'] == self._create_failure_receipt_id)
+        if info.get('ended') is not True and not absent:
             raise RuntimeError('Conversation end was not acknowledged')
+        self._create_failure_receipt_id = ''
         self.csrf = ''
         self.cursor = 0
         self.must_reset = False
@@ -1556,8 +1597,9 @@ class NativeCall:
             self.drain_queue(self.turns)
             self._notify_input_changed()
             await self.responsive_notice(
-                'Die Verbindung ist nicht bereit. Vorgemerkte Anfragen wurden nicht übermittelt. '
-                'Bitte beenden Sie den Anruf.', 'CONNECTION_FAILED', wait=True, _terminal_failure=True)
+                (caller_create_failure_notice(startup_reason(error)) or
+                 'Die Verbindung ist nicht bereit. Vorgemerkte Anfragen wurden nicht übermittelt. '
+                 'Bitte beenden Sie den Anruf.'), 'CONNECTION_FAILED', wait=True, _terminal_failure=True)
             self.input_ended.set()
             self.drain_queue(self.recognized_turns)
             self.recognized_turns.put_nowait(None)

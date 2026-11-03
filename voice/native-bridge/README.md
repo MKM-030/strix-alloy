@@ -65,6 +65,15 @@ Abschlussmeldung zum exakt gebundenen END kann die Unterhaltung freigeben.
 Eine abgelaufene lokale Anmeldung beweist diesen Abschluss nicht. Das ist kein
 Nachweis über abgeschlossene Fachaufträge oder gestoppte Hintergrundaufgaben.
 
+Der CREATE-Fehlerpfad unterscheidet außerdem eine nachgewiesene Nichtanlage von
+einem unklaren Ergebnis. Nur eine korrelierte eigene Ablehnung vor dem nativen
+Handler oder ein nachweislich unversandter Aufruf kann ohne remote END lokal
+abschließen. Dafür muss derselbe private Beleg aus der Startantwort beim
+Abschluss wieder vorliegen. HTTP 401 allein, Transportfehler und verlorene
+Startantworten bleiben unklar. Eine Anmeldeablehnung erhält eine feste eigene
+Sprachmeldung; sie löst weder eine automatische Neuanmeldung noch eine erneute
+Anfrage aus. Diese Quellcodeänderung klärt keine ältere offene Sitzung.
+
 Die bestehende Metadaten-Nachricht mit den vier CREATE-IDs wird nach erfolgreichem
 Dialogstart auch dann einmal veröffentlicht, wenn der Datenkanal schon vorher
 offen war. Sie dient der Zuordnung von Testprotokollen; sie ist keine neue
