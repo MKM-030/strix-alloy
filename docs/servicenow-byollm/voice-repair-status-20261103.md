@@ -2,6 +2,48 @@
 
 Die vorzeitige Mitarbeiterfrage in der Begrüßung ist korrigiert. Beide tatsächlich verwendeten Begrüßungsquellen enthalten jetzt: **„Hallo und willkommen. Wie kann ich Ihnen helfen?“** Eine frische öffentliche Voice-Konfigurationsabfrage unter dem ursprünglichen Benutzer hat genau diesen Text bestätigt. Die vollständige Gesprächsreparatur ist weiterhin offen.
 
+Die zusätzliche Prüfung der tatsächlichen Zugriffsausgaben hat die Ursache des
+Workflow-Abbruchs weiter eingegrenzt: Der äußere Workflow durfte starten, sein
+bisheriger Rollenfilter entzog aber die für den Aufruf des vorhandenen
+SCC-Agenten erforderliche Admin-Rolle. Die freigegebene Korrektur ergänzt diese
+Rolle ausschließlich im äußeren Workflow. Der fachliche Agent behält seine
+beiden Datenrollen, seine bisherigen Aufrufregeln und die dynamische
+Benutzerzuordnung. Die unabhängige Rücklesung bestätigt genau eine neue
+Rollenzuordnung und deren native Änderungsaufzeichnung. Für den unveränderten
+Konfigurationskopf entstand kein zusätzlicher persistierter Eintrag; der
+ursprüngliche Prüfbericht mit seiner abweichenden Aufzeichnungserwartung bleibt
+als Ausführungsnachweis erhalten. Die vollständige Gesprächsprüfung nach dieser
+Korrektur steht noch aus.
+
+Zusätzlich ist eine eng begrenzte lokale Browser-Anmeldungskorrektur aktiv
+und unabhängig geprüft: Ein gültiger OAuth-Bearer muss kein JWT mit drei
+Punktsegmenten sein. Der Sprachadapter akzeptiert künftig dieselbe begrenzte
+ASCII-Schreibweise und lässt weiterhin ServiceNow die tatsächliche Berechtigung
+prüfen. Elf gezielte Tests bestehen. Nur der Sprachadapter wurde neu geladen;
+Modell, Erkennung und eigene Stimme wurden erhalten.
+
+Der native gemeinsame Voice-Startbaustein ist ebenfalls korrigiert und durch
+normales Speichern in einem eigenen Update Set aufgezeichnet. Er behandelt
+`connected` und `completed` als erfolgreiche Verbindung, fängt asynchrone
+Signalisierungs- und Wiedergabefehler ab und ordnet den optionalen Audiokontext
+dem jeweiligen Anruf zu. Ein Fehler der optionalen Analyse darf funktionierende
+Wiedergabe nicht beenden. Die produktive lokale Fassung besteht 26 portable
+Regressionstests; native Rücklesung und genau eine passende XML-Aufzeichnung
+sind geprüft. Der native Hilfsbaustein und die Ereigniszuordnung blieben
+unverändert. Die Anpassung betrifft den gemeinsamen Test-Startbaustein, nicht
+nur das SCC-Profil; physische Geräte sind damit noch nicht abgenommen.
+
+Ein neuer synthetischer Anruf erreichte nach der Rollen-Korrektur die echte
+SCC-Mitarbeiterfrage, las den erkannten Namen zurück und nahm genau ein Ja auf
+diese Namensfrage an. Die Erkennung änderte dabei den künstlichen Testnamen
+„Testperson“ zu „Testpersonen“; die Rücklesung bewahrte genau diese erkannte
+Fassung. Der erste folgende ServiceNow-Text war eine Planer-Übergangsmeldung.
+Der begrenzte Test endete danach sauber, bevor eine weitere Angabe oder eine
+Bestellfreigabe gesendet wurde. Er belegt somit noch keine vollständige
+Fortsetzung bis zur nächsten echten Fachfrage. Die tatsächlichen Modellläufe
+sind erfolgreich auf Halogen; die Wartezeiten entstehen aus mehreren
+nacheinander ausgeführten ServiceNow-Planungs- und Agentenschritten.
+
 ## Zwei Profile mit unterschiedlichen Aufgaben
 
 | Quelle | Profil | Begrüßungsdatensatz |

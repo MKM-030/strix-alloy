@@ -31,6 +31,41 @@ async function handler({ api, event, helpers, imports }) {
     let iceRetryCount = 0;
     let iceTimeoutId = null;
     let answerReceived = false;
+    let voiceFailed = false;
+
+    function failVoice(message) {
+        if (voiceFailed || window.testVoiceUI.webrtc !== webrtc) return;
+        voiceFailed = true;
+        disconnect();
+        // Detach before native cleanup; observe the close promise ourselves.
+        const context = webrtc.audioContext;
+        webrtc.audioContext = null;
+        if (context && context.state !== 'closed') {
+            Promise.resolve().then(() => context.close()).catch(() => {});
+        }
+        uiUtils.disconnectVoice(window, webrtc);
+        api.setState("isConnectionInProgress", false);
+        Promise.resolve().then(() => helpers.translate(message)).catch(() => message)
+            .then(value => api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
+                items: [{ id: 'auth_request_failure', status: 'critical',
+                    icon: 'exclamation-triangle-outline',
+                    content: { type: 'html', value }, action: { type: 'dismiss' } }]
+            })).catch(() => {});
+    }
+
+    function iceIsReady() {
+        return webrtc.pc && (webrtc.pc.iceConnectionState === 'connected'
+            || webrtc.pc.iceConnectionState === 'completed');
+    }
+
+    function markIceReady() {
+        const firstConnection = !webrtc.isConnected;
+        webrtc.isConnected = true;
+        helpers.timing.clearTimeout(iceTimeoutId);
+        iceTimeoutId = null;
+        if (firstConnection) uiUtils.startCallTimer();
+        api.setState("isConnectionInProgress", false);
+    }
     const remoteCandidateQueue = [];
     window.testVoiceUI.webrtc = webrtc;
     api.setState("callStarted", true);
@@ -140,6 +175,7 @@ async function handler({ api, event, helpers, imports }) {
 
         // Create peer connection without ICE servers — they arrive with the answer
         webrtc.pc = new window.RTCPeerConnection();
+        const peer = webrtc.pc;
 
         webrtc.localStream.getTracks().forEach(track => {
             webrtc.pc.addTrack(track, webrtc.localStream);
@@ -170,7 +206,12 @@ async function handler({ api, event, helpers, imports }) {
             helpers.timing.clearTimeout(iceTimeoutId);
         }
         iceTimeoutId = helpers.timing.setTimeout(async () => {
-            if (!webrtc.isConnected && webrtc.pc && webrtc.pc.iceConnectionState !== 'connected') {
+            if (voiceFailed || webrtc.pc !== peer || window.testVoiceUI.webrtc !== webrtc) return;
+            if (iceIsReady()) {
+                markIceReady();
+                return;
+            }
+            if (!webrtc.isConnected && webrtc.pc) {
                 if (iceRetryCount < MAX_ICE_RETRIES) {
                     iceRetryCount++;
                     if (webrtc.debug)
@@ -202,12 +243,9 @@ async function handler({ api, event, helpers, imports }) {
             if (webrtc.debug)
                 console.log(`ICE Connection State: ${webrtc.pc.iceConnectionState}`);
 
-            if (webrtc.pc.iceConnectionState === 'connected') {
-                webrtc.isConnected = true;
-                helpers.timing.clearTimeout(iceTimeoutId);
-                iceTimeoutId = null;
-                uiUtils.startCallTimer();
-                api.setState("isConnectionInProgress", false);
+            if (voiceFailed || webrtc.pc !== peer || window.testVoiceUI.webrtc !== webrtc) return;
+            if (iceIsReady()) {
+                markIceReady();
             } else if (webrtc.pc.iceConnectionState === 'disconnected' || webrtc.pc.iceConnectionState === 'failed') {
                 helpers.timing.clearTimeout(iceTimeoutId);
                 iceTimeoutId = null;
@@ -226,7 +264,7 @@ async function handler({ api, event, helpers, imports }) {
         };
 
         // Handle incoming audio (from server)
-        webrtc.pc.ontrack = (event) => {
+        webrtc.pc.ontrack = async (event) => {
             if (webrtc.debug) {
                 console.log("ontrack event fired!");
                 console.log(`   Track kind: ${event.track.kind}`);
@@ -237,20 +275,50 @@ async function handler({ api, event, helpers, imports }) {
             }
 
             if (event.streams && event.streams.length > 0) {
-                var audio = window.document.getElementById("webrtc-audio");
-                audio.srcObject = event.streams[0];
-
-                // Close previous AudioContext if any
-                if (webrtc.audioContext) {
-                    webrtc.audioContext.close();
+                if (voiceFailed || webrtc.pc !== peer || window.testVoiceUI.webrtc !== webrtc) return;
+                try {
+                    const audio = window.document.getElementById("webrtc-audio");
+                    if (!audio) throw new Error('Audio element unavailable');
+                    audio.srcObject = event.streams[0];
+                    // Required media playback is independent of the optional analysis graph.
+                    const playback = (async () => audio.play())();
+                    let audioContext;
+                    function retireAnalysis() {
+                        if (!audioContext || webrtc.audioContext !== audioContext) return;
+                        webrtc.audioContext = null;
+                        if (audioContext.state !== 'closed') {
+                            Promise.resolve().then(() => audioContext.close()).catch(() => {});
+                        }
+                    }
+                    try {
+                        // Store ownership before graph setup; native cleanup owns pending resume too.
+                        audioContext = webrtc.audioContext;
+                        if (!audioContext || audioContext.state === 'closed') {
+                            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                            webrtc.audioContext = audioContext;
+                        }
+                        const source = audioContext.createMediaStreamSource(event.streams[0]);
+                        const analyser = audioContext.createAnalyser();
+                        analyser.fftSize = 256;
+                        source.connect(analyser);
+                        if (audioContext.state === 'suspended') {
+                            // Observe separately: optional resume must never gate or delay media.
+                            (async () => audioContext.resume())().then(() => {
+                                if (voiceFailed || webrtc.pc !== peer || window.testVoiceUI.webrtc !== webrtc
+                                        || audioContext.state !== 'running') retireAnalysis();
+                            }, retireAnalysis);
+                        } else if (audioContext.state !== 'running') {
+                            retireAnalysis();
+                        }
+                    } catch (error) {
+                        retireAnalysis();
+                    }
+                    await playback;
+                } catch (error) {
+                    if (webrtc.pc === peer && window.testVoiceUI.webrtc === webrtc) {
+                        failVoice("Voice audio playback could not start. Check browser audio permissions and start a new call.");
+                    }
                 }
-
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const source = audioContext.createMediaStreamSource(event.streams[0]);
-                const analyser = audioContext.createAnalyser();
-                analyser.fftSize = 256;
-                source.connect(analyser);
-                audio.play();
             } else {
                 if (webrtc.debug)
                     console.error('No streams in ontrack event!');
@@ -450,24 +518,34 @@ async function handler({ api, event, helpers, imports }) {
             console.log(`Signaling WebSocket URL: ${wsUrl}`);
         webrtc.signalingWs = new window.WebSocket(wsUrl);
 
+        const socket = webrtc.signalingWs;
         webrtc.signalingWs.onopen = async () => {
             if (webrtc.debug)
                 console.log("Signaling WebSocket connected");
 
             // Create peer connection and send offer
-            setupPeerConnection();
-            await createAndSendOffer();
+            if (voiceFailed || webrtc.signalingWs !== socket || window.testVoiceUI.webrtc !== webrtc) return;
+            try {
+                setupPeerConnection();
+                await createAndSendOffer();
+            } catch (error) {
+                if (webrtc.signalingWs === socket) {
+                    failVoice("Voice signaling could not complete. Start a new call.");
+                }
+            }
         };
 
-        webrtc.signalingWs.onmessage = (event) => {
+        webrtc.signalingWs.onmessage = async (event) => {
             if (webrtc.debug)
                 console.log(`[Signaling WS] Raw message: ${event.data}`);
+            if (voiceFailed || webrtc.signalingWs !== socket || window.testVoiceUI.webrtc !== webrtc) return;
             try {
                 const message = JSON.parse(event.data);
-                handleSignalingMessage(message);
-            } catch (e) {
-                if (webrtc.debug)
-                    console.log(`[Signaling WS] Non-JSON message: ${event.data}`);
+                await handleSignalingMessage(message);
+            } catch (error) {
+                if (webrtc.signalingWs === socket) {
+                    failVoice("Voice signaling could not complete. Start a new call.");
+                }
             }
         };
 
