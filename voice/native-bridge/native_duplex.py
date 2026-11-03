@@ -1312,6 +1312,9 @@ class NativeDuplex:
                         self.call.call_id, type(error).__name__, startup_reason(error))
             return
         self._bootstrap_state = 'ready'
+        publish_metadata = getattr(self.call, 'publish_dialog_metadata', None)
+        if callable(publish_metadata):
+            publish_metadata()
         LOG.info('Voice independent startup call=%s stage=ready pending=%d supplements=%d',
                  self.call.call_id, len(self._pending), len(self._supplements))
         # New caller intent supersedes startup output. Original early data

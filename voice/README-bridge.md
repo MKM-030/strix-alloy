@@ -1,13 +1,28 @@
 # SCC Local Voice bridge
 
-This adapter reuses the standard asynchronous Virtual Agent Bot Integration API. It does not modify or impersonate a supported native ServiceNow Voice provider. Existing HaloGen skills remain in ServiceNow; the local browser supplies utterance-based ASR/TTS. Full duplex, telephony and the native Voice preview are not implemented.
+This component reuses the standard asynchronous Virtual Agent Bot Integration
+API. ServiceNow owns business execution and model capability configuration. The
+native Voice/media integration is documented in [native-bridge/README.md](native-bridge/README.md);
+the standalone local browser below remains a separate utterance-based client.
+
+For profile-bound native callers, a dispatched CREATE has one bounded owner.
+Closing cannot cancel that mutation and race it with END. The validated result
+may establish cleanup ownership after closing has begun, while further startup
+and input remain blocked. Repeated cleanup observations join one END operation.
+An enqueue ACK stays pending until the exact authenticated END completion
+callback arrives; unknown delivery retains ownership. A bounded end-only receipt
+supports the original cookie/CSRF without occupying active capacity. These
+lifecycle observations do not establish business-worker or order completion.
 
 ## Run
 
-Use Python 3.12 and `aiohttp==3.14.3` (the existing server virtualenv is suitable):
+Use the managed launcher described in [native-start/README.md](native-start/README.md)
+for the installed Voice stack. Do not start a duplicate process over its owned
+listeners. For an isolated, previously stopped Bot-only installation, use its
+existing Python 3.12 environment with `aiohttp==3.14.3`:
 
 ```powershell
-& C:\Projects\strix-alloy-clean\server\.local\venv\Scripts\python.exe C:\Projects\strix-alloy-scc-voice\voice\bridge.py --config E:\SCC-Voice\bridge.json
+& C:\Projects\strix-alloy-clean\voice\native-bridge\.venv\Scripts\python.exe C:\Projects\strix-alloy-clean\voice\bridge.py --config E:\SCC-Voice\bridge.json
 ```
 
 Open **http://127.0.0.1:8850/** on the machine. `localhost` is deliberately not an alternative hostname. The UI listens only on loopback. Do not publish port 8850 through a tunnel. Only the separate callback listener on port 8853 may be published through authenticated HTTPS.

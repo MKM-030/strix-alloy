@@ -56,6 +56,21 @@ Die Reihenfolge ist STT/TTS und aktive Stimme, Modell, Gateway, Bot-Bridge/Nativ
 
 Nur eigene Prozesse kontrolliert bei inaktiver Sitzung neu starten. Bestehende fachliche ServiceNow-Anfragen nicht blind wiederholen. Barge-in unterbricht Audio, nicht automatisch die bereits eingereichte Aktion. Ein unklar beendeter eigener Dialog kann die Kapazität bis zur Klärung belegt halten.
 
+Beim Auflegen während der authentisierten Gesprächsanlage behält die Bot-Bridge
+den bereits versandten CREATE-Aufruf bis zu dessen ursprünglicher Frist. Ein
+späteres gültiges Ergebnis dient dann ausschließlich dem gezielten Abschluss;
+es löst weder Refresh noch START oder eine weitere Eingabe aus. END wird einmal
+gesendet. HTTP 202 bedeutet weiterhin „Abschluss läuft“. Erst die authentisierte
+Abschlussmeldung zum exakt gebundenen END kann die Unterhaltung freigeben.
+Eine abgelaufene lokale Anmeldung beweist diesen Abschluss nicht. Das ist kein
+Nachweis über abgeschlossene Fachaufträge oder gestoppte Hintergrundaufgaben.
+
+Die bestehende Metadaten-Nachricht mit den vier CREATE-IDs wird nach erfolgreichem
+Dialogstart auch dann einmal veröffentlicht, wenn der Datenkanal schon vorher
+offen war. Sie dient der Zuordnung von Testprotokollen; sie ist keine neue
+fachliche Autorisierung. Unvollständige IDs und geschlossene Calls werden nicht
+veröffentlicht.
+
 Abnahme auf Android und iPhone jeweils mit Begrüßung, erstem Turn, Folgeturn, Unterbrechung, sauberem Abschluss und neuem Anruf durchführen; LAN, 5G und fremdes WLAN getrennt prüfen. ICE, DTLS und Audio in beide Richtungen müssen funktionieren.
 
 Die optionale RTC-Diagnose ist standardmäßig ausgeschaltet. `SCC_VOICE_MEDIA_DIAGNOSTIC_CALLS=1` begrenzt sie auf einen autorisierten SDK-Call und maximal drei Zustandsaufnahmen. Sie protokolliert keine SDP-, Adress-, Credential- oder Gesprächsinhalte. Andere allgemeine Bibliothekslogs können Netzwerkadressen enthalten und bleiben privat.

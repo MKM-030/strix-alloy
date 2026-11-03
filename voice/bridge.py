@@ -39,6 +39,7 @@ STATIC = Path(__file__).parent / 'static'
 MAX_WAV = 20 * 1024 * 1024
 TERMINAL_DRAIN_SECONDS = 2.0
 CALLER_BOOTSTRAP_SECONDS = 45
+MAX_END_RECEIPTS = 128
 LOG = logging.getLogger('voice-bridge')
 
 
@@ -92,6 +93,10 @@ class Conversation:
     caller_refresh_started: bool = field(default=False, repr=False)
     caller_authorization_task: object | None = field(default=None, repr=False)
     caller_create_request_id: str = field(default='', repr=False)
+    caller_create_task: object | None = field(default=None, repr=False)
+    cleanup_task: object | None = field(default=None, repr=False)
+    cleanup_state: str = ''
+    cleanup_request_id: str = field(default='', repr=False)
     sid: str = field(default_factory=lambda: uuid.uuid4().hex)
     csrf: str = field(default_factory=lambda: secrets.token_urlsafe(32))
     created: float = field(default_factory=time.monotonic)
@@ -313,6 +318,8 @@ class Bridge:
         self.tts_url = 'http://127.0.0.1:8852/v1/audio/speech'
         self.origin = 'http://127.0.0.1:' + str(settings.ui_port)
         self.sessions = {}
+        self.end_receipts = {}
+        self.owned_tasks = set()
         self.http = None
         self.stopping = False
         self.bootstrap_tasks = set()
@@ -323,21 +330,40 @@ class Bridge:
         self.http = ClientSession(timeout=ClientTimeout(total=180), trust_env=False)
         yield
         self.stopping = True
-        for session in self.sessions.values():
-            self.retire_caller_bootstrap(session)
-        if self.bootstrap_tasks:
-            LOG.warning('Bridge startup shutdown unresolved=%d', len(self.bootstrap_tasks))
-        await self.http.close()
+        for session in list(self.sessions.values()):
+            if session.caller_create_request_id:
+                self.begin_owned_cleanup(session)
+            else:
+                self.retire_caller_bootstrap(session)
+        # CREATE and its one ordered END retain the live HTTP transport while
+        # draining their original bounded requests. Unknown delivery stays owned.
+        while self.owned_tasks:
+            await asyncio.gather(*list(self.owned_tasks), return_exceptions=True)
         if self.bootstrap_tasks:
             await asyncio.gather(*list(self.bootstrap_tasks), return_exceptions=True)
+        unresolved = sum(bool(s.caller_create_request_id and not s.ended)
+                         for s in self.sessions.values())
+        if unresolved:
+            LOG.warning('Bridge shutdown cleanup unresolved=%d', unresolved)
+        await self.http.close()
         for session in self.sessions.values():
             self.retire_caller_bootstrap(session)
-            session.caller_user_id = session.caller_email = ''
+            if not session.caller_create_request_id:
+                session.caller_user_id = session.caller_email = ''
 
     def expire(self):
         now = time.monotonic()
+        for sid, (_, completed_at) in list(self.end_receipts.items()):
+            if now - completed_at > self.settings.session_seconds:
+                del self.end_receipts[sid]
         for sid, session in list(self.sessions.items()):
             if now - session.created > self.settings.session_seconds:
+                if session.caller_create_request_id:
+                    if session.ended:
+                        self.finish_owned_cleanup(session)
+                    else:
+                        self.begin_owned_cleanup(session)
+                    continue
                 self.retire_caller_bootstrap(session)
                 session.caller_user_id = session.caller_email = ''
                 del self.sessions[sid]
@@ -364,13 +390,16 @@ class Bridge:
         if request.headers.get('Sec-Fetch-Site') == 'cross-site':
             raise web.HTTPForbidden(text='Cross-site request rejected')
         self.expire()
-        session = self.sessions.get(request.cookies.get('scc_voice', ''))
+        sid = request.cookies.get('scc_voice', '')
+        session = self.sessions.get(sid)
+        receipt = self.end_receipts.get(sid) if request.path == '/api/end' and request.method == 'POST' else None
         request._voice_session = session
+        request._voice_end_receipt = receipt
         if request.path.startswith('/api/') and request.path != '/api/session':
-            if not session:
+            if not session and not receipt:
                 raise web.HTTPUnauthorized(text='Session expired; reload page')
             if request.method != 'GET' and (sent_origin != self.origin or not secrets.compare_digest(
-                    request.headers.get('X-CSRF-Token', ''), session.csrf)):
+                    request.headers.get('X-CSRF-Token', ''), session.csrf if session else receipt[0])):
                 raise web.HTTPForbidden(text='CSRF check failed')
         try:
             response = await handler(request)
@@ -472,6 +501,8 @@ class Bridge:
                     if self.sessions.get(session.sid) is session and session.caller_bootstrap is ticket:
                         session.caller_bootstrap = None
                         self.retire_caller_bootstrap(session)
+                        if session.caller_create_request_id:
+                            self.begin_owned_cleanup(session)
                         if not self.stopping and not session.ending and not session.ended:
                             session.failed = True
                             session.busy = False
@@ -514,12 +545,21 @@ class Bridge:
                     await self.send(session, '', True, 'START_CONVERSATION')
             except BaseException:
                 self.retire_caller_bootstrap(session)
+                if session.caller_create_request_id:
+                    self.begin_owned_cleanup(session)
                 raise
         return web.json_response({'accepted': True}, status=202)
 
     async def reset(self, request):
         await self.json(request)
         old = request._voice_session
+        if old.caller_create_request_id:
+            self.begin_owned_cleanup(old)
+            if not old.ended:
+                return self.owned_cleanup_response(old)
+            self.finish_owned_cleanup(old)
+            request._voice_session = None
+            return await self.session(request)
         old.ending = True
         self.retire_caller_bootstrap(old)
         async with old.lock:
@@ -535,6 +575,18 @@ class Bridge:
     async def end(self, request):
         await self.json(request)
         session = request._voice_session
+        if getattr(request, '_voice_end_receipt', None):
+            response = web.json_response({'ended': True})
+            response.del_cookie('scc_voice', path='/')
+            return response
+        if session.caller_create_request_id:
+            self.begin_owned_cleanup(session)
+            if not session.ended:
+                return self.owned_cleanup_response(session)
+            self.finish_owned_cleanup(session)
+            response = web.json_response({'ended': True})
+            response.del_cookie('scc_voice', path='/')
+            return response
         session.ending = True
         self.retire_caller_bootstrap(session)
         async with session.lock:
@@ -548,6 +600,72 @@ class Bridge:
         response = web.json_response({'ended': True})
         response.del_cookie('scc_voice', path='/')
         return response
+
+    def track_owned_task(self, task):
+        self.owned_tasks.add(task)
+        task.add_done_callback(self.finish_owned_task)
+        return task
+
+    def finish_owned_task(self, task):
+        self.owned_tasks.discard(task)
+        if not task.cancelled() and task.exception() is not None:
+            LOG.warning('Owned conversation operation unresolved type=%s', type(task.exception()).__name__)
+
+    def begin_owned_cleanup(self, session):
+        session.ending = True
+        self.retire_caller_bootstrap(session)
+        if session.cleanup_task is None:
+            session.cleanup_state = 'draining_create'
+            session.cleanup_task = self.track_owned_task(asyncio.create_task(self.drain_owned_cleanup(session)))
+        return session.cleanup_task
+
+    async def drain_owned_cleanup(self, session):
+        # Never wait for the CREATE owner while holding the start handler's lock.
+        try:
+            identity = None
+            if session.caller_create_task is not None:
+                identity = await asyncio.shield(session.caller_create_task)
+            async with session.lock:
+                if session.ended:
+                    return
+                if (self.sessions.get(session.sid) is not session
+                        or session.conversation_binding is None
+                        or identity != self.owned_cleanup_identity(session)):
+                    session.cleanup_state = 'unresolved'
+                    return
+                session.cleanup_state = 'ending'
+                await self.send(session, '', True, 'END_CONVERSATION')
+                if not session.ended:
+                    session.cleanup_state = 'end_enqueued'
+        except (Exception, asyncio.CancelledError):
+            # The remote mutation may have committed. This latch is never replayed.
+            session.cleanup_state = 'unresolved'
+
+    def owned_cleanup_identity(self, session):
+        return ((self.settings.instance_url, self.settings.caller_create_api_path,
+                 self.settings.caller_binding_service_id, self.settings.caller_binding_agent_id,
+                 self.settings.inbound_id, self.bot_url),
+                CallerBinding(session.caller_user_id, session.caller_email),
+                (session.voice_context.get('voice_assistant'),
+                 session.voice_context.get('global_context_profile')), session.sid, session.user_id,
+                session.caller_create_request_id, session.conversation_binding)
+
+    @staticmethod
+    def owned_cleanup_response(session):
+        return web.json_response({'ended': False, 'cleanup': session.cleanup_state}, status=202)
+
+    def finish_owned_cleanup(self, session):
+        session.ended = True
+        session.busy = False
+        session.cleanup_state = 'completed'
+        self.retire_caller_bootstrap(session)
+        session.caller_user_id = session.caller_email = ''
+        if self.sessions.get(session.sid) is session:
+            self.sessions.pop(session.sid)
+        self.end_receipts[session.sid] = (session.csrf, time.monotonic())
+        while len(self.end_receipts) > MAX_END_RECEIPTS:
+            del self.end_receipts[next(iter(self.end_receipts))]
+        session.change.set()
 
     async def message(self, request):
         data = await self.json(request)
@@ -781,6 +899,8 @@ class Bridge:
         session.context_requests.clear()
         session.input_boundary_request_id = session.input_boundary_kind = ''
         session.requests.append(request_id)
+        if action == 'END_CONVERSATION' and session.caller_create_request_id:
+            session.cleanup_request_id = request_id
         session.progress.begin_request(request_id)
         LOG.info('Bot request id=%s action=%s', request_id, action or 'MESSAGE')
         session.busy = True
@@ -825,7 +945,7 @@ class Bridge:
         context = dict(session.voice_context)
         source = (self.settings.instance_url,self.settings.caller_create_api_path,
                   self.settings.caller_binding_service_id,self.settings.caller_binding_agent_id,
-                  self.settings.inbound_id)
+                  self.settings.inbound_id,self.bot_url)
         if (self.settings.caller_create_api_path != CALLER_CREATE_PATH
                 or self.settings.caller_binding_service_id != CALLER_SERVICE_ID
                 or self.settings.caller_binding_agent_id != CALLER_AGENT_ID
@@ -840,38 +960,52 @@ class Bridge:
             raise ValueError('Native caller CREATE unavailable')
         authorization,remaining,deadline = ticket.claim_create()
         session.caller_create_request_id = request_id
-        session.caller_authorization_task = asyncio.current_task()
         request = {'version':1,'requestId':request_id,'clientSessionId':session.sid,
                    'clientMessageId':payload['message']['clientMessageId']}
+        session.caller_create_task = self.track_owned_task(asyncio.create_task(
+            self.run_owned_create(session, request, caller, context, source, ticket,
+                                  authorization, min(deadline, time.monotonic()+min(30,remaining)))))
+        authorization = None
+        await asyncio.shield(session.caller_create_task)
+
+    async def run_owned_create(self, session, request, caller, context, source, ticket,
+                               authorization, deadline):
         try:
-            created = await create_native_caller_conversation(self.settings.instance_url,
-                self.settings.caller_create_api_path,self.sn_token,authorization,dict(request),
-                timeout_seconds=min(30,remaining))
-        except asyncio.CancelledError:
+            async with asyncio.timeout(max(0, deadline-time.monotonic())):
+                created = await create_native_caller_conversation(source[0], source[1],
+                    self.sn_token, authorization, dict(request),
+                    timeout_seconds=max(.001, min(30, deadline-time.monotonic())))
+        except BaseException:
             session.failed = True
             session.busy = False
             raise
         finally:
             authorization = None
-            session.caller_authorization_task = None
-        if (time.monotonic() >= deadline or not ticket.available or session.caller_bootstrap is not ticket
-                or self.sessions.get(session.sid) is not session or self.stopping
-                or session.failed or session.ending or session.ended
+        if (time.monotonic() >= deadline or self.sessions.get(session.sid) is not session
                 or CallerBinding(session.caller_user_id,session.caller_email) != caller
                 or session.voice_context != context
                 or (self.settings.instance_url,self.settings.caller_create_api_path,
                     self.settings.caller_binding_service_id,self.settings.caller_binding_agent_id,
-                    self.settings.inbound_id) != source
-                or session.user_id != 'voice-'+session.sid or session.bootstrap_stage != 'creating'
-                or session.pending_action != 'CREATE_CONVERSATION'
-                or not session.requests or session.requests[-1] != request_id
+                    self.settings.inbound_id,self.bot_url) != source
+                or session.sid != request['clientSessionId'] or session.user_id != 'voice-'+session.sid
+                or session.caller_create_request_id != request['requestId']
+                or session.bootstrap_stage != 'creating' or session.pending_action != 'CREATE_CONVERSATION'
+                or not session.requests or session.requests[-1] != request['requestId']
                 or session.conversation_binding is not None):
             raise ValueError('Native caller CREATE changed')
-        # Revalidate even an injected/helper return before using existing binding logic.
+        # Valid late results establish cleanup ownership, never renewed authority.
         created = validated_created({'result':{'status':'success','created':created}},request)
         self.observe_conversation_binding(session,created)
+        identity = self.owned_cleanup_identity(session)
+        if 'nowSessionId' in created:
+            session.now_session = created['nowSessionId']
+        if (self.stopping or session.ending or session.failed or session.ended
+                or not ticket.available or session.caller_bootstrap is not ticket):
+            self.begin_owned_cleanup(session)
+            return identity
         self.consume(session,created)
-        self.queue_start_created(session,request_id)
+        self.queue_start_created(session,request['requestId'])
+        return identity
 
     async def events(self, request):
         session = request._voice_session
@@ -926,6 +1060,16 @@ class Bridge:
                  'context_alias' if is_alias else 'current' if matched_request_id else 'none',
                  matched_request_id, data.get('completed'),
                  [item.get('uiType') for item in data.get('body', []) if isinstance(item, dict)])
+        if session and session.ending and session.caller_create_request_id:
+            # Existing native completed flag, exact latched END request only.
+            # It proves conversation end, never business-worker/order completion.
+            if (session.cleanup_request_id and data.get('requestId') == session.cleanup_request_id
+                    and current_request_id == session.cleanup_request_id
+                    and data.get('userId') == session.user_id and data.get('completed') is True
+                    and data.get('streamActive') is not True
+                    and data.get('streamState') not in ('START', 'INPROGRESS')):
+                self.finish_owned_cleanup(session)
+            return web.json_response({'ok': True})
         if (session and matched_request_id
                 and not session.ending and not session.failed
                 and (not session.ended or session.completion_deadline)):
@@ -1363,8 +1507,10 @@ async def serve(bridge):
         LOG.info('Local UI ready on port %s; isolated callback on port %s', bridge.settings.ui_port, bridge.settings.callback_port)
         await asyncio.Event().wait()
     finally:
-        await callbacks.cleanup()
-        await ui.cleanup()
+        try:
+            await ui.cleanup()
+        finally:
+            await callbacks.cleanup()
 
 
 if __name__ == '__main__':

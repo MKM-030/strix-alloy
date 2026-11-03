@@ -413,7 +413,7 @@ class Dialog:
             headers['X-SCC-Voice-Authorization'] = caller_authorization
         async with self.http.request(method, self.config.backend_url + path, headers=headers,
                                      allow_redirects=False, **kwargs) as response:
-            if path == '/api/end' and response.status == 401:
+            if path == '/api/end' and response.status == 401 and not self._caller_bootstrap_bound:
                 # Only the trusted loopback owner can declare its cookie expired.
                 return {'ended':True,'expired':True}
             if response.status not in (200, 202):
@@ -749,6 +749,7 @@ class NativeCall:
         self.peer.addTrack(SpeakerTrack(self.playback))
         self.channel = None
         self.pending_events = []
+        self._dialog_metadata_published = False
         self.tasks = set()
         self.turns = asyncio.Queue(maxsize=2)
         self.responsive_attachment_factory = responsive_attachment_factory
@@ -951,14 +952,35 @@ class NativeCall:
                 opened_logged = True
                 LOG.info('Voice transport call=%s stage=datachannel_open pending_events=%d',
                          self.call_id, len(self.pending_events))
-            if any(self.dialog.metadata.values()):
-                self.emit('metadata', self.dialog.metadata)
+            self.publish_dialog_metadata()
             for message in self.pending_events:
                 channel.send(json.dumps(message))
             self.pending_events.clear()
         channel.on('open', opened)
         if channel.readyState == 'open':
             opened()
+
+    def publish_dialog_metadata(self):
+        """Publish the existing private CREATE tuple once, when transport is open."""
+        if (self.closed or self._dialog_metadata_published or self.channel is None
+                or self.channel.readyState != 'open'):
+            return False
+        metadata = getattr(self.dialog, 'metadata', None)
+        fields = {'conversation_id', 'interaction_id', 'creation_message_id', 'create_request_id'}
+        if (type(metadata) is not dict or set(metadata) != fields
+                or not all(type(metadata[key]) is str and re.fullmatch(r'[0-9a-f]{32}', metadata[key])
+                           for key in fields)):
+            return False
+        try:
+            # Dialog owns validation/immutability; this is corroboration only.
+            # Do not consume bounded backlog capacity before channel readiness.
+            self.emit('metadata', dict(metadata))
+        except Exception as error:
+            LOG.warning('Voice transport call=%s stage=metadata_send_failed type=%s',
+                        self.call_id, type(error).__name__)
+            return False
+        self._dialog_metadata_published = True
+        return True
 
     def emit(self, kind, data=None):
         message = {'type':kind}

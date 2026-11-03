@@ -233,7 +233,8 @@ class OwnedCreateBridgeTests(unittest.IsolatedAsyncioTestCase):
             headers={'Authorization':'Bearer callback-secret'})
         response=await self.ui.post('/api/message',json={'text':'Synthetischer Name'},headers=self.headers)
         self.assertEqual(response.status,202)
-        self.assertEqual((await self.ui.post('/api/end',json={},headers=self.headers)).status,200)
+        self.assertEqual((await self.ui.post('/api/end',json={},headers=self.headers)).status,202)
+        await session.cleanup_task
         self.assertEqual([v.get('action') for v in self.sent],['START_CREATED_CONVERSATION',None,'END_CONVERSATION'])
         self.assertEqual(len(headers),3)
         for header in headers:
@@ -241,22 +242,28 @@ class OwnedCreateBridgeTests(unittest.IsolatedAsyncioTestCase):
             self.assertNotIn(fixtures.HEADER,header)
             self.assertNotIn(fixtures.TOKEN,repr(header))
 
-    async def test_end_cancels_pending_owned_create_without_start_or_fallback(self):
-        entered,cancelled=asyncio.Event(),asyncio.Event()
+    async def test_end_drains_pending_owned_create_without_start_or_fallback(self):
+        entered,release=asyncio.Event(),asyncio.Event()
         async def own(*args,**kwargs):
             entered.set()
-            try:await asyncio.Event().wait()
-            except asyncio.CancelledError:cancelled.set();raise
+            await release.wait()
+            return created(args[4])
         self.creator.side_effect=own
         starting=asyncio.create_task(self.start())
         await asyncio.wait_for(entered.wait(),1)
+        session=next(iter(self.bridge.sessions.values()))
         response=await asyncio.wait_for(self.ui.post('/api/end',json={},headers=self.headers),1)
-        await asyncio.gather(starting,return_exceptions=True);await self.settle()
-        self.assertEqual(response.status,200);self.assertTrue(cancelled.is_set())
+        self.assertEqual(response.status,202)
+        self.assertFalse(session.caller_create_task.done())
+        self.assertEqual(self.sent,[])
+        release.set()
+        await starting
+        await session.cleanup_task
         self.assertEqual([v.get('action') for v in self.sent],['END_CONVERSATION'])
+        self.assertFalse(session.ended)
         self.creator.assert_awaited_once();self.refresher.assert_not_awaited()
 
-    async def test_expiration_cancels_pending_create_and_erases_ticket(self):
+    async def test_expiration_bounds_pending_create_and_retains_uncertain_ownership(self):
         entered,cancelled=asyncio.Event(),asyncio.Event()
         async def own(*args,**kwargs):
             entered.set()
@@ -267,25 +274,33 @@ class OwnedCreateBridgeTests(unittest.IsolatedAsyncioTestCase):
             starting=asyncio.create_task(self.start())
             await asyncio.wait_for(entered.wait(),1)
         await asyncio.wait_for(cancelled.wait(),1)
-        await asyncio.gather(starting,return_exceptions=True)
+        response=await starting
+        self.assertEqual(response.status,502)
         session=next(iter(self.bridge.sessions.values()))
         self.assertTrue(session.failed);self.assertIsNone(session.caller_bootstrap)
+        self.assertIsNotNone(session.caller_create_task)
         self.assertEqual(self.sent,[]);self.refresher.assert_not_awaited()
+        response=await self.ui.post('/api/end',json={},headers=self.headers)
+        self.assertEqual(response.status,202)
+        self.assertIn(session.sid,self.bridge.sessions)
 
-    async def test_reset_cancels_owned_create_before_replacing_private_cookie(self):
-        entered,cancelled=asyncio.Event(),asyncio.Event()
+    async def test_reset_retains_pending_create_and_original_private_cookie(self):
+        entered,release=asyncio.Event(),asyncio.Event()
         async def own(*args,**kwargs):
             entered.set()
-            try:await asyncio.Event().wait()
-            except asyncio.CancelledError:cancelled.set();raise
+            await release.wait()
+            return created(args[4])
         self.creator.side_effect=own
         starting=asyncio.create_task(self.start());await asyncio.wait_for(entered.wait(),1)
         old=next(iter(self.bridge.sessions.values()))
         response=await asyncio.wait_for(self.ui.post('/api/reset',json={},headers=self.headers),1)
-        await asyncio.gather(starting,return_exceptions=True);await self.settle()
-        self.assertEqual(response.status,200);self.assertTrue(cancelled.is_set())
-        self.assertNotIn(old.sid,self.bridge.sessions)
-        self.assertEqual(old.caller_user_id,'');self.assertEqual(old.caller_email,'')
+        self.assertEqual(response.status,202)
+        self.assertIs(self.bridge.sessions[old.sid],old)
+        self.assertTrue(old.caller_user_id)
+        self.assertEqual(self.sent,[])
+        release.set()
+        await starting
+        await old.cleanup_task
         self.assertEqual([v.get('action') for v in self.sent],['END_CONVERSATION'])
         self.refresher.assert_not_awaited()
 
