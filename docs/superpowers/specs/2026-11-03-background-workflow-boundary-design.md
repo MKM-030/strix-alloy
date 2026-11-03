@@ -85,6 +85,12 @@ executions in a complete, ordinarily readable plan/task/tool projection. A
 tool execution before any supplied name is a failed boundary, even if a name
 question follows. Stop and close the owned conversation; do not advance input.
 Absent/denied tool metadata means this condition is unknown, never zero.
+For this absence test, enumerate the exact bounded projection with ordinary
+domain-respecting GlideRecord and require record.canRead plus all field.canRead
+checks before reading values on every returned row. Silent row filtering by
+GlideRecordSecure cannot establish completeness. A denied row stops with
+unknown evidence; never read its values, switch privilege or retry via another
+access mechanism.
 
 Offline tests must cover preflight denial, falsey readable fields, malformed or
 lost submission response, duplicate dispatch, changed principal/target/session,
