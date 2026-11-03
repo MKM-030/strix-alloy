@@ -1,14 +1,14 @@
 # Capability-Modellzuordnungen verwalten
 
-Die beiden eigenständigen Skripte verwalten die ServiceNow-Konfiguration für vorhandene Capabilities. [SwitchCapabilityModels.fix.js](../../servicenow/byollm/capability-model-management/SwitchCapabilityModels.fix.js) ändert bestehende Modellzuordnungen; [AddCapabilityModel.background.js](../../servicenow/byollm/capability-model-management/AddCapabilityModel.background.js) ergänzt eine neue Modellalternative mit Definition, Prompt-Konfiguration und Verknüpfungen. Beide beginnen mit einer Vorschau (`apply: false`).
+Drei eigenständige Skripte verwalten die ServiceNow-Konfiguration für vorhandene Capabilities. [RegisterCapabilityModel.background.js](../../servicenow/byollm/capability-model-management/RegisterCapabilityModel.background.js) registriert optional zuerst ein neues Modell mit eigenem Transformer unter einer bestehenden geprüften Custom-LLM-Implementierung. [AddCapabilityModel.background.js](../../servicenow/byollm/capability-model-management/AddCapabilityModel.background.js) ergänzt für ein registriertes Modell eine Capability-Alternative mit Definition, Prompt-Konfiguration und Verknüpfungen. [SwitchCapabilityModels.fix.js](../../servicenow/byollm/capability-model-management/SwitchCapabilityModels.fix.js) ändert bestehende Modellzuordnungen. Alle beginnen mit einer Vorschau (`apply: false`); Add und Switch bleiben eigenständige, unveränderte Schritte.
 
-Die Modellregistrierung, Capability-Auswahl und Veröffentlichung bleiben in ServiceNow AI Control Tower / Skill Kit. Die Skripte laden oder starten kein lokales Modell. Der zentrale lokale Controller muss das tatsächlich gewählte Modell separat bedienen können. Dialog, Agent-Schritte, STT und TTS behalten ihre getrennten Konfigurationen.
+Registrierung, Aktivierung, Capability-Auswahl und Veröffentlichung bleiben getrennte sichtbare Schritte in ServiceNow AI Control Tower / Skill Kit. Die Skripte laden oder starten kein lokales Modell. Der zentrale lokale Controller muss das tatsächlich gewählte Modell separat bedienen können. Dialog, Agent-Schritte, STT und TTS behalten ihre getrennten Konfigurationen. Normale native Regeln für Metadatenkennzeichen und Suchindizierung können bei der Registrierung Infrastrukturänderungen auslösen; daraus folgt weder ein Inferenzaufruf noch ein Nachweis von Cloud-Inferenz.
 
 ## Vorbereiten und Ergebnis lesen
 
 Die Dateien sind vollständige serverseitige ES5-Skripte für **Global**. Das Switch-Skript kann als Fix Script oder unter **Scripts - Background** ausgeführt werden; das Add-Skript ist für **Scripts - Background** vorbereitet. Den Parameterblock anpassen und zunächst die gesamte Datei mit `apply: false` ausführen. Beim Add-Skript wird auch für die Vorschau die Rolle `admin` verlangt. Eine Vorschau kann wegen fehlender Lese- oder Schreibrechte ablehnen: Sie prüft die Voraussetzungen des geplanten Schreibwegs bereits vorab.
 
-`targetModel` ist der genaue Wert von `sys_generative_ai_model_config.model`, beispielsweise `halogen-v2` oder `Gemma 4 26B-A4B`. Ein Anzeigename oder Dateiname reicht nicht. Die aktive Registrierung muss bereits vorhanden sein, einschließlich Custom-LLM-Provider-Mapping, Flow-Implementierung, Connection Alias sowie Request-/Response-Transformer. Diese Skripte erstellen keine Modellregistrierung oder Zugangsdaten. Andere Modelle funktionieren über denselben geprüften Custom-LLM-Vertrag; beliebige andere Provider-Implementierungen sind nicht abgedeckt.
+`targetModel` ist der genaue Wert von `sys_generative_ai_model_config.model`, beispielsweise `halogen-v2` oder `Gemma 4 26B-A4B`. Ein Anzeigename oder Dateiname reicht nicht. Für Add und Switch muss die aktive Registrierung bereits vorhanden sein, einschließlich Custom-LLM-Provider-Mapping, Flow-Implementierung, Connection Alias sowie Request-/Response-Transformer. Der optionale Registrar erstellt die Modellregistrierung und ihren eigenen Transformer, jedoch keine Provider-Implementierung, Verbindung oder Zugangsdaten. Andere Modelle funktionieren über denselben geprüften Custom-LLM-Vertrag; beliebige andere Provider-Implementierungen sind nicht abgedeckt.
 
 Bei mehrdeutigen Namen die passende Registrierung mit `modelConfigId`, gegebenenfalls zusätzlich `providerMappingId` und `providerId`, auswählen. Die Werte sind `sys_id`s der jeweiligen Tabellen:
 
@@ -83,6 +83,47 @@ updateSetIdsByScope: {
 
 Platzhalter durch echte 32-stellige IDs ersetzen. Die Anwendung jedes Update Sets muss zum jeweiligen Zieldatensatz passen. Die Sets dürfen nur passende `INSERT_OR_UPDATE`-Einträge ohne eingebettete Löschaktionen enthalten. Das Skript wählt sie mit dem nativen Update-Set-Setter, erfasst und prüft jeden Customer Update und stellt die vorherige Auswahl abschließend wieder her. Reines Speichern der Benutzerpräferenz ist kein Ersatz für diesen nativen Setter.
 
+## Optional zuerst ein neues Modell registrieren
+
+Der Registrar ist ein vollständiges ES5-Skript für **Global / Scripts - Background**. Er legt genau eine neue `sys_generative_ai_model_config` und einen eigenen `sys_generative_ai_custom_llm_transformer` an. Bestehende Modell- und Transformer-Zeilen, Provider, Flows und Aliasse bleiben erhalten. Request- und Response-Inhalt werden exakt aus dem ausdrücklich ausgewählten, geprüften Quelltransformer übernommen; dessen Zeile wird weder geteilt noch auf das neue Modell umgehängt. Diese Adapter müssen fachlich zum neuen Modell passen. `maxTokens`, Thinking, Function Calling und Logging sind eigenständig zu prüfende Vertragsangaben, keine vom Quellmodell geerbten Fähigkeiten.
+
+Im `PARAMETERS`-Block die tatsächlichen Instanzwerte einsetzen und zuerst `apply: false` ausführen:
+
+```javascript
+apply: false,
+targetModel: '<exakte neue Modellkennung>',
+displayName: '<Anzeigename>',
+sourceModelConfigId: '<bestehende aktive Custom-LLM-Modell-sys_id>',
+sourceTransformerId: '<deren Transformer-sys_id>',
+providerMappingId: '<bestehendes Mapping des Quellmodells>',
+providerId: '<zugehöriger sys_gen_ai_provider>',
+connectionAliasId: '<bestehender Connection Alias des Quellmodells>',
+capabilityIds: ['<ausgewählte Capability-sys_id>'],
+maxTokens: 8192,              // Beispielwert durch den geprüften Modellvertrag ersetzen.
+outputTokenSize: null,       // Optional: geprüfte positive Obergrenze <= maxTokens.
+active: false,
+thinkingEnabled: false,
+enableFunctionCalling: false,
+loggingEnabled: false,
+logSamplingPercentage: 100,
+expectedSourceGraphHash: '',
+expectedRequestHash: '',
+expectedResponseHash: '',
+updateSetId: ''
+```
+
+Die Vorschau schreibt keine Datensätze und wählt kein Update Set. Sie prüft schon die tatsächlichen neuen Datensatz-Prototypen, Global-Eigentum, Lese-/Create-/Feldschreibrechte, Dictionary-Vertrag und native Defaults. Dafür muss der **Application Picker tatsächlich auf Global** stehen. Fehlende Rechte führen zur Ablehnung; der Registrar besitzt keinen administrativen Ersatzschreibweg und ändert keine ACLs oder Rollen. Der normale sichere `newRecord()`/`insert()`-Weg entspricht dem belegten klassischen Submit-Grundbaustein und behält Business Rules bei. Der native UI-Wrapper wird wegen seiner `false || true`-Umwandlung für inaktive Anlage nicht verwendet.
+
+Das JSON-Protokoll trägt `[CAPABILITY_MODEL_REGISTER]`. Es enthält erlaubte Planwerte, IDs, Revisionen und SHA-256-Hashes, jedoch keine Transformer-Skripte oder Zugangsdaten. Den ausgewählten Quellinhalt separat vollständig prüfen. Für Apply die Vorschauwerte `source.graphHash`, `source.requestHash` und `source.responseHash` exakt als `expectedSourceGraphHash`, `expectedRequestHash` und `expectedResponseHash` übernehmen. Jede Änderung des geprüften Quellgraphen oder Inhalts verlangt eine neue Prüfung. Beide Skriptfelder dürfen jeweils höchstens **4.000 Zeichen** enthalten; leere Inhalte, native Platzhalter und abgeschnittener Rückleseinhalt werden abgelehnt.
+
+Für Apply zusätzlich ein vorhandenes **Global-Root-Update-Set ohne Parent im Status In progress** als `updateSetId` setzen. Der Registrar wählt es nativ, prüft jeden Customer Update auf die Anwendung Global, vollständige Feldwerte und ausschließliche `INSERT_OR_UPDATE`-Aktionen und stellt die vorherige Auswahl wieder her. Scope, Package und Schutzstatus sind Pflichtprüfungen der Modell- und Transformer-Zeilen; für Update Set und Customer Update gilt deren eigenes `application`-Feld. Vor `Applied` und einer bereiten Add-Übergabe werden beide aufgezeichneten Datensätze nochmals gegen die aktuellen Zielsnapshots geprüft. Ein inzwischen veralteter Capture ergibt `Partial`; er wird nicht automatisch neu aufgezeichnet. Ein fehlgeschlagener Insert, unklare Rücklesung, unerwartete native Kinder, falsche Aufzeichnung oder fehlgeschlagene Wiederherstellung ergeben `Partial` mit `writeAttempts`, abgeschlossenen `writes`, `captures`, `observedTargets` und Historieninventar. Ein Abbruch vor dem ersten Insert ergibt `Refused`; eine fehlgeschlagene Wiederherstellung der Update-Set-Auswahl bleibt auch ohne Insert `Partial`. Kein automatischer Wiederholungslauf und keine bereinigenden Löschungen folgen.
+
+Neue Registrierungen bleiben standardmäßig **inaktiv mit leerem Lifecycle**. Ein Lifecycle-Wert `draft` existiert hier nicht und wird nicht erfunden. `model_source=customer` und `usage_mode=none` müssen als native schreibgeschützte Defaults vorhanden sein; das Skript schreibt sie ebenso wenig wie Scope oder Package. `preceding_model_config` und `sys_overrides` bleiben leer. Zielbezogene Modellversion-Mappings sowie eingehende Vorgänger-/Override-Beziehungen werden vor und nach der Anlage inventarisiert. Unerwartete Kinder bleiben zur Untersuchung erhalten. Es wird keine Hersteller- oder Quellhistorie kopiert, insbesondere keine der sieben alten Halogen-Zuordnungen.
+
+Das Ergebnis `handoff` nennt `targetModel`, `modelConfigId`, `providerMappingId`, `providerId`, die ausgewählten `capabilityIds` und `readyForAdd`. Eine Vorschau und eine inaktive Anlage melden `readyForAdd: false`. Das neue Modell anschließend nativ prüfen und aktivieren. Wer die aktive Registry-Anlage ausdrücklich als Teil des geprüften Plans möchte, kann `active: true` wählen; dann wird genau `active=true` mit `lifecycle_state=active` angelegt. Erst eine vollständig geprüfte aktive Registrierung kann `readyForAdd: true` melden. Diese Bereitschaft betrifft den registrierten Zielgraphen; Add prüft seine eigenen Capability- und Promptvoraussetzungen weiterhin selbst. Es werden weder Capabilities ausgewählt oder veröffentlicht noch Modelle gestartet.
+
+Ein vollständig identischer eigener Zielgraph mit belegter sicherer Aufzeichnung liefert `NoOp`. Abweichende, unvollständige oder mehrdeutige Ziele werden abgelehnt. Auch ein anderes Provider-Mapping mit derselben Flow-Implementierung darf dieselbe Modellkennung nicht ein zweites Mal verwenden. Die Vorabfrage stellt keine atomare Datenbank-Eindeutigkeit her; erkannte Rennen ergeben `Partial` und verlangen eine frische Bestandsprüfung. Die in der Vorschau erzeugten neuen IDs sind Vorschauidentitäten; maßgeblich sind die tatsächlich bestätigten IDs des Apply-Ergebnisses.
+
 ## Modellalternative ergänzen
 
 Das Add-Skript ergänzt ein **bereits registriertes** Modell für 1 bis 100 ausdrücklich ausgewählte vorhandene Capabilities. Es erstellt keine neue Capability oder Skill-Kopie. Quellen sind passende aktive Now-LLM-Definitionen; standardmäßig muss genau ein aktueller Standardprompt eindeutig ausgewählt werden können.
@@ -141,15 +182,15 @@ Das Switch-Skript lehnt unvereinbare beziehungsweise nachweislich kopierte **Pro
 
 ## Berechtigungen und Teilfehler
 
-Standardmäßig erfolgen Schreibzugriffe über `GlideRecordSecure`. Wenn die Vorschau für eine konkret geprüfte eigene Konfiguration fehlende Schreibrechte zeigt, kann `allowAdminMaintenance: true` ausdrücklich den administrativen `GlideRecord`-Schreibweg erlauben. Dieser verlangt `admin`, behält sichere Vorprüfungen und normale Business Rules bei und ändert keine Rollen, ACLs oder Schutzregeln. Geschützte Herstellerziele bleiben ausgeschlossen.
+Standardmäßig erfolgen Schreibzugriffe über `GlideRecordSecure`. Ausschließlich bei Switch und Add kann `allowAdminMaintenance: true` ausdrücklich den administrativen `GlideRecord`-Schreibweg erlauben, wenn die Vorschau für eine konkret geprüfte eigene Konfiguration fehlende Schreibrechte zeigt. Dieser verlangt `admin`, behält sichere Vorprüfungen und normale Business Rules bei und ändert keine Rollen, ACLs oder Schutzregeln. Geschützte Herstellerziele bleiben ausgeschlossen. Der Registrar erlaubt ausschließlich `GlideRecordSecure` und keinen solchen Ersatzweg.
 
 Revisionen und Beziehungen werden vor Änderungen erneut geprüft; das ist keine Datenbanktransaktion. Insbesondere können Datensatzrechte nativ erzeugter Kinder erst nach deren Anlage vollständig geprüft werden. Deshalb sind `partial_or_uncertain` beim Switch beziehungsweise `Partial` beim Add keine Erfolgsmeldungen. Dann anhand von `attempted`/`writeAttempts`, abgeschlossenen Änderungen, Customer Updates und frischen Rücklesungen den tatsächlichen Stand ermitteln; keinen automatischen Wiederholungslauf starten. Auch eine fehlgeschlagene Wiederherstellung der Update-Set-Auswahl wird ausdrücklich gemeldet.
 
-Switch-Ergebnisse sind `preview`, `applied`, `no_op`, `aborted` oder `partial_or_uncertain`; Add-Ergebnisse sind `Preview`, `Applied`, `NoOp`, `Refused` oder `Partial`. Native Prüfungen können nach Plattformänderungen bewusst mit einem nicht unterstützten Schema-/Generatorvertrag abbrechen. Dann die aktuelle native Implementierung neu prüfen, statt die Prüfung zu entfernen.
+Switch-Ergebnisse sind `preview`, `applied`, `no_op`, `aborted` oder `partial_or_uncertain`; Add- und Registrar-Ergebnisse sind `Preview`, `Applied`, `NoOp`, `Refused` oder `Partial`. Native Prüfungen können nach Plattformänderungen bewusst mit einem nicht unterstützten Schema-/Generatorvertrag abbrechen. Dann die aktuelle native Implementierung neu prüfen, statt die Prüfung zu entfernen.
 
 ## Lieferumfang und geprüfte Grenze
 
-Zu beiden Dateien gehören ausführbare lokale Tests: [Switch-Tests](../../servicenow/byollm/capability-model-management/switch-capability-models.test.cjs) und [Add-Tests](../../servicenow/byollm/capability-model-management/add-capability-model.test.cjs). Sie prüfen unter anderem Vorschau, Auswahl, Mehrdeutigkeit, Historie, Drift, Schreibrechte, native Kinder, Aufzeichnung und Teilfehler. Sie ersetzen keine Prüfung einer konkret ausgewählten Instanzkonfiguration.
+Zu allen drei Dateien gehören ausführbare lokale Tests: [Switch-Tests](../../servicenow/byollm/capability-model-management/switch-capability-models.test.cjs), [Add-Tests](../../servicenow/byollm/capability-model-management/add-capability-model.test.cjs) und [Registrar-Tests](../../servicenow/byollm/capability-model-management/register-capability-model.test.cjs). Sie prüfen unter anderem Vorschau, Auswahl, Mehrdeutigkeit, Historie, Drift, Schreibrechte, native Kinder, Aufzeichnung und Teilfehler. Sie ersetzen keine Prüfung einer konkret ausgewählten Instanzkonfiguration. Für den Registrar wurde hier ausschließlich lokal mit simulierten Plattformdatensätzen getestet; weder native Registrar-Vorschau noch Apply, Aktivierung, Add-Übergabe oder Modellbetrieb wurden ausgeführt.
 
 Die Skripte wurden für wiederverwendbare Wartung erstellt; ein allgemeiner Add- oder Switch-Massenlauf wurde damit nicht ausgeführt. Eine native Switch-Vorschau für VA Input Response Generation mit Halogen wurde ohne Schreibzugriff geprüft. Sie meldete zwei aktive veröffentlichte Prompts: den bereits auf Halogen korrigierten Standardprompt und einen weiterhin Gemma zugeordneten Prompt ohne Standardbindung. Die separat freigegebene punktuelle Korrektur betraf nur den Standardprompt; die breitere Vorschau wurde nicht angewendet.
 
