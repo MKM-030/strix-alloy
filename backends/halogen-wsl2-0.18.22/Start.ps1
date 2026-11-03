@@ -5,6 +5,9 @@ param(
     [ValidateSet('w4b','v2')][string]$Checkpoint='v2',
     [ValidateSet('Off','Exact','Flexible')][string]$PromptCache='Off',
     [ValidateRange(4096,262144)][int]$ContextSize=262144,
+    [ValidateSet(1,2)][int]$Slots=1,
+    [ValidateSet(32768,65536)][int]$KvPoolPositions,
+    [switch]$DisableVision,
     [ValidateRange(1,3)][int]$DraftTokens,
     [ValidateSet(2048,4096,8192,16384,32768)][int]$PrefillChunk,
     [ValidateSet(2048,4096,8192,16384,32768)][int]$MaxPrefillTokens,
@@ -29,7 +32,7 @@ if ($Logs) {
     exit 0
 }
 if ($Profile -ne 'Serve') {
-    if ($PSBoundParameters.ContainsKey('ApiDefaultsJson') -or $PSBoundParameters.ContainsKey('SpeculationPolicyJson') -or $PSBoundParameters.ContainsKey('MatmulTuningJson') -or $PSBoundParameters.ContainsKey('KernelControlsJson') -or $PSBoundParameters.ContainsKey('PrefillChunk') -or $PSBoundParameters.ContainsKey('MaxPrefillTokens') -or $PrefillKeepTrunk -or $PSBoundParameters.ContainsKey('AdmitTicks') -or $PSBoundParameters.ContainsKey('DraftTokens') -or $PromptCache -ne 'Off' -or $Checkpoint -ne 'w4b' -or $PSBoundParameters.ContainsKey('PromptCache') -or $Stop -or $Status -or $PSBoundParameters.ContainsKey('ContextSize')) {
+    if ($PSBoundParameters.ContainsKey('Slots') -or $PSBoundParameters.ContainsKey('KvPoolPositions') -or $DisableVision -or $PSBoundParameters.ContainsKey('ApiDefaultsJson') -or $PSBoundParameters.ContainsKey('SpeculationPolicyJson') -or $PSBoundParameters.ContainsKey('MatmulTuningJson') -or $PSBoundParameters.ContainsKey('KernelControlsJson') -or $PSBoundParameters.ContainsKey('PrefillChunk') -or $PSBoundParameters.ContainsKey('MaxPrefillTokens') -or $PrefillKeepTrunk -or $PSBoundParameters.ContainsKey('AdmitTicks') -or $PSBoundParameters.ContainsKey('DraftTokens') -or $PromptCache -ne 'Off' -or $Checkpoint -ne 'w4b' -or $PSBoundParameters.ContainsKey('PromptCache') -or $Stop -or $Status -or $PSBoundParameters.ContainsKey('ContextSize')) {
         throw 'Legacy 4K qualification profiles do not accept service controls or ContextSize.'
     }
     $duration=if($PSBoundParameters.ContainsKey('ServeSeconds')){$ServeSeconds}else{300}
@@ -37,6 +40,9 @@ if ($Profile -ne 'Serve') {
 } else {
     $arguments=@('-u','-B',(Join-Path $PSScriptRoot 'scripts/service.py'),
         '--checkpoint',$Checkpoint,'--prompt-cache',$PromptCache,'--context-size',"$ContextSize",'--serve-seconds',"$ServeSeconds",'--startup-timeout',"$StartupTimeoutSeconds")
+    if($PSBoundParameters.ContainsKey('Slots')){$arguments+=@('--slots',"$Slots")}
+    if($PSBoundParameters.ContainsKey('KvPoolPositions')){$arguments+=@('--kv-pool-positions',"$KvPoolPositions")}
+    if($DisableVision){$arguments+='--disable-vision'}
     if($PSBoundParameters.ContainsKey('DraftTokens')){$arguments+=@('--draft-tokens',"$DraftTokens")}
     if($PSBoundParameters.ContainsKey('PrefillChunk')){$arguments+=@('--prefill-chunk',"$PrefillChunk")}
     if($PSBoundParameters.ContainsKey('MaxPrefillTokens')){$arguments+=@('--max-prefill-tokens',"$MaxPrefillTokens")}
