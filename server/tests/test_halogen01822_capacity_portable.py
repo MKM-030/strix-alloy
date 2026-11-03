@@ -70,6 +70,40 @@ class CapacityTests(unittest.TestCase):
             '--slots',str(slots),'--kv-pool-positions',str(pool),
             '--prefill-chunk','8192','--max-prefill-tokens','8192'])
 
+    def launch_admission(self, profile):
+        controller.validate_halogen_capacity_profile(profile,REPO)
+        engine=profile['engine']
+        command=controller.halogen_launch_command(engine,controller.validate_engine(engine,REPO))
+        options=self.service.options(command[4:])
+        floors=self.service.floors(options.context_size,options.checkpoint,options.disable_vision,
+                                  **self.service.capacity_options(options))
+        return options,floors
+
+    def test_concurrency2_requires_complete_engine_capacity_before_launch_admission(self):
+        for fields in ({},{'slots':1},{'kv_pool_positions':32768}):
+            profile=json.loads((FIXTURES/'halogen01822-capacity-text32k-profile.json').read_text())
+            profile['concurrency']=2
+            profile['backend']['expected']['capability_probe']='ok'
+            profile['engine']['python_executable']=sys.executable
+            profile['engine'].update(fields)
+            with self.subTest(fields=fields),self.assertRaisesRegex(
+                    ValueError,'concurrency 2 requires explicit slots and kv_pool_positions'):
+                self.launch_admission(profile)
+
+    def test_launch_admission_keeps_singleton_and_explicit_queued_control_floors(self):
+        profile=json.loads((FIXTURES/'halogen01822-capacity-text32k-profile.json').read_text())
+        profile['engine']['python_executable']=sys.executable
+        options,floors=self.launch_admission(profile)
+        self.assertFalse(self.service.explicit_capacity(options))
+        self.assertEqual(floors,(30,124))
+        profile['concurrency']=2
+        profile['engine'].update(slots=1,kv_pool_positions=32768)
+        profile['backend']['expected']['capability_probe']='ok'
+        options,floors=self.launch_admission(profile)
+        self.assertTrue(self.service.explicit_capacity(options))
+        self.assertEqual((options.slots,options.kv_pool_positions),(1,32768))
+        self.assertEqual(floors,(30,131))
+
     def test_default_capacity_is_unchanged_at_all_existing_contexts(self):
         for context in (4096,4097,32768,262144):
             for checkpoint in ('v2','w4b'):

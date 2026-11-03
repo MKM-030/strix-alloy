@@ -335,6 +335,8 @@ def validate_halogen_capacity_profile(configuration, repo):
         return  # Historical backends retain their existing gateway policy.
     if type(concurrency) is not int or concurrency not in (1, 2):
         raise ValueError('Halogen capacity requires integer concurrency 1 or 2')
+    if concurrency == 2 and not all(key in engine for key in ('slots', 'kv_pool_positions')):
+        raise ValueError('Halogen concurrency 2 requires explicit slots and kv_pool_positions')
     if configuration.get('minimum_reserve_gib') != 18:
         raise ValueError('Capacity opt-in requires the unchanged 18 GiB reserve')
     if engine.get('context') != 32768:
