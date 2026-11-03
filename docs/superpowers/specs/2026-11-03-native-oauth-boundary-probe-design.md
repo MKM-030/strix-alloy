@@ -95,7 +95,13 @@ Conversation rows contain `id,consumerId,accountId,vendorId,profileId,deviceId,
 state,createdMs,updatedMs,modCount`. Session rows contain
 `id,consumerId,accountId,vendorId,deviceId,deviceType,createdMs`. All returned
 rows are proven owned through actual current-GS consumer/account relationships;
-only safe IDs are exported. Query with normal GlideRecord and check each row
+only safe IDs are exported. Empty reference fields become null, but each row
+must have a proven own consumer or account; nonempty references must be32hex.
+Historical device strings are compared in memory: `deviceId` is the requested
+generated UUID on exact equality and null otherwise. Historical device values
+are never exported. `deviceType` retains the source-known `mweb`, `ios`,
+`android`, `nowassistpanel` values and is null otherwise. Matching candidates
+must still satisfy every fixed tuple field in the protocol. Query with normal GlideRecord and check each row
 and required element before reading values, so denied rows cannot vanish into
 an apparently complete secure-query snapshot. Include the known union of own
 consumer and user-profile account paths. Active states are `open`,
@@ -149,6 +155,49 @@ One exclusive explicit-execution marker precedes network/credential actions.
 The final independent metadata read establishes terminal conversation state
 and own-active count separately from End ACK/TopicFinished. Do not infer native
 session retirement from end_time, conversation completion or a local counter.
+
+The protocol returns exactly `{report,residue}`. `report` is public-safe with
+exact keys `version,status,failureCode,native,metadata,durations,limitations`.
+`version` is1; status is `passed`, `refused`, `failed` or `uncertain`. `native`
+has `createAttempted,createHttpStatus,authenticatedFlag,freshBindingProven,
+endAttempted,endHttpStatus,endAcknowledged,topicFinished,syncPolls`; status
+fields are null or HTTP100..599, authenticatedFlag null or boolean, syncPolls
+an integer0..6, other fields booleans. `metadata` has
+`beforeComplete,afterComplete,terminalComplete,principalMatches,
+unexpectedInitialization,terminalConversation,activeConversations,
+unknownStates,ownedDeviceConversations,ownedDeviceSessions,unownedDeviceRows,
+messages,plans,genai,tools`; first four booleans, next two null/boolean, rest
+null/nonnegative bounded integers. Counts reflect the final complete snapshot
+available, and `unexpectedInitialization` is true if any observed plans,
+genai or tools are nonzero, false only with available evidence, otherwise null.
+`durations` has `beforeMs,createMs,verifyMs,endMs,syncMs,terminalMs,totalMs`,
+each null or finite nonnegative integer milliseconds. `limitations` always
+has `ambMappingIndependent:false,serverInitializationGuaranteedFalse:false,
+sessionRetirementProven:false`. No raw identifier/hash/error is public.
+`residue` is private-only, exactly `attemptId,deviceId,conversationIds,sessionIds`,
+using generated UUIDs and independently proven own device-row IDs only.
+
+Protocol failureCode is null or `INVALID_CONFIG`, `CANCELLED`, `TIMEOUT`,
+`PRECHECK_REFUSED`, `IDENTITY_MISMATCH`, `HTTP_ERROR`, `REDIRECT`,
+`RESPONSE_LIMIT`, `INVALID_RESPONSE`, `INVALID_BINDING`, `UNAUTHENTICATED`,
+`EXISTING_CONVERSATION`, `INVALID_SEQUENCE`, `BINDING_UNPROVEN`,
+`UNEXPECTED_INITIALIZATION`, `ACTIVITY_UNAVAILABLE`, `CLEANUP_UNCONFIRMED`,
+`TERMINAL_UNCONFIRMED`, `REQUEST_FAILED`. Retain the first failure. `passed`
+requires no failure, authenticated null flag plus independently fresh binding,
+End ACK, TopicFinished, complete terminal metadata showing terminal exact own
+conversation and no own active/unknown states, and no observed initialization.
+A pre-create refusal is `refused`; any ambiguous create or unconfirmed cleanup
+is `uncertain`; a measured failure with proven terminal cleanup is `failed`.
+Create HTTP rejection does not prove absence of side effects; still perform
+bounded device metadata correlation and keep that limitation honest.
+
+Cleanup reserve45s starts once create settles, fails or times out; it never
+inherits user cancellation. Reserve the final15s for terminal metadata, using
+remaining budgets for after-proof, End and at most six sync reads. The caps
+are maxima, not an entitlement to all six polls. If proof is refused, retain
+safe residue and skip End. A subsequent terminal read cannot retrospectively
+authorize End or erase an earlier uncertainty. Unknown activity prevents pass
+but does not prohibit cleanup of an independently proven fresh own tuple.
 
 ## Evidence
 
