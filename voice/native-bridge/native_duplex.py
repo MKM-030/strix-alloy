@@ -9,7 +9,7 @@ from collections import deque
 from dataclasses import dataclass, replace
 import importlib.util
 import logging
-from startup_reason import startup_reason
+from startup_reason import startup_reason, caller_create_failure_notice
 import math
 from pathlib import Path
 import re
@@ -429,6 +429,7 @@ class NativeDuplex:
         self._bootstrap_onset = None
         self._incoming_turn = None
         self._backend_unavailable = False
+        self._bootstrap_failure_reason = ''
         self._automatic_progress_seen = set()
         self._workers = set()
         self._invalidations = set()
@@ -662,6 +663,9 @@ class NativeDuplex:
                     'Ihre Angaben bleiben bis zur Bereitschaft lokal vorgemerkt.' if self._pending or self._supplements else
                     'Die Verbindung zu ServiceNow wird noch vorbereitet. Wir können Ihr Anliegen schon besprechen.')
         if self._bootstrap_state == 'failed':
+            notice = caller_create_failure_notice(self._bootstrap_failure_reason)
+            if notice:
+                return notice
             return ('Die Verbindung zu ServiceNow konnte nicht vorbereitet werden. Wir können Ihr Anliegen '
                     'weiter besprechen. Ihre Angaben werden nicht automatisch erneut gesendet.')
         if getattr(dialog, 'conversation_ended', False):
@@ -1304,6 +1308,7 @@ class NativeDuplex:
                 raise ValueError('Invalid owned startup result')
         except (asyncio.CancelledError, Exception) as error:
             self._bootstrap_state = 'failed'
+            self._bootstrap_failure_reason = startup_reason(error)
             self._backend_unavailable = True
             self._reply_revision = None
             self.interrupt()

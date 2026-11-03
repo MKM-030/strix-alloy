@@ -24,14 +24,16 @@ if __package__:
     from .caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
         CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID,
         valid_authorization, resolve_native_caller, refresh_native_caller_session,
-        create_native_caller_conversation, validated_created)
+        create_native_caller_conversation, validated_created,
+        CALLER_CREATE_FAILURE_CONTRACT, CallerCreateFailure, CallerCreateFailureReceipt)
     from .callback_progress import CallbackProgress
     from .context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
 else:
     from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
         CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID,
         valid_authorization, resolve_native_caller, refresh_native_caller_session,
-        create_native_caller_conversation, validated_created)
+        create_native_caller_conversation, validated_created,
+        CALLER_CREATE_FAILURE_CONTRACT, CallerCreateFailure, CallerCreateFailureReceipt)
     from callback_progress import CallbackProgress
     from context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
 
@@ -94,6 +96,8 @@ class Conversation:
     caller_authorization_task: object | None = field(default=None, repr=False)
     caller_create_request_id: str = field(default='', repr=False)
     caller_create_task: object | None = field(default=None, repr=False)
+    caller_create_failure: object | None = field(default=None, repr=False)
+    caller_create_failure_id: str = field(default='', repr=False)
     cleanup_task: object | None = field(default=None, repr=False)
     cleanup_state: str = ''
     cleanup_request_id: str = field(default='', repr=False)
@@ -353,7 +357,8 @@ class Bridge:
 
     def expire(self):
         now = time.monotonic()
-        for sid, (_, completed_at) in list(self.end_receipts.items()):
+        for sid, receipt in list(self.end_receipts.items()):
+            completed_at = receipt[1]
             if now - completed_at > self.settings.session_seconds:
                 del self.end_receipts[sid]
         for sid, session in list(self.sessions.items()):
@@ -576,7 +581,8 @@ class Bridge:
         await self.json(request)
         session = request._voice_session
         if getattr(request, '_voice_end_receipt', None):
-            response = web.json_response({'ended': True})
+            receipt = request._voice_end_receipt
+            response = web.json_response(receipt[2] if len(receipt) == 3 else {'ended': True})
             response.del_cookie('scc_voice', path='/')
             return response
         if session.caller_create_request_id:
@@ -624,7 +630,16 @@ class Bridge:
         try:
             identity = None
             if session.caller_create_task is not None:
-                identity = await asyncio.shield(session.caller_create_task)
+                try:
+                    identity = await asyncio.shield(session.caller_create_task)
+                except CallerCreateFailure:
+                    async with session.lock:
+                        receipt = self.owned_create_failure(session)
+                        if receipt is not None and receipt.outcome == 'not_created':
+                            self.finish_not_created(session)
+                        else:
+                            session.cleanup_state = 'unresolved'
+                    return
             async with session.lock:
                 if session.ended:
                     return
@@ -653,6 +668,76 @@ class Bridge:
     @staticmethod
     def owned_cleanup_response(session):
         return web.json_response({'ended': False, 'cleanup': session.cleanup_state}, status=202)
+
+    def record_create_failure(self, session, error, request, caller, context, source):
+        receipt = error.receipt
+        if (type(receipt) is not CallerCreateFailureReceipt
+                or self.sessions.get(session.sid) is not session or session.ended
+                or session.conversation_binding is not None
+                or self.owned_cleanup_identity(session)[0] != source
+                or CallerBinding(session.caller_user_id, session.caller_email) != caller
+                or session.voice_context != context
+                or session.sid != request['clientSessionId'] or session.user_id != 'voice-'+session.sid
+                or session.caller_create_request_id != request['requestId']
+                or session.bootstrap_stage != 'creating' or session.pending_action != 'CREATE_CONVERSATION'
+                or not session.requests or session.requests[-1] != request['requestId']
+                or (receipt.request_id, receipt.client_session_id, receipt.client_message_id) !=
+                   (request['requestId'], request['clientSessionId'], request['clientMessageId'])):
+            return
+        session.caller_create_failure = (receipt, self.owned_cleanup_identity(session),
+                                        dict(context), dict(request), asyncio.current_task())
+        if receipt.outcome == 'not_created':
+            session.caller_create_failure_id = uuid.uuid4().hex
+
+    def owned_create_failure(self, session):
+        saved = session.caller_create_failure
+        if type(saved) is not tuple or len(saved) != 5:
+            return None
+        receipt, identity, context, request, task = saved
+        if (type(receipt) is not CallerCreateFailureReceipt
+                or self.sessions.get(session.sid) is not session or session.ended
+                or session.conversation_binding is not None
+                or self.owned_cleanup_identity(session) != identity or session.voice_context != context
+                or session.caller_create_task is not task or not task.done() or task.cancelled()
+                or type(task.exception()) is not CallerCreateFailure
+                or task.exception().receipt is not receipt
+                or session.caller_create_request_id != request['requestId']
+                or session.bootstrap_stage != 'creating' or session.pending_action != 'CREATE_CONVERSATION'
+                or not session.requests or session.requests[-1] != request['requestId']
+                or receipt.reason not in ('caller_create_unauthorized', 'caller_create_access_denied',
+                                           'caller_create_unavailable')
+                or receipt.outcome not in ('unknown', 'not_created')):
+            return None
+        if receipt.outcome == 'not_created' and not (
+                receipt.contract == CALLER_CREATE_FAILURE_CONTRACT
+                and re.fullmatch(r'[0-9a-f]{32}', session.caller_create_failure_id)
+                and ((receipt.dispatch_state == 'not_dispatched' and receipt.http_status == 0)
+                     or (receipt.dispatch_state == 'response_received' and receipt.http_status == 403
+                         and receipt.close_completed is True))):
+            return None
+        return receipt
+
+    def caller_create_failure_payload(self, session):
+        receipt = self.owned_create_failure(session)
+        if receipt is None:
+            return None
+        return {'error': {'source': CALLER_CREATE_FAILURE_CONTRACT, 'version': 1,
+            'reason': receipt.reason, 'creationOutcome': receipt.outcome,
+            'receiptId': session.caller_create_failure_id if receipt.outcome == 'not_created' else ''}}
+
+    def finish_not_created(self, session):
+        # A local terminal owner, explicitly NOT an acknowledged remote END.
+        payload = {'ended': False, 'localTerminal': True, 'creationOutcome': 'not_created',
+                   'cleanup': 'not_required', 'receiptId': session.caller_create_failure_id}
+        session.busy = False
+        session.cleanup_state = 'not_required'
+        self.retire_caller_bootstrap(session)
+        session.caller_user_id = session.caller_email = ''
+        self.sessions.pop(session.sid)
+        self.end_receipts[session.sid] = (session.csrf, time.monotonic(), payload)
+        while len(self.end_receipts) > MAX_END_RECEIPTS:
+            del self.end_receipts[next(iter(self.end_receipts))]
+        session.change.set()
 
     def finish_owned_cleanup(self, session):
         session.ended = True
@@ -936,6 +1021,9 @@ class Bridge:
             self.retire_caller_bootstrap(session)
             session.emit('ServiceNow hat die Anfrage nicht bestätigt. Bitte einen neuen Dialog starten.', 'error')
             LOG.warning('Bot request failed; no credentials or payload logged')
+            failure = self.caller_create_failure_payload(session) if action == 'CREATE_CONVERSATION' else None
+            if failure is not None:
+                raise web.HTTPBadGateway(text=json.dumps(failure), content_type='application/json') from None
             raise web.HTTPBadGateway(text='ServiceNow request failed; delivery may be uncertain')
 
     async def send_owned_create(self, session, payload):
@@ -975,9 +1063,11 @@ class Bridge:
                 created = await create_native_caller_conversation(source[0], source[1],
                     self.sn_token, authorization, dict(request),
                     timeout_seconds=max(.001, min(30, deadline-time.monotonic())))
-        except BaseException:
+        except BaseException as error:
             session.failed = True
             session.busy = False
+            if type(error) is CallerCreateFailure:
+                self.record_create_failure(session, error, request, caller, context, source)
             raise
         finally:
             authorization = None

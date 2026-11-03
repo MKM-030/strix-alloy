@@ -81,7 +81,7 @@ function run(options={}){
   VoiceAgentUtils:function(){return {getAuthorizedAgentIds(service,testMode){counters.agents++;assert.equal(service,SERVICE);assert.equal(testMode,false);return options.agents===undefined?[AGENT]:clone(options.agents);}};},
   LocalLLMVoiceAssistantSettings:function(){return {getSettings(service){counters.settings++;assert.equal(service,SERVICE);if(options.settingsThrows)throw new Error('PRIVATE_SETTINGS');return settings;}};},
   GlideRecordSecure:function(table){return Record(table,true);},GlideRecord:function(table){return Record(table,false);},GlideDateTime:DateTime,
-  sn_va_as_service:{VABotToBotRestMessageHandler:function(){counters.constructors++;if(options.constructorDenied)throw new Error('PRIVATE_CROSS_SCOPE_DENIED');return {processPayload(nativePayload,headers){
+  sn_va_as_service:{VABotToBotRestMessageHandler:function(){counters.constructors++;if(options.constructorDenied)throw new Error('PRIVATE_CROSS_SCOPE_DENIED');if(options.constructorDrift)gsDrift=true;return {processPayload(nativePayload,headers){
    calls.push({payload:clone(nativePayload),headers:clone(headers),originalGSUser:context.gs.getUserID(),originalGSAdmin:context.gs.hasRole('admin')});created=true;
    if(options.handlerThrows)throw new Error('PRIVATE_NATIVE_EXCEPTION');if(options.settingsDrift)settings[options.settingsDrift]=OTHER;gsDrift=true;
    return nativeResponse(nativePayload);
@@ -90,7 +90,11 @@ function run(options={}){
  vm.runInNewContext(SOURCE,context,{timeout:1000});
  return {status:response.status,body:clone(response.body),calls,counters,valueReads,queries,rights,getCounts,input:clone(input),initialInput,settings:clone(settings),initialSettings,created};
 }
-function denied(options,status=403){const r=run(options);assert.equal(r.status,status);assert.deepEqual(r.body,{status:'failure',detail:'Local caller create unavailable'});assert.equal(r.calls.length,0);assert.equal(JSON.stringify(r.body).includes('PRIVATE'),false);return r;}
+function denied(options,status=403){const r=run(options);assert.equal(r.status,status);
+ assert.deepEqual(r.body,status===403?{status:'failure',failure:{contract:'scc_local_caller_create_v1',version:1,
+  outcome:'not_created',reason:'access_denied',requestId:RID,clientSessionId:SID,clientMessageId:MID,
+  serviceId:SERVICE,contextProfile:PROFILE}}:{status:'failure',detail:'Local caller create unavailable'});
+ assert.equal(r.calls.length,0);assert.equal(JSON.stringify(r.body).includes('PRIVATE'),false);return r;}
 function uncertain(options){const r=run(options);assert.equal(r.status,503);assert.deepEqual(r.body,{status:'failure',detail:'Local caller create unavailable'});assert.equal(r.calls.length,1);assert.equal(JSON.stringify(r.body).includes('PRIVATE'),false);return r;}
 
 test('one normal public synchronous CREATE uses original GS/headers and exact fixed server payload',()=>{
@@ -158,4 +162,38 @@ test('the candidate contains exactly one public CREATE site, no escalation/priva
  assert.equal((SOURCE.match(/new sn_va_as_service\.VABotToBotRestMessageHandler\(\)/g)||[]).length,1);
  assert.doesNotMatch(SOURCE,/\.elevate|VoiceConversationManager|USER_REF|actual_user|GlideImpersonate|setWorkflow|setUseEngines|queryNoDomain|sys_script_include|decrypt|setPreference|savePreference|\.insert\(|\.update\(|deleteRecord|deleteMultiple/);
  assert.equal((SOURCE.match(/action:'CREATE_CONVERSATION'/g)||[]).length,1);assert.match(SOURCE,/syncResponse:true/);
+});
+
+test('explicit pre-constructor access denial supplies exact correlated noncreation contract',()=>{
+ for(const options of [{authorizationDenied:true},{serviceDenied:true},{noAdmin:true},{currentName:'guest'},
+                       {agents:[]},{matches:[]},{providerToken:''}]){
+  const r=run(options);
+  assert.equal(r.status,403);assert.equal(r.calls.length,0);assert.equal(r.counters.constructors,0);
+  assert.deepEqual(r.body,{status:'failure',failure:{contract:'scc_local_caller_create_v1',version:1,
+   outcome:'not_created',reason:'access_denied',requestId:RID,clientSessionId:SID,clientMessageId:MID,
+   serviceId:SERVICE,contextProfile:PROFILE}});
+  const publicBody=JSON.stringify(r.body);
+  for(const secret of [AUTH,TOKEN,USER.email,ID,'PRIVATE'])assert.equal(publicBody.includes(secret),false);
+ }
+});
+
+test('malformed request cannot mint a correlated negative creation receipt',()=>{
+ for(const input of [{}, {...payload(),requestId:'not-a-guid'}, {...payload(),requestId:SID}]){
+  const r=run({input});assert.equal(r.status,400);assert.equal(r.calls.length,0);
+  assert.deepEqual(r.body,{status:'failure',detail:'Local caller create unavailable'});
+ }
+});
+
+test('post-constructor principal denial remains uncertain despite no handler invocation',()=>{
+ const r=run({constructorDrift:true,driftRole:true});
+ assert.equal(r.status,403);assert.equal(r.counters.constructors,1);assert.equal(r.calls.length,0);
+ assert.deepEqual(r.body,{status:'failure',detail:'Local caller create unavailable'});
+});
+
+test('conflicts and pre/post-handler runtime failures do not mint noncreation receipts',()=>{
+ for(const options of [{existingAlias:true},{settingsThrows:true},{constructorDenied:true},
+                       {handlerThrows:true},{nativeStatus:401}]){
+  const r=run(options);assert.ok([409,503].includes(r.status));
+  assert.deepEqual(r.body,{status:'failure',detail:'Local caller create unavailable'});
+ }
 });

@@ -1,0 +1,17 @@
+# Voice CREATE failure and local cleanup
+
+Marcel authorized autonomous repair and all necessary changes, with no questions. This is a bounded repair of the observed CREATE401 failure path. It does not prove the caller's grant/expiry cause, retroactively settle the existing UNKNOWN call, or complete physical-device acceptance.
+
+The current transport discards received status and context-close disposition. Every failed owned CREATE then latches unresolved; Native's retained capacity is correct for UNKNOWN but cannot distinguish a proven noncreation. Keep the existing single CREATE and successful late CREATE -> ordered END behavior.
+
+Approaches considered: mapping every401/403 to absent is unsound; weakening authentication is outside the product contract. Use typed bounded failure receipts, and an explicit versioned own-resource negative envelope on reviewed pre-handler403 branches. Platform401 stays UNKNOWN. The implementation choice is Root's under the user's delegated authority.
+
+Transport exports frozen CallerCreateFailureReceipt and ValueError-compatible CallerCreateFailure with fixed text. Receipt fields are reason, outcome, stage, http_status, dispatch_state, close_completed, contract, request_id, client_session_id, client_message_id. No credentials, personal identity, body, headers or upstream prose. Correlation fields are repr-hidden. Only validated request no-dispatch or exact own403 negative envelope after normal response AND client context exit proves not_created. Malformed200, redirects,5xx, conflicts, cancellation and transport/close failures remain UNKNOWN.
+
+Bot stores receipts only with its exact current owner identity, task and original request. Under the session lock, a finished failed CREATE can settle no-creation only if no contradictory created binding exists and source/caller/context/request/identity still match. It performs no END or second CREATE. A fresh private receiptId binds the initial502 response to subsequent local terminal no-create response. Remote END receipts keep their existing meaning. Tombstones preserve the distinct payload and existing CSRF/expiry bounds.
+
+Private initial failure response is exactly {error:{source:'scc_local_caller_create_v1',version:1,reason,creationOutcome,receiptId}}. ReceiptId is a32hex nonce only for a validated not_created receipt; UNKNOWN uses empty string. Native accepts this allowlisted startup reason only from its trusted loopback POST/api/start with bound caller credentials,HTTP502, bounded identity JSON and exact keys. It never trusts arbitrary upstream text. Auth rejection gets fixed spoken feedback; no inferred expiry, automatic renewal, replay or business action.
+
+No-create terminal payload is exactly {ended:false,localTerminal:true,creationOutcome:'not_created',cleanup:'not_required',receiptId}. Native accepts it only with the exact nonce it observed on its same dialog's initial failure. Otherwise cleanup remains retained. True remote ended acknowledgements remain unchanged. Successful local terminal settlement clears the expected nonce with the other session fields.
+
+Validation covers the real transport/Bot/Native functions with synthetic transport or loopback servers, concurrent closes, forbidden CSRF, foreign/drifted receipts, response/client close failures, native401 normalized503, unchanged unknown retention, and successful late CREATE ordered END. No live source promotion until review and a separately pinned maintenance window; no old helper/call replay.
