@@ -1,0 +1,156 @@
+{
+  "sn_aia_usecase": [
+    {
+      "sys_id": "2f3c8a39931093185c8132d47aba1014",
+      "team": "c04cca39931093185c8132d47aba10c8",
+      "base_plan": "Übertrage die Durchführung ausschließlich an den vorhandenen Agenten SCC Laptop Onboarding. Übernimm den Gesprächskontext einschließlich bereits genannter Mitarbeiterdaten unverändert. Der Agent führt seine bestehende Datenerfassung und Namensprüfung sowie die getrennte vollständige Bestellzusammenfassung mit ausdrücklicher Freigabe durch. Ein Ja zur Namensfrage ist keine Bestellfreigabe. Ergänze keine Mitarbeiterdaten und wiederhole keine Bestellung bei Fehler oder unklarem Ergebnis. Gib alle hörbaren Ausgaben in kurzen deutschen Sätzen aus.",
+      "execution_mode": "copilot",
+      "strategy": "b264c470ff1022106c36ffffffffff67",
+      "context_processing_script": "/*\n * Available Variables:\n *\n * - user_utterance: The user input or message that initiated the use case.\n *          This represents the user's natural language query or command\n *          received during the conversation.\n *\n * - usecase_id: The unique identifier of the use case being executed.\n *          Can be used to reference use case configurations, metadata,\n *          or to apply specific context-handling logic.\n *\n * - context: An object containing contextual information for the use case.\n *          It always includes a \"pageContext\" and may include a \"triggerContext\",\n *          depending on how and from where the use case was invoked.\n *\n *          Behavior by invocation type:\n *          ---------------------------------\n *          - When invoked via the startAiAgentConversation API:\n *                If a \"contextMemory\" parameter is passed in the API request,\n *                it will be available as the \"triggerContext\".\n *                The \"pageContext\" is always present in this call,\n *                regardless of the invocation type (standalone or workflow-based).\n *                Example:\n *                    {\n *                        pageContext: { ... },\n *                        triggerContext: { ... } // Derived from contextMemory (if passed)\n *                    }\n *\n *          - When invoked as part of a workflow or chained use case:\n *                The \"pageContext\" and \"triggerContext\" available here may represent\n *                the state carried forward from a previous execution step.\n *                This script can modify, enrich, or restructure these contexts\n *                before passing them to the downstream agent(s).\n *\n *          - When executed directly (standalone use case execution):\n *                The \"pageContext\" will always be available (even if empty),\n *                and \"triggerContext\" will only be populated if explicitly\n *                provided through the API call.\n *\n * Return Format:\n * ----------------\n * This script must return an updated context object to be passed to\n * the next stage (typically the agent or workflow step):\n *    { pageContext: {}, triggerContext: {} }\n *\n * Example:\n * ----------------\n * return {\n *     pageContext: {\n *         ...context.pageContext,\n *         usecaseProcessed: true\n *     },\n *     triggerContext: {\n *         ...context.triggerContext,\n *         lastModifiedBy: \"usecase_context_script\"\n *     }\n * };\n */\n(function(user_utterance, usecase_id, context) {\n    return {\n        pageContext: context?.pageContext,\n        triggerContext: context?.triggerContext\n    };\n})(user_utterance, usecase_id, context);\n"
+    }
+  ],
+  "sn_aia_team": [
+    {
+      "sys_id": "c04cca39931093185c8132d47aba10c8",
+      "name": "SCC Laptop Onboarding Voice Workflow"
+    }
+  ],
+  "sn_aia_team_member": [
+    {
+      "sys_id": "504c0e39931093185c8132d47aba100e",
+      "team": "c04cca39931093185c8132d47aba10c8",
+      "agent": "a4a9438393738354e7f2b9fa6aba101d"
+    }
+  ],
+  "sn_aia_version": [
+    {
+      "sys_id": "af3c8a39931093185c8132d47aba1017",
+      "target_id": "2f3c8a39931093185c8132d47aba1014",
+      "target_table": "sn_aia_usecase",
+      "active": "1",
+      "state": "published",
+      "instructions": "Übertrage die Durchführung ausschließlich an den vorhandenen Agenten SCC Laptop Onboarding. Übernimm den Gesprächskontext einschließlich bereits genannter Mitarbeiterdaten unverändert. Der Agent führt seine bestehende Datenerfassung und Namensprüfung sowie die getrennte vollständige Bestellzusammenfassung mit ausdrücklicher Freigabe durch. Ein Ja zur Namensfrage ist keine Bestellfreigabe. Ergänze keine Mitarbeiterdaten und wiederhole keine Bestellung bei Fehler oder unklarem Ergebnis. Gib alle hörbaren Ausgaben in kurzen deutschen Sätzen aus.",
+      "applicability_script": "/** \n * Function to determine applicability of this version based on runtime inputs \n * \n * @param {Object} inputs - The input parameters object \n * @param {string} inputs.channel - The channel the request originated from (e.g., 'voice', 'chat') \n * \n * @returns {boolean} Returns true/false \n(function(inputs) {\n    return inputs.channel == 'voice' ; \n})(inputs);*/\n(function(inputs) {\n    return inputs.channel == 'ALL';\n})(inputs);"
+    }
+  ],
+  "sn_aia_usecase_config_override": [
+    {
+      "sys_id": "884cca39931093185c8132d47aba107c",
+      "usecase_configuration": "2f3c8a39931093185c8132d47aba1014",
+      "active": "1",
+      "run_as_user": ""
+    }
+  ],
+  "sn_aia_agent": [
+    {
+      "sys_id": "a4a9438393738354e7f2b9fa6aba101d",
+      "instructions": "<scc_voice_current_question_20261024>\nGib vor einer erforderlichen Namensbestätigung keine vorläufige Ausgabe aus, die das Eintrittsdatum oder eine andere spätere Angabe verlangt oder ankündigt: Auch „Als Nächstes benötige ich ...“ fordert bereits eine Antwort heraus. Die erste und einzige hörbare Rückfrage ist dann die bestehende aktuelle Namensfrage, direkt über die Eingabeaktion, ohne vorausgehende Start- oder Fortschrittsmeldung. Unaufgefordert genannte Datumsangaben bleiben unverändert erhalten, bestätigen aber keinen Namen; warte weiterhin auf eine eindeutige Antwort auf genau die Namensfrage.\n</scc_voice_current_question_20261024>\n\n<scc_voice_name_priority_20261024>\nPrüfe zuerst den Mitarbeiternamen. Ein genannter, aber in diesem Anruf noch nicht ausdrücklich rückbestätigter Name ist für Schritt 3 NICHT bekannt. Stelle vor JEDEM Werkzeugaufruf ausschließlich diese Rückfrage: „Ich habe [vollständiger tatsächlich genannter Name] verstanden. Ist der Name genau so richtig?“ Warte auf die Antwort. Bei Nein oder unsicherer Schreibweise bitte um Buchstabieren, lies die Schreibweise zurück und warte erneut auf deren Bestätigung. Rufe insbesondere SCC Laptop Bestellkontext erst NACH dieser Namensbestätigung einmal auf. Eine Zusatznotiz während laufender Bearbeitung ist keine Namens- oder Bestellfreigabe. Ein Ja zum Namen bestätigt nur den Namen. Für eine Bestellung bleiben vollständige Zusammenfassung und getrennte ausdrückliche Freigabe erforderlich. Diese Reihenfolge hat Vorrang vor dem bisherigen Schritt 3; alle weiteren Berechtigungs-, Bestell- und Fehlerregeln bleiben bindend.\n</scc_voice_name_priority_20261024>\n\n\n1. Lies die ursprüngliche Anfrage und bisherigen Nachrichten. Übernimm Mitarbeitername, Eintrittsdatum und Lieferstandort, wenn genannt. Für diese Demo bedeutet 1.11. den 1. November 2026. Hamburg ist ein gültiger Lieferstandort.\n2. Wenn der Mitarbeitername fehlt, frage sofort und vor jedem Werkzeugaufruf: \"Wie heißt dein neuer Mitarbeiter?\" Gib davor keine Einleitung oder Fortschrittsmeldung aus. Warte auf den Namen.\n3. Sobald der Mitarbeitername bekannt ist, rufe SCC Laptop Bestellkontext genau einmal auf, sofern dieses Werkzeug in dieser Unterhaltung noch nicht aufgerufen wurde, um den angemeldeten Anforderer und die Katalogangaben zu lesen. Bei \"mein neuer Mitarbeiter\" schlage diesen Anforderer als Vorgesetzten vor. Frage danach nur nach fehlenden Angaben. Frage nicht erneut nach bereits genanntem Datum oder Standort. Wenn der Vorgesetzte unklar ist, frage nach ihm.\n4. Fasse alle vier Angaben in einem kurzen gesprochenen Satz zusammen, ohne Liste oder Markdown: \"Laptop für [Mitarbeiter] zum [Eintrittsdatum] nach [Lieferstandort], Vorgesetzter [Name]. Soll ich das bestellen?\" Setze ausschließlich die bestätigten Gesprächsdaten ein. Warte auf eine ausdrückliche Bestätigung. Änderungen machen eine neue vollständige Zusammenfassung und Bestätigung notwendig.\n5. Rufe erst danach SCC Laptop Bestellung absenden genau einmal mit den bestätigten Angaben auf. Bei einem Fehler oder unklarem Ergebnis niemals automatisch erneut bestellen; erkläre den Status.\n6. Antworte nach dem Tool-Ergebnis in höchstens zwei kurzen deutschen Sätzen, ohne die bereits bestätigten Mitarbeiterangaben erneut aufzuzählen. Bei ok=true nenne den tatsächlich zurückgegebenen Artikelnamen aus catalog_item_name und die echten Nummern aus request_number und requested_item_number. Bei reused=true sage, dass die passende Anforderung bereits vorhanden ist; sonst bestätige die Anlage. Fehlt catalog_item_name, sage, dass der genaue Artikelname im Ergebnis fehlt; erfinde ihn nicht und bestelle deshalb nicht erneut. Nenne ein Modell nur, wenn es ausdrücklich im Tool-Ergebnis steht. Bei ok=false erkläre nur den zurückgegebenen Fehlerstatus. Behaupte keine reale Hardware-Lieferung oder Lieferzusage.\n\n<scc_name_confirmation_20261024>\nZusätzliche verbindliche Namensprüfung für das Sprachgespräch; alle bisherigen Regeln zu Anforderer, Vorgesetztenprüfung, vollständiger Bestellzusammenfassung, ausdrücklicher Bestellbestätigung, einmaligem Absenden und unklarem Ergebnis bleiben erhalten. Die Namensprüfung gilt auch dann, wenn der Name bereits genannt und deshalb nicht mehr fehlend ist. Ein neu erkannter Mitarbeitername gilt für den nächsten Bestellkontextaufruf erst nach der Rücklesebestätigung als bekannt; dieser Aufruf bleibt genau einmal pro Unterhaltung zulässig.\n1. Lies jeden neu genannten oder korrigierten kritischen Personennamen vor der weiteren fachlichen Verwendung vollständig vor. Frage ausdrücklich: \"Ich habe [vollständiger Name] verstanden. Ist der Name genau so richtig?\" Verwende ausschließlich die tatsächlich genannten Angaben, ohne einen Namen zu ergänzen oder aus ähnlich klingenden Namen zu erraten. Diese Prüfung betrifft insbesondere den neuen Mitarbeiter und einen ausdrücklich genannten oder korrigierten Vorgesetzten.\n2. Ein Nein auf die aktuelle Namensfrage verwirft die vorgeschlagene Schreibweise. Enthält eine solche Antwort zugleich ein frei gesprochenes Wort und eine Buchstabenfolge, interpretiere das Wort nicht automatisch als neuen Vornamen und die Folge nicht automatisch als vollständigen Namen. Frage zuerst gezielt: \"Bitte buchstabieren Sie zuerst nur den Vornamen.\" Frage anschließend getrennt nach dem Nachnamen, falls dessen eindeutige vollständige Buchstabierfolge noch fehlt. Behalte ausdrücklich unveränderte Namensteile bei; ergänze sie nicht aus dem Kontonamen. Wiederhole erkannte Buchstaben einschließlich ausdrücklich genannter Umlaute und frage bei fehlendem Bezug oder unklaren Buchstaben nach. Behaupte vor dieser Klärung keine Namensänderung. Auch bei anderer Ablehnung, unsicherer Erkennung, mehrdeutiger Schreibweise oder unklarer Antwort bitte um Buchstabieren, bei Bedarf Vorname und Nachname einzeln. Übernimm die genannten Buchstaben einschließlich ausdrücklich genannter Umlaute, ß, Bindestriche, Apostrophe und Leerzeichen. Ist ein Buchstabe unklar, frage gezielt nach. Erfinde keine Buchstaben und ersetze keine Schreibweise stillschweigend. Lies die vollständige daraus verstandene Schreibweise erneut vor und frage ausdrücklich, ob genau diese Schreibweise richtig ist.\n3. Fahre mit der geprüften Namensangabe erst fort, wenn eine ausdrückliche eindeutige Zustimmung auf genau diese aktuelle Namensfrage vorliegt. Ein unsicheres, verneintes, bedingtes oder auf eine andere Frage bezogenes Ja bestätigt den Namen nicht. Wird die Frage unterbrochen oder ist der Bezug unklar, stelle sie erneut. Jede Korrektur macht die vorherige Namensbestätigung ungültig und verlangt eine neue Rücklesefrage. Übernimm keine Bestätigung aus einem früheren Anruf.\n4. Bewahre die Originalaussagen und Buchstabierangaben im Gespräch unverändert. Trenne die vorgeschlagene von der ausdrücklich bestätigten Schreibweise; stelle eine normalisierte Interpretation niemals als wörtliche frühere Nutzeraussage dar. Die Namensbestätigung bestätigt keine Identität oder Berechtigung. Ein neuer Mitarbeiter muss noch keinen Verzeichniseintrag haben. Die vorhandene autorisierte Anforderer- und Vorgesetztensuche einschließlich ihrer Mehrdeutigkeitsprüfung bleibt verbindlich.\n5. Ein Ja zur Namensfrage ist ausschließlich die Namensbestätigung und niemals eine Bestellbestätigung. Es darf dadurch keine Bestellung abgesendet werden. Stelle danach, sobald alle übrigen Angaben vorliegen, weiterhin die vollständige aktuelle Bestellzusammenfassung mit einer getrennten ausdrücklichen Bestellfrage. Warte auf deren eigene eindeutige Zustimmung. Änderungen verlangen weiterhin eine neue vollständige Zusammenfassung und Bestätigung. Sende ausschließlich über das bestehende Bestellwerkzeug genau einmal; bei Fehler oder unklarem Ergebnis niemals automatisch erneut bestellen.\n</scc_name_confirmation_20261024>",
+      "role": "Du bist der freundliche deutschsprachige IT-Service-Assistent für die Laptop-Onboarding-Demo. Sprich in kurzen natürlichen Sätzen und stelle höchstens eine fehlende Angabe pro Frage. Nutze ausschließlich das SCC-Laptop-Katalogelement. Erfinde keine Mitarbeiter, Bestellnummern oder Lieferzusagen. Vorhandene Angaben werden übernommen. Erst nach ausdrücklicher Bestätigung der vollständigen Zusammenfassung darfst du die Bestellung absenden. Die Antworten werden vorgelesen: Verwende kurze gesprochene Sätze, keine Markdown-Zeichen, Tabellen oder Aufzählungen. Vermeide zusätzliche Einleitungen. Alle für den Benutzer sichtbaren oder hörbaren Ausgaben, einschließlich Zwischen- und Fortschrittsmeldungen vor und nach Werkzeugaufrufen, müssen vollständig auf Deutsch sein. Gib keine englischen Ausgaben und keine Absichtserklärungen wie „Ich werde ...“ aus.",
+      "strategy": "f0bff21f9f13c6108f431597d90a1c74",
+      "context_processing_script": "/*\n * Available Variables:\n * - task: The task provided to agent to solve either by orchestrator or user(incase of only agent execution i.e agent is invoked as seperate entity instead from a workflow).\n * - user_utterance: The user utterance provided. and task = user_utterance in case of individual agent execution.\n * - agent_id: The agent id.\n * - context: An object that carries additional contextual information for the agent.\n *          It always includes a \"pageContext\" and may include a \"triggerContext\",\n *          depending on how and from where the agent is invoked.\n *\n *          Behavior by invocation type:\n *          ---------------------------------\n *          - When invoked via the startAiAgentConversation API:\n *                If a \"contextMemory\" parameter is provided in the API request,\n *                it will be available here as the \"triggerContext\".\n *                The \"pageContext\" is always present in this call, regardless\n *                of whether the agent is executed individually or as part of a use case.\n *                Example:\n *                    {\n *                        pageContext: { ... },\n *                        triggerContext: { ... } // Derived from contextMemory (if passed)\n *                    }\n *\n *          - When invoked as part of a use case or workflow:\n *                The \"pageContext\" and \"triggerContext\" objects available here\n *                may have been *modified* by the use case’s context processing script.\n *                This means the use case may alter, extend, or overwrite values\n *                from the original \"pageContext\" or \"triggerContext\"\n *                before the context reaches the agent.\n *                If the use case was originally triggered via the API,\n *                the initial \"triggerContext\" is still derived from the\n *                \"contextMemory\" parameter, but its contents may have been updated\n *                by the use case logic.\n *\n *          - When executed directly (standalone agent execution):\n *                The \"pageContext\" will always be present (default or empty),\n *                and the \"triggerContext\" will only be populated if explicitly\n *                passed through the API call.\n * Return an modified context like: { pageContext : {},triggerContext:{} }\n */\n(function(task, user_utterance, agent_id, context) {\n    return {\n        pageContext : context?.pageContext,\n\t\ttriggerContext : context?.triggerContext\n    };\n})(task,user_utterance, agent_id, context);"
+    }
+  ],
+  "sn_aia_agent_config": [
+    {
+      "sys_id": "f21ac78793738354e7f2b9fa6aba106e",
+      "agent": "a4a9438393738354e7f2b9fa6aba101d",
+      "active": "1",
+      "run_as_user": "",
+      "current_version": "f61ac78793738354e7f2b9fa6aba104b"
+    }
+  ],
+  "sys_agent_access_role_configuration": [
+    {
+      "sys_id": "884cca39931093185c8132d47aba1082",
+      "agent_table": "sn_aia_usecase",
+      "agent": "2f3c8a39931093185c8132d47aba1014",
+      "role_list": "",
+      "allow_all_session_roles": "false",
+      "action": "limit_to_roles",
+      "sys_scope": "global"
+    },
+    {
+      "sys_id": "a6bc4f8393b38354e7f2b9fa6aba1022",
+      "agent_table": "sn_aia_agent",
+      "agent": "a4a9438393738354e7f2b9fa6aba101d",
+      "role_list": "",
+      "allow_all_session_roles": "false",
+      "action": "limit_to_roles",
+      "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee"
+    }
+  ],
+  "sys_agent_access_role_mapping": [
+    {
+      "sys_id": "804cca39931093185c8132d47aba10bc",
+      "agent_access_config": "884cca39931093185c8132d47aba1082",
+      "role": "282bf1fac6112285017366cb5f867469",
+      "sys_scope": "global"
+    },
+    {
+      "sys_id": "844cca39931093185c8132d47aba10c2",
+      "agent_access_config": "884cca39931093185c8132d47aba1082",
+      "role": "de69200f93485750e7f2b9fa6aba1043",
+      "sys_scope": "global"
+    },
+    {
+      "sys_id": "3abc4f8393b38354e7f2b9fa6aba1032",
+      "agent_access_config": "a6bc4f8393b38354e7f2b9fa6aba1022",
+      "role": "282bf1fac6112285017366cb5f867469",
+      "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee"
+    },
+    {
+      "sys_id": "749ce04f93885750e7f2b9fa6aba1061",
+      "agent_access_config": "a6bc4f8393b38354e7f2b9fa6aba1022",
+      "role": "de69200f93485750e7f2b9fa6aba1043",
+      "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee"
+    }
+  ],
+  "sys_security_acl": [
+    {
+      "sys_id": "773c8a39931093185c8132d47aba10ad",
+      "name": "global.global.SCC Laptop Onboarding Voice Workflow",
+      "type": "d9eb25b39fc222109570e67e8a0a1c6a",
+      "operation": "execute",
+      "active": "true",
+      "admin_overrides": "true",
+      "advanced": "false",
+      "script": "",
+      "condition": "",
+      "decision_type": "allow",
+      "security_attribute": "",
+      "applies_to": "",
+      "controlled_by_refs": "",
+      "sys_scope": "global"
+    },
+    {
+      "sys_id": "115c870393b38354e7f2b9fa6aba10a6",
+      "name": "global.sn_generative_ai.SCC Laptop Onboarding",
+      "type": "fc55e9f79f8222109570e67e8a0a1c34",
+      "operation": "execute",
+      "active": "true",
+      "admin_overrides": "true",
+      "advanced": "false",
+      "script": "",
+      "condition": "",
+      "decision_type": "allow",
+      "security_attribute": "",
+      "applies_to": "",
+      "controlled_by_refs": "",
+      "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee"
+    }
+  ],
+  "sys_security_acl_role": [
+    {
+      "sys_id": "bf3cca39931093185c8132d47aba105b",
+      "sys_security_acl": "773c8a39931093185c8132d47aba10ad",
+      "sys_user_role": "2831a114c611228501d4ea6c309d626d",
+      "sys_scope": "global"
+    },
+    {
+      "sys_id": "995c4f0393b38354e7f2b9fa6aba1078",
+      "sys_security_acl": "115c870393b38354e7f2b9fa6aba10a6",
+      "sys_user_role": "2831a114c611228501d4ea6c309d626d",
+      "sys_scope": "7cc4ec81533121106b38ddeeff7b12ee"
+    }
+  ]
+}
