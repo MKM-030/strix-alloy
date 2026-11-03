@@ -46,7 +46,28 @@
     "windows_admission_physical_gib": 30,
     "windows_admission_commit_gib": 131,
     "windows_runtime_physical_gib": 18,
-    "windows_runtime_commit_gib": 18
+    "windows_runtime_commit_gib": 18,
+    "capacity_opt_in": {
+      "context": 32768,
+      "checkpoints": [
+        "v2"
+      ],
+      "text_only": true,
+      "slots": [
+        1,
+        2
+      ],
+      "kv_pool_positions": [
+        32768,
+        65536
+      ],
+      "gateway_concurrency": [
+        1,
+        2
+      ],
+      "default_unchanged": true,
+      "runtime_qualified": false
+    }
   },
   "v2_bridge_sha256": "0cac01d1f4f83c8b0074d487b8d927b7f445a17cf00552c540c3db8c7567adf9",
   "upstream_api_sha256": "0fc902343a816feb7a933f67c773e98025d8d09b55711545d874d6cddc07ea08",

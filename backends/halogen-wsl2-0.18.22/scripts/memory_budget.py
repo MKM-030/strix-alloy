@@ -11,12 +11,15 @@ RUNTIME_RESERVE_GIB = 18
 VISION_TOWER_BYTES = 897916416
 VISION_ADMISSION_GIB = math.ceil(VISION_TOWER_BYTES / (1024 ** 3))
 
-def admission_floors(context, checkpoint='w4b', vision=False):
+def admission_floors(context, checkpoint='w4b', vision=False, *, slots=1, kv_pool_positions=None):
     if type(context) is not int or not 4096 <= context <= 262144:
         raise ValueError('Context must be 4096..262144')
     if checkpoint not in ('w4b','v2'): raise ValueError('Unknown checkpoint')
     if type(vision) is not bool or (vision and checkpoint != 'v2'):
         raise ValueError('Vision admission requires an explicit boolean for the v2 checkpoint')
+    from capacity_policy import resolve
+    resolved=resolve(context,checkpoint,slots=slots,kv_pool_positions=kv_pool_positions,disable_vision=not vision)
+    opt_in=slots != 1 or kv_pool_positions is not None
     if checkpoint == 'v2':
         # Explicitly selected v2 startup admission; runtime reserve and
         # total-commit admission remain independently enforced.
@@ -26,8 +29,14 @@ def admission_floors(context, checkpoint='w4b', vision=False):
         physical = HOST_STARTUP_DECLINE_GIB + HOST_UNCERTAINTY_GIB + RUNTIME_RESERVE_GIB
     # Keep the existing conservative total-commit estimate until new runs
     # provide measured evidence for both checkpoints. Commit is not RAM.
-    kv_commit_gib = (context - 4096) * 32768 / (1024 ** 3)
+    kv_commit_gib = (resolved['kv_pool_positions'] - 4096) * 32768 / (1024 ** 3)
+    # Conservative commit accounting for the second slot; device allocation
+    # and actual runtime reserves remain independently enforced.
+    if opt_in: kv_commit_gib += (slots - 1) * 120586240 / (1024 ** 3)
     commit = max(117, math.ceil(100.247 + 4 + RUNTIME_RESERVE_GIB + kv_commit_gib))
+    if opt_in:
+        physical=max(physical,30)
+        commit=max(commit,131)
     if vision:
         # Charge the complete pinned tower, rounded up, to both independent
         # admission pools. Existing runtime reserves and KV/copy caps stay fixed.

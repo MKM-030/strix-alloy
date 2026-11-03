@@ -24,6 +24,7 @@ import portable
 import kernel_controls as kc
 import speculation_policy as sp
 import api_defaults as ad
+import capacity_policy as cp
 import lookup_source as lookup
 from startup_monitor import StartupMonitor
 import runner as r
@@ -117,6 +118,8 @@ def options(argv=None):
     p.add_argument('--private-hsa-receipt',default=None)
     p.add_argument('--private-hsa-receipt-sha256',default=None)
     p.add_argument('--context-size',type=int,default=DEFAULT_CONTEXT)
+    p.add_argument('--slots',type=int,choices=(1,2),default=1)
+    p.add_argument('--kv-pool-positions',type=int,choices=(32768,65536),default=None)
     p.add_argument('--serve-seconds',type=int,default=0,help='0 means until explicitly stopped')
     p.add_argument('--startup-timeout',type=int,default=900)
     p.add_argument('--print-only',action='store_true')
@@ -131,6 +134,7 @@ def options(argv=None):
 
 def validate_options(o):
     validate_disable_vision(getattr(o,'disable_vision',False),getattr(o,'checkpoint','v2'))
+    resolve_capacity(o)
     hsa_path = getattr(o, 'private_hsa_receipt', None)
     hsa_sha = getattr(o, 'private_hsa_receipt_sha256', None)
     if (hsa_path is None) != (hsa_sha is None):
@@ -177,10 +181,24 @@ def validate_options(o):
         raise ValueError('StartupTimeoutSeconds must be 120..3600; it is not a serving timeout')
 
 
-def floors(context, checkpoint='v2', disable_vision=False):
+def capacity_options(o):
+    return dict(slots=getattr(o, 'slots', 1), kv_pool_positions=getattr(o, 'kv_pool_positions', None))
+
+
+def explicit_capacity(o):
+    return getattr(o, 'slots', 1) != 1 or getattr(o, 'kv_pool_positions', None) is not None
+
+
+def resolve_capacity(o):
+    return cp.resolve(o.context_size, getattr(o, 'checkpoint', 'v2'),
+        disable_vision=getattr(o, 'disable_vision', False), **capacity_options(o))
+
+
+def floors(context, checkpoint='v2', disable_vision=False, *, slots=1, kv_pool_positions=None):
     validate_disable_vision(disable_vision,checkpoint)
     from memory_budget import admission_floors
-    return admission_floors(context,checkpoint,vision=(checkpoint=='v2' and not disable_vision))
+    return admission_floors(context,checkpoint,vision=(checkpoint=='v2' and not disable_vision),
+        slots=slots,kv_pool_positions=kv_pool_positions)
 
 
 def atomic(path, value):
@@ -306,21 +324,22 @@ def validate_prefill_limits(context, prefill_chunk, max_prefill_tokens):
             raise ValueError('Max prefill tokens requires an explicit chunk no larger than the token arena')
 
 
-def environment(context, checkpoint="v2", prompt_cache="Off", draft_tokens=None, prefill_chunk=None, prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, speculation_policy=None, max_prefill_tokens=None, api_defaults=None, disable_vision=False):
+def environment(context, checkpoint="v2", prompt_cache="Off", draft_tokens=None, prefill_chunk=None, prefill_keep_trunk=False, admit_ticks=None, kernel_controls=None, speculation_policy=None, max_prefill_tokens=None, api_defaults=None, disable_vision=False, slots=1, kv_pool_positions=None):
     validate_disable_vision(disable_vision,checkpoint)
     if draft_tokens is not None and (type(draft_tokens) is not int or draft_tokens not in (1,2,3)):
         raise ValueError("Draft depth must be 1, 2 or 3")
     validate_prefill_limits(context,prefill_chunk,max_prefill_tokens)
     if prefill_keep_trunk and checkpoint != 'v2': raise ValueError('PREFILL_KEEP_TRUNK requires v2')
     if admit_ticks is not None and (type(admit_ticks) is not int or not 1 <= admit_ticks <= 1024): raise ValueError('Invalid admit ticks')
+    resolved=cp.resolve(context,checkpoint,slots=slots,kv_pool_positions=kv_pool_positions,disable_vision=disable_vision)
     env=r.environment(r.manifest_for('serve'))
     # The bounded 4K diagnostics retain their old arena; continuous serving
     # starts with this release's compute defaults unless explicitly tuned.
     for key in ('HALOGEN_PREFILL_CHUNK', 'HALOGEN_MAX_TOK',
                 'HALOGEN_FLASH_ROUTE_GEMM', 'HALOGEN_TOPK_REPLAY'):
         env.pop(key, None)
-    env.update(HALOGEN_CTX=str(context),HALOGEN_KV_POOL_POSITIONS=str(context),
-               HALOGEN_KV_SLOTS='1',HALOGEN_API_PORT='8731',HALOGEN_VERBOSE='1',HALOGEN_HOST_RESERVE_GIB='18',
+    env.update(HALOGEN_CTX=str(context),HALOGEN_KV_POOL_POSITIONS=str(resolved['kv_pool_positions']),
+               HALOGEN_KV_SLOTS=str(resolved['slots']),HALOGEN_API_PORT='8731',HALOGEN_VERBOSE='1',HALOGEN_HOST_RESERVE_GIB='18',
                HF_HUB_OFFLINE='1')
     if checkpoint == 'v2':
         env.update(HALOGEN_CHECKPOINT='/models/qwen38-flash-next-v2.hgn',
@@ -368,6 +387,7 @@ def source_hashes():
 def build_manifest(o, attempt, run_id):
     validate_options(o)
     checkpoint=getattr(o,'checkpoint','v2')
+    resolved=resolve_capacity(o)
     base=r.manifest_for('serve')
     mounts=dict(r.FIXED_MOUNTS)
     for role,item in base['artifacts'].items():
@@ -382,9 +402,11 @@ def build_manifest(o, attempt, run_id):
     if checkpoint=='v2':
         mounts['/candidate/libhalogen01822-v2-preflight.so']=r.linux_path(LOCAL/'libhalogen01822-v2-preflight.so')
     result=dict(schema=1,version='0.18.22',image=r.IMAGE,run_id=run_id,checkpoint=checkpoint,
-        context=o.context_size,slots=1,serve_seconds=o.serve_seconds,startup_timeout=o.startup_timeout,
-        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None),getattr(o,'speculation_policy_json',None),max_prefill_tokens=getattr(o,'max_prefill_tokens',None),api_defaults=getattr(o,'api_defaults_json',None),disable_vision=getattr(o,'disable_vision',False)),sources=source_hashes(),
+        context=o.context_size,slots=resolved['slots'],serve_seconds=o.serve_seconds,startup_timeout=o.startup_timeout,
+        mounts=mounts,environment=environment(o.context_size,checkpoint,getattr(o,'prompt_cache','Off'),getattr(o,'draft_tokens',None),getattr(o,'prefill_chunk',None),getattr(o,'prefill_keep_trunk',False),getattr(o,'admit_ticks',None),getattr(o,'kernel_controls_json',None),getattr(o,'speculation_policy_json',None),max_prefill_tokens=getattr(o,'max_prefill_tokens',None),api_defaults=getattr(o,'api_defaults_json',None),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o)),sources=source_hashes(),
         entrypoint_sha256=portable.digest(attempt/'entrypoint-service.sh'))
+    if explicit_capacity(o):
+        result['kv_pool_positions']=resolved['kv_pool_positions']
     if getattr(o, 'speculation_policy_json', None) is not None:
         result['speculation_policy'] = sp.validate(o.speculation_policy_json)
     if getattr(o, 'api_defaults_json', None) is not None:
@@ -395,6 +417,7 @@ def build_manifest(o, attempt, run_id):
 
 
 def reject_unqualified_manifest_overrides(m):
+    cp.validate_manifest(m)
     for key in ('private_hsa', 'matmul_tuning'):
         if m.get(key) is not None:
             raise ValueError('Private runtime override is not rebound to 0.18.22: '+key)
@@ -456,19 +479,19 @@ def request_stop(o):
     return 0
 
 
-def check_admission(frame, context, checkpoint='v2', disable_vision=False):
-    phys,commit=floors(context,checkpoint,disable_vision=disable_vision)
+def check_admission(frame, context, checkpoint='v2', disable_vision=False, *, slots=1, kv_pool_positions=None):
+    phys,commit=floors(context,checkpoint,disable_vision=disable_vision,slots=slots,kv_pool_positions=kv_pool_positions)
     if frame.get('available_bytes',0)<phys*r.GIB or frame.get('commit_headroom_bytes',0)<commit*r.GIB:
         raise ValueError(f'Context {context} needs {phys} GiB free physical / {commit} GiB commit headroom; '
             f'observed {frame.get("available_bytes",0)/r.GIB:.2f} / {frame.get("commit_headroom_bytes",0)/r.GIB:.2f}')
 
 
-def admission(host,context,stop,log,checkpoint='v2',keepalive=None,disable_vision=False):
+def admission(host,context,stop,log,checkpoint='v2',keepalive=None,disable_vision=False,*,slots=1,kv_pool_positions=None):
     r.exclusive_host()
     # v2 needs ten consecutive safe seconds; the w4b stability rule stays sixty.
     # Floors and fresh checks immediately before container/model startup remain independent.
     stable_seconds=10 if checkpoint=='v2' else 60
-    log.info('Checking memory admission: context=%s, required physical/commit GiB=%s, stable_seconds=%s',context,floors(context,checkpoint,disable_vision=disable_vision),stable_seconds)
+    log.info('Checking memory admission: context=%s, required physical/commit GiB=%s, stable_seconds=%s',context,floors(context,checkpoint,disable_vision=disable_vision,slots=slots,kv_pool_positions=kv_pool_positions),stable_seconds)
     deadline=time.monotonic()+240; safe_since=None; last_note=-20; last_error=None
     while time.monotonic()<deadline:
         if stop.is_set(): raise InterruptedError('Startup cancelled')
@@ -477,7 +500,7 @@ def admission(host,context,stop,log,checkpoint='v2',keepalive=None,disable_visio
         r.check_frame(frame,age=time.monotonic()-started)
         if keepalive is not None: keepalive.check()
         try:
-            check_admission(frame,context,checkpoint,disable_vision=disable_vision)
+            check_admission(frame,context,checkpoint,disable_vision=disable_vision,slots=slots,kv_pool_positions=kv_pool_positions)
             if safe_since is None: safe_since=time.monotonic()
             if time.monotonic()-safe_since>=stable_seconds: return frame
         except ValueError as exc:
@@ -623,11 +646,16 @@ def guard_alive(process, attempt):
         raise
 
 
-def validate_health(h,context,checkpoint='v2',disable_vision=False):
+def validate_health(h,context,checkpoint='v2',disable_vision=False,*,slots=1,kv_pool_positions=None):
     validate_disable_vision(disable_vision,checkpoint)
     if h.get('status')!='ok' or h.get('version')!={'api':'0.18.22','engine':'0.18.22','match':True}:
         raise ValueError('Expected ready, matching Halogen 0.18.22 engine and API')
-    for key,expected in [('context',context),('slot_ctx',context),('kv_pool_positions',context),('slots',1)]:
+    resolved=cp.resolve(context,checkpoint,slots=slots,kv_pool_positions=kv_pool_positions,disable_vision=disable_vision)
+    if slots != 1 or kv_pool_positions is not None:
+        if h.get('capability_probe') != 'ok': raise ValueError('Capacity opt-in requires a successful native capability probe')
+        for key in ('slots','kv_pool_positions','context','slot_ctx'):
+            if type(h.get(key)) is not int: raise ValueError('Capacity health field must be an integer: '+key)
+    for key,expected in [('context',context),('slot_ctx',context),('kv_pool_positions',resolved['kv_pool_positions']),('slots',resolved['slots'])]:
         if h.get(key)!=expected: raise ValueError(f'Server silently changed {key}: {h.get(key)} != {expected}')
     if checkpoint == 'v2' and not disable_vision and h.get('vision', {}).get('enabled') is not True:
         raise ValueError('Expected enabled pinned vision tower for the v2 service')
@@ -645,15 +673,19 @@ def main(argv=None):
             return 2
     if o.stop or o.status: return request_stop(o)
     if o.print_only:
-        print(json.dumps(dict(context=o.context_size,slots=1,serve_seconds=o.serve_seconds,
+        resolved=resolve_capacity(o)
+        result=dict(context=o.context_size,slots=resolved['slots'],serve_seconds=o.serve_seconds,
             continuous=o.serve_seconds==0,startup_timeout=o.startup_timeout,checkpoint=getattr(o,'checkpoint','v2'),
-            endpoint=API+'/v1',token_file=str(TOKEN_PATH),admission_gib=floors(o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False))),indent=2))
+            endpoint=API+'/v1',token_file=str(TOKEN_PATH),admission_gib=floors(o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o)))
+        if explicit_capacity(o): result['kv_pool_positions']=resolved['kv_pool_positions']
+        print(json.dumps(result,indent=2))
         return 0
     return serve(o)
 
 
 def serve(o):
     validate_options(o)
+    resolved=resolve_capacity(o)
     r.configure()
     machine=r.MACHINE
     actual=portable.preflight(machine['distro'],machine['user'],machine['models'],machine['dxg'],checkpoint=getattr(o,'checkpoint','v2'),ngram_source=machine.get('ngram_source'))
@@ -677,11 +709,12 @@ def serve(o):
     cache_worker=None; cache_stopped=False
     cleanup=False; recovered=False; ready=False; m=None; error=None; creation_attempted=False
     state=dict(schema=1,run_id=run_id,attempt=str(attempt),phase='starting',
-               endpoint=API+'/v1',model=MODEL,context=o.context_size,slots=1,checkpoint=getattr(o,'checkpoint','v2'),
+               endpoint=API+'/v1',model=MODEL,context=o.context_size,slots=resolved['slots'],checkpoint=getattr(o,'checkpoint','v2'),
                prompt_cache=getattr(o,'prompt_cache','Off'),disable_vision=getattr(o,'disable_vision',False),
                serve_seconds=o.serve_seconds,controller_pid=os.getpid(),
                token_file=str(TOKEN_PATH),log_file=str(attempt/'engine.log'),
                controller_log=str(attempt/'service.log'))
+    if explicit_capacity(o): state['kv_pool_positions']=resolved['kv_pool_positions']
     atomic(STATE_PATH,state)
     def sigstop(*_): stop.set()
     old_handler=signal.signal(signal.SIGINT,sigstop)
@@ -713,12 +746,12 @@ def serve(o):
         # Admission, command/guard setup, and smoke checks surround the model timeout.
         keepalive=AdmissionKeepalive(r.WSL,run_id,o.startup_timeout+600)
         keepalive.arm()
-        baseline=admission(host,o.context_size,stop,log,getattr(o,'checkpoint','v2'),keepalive=keepalive,disable_vision=getattr(o,'disable_vision',False))
+        baseline=admission(host,o.context_size,stop,log,getattr(o,'checkpoint','v2'),keepalive=keepalive,disable_vision=getattr(o,'disable_vision',False),**capacity_options(o))
         keepalive.check()
         r.exclusive_host()
-        frame=host.frame(); check_admission(frame,o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False))
+        frame=host.frame(); check_admission(frame,o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o))
         atomic(attempt/'admission-create.json',frame)
-        log.info('Creating Halogen 0.18.22: context=%s, slots=1; no model download',o.context_size)
+        log.info('Creating Halogen 0.18.22: context=%s, slots=%s; no model download',o.context_size,resolved['slots'])
         lookup.revalidate(machine, m.get('lookup_tuning'))
         keepalive.check()
         creation_attempted=True
@@ -736,7 +769,7 @@ def serve(o):
         # Exact source and fresh-memory checks immediately before model startup.
         if source_hashes()!=m['sources']: raise ValueError('Source changed during admission')
         keepalive.check()
-        r.exclusive_host(); baseline=host.frame(); check_admission(baseline,o.context_size,getattr(o,"checkpoint","v2"),disable_vision=getattr(o,'disable_vision',False))
+        r.exclusive_host(); baseline=host.frame(); check_admission(baseline,o.context_size,getattr(o,"checkpoint","v2"),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o))
         atomic(attempt/'admission-start.json',baseline)
         if cancelled(): raise InterruptedError('Startup cancelled')
         lookup.revalidate(machine, m.get('lookup_tuning'))
@@ -760,7 +793,7 @@ def serve(o):
             try: health=http('/health',secret)
             except (OSError,ValueError): health={}
             if health.get('status')=='ok':
-                validate_health(health,o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False))
+                validate_health(health,o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o))
                 cache_worker.stop(); cache_stopped=True
                 log.info('Startup-cache worker stopped before inference; client cache is retained')
                 atomic(attempt/'health.json',health)
