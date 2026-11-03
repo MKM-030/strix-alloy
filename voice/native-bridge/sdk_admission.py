@@ -15,6 +15,10 @@ from urllib.parse import parse_qsl
 import aiohttp
 
 from core import authorized_agents
+from caller_create_preflight import (
+    CallerCreatePreflightDenied, requires_caller_create_preflight, require_caller_create_access,
+    deadline_bound_context,
+)
 from sdk_deployment import SDKDeploymentPolicy
 from sdk_admission_policy import (
     AUTHORIZATION_TIMEOUT_SECONDS, SDK_AGENT_ID, MAX_QUERY_BYTES, MAX_QUERY_FIELDS,
@@ -218,21 +222,22 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
         payload["assistantSettingsVersion"] = 1
     call_settings = None
     factory = aiohttp.ClientSession if http_factory is None else http_factory
+    deadline = asyncio.get_running_loop().time() + AUTHORIZATION_TIMEOUT_SECONDS
     try:
-        async with asyncio.timeout(AUTHORIZATION_TIMEOUT_SECONDS):
-            async with factory(
+        async with asyncio.timeout_at(deadline):
+            client = factory(
                 cookie_jar=aiohttp.DummyCookieJar(), trust_env=False,
                 auto_decompress=False,
                 skip_auto_headers={"Accept-Encoding"},
-                timeout=aiohttp.ClientTimeout(total=AUTHORIZATION_TIMEOUT_SECONDS),
-            ) as http:
-                async with http.post(
+                timeout=aiohttp.ClientTimeout(total=AUTHORIZATION_TIMEOUT_SECONDS))
+            async with deadline_bound_context(client, deadline) as http:
+                request = http.post(
                     policy.authorization_url, json=payload,
                     headers={"Authorization": authorization, "Content-Type": "application/json",
                              "Accept": "application/json",
                              "Accept-Encoding": "identity"},
-                    allow_redirects=False,
-                ) as response:
+                    allow_redirects=False)
+                async with deadline_bound_context(request, deadline) as response:
                     if response.status != 200:
                         raise AdmissionDenied(401 if response.status == 401 else 403)
                     data = await _bounded_response(response)
@@ -242,8 +247,15 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
                             data, service_id=policy.assistant_id, agent_id=policy.voice_agent_id)
                     elif not authorized_agents(data, policy.voice_agent_id):
                         raise AdmissionDenied(403)
+            if call_settings is not None and requires_caller_create_preflight(
+                    policy.instance_url, policy.assistant_id, call_settings.context_profile,
+                    policy.voice_agent_id):
+                await require_caller_create_access(authorization,
+                                                  http_factory=http_factory, deadline=deadline)
     except AdmissionDenied:
         raise
+    except CallerCreatePreflightDenied as error:
+        raise AdmissionDenied(error.status) from None
     except Exception:
         # Suppress platform/network/parser details; caller cancellation still
         # propagates because CancelledError is a BaseException, not Exception.

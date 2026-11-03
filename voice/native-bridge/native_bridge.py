@@ -29,6 +29,10 @@ from aiortc.sdp import candidate_from_sdp
 from av import AudioFrame, AudioResampler
 from core import EndpointGate, PlaybackBuffer, local_auth, authorized_agents
 from sdk_deployment import SDKDeploymentPolicy, valid_call_duration
+from sdk_admission_policy import AUTHORIZATION_TIMEOUT_SECONDS
+from caller_create_preflight import (
+    requires_caller_create_preflight, require_caller_create_access, deadline_bound_context,
+)
 from spoken_output import spoken_text
 from assistant_settings import CallSettings
 from host_ice import HostIceConfiguration, load_host_ice_file
@@ -2020,26 +2024,35 @@ async def authorize(request, config, http, with_settings=False):
             or not re.fullmatch(r'Bearer [A-Za-z0-9._~+/-]+=*', authorization)):
         return False
     url = config.instance_url + '/api/sn_voice_aia/ai_voice_agent/agents_authorized'
+    deadline = asyncio.get_running_loop().time() + AUTHORIZATION_TIMEOUT_SECONDS
     try:
-        async with http.post(url, json={'serviceId':config.voice_service_id,'clientApp':'admin_test',
-                                   **({'assistantSettingsVersion':1} if with_settings else {})},
-                             headers={'Authorization':authorization,'Accept':'application/json',
-                                      **({'Accept-Encoding':'identity'} if with_settings else {})},
-                             **({'auto_decompress':False} if with_settings else {}),
-                             allow_redirects=False, timeout=ClientTimeout(total=10)) as response:
-            if response.status != 200:
-                LOG.warning('Native OAuth verification denied status=%s', response.status)
-                return False
-            if with_settings:
-                from sdk_admission import _bounded_response
-                data = await _bounded_response(response)
-                return CallSettings.from_authorized_response(data,config.voice_service_id,config.required_agent_id)
-            data = await response.json()
-            accepted = authorized_agents(data, config.required_agent_id)
-            if not accepted:
-                result = data.get('result') if isinstance(data, dict) else None
-                LOG.warning('Native OAuth verification envelope/agent denied result_type=%s', type(result).__name__)
-            return accepted
+        async with asyncio.timeout_at(deadline):
+            operation = http.post(url, json={'serviceId':config.voice_service_id,'clientApp':'admin_test',
+                                       **({'assistantSettingsVersion':1} if with_settings else {})},
+                                 headers={'Authorization':authorization,'Accept':'application/json',
+                                          **({'Accept-Encoding':'identity'} if with_settings else {})},
+                                 **({'auto_decompress':False} if with_settings else {}),
+                                 allow_redirects=False, timeout=ClientTimeout(total=10))
+            async with deadline_bound_context(operation, deadline) as response:
+                if response.status != 200:
+                    LOG.warning('Native OAuth verification denied status=%s', response.status)
+                    return False
+                if with_settings:
+                    from sdk_admission import _bounded_response
+                    data = await _bounded_response(response)
+                    settings = CallSettings.from_authorized_response(
+                        data, config.voice_service_id, config.required_agent_id)
+                else:
+                    data = await response.json()
+                    accepted = authorized_agents(data, config.required_agent_id)
+                    if not accepted:
+                        result = data.get('result') if isinstance(data, dict) else None
+                        LOG.warning('Native OAuth verification envelope/agent denied result_type=%s', type(result).__name__)
+                    return accepted
+            if requires_caller_create_preflight(config.instance_url, config.voice_service_id,
+                                               settings.context_profile, config.required_agent_id):
+                await require_caller_create_access(authorization, deadline=deadline)
+            return settings
     except Exception:
         return False
 
