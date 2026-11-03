@@ -17,6 +17,21 @@ bounded live probe is still in preparation while its cancellation/cleanup
 handling is corrected; no fresh authentication or test call has run for this
 source reload.
 
+The first actual post-reload test has now run once (V7). It received the correct
+generic greeting, then failed before name input. Native session cleanup was
+acknowledged in 0.672 seconds; the test token was revoked (issuer200 plus the
+same-token401) and its temporary file removed. Its 9.781-second first-audio
+measurement includes the SDK client's complete ICE gathering and does not
+measure phone/browser startup.
+
+Independent exact native evidence identifies the remaining cause: workflow
+`2f3c8a39931093185c8132d47aba1014` terminated with `security_violation`; two
+conversation/interaction/provider-bound worker contexts had both effective and
+logged-in user `guest`, including an ACL denial. No GenAI/tool rows were visible
+for that execution. Keep the execution access rules intact and repair the user
+handoff before another Voice test. The completed greeting/model/startup changes
+do not constitute full Voice acceptance.
+
 The direct failure report supersedes the earlier wait for a phone-test result.
 The adapter repair is active. The approved ServiceNow VA Input and two Planner
 model corrections are applied and independently read back; complete live
