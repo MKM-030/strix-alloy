@@ -116,7 +116,11 @@ are null with available=false; do not invent a query/zero. Read actual
 message.session references when available, without reading payload/text.
 `messageSessionLinks` contains deduplicated `{conversationId,sessionId}` safe
 record references for messages on the generated device's owned conversations;
-an empty session is represented by null. If message activity is unavailable,
+an empty session is represented by null. A link must name the candidate
+conversation; a non-null session reference must name its proven session.
+A null session reference supplies no corroboration and is not a contradiction;
+it never replaces mandatory direct DTO-to-record session equality.
+If message activity is unavailable,
 links are empty and `activity.available` is false. Missing links are never
 proof of no messages. Activity is restricted to those device conversations,
 using `sys_cs_message.conversation`, `sn_aia_execution_plan.conversation`,
