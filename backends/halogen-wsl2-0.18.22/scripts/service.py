@@ -135,6 +135,8 @@ def options(argv=None):
 def validate_options(o):
     validate_disable_vision(getattr(o,'disable_vision',False),getattr(o,'checkpoint','v2'))
     resolve_capacity(o)
+    if explicit_capacity(o) and getattr(o, 'prompt_cache', 'Off') != 'Off':
+        raise ValueError('Capacity opt-in requires CacheOff')
     hsa_path = getattr(o, 'private_hsa_receipt', None)
     hsa_sha = getattr(o, 'private_hsa_receipt_sha256', None)
     if (hsa_path is None) != (hsa_sha is None):
@@ -332,6 +334,8 @@ def environment(context, checkpoint="v2", prompt_cache="Off", draft_tokens=None,
     if prefill_keep_trunk and checkpoint != 'v2': raise ValueError('PREFILL_KEEP_TRUNK requires v2')
     if admit_ticks is not None and (type(admit_ticks) is not int or not 1 <= admit_ticks <= 1024): raise ValueError('Invalid admit ticks')
     resolved=cp.resolve(context,checkpoint,slots=slots,kv_pool_positions=kv_pool_positions,disable_vision=disable_vision)
+    if (slots != 1 or kv_pool_positions is not None) and prompt_cache != 'Off':
+        raise ValueError('Capacity opt-in requires CacheOff')
     env=r.environment(r.manifest_for('serve'))
     # The bounded 4K diagnostics retain their old arena; continuous serving
     # starts with this release's compute defaults unless explicitly tuned.
