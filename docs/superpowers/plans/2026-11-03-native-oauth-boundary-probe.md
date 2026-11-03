@@ -60,3 +60,21 @@
 - [ ] If all gates pass, Root runs exactly one existing-credential native boundary attempt. No new permission grant is part of this action. Preserve every failure/uncertainty receipt; no automatic retry.
 - [ ] Independently correlate exact new own metadata/activity and terminal outcome; token revocation proof is mandatory. Do not claim AIA/Voice/device acceptance from this diagnostic.
 - [ ] Update the durable continuation/status with actual results and smallest evidenced next correction, preserving current Code context and all services.
+
+### Task 4: Correct the measured auth-response lifetime before a new version
+
+The first Root execution failed before token dispatch/native CS. Preserve it.
+Offline signal-linked streaming responses reproduce premature controller abort
+before the unchanged core reads its body; controls retain the signal and pass.
+
+- [ ] In NEW private sibling native-oauth-boundary-probe-v2/, prepare only the
+  existing driver/helper/tests with unique v2 execution flag and the spec's
+  bounded detached-byte auth-response handoff. No original attempt edits.
+- [ ] RED/GREEN behavioral coupled-stream coverage, including direct and
+  redirect/callback auth, token success/error/metadata failure and known-token
+  finally cleanup, irrelevant redirect/error bodies, hanging/late/overflow,
+  and actual CLI cancellation. Run focused private tests only; tracked oracle,
+  protocol and unchanged original PKCE core are not edited.
+- [ ] Independently review exact v2 diff/preparation and updated hashes/flags;
+  only then Root may consider one distinct version invocation under fresh gates.
+  No automatic retry or previous marker reuse. Record the actual bounded result.

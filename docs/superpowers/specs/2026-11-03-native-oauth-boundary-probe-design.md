@@ -205,6 +205,31 @@ but does not prohibit cleanup of an independently proven fresh own tuple.
 
 ## Evidence
 
+### Measured authorization response-lifetime correction
+
+The first reviewed executable run failed before token exchange and before any
+native CS operation. Its exact program/marker/result remain immutable. Offline
+signal-coupled WHATWG streaming responses reproduce a premature abort in the
+private auth connector: its bounded scope ended at response headers, aborting
+the body before the unchanged core consumed it. This proves that code defect
+and matches the safe live failure, without claiming a retained live exception.
+
+A separate private v2 preparation uses the unique explicit flag
+`--execute-native-oauth-boundary-probe-v2` and its own new sibling folder.
+It must consume the bytes needed by the unchanged PKCE core within the existing
+20s/131072-byte request scope and return a detached RAM-backed response. Preserve
+actual status, core-relevant headers including Content-Type/Location, and exact
+consumed bytes. Authorization/callback redirects and HTTP errors whose body
+the core never consumes are discarded without a new blocking body read.
+Every token-exchange response is bounded/read for early usable-token capture
+before core HTTP/metadata validation. Keep unknown issuance and every known
+token's mandatory finally revocation. No unbounded retained controller, raw
+body artifact, original-helper change, retry or new privilege is introduced.
+Coupled-stream tests must prove success, abort-after-consumption, redirects,
+early token cleanup and timeout/overflow/late-reader handling. New implementation
+and operational reviews precede any distinct Root invocation; no old attempt
+may be replayed. The actual native boundary remains unmeasured so far.
+
 Authoritative exact native wire extracts, source hashes and metadata evidence
 are in `entry-workflow/v5-original-caller/authenticated-chat-contract/` and
 `entry-workflow/native-browser-session-probe/preflight/fresh-binding-preflight/`.
