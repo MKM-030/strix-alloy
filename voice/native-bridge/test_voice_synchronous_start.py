@@ -300,6 +300,22 @@ class SynchronousStartTests(unittest.IsolatedAsyncioTestCase):
         await self.post_output(self.output)
         self.assertEqual(self.session.sequence, cursor)
 
+    async def test_nested_topic_installed_shape_preserves_actual_offered_choices(self):
+        self.callback_body = [{'uiType': 'TopicPickerControl', 'label': 'Choose support.',
+            'uiMetadata': {'categories': [{'label': 'Services', 'options': [
+                {'label': 'Support', 'value': 'support'}]}]}}]
+        opening, startup = await self.start()
+        await self.assert_ready(opening, startup)
+
+    async def test_nested_topic_empty_string_value_is_preserved(self):
+        self.callback_body = [{'uiType': 'TopicPickerControl', 'uiMetadata': {
+            'categories': [{'options': [{'label': 'Empty choice', 'value': ''}]}]}}]
+        opening, startup = await self.start()
+        await self.settled()
+        self.assertFalse(self.session.failed)
+        self.assertEqual(await asyncio.wait_for(opening, 2), [])
+        self.assertEqual(self.session.choices, [{'label': 'Empty choice', 'value': ''}])
+
     async def assert_rejected(self, transform):
         self.reply = transform
         opening, startup = await self.start()
@@ -371,6 +387,51 @@ def input_case(kind):
 
 for kind in ('InputText', 'Picker', 'Boolean', 'Date', 'DateTime', 'Time'):
     setattr(SynchronousStartTests, 'test_input_boundary_' + kind.lower(), input_case(kind))
+
+
+def nested_topic_case(metadata, *, rejected):
+    async def test(self):
+        control = {'uiType': 'TopicPickerControl'}
+        if metadata is not None:
+            control['uiMetadata'] = metadata
+        self.callback_body = [control]
+        if rejected:
+            await self.assert_rejected(None)
+        else:
+            opening, startup = await self.start()
+            await self.settled()
+            self.assertFalse(self.session.failed)
+            self.assertEqual(await asyncio.wait_for(opening, 2), [])
+            self.assertFalse(self.session.busy)
+            self.assertEqual(self.session.input_boundary_request_id, startup['requestId'])
+            self.assertEqual(self.session.input_boundary_kind, 'TopicPickerControl')
+            self.assertEqual(self.session.choices, [])
+    return test
+
+
+for name, metadata in {
+    'categories_object': {'categories': {'options': [{'label': 'Support', 'value': 'support'}]}},
+    'categories_null': {'categories': None},
+    'category_null': {'categories': [None]},
+    'category_list': {'categories': [[]]},
+    'options_object': {'categories': [{'options': {}}]},
+    'options_null': {'categories': [{'options': None}]},
+    'option_null': {'categories': [{'options': [None]}]},
+    'option_nonstring_value': {'categories': [{'options': [{'value': 1}]}]},
+    'option_missing_value': {'categories': [{'options': [{'label': 'Support'}]}]},
+}.items():
+    setattr(SynchronousStartTests, 'test_nested_topic_reject_' + name,
+            nested_topic_case(metadata, rejected=True))
+
+for name, metadata in {
+    'metadata_omitted': None,
+    'metadata_empty': {},
+    'categories_empty': {'categories': []},
+    'options_omitted': {'categories': [{}]},
+    'options_empty': {'categories': [{'options': []}]},
+}.items():
+    setattr(SynchronousStartTests, 'test_nested_topic_accept_' + name,
+            nested_topic_case(metadata, rejected=False))
 
 
 if __name__ == '__main__':

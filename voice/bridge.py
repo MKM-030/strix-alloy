@@ -983,6 +983,18 @@ class Bridge:
                 raise ValueError('Invalid START options')
             if 'uiMetadata' in control and not isinstance(control['uiMetadata'], dict):
                 raise ValueError('Invalid START metadata')
+            if control['uiType'] == 'TopicPickerControl':
+                categories = control.get('uiMetadata', {}).get('categories', [])
+                if not isinstance(categories, list):
+                    raise ValueError('Invalid START topic categories')
+                for category in categories:
+                    if not isinstance(category, dict):
+                        raise ValueError('Invalid START topic category')
+                    options = category.get('options', [])
+                    if (not isinstance(options, list)
+                            or any(not isinstance(option, dict)
+                                   or not isinstance(option.get('value'), str) for option in options)):
+                        raise ValueError('Invalid START topic options')
             if control.get('actionType') == 'CreateConversation':
                 raise ValueError('Unexpected CREATE during START')
             if control.get('actionType') == 'StartConversation' and binding is not None:
