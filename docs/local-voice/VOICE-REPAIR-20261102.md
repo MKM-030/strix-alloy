@@ -6,36 +6,66 @@ corrected to Halogen. The outer role-mask repair subsequently allowed both
 the native workflow and its SCC child through access checks; the earlier
 Guest diagnosis alone did not explain the complete execution failure.
 
-The bounded V10 name test passed: it retained the exact raw synthetic-name
-ASR, completed the local readback and accepted one local name-only Ja.
-ServiceNow then asked its separate required name-confirmation question.
-That local Ja was not replayed against the later backend question. V11,
-which can answer that fresh backend name question once and then observe the
-next concrete field question, remains unrun.
+The final bounded V12 test passed. It completed the generic greeting, exact
+raw synthetic-name readback, local name-only Ja, a fresh Ja to ServiceNow's
+separate name question, and the next actual InputText question: “Wann beginnt
+der neue Mitarbeiter? Bitte nenne das Eintrittsdatum.” That question's audio
+was fully emitted and conservatively drained; the probe then stayed silent.
+No date or order answer was sent. The three synthetic releases produced
+exactly two post-local-confirmation business MESSAGEs. Total duration was
+178.672 seconds, including 8.469 seconds of acknowledged own cleanup; Native
+capacity returned to zero and the test token was revoked and removed.
+
+Independent ordinary reads bind the exact four-ID conversation chain and
+closed interaction. Eleven conversation-bound Halogen executions succeeded,
+including ReAct, both Planner capabilities and VA Input. The native workflow
+and original SCC access gate passed; the SCC task and its existing context
+tool succeeded. Worker identity remains unproved because the relevant read
+is denied. This is a bounded name/context continuation, not order acceptance.
 
 The managed-ICE WSS V3 probe observed its first voiced PCM at 3.484 seconds
 and an offer/answer interval of 1.015 seconds. These are measurements from a
 synthetic host-only client, not physical phone/browser startup or full
 introduction-playback acceptance.
 
-The verified combined reload receipt c93527e5… loaded owned-CREATE draining,
-exact END-completion handling and complete four-ID metadata publication.
-That dated receipt preserved the controller, Halogen, Gateway, ASR and own
-TTS. Its process IDs are historical generation evidence, not restart recipes.
+The active adapters retain owned-CREATE draining, exact END-completion
+handling and complete four-ID metadata publication. The latest maintenance
+receipt be5cd440… also loaded fixed nonsecret CREATE-stage/HTTP diagnostics.
+The controller, Halogen, Gateway, ASR and own TTS generations were preserved.
+Process IDs in older receipts are historical evidence, not restart recipes.
 
 A different subsequent SDK call (e770…) reserved capacity after a failed
 CREATE-only operation. Its client and peer closed; no ASR, queued speech,
 START or END was observed. Remote allocation remains unknown. A negative
 visibility read does not establish that no remote conversation exists.
-The safe fixed-stage CREATE diagnostics are promoted to canonical source,
-but their runtime activation is pending. The failed CREATE has not been
-replayed, and V11 preflight refused the occupied slot without starting V11.
+An explicitly scoped operator maintenance abandoned only that closed-peer,
+input-free local reservation. It did not claim remote completion or replay
+the old CREATE. New V11 and V12 CREATEs succeeded. V11's original failed
+receipt is preserved: its test rejected the genuine question followed by a
+date instruction and imposed an 8-second cleanup timeout. V12 corrected only
+those harness checks/budgets, retained all input/audio/order guards and passed.
+
+A separate two-token experiment verified that issuing a second fresh Voice
+token and revoking it left the first authorized. Both test tokens were then
+revoked independently. This does not identify the old failed caller's token
+or prove the historical failure's HTTP status.
+
+The remaining backend latency is material: initialization still takes about
+29 seconds, and subsequent Planner/Agent turns take tens of seconds. Local
+readback and acknowledgement remain immediate. Conversation and AIA currently
+share one Halogen slot. The isolated parallel-capacity plan reuses an existing
+two-slot candidate for a distinct short-Voice/long-AIA qualification; no model,
+cache, capacity or selected-profile change has been activated by that work.
+The earlier mixed-long-request cohort improved throughput but worsened
+individual latency, so it is not a Voice-latency acceptance result.
 
 The full Voice goal remains open: physical iPhone/Android/desktop parity,
-real microphone/noise/name-correction and repeated-call behavior, requester
-context, native business execution and sustained progress still require
-acceptance evidence. The sections below retain earlier dated diagnoses and
-results; this update supersedes their stale runtime and blocker descriptions.
+real microphone/noise/name-correction and immediate repeated-call behavior,
+requester/worker identity, context receipt/ingestion and sustained progress
+still require acceptance evidence. Existing business execution was observed
+only for the bounded context read described above. The sections below retain
+earlier dated diagnoses and results; this update supersedes stale runtime and
+blocker descriptions.
 
 ## Demonstrated causes
 
