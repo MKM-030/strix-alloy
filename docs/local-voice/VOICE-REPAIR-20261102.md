@@ -1,5 +1,22 @@
 # Voice repair — 2 November 2026
 
+Update 3 November: the documented synchronous `START_CREATED_CONVERSATION`
+contract is now active (commit `1fa700c`, Native25004/Bot3800). Full native
+startup controls and empty acknowledgements are handled separately; actual
+controls must match the pending request/user/session and valid offered choices.
+Callbacks share deduplication and state handling. Normal later turns remain
+asynchronous. The last correction passed 86 focused tests and independent
+source review. Existing broad-suite errors were independently reproduced on
+the unchanged baseline; the interrupted broad run is not a passing suite.
+
+The reload changed no settings and preserved the controller, Halogen, Gateway,
+ASR and own TTS generations. Both native greeting profiles were repaired earlier
+to `Hallo und willkommen. Wie kann ich Ihnen helfen?`. Actual worker identity,
+positive-name continuation and device/latency acceptance remain open. The next
+bounded live probe is still in preparation while its cancellation/cleanup
+handling is corrected; no fresh authentication or test call has run for this
+source reload.
+
 The direct failure report supersedes the earlier wait for a phone-test result.
 The adapter repair is active. The approved ServiceNow VA Input and two Planner
 model corrections are applied and independently read back; complete live
