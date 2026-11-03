@@ -1,14 +1,15 @@
 # Nativer ServiceNow-Voice-Adapter
 
-Stand: 19.10.2026. Dieser Adapter verbindet den nativen Voice-/Now-Mobile-Medienpfad mit lokalem STT, TTS und der vorhandenen Bot-Bridge. Das Modell wird über den nativen ServiceNow-Skill-/Custom-LLM-Pfad angesprochen. Modell- und Skillwahl bleiben in AI Control Tower / Skill Kit; Sprache und Voice-Anweisungen kommen aus dem Voice Assistant.
+Stand: 03.11.2026. Dieser Adapter verbindet den nativen Voice-/Now-Mobile-Medienpfad mit lokalem STT, TTS und der vorhandenen Bot-Bridge. Das Modell wird über den nativen ServiceNow-Skill-/Custom-LLM-Pfad angesprochen. Modell- und Skillwahl bleiben in AI Control Tower / Skill Kit; Sprache und Voice-Anweisungen kommen aus dem Voice Assistant.
 
 ## Aktueller Nachweisstand
 
 - Früherer Android-/iPhone-Betrieb und ein externer IPv4-Medienpfad sind historisch belegt.
-- Frische externe Versuche erreichen Session und SDP, aber keinen ICE-/DTLS-Audiopfad. TTS beginnt lokal nach 46–47 ms; dies beweist keine Wiedergabe auf dem Telefon.
-- Die neue optionale Host-TURN-Konfiguration benötigt einen öffentlichen Relaydienst und private Credentials. Sie ist keine bestätigte Behebung des aktuellen Telefonfehlers.
-- Die neue Konfiguration wurde unabhängig geprüft. Details zu Regressionstests und dem bekannten bereits zuvor bestehenden Begrüßungs-Testfehler stehen im Release-Nachweis.
-- Der laufende Prozess wurde für die bloße Quellcode-Erweiterung nicht neu gestartet; Relaybetrieb ist nicht aktiviert.
+- Der synthetische SDK-Test erreicht die generische Begrüßung, die echte SCC-Namensfrage, lokale Namenswiederholung und eine Bestätigung. Eine reine Planner-Übergabemeldung belegt noch keine nächste fachliche Rückfrage.
+- Ein getrennter lokaler WSS-Test erreicht HTTP 101 und hörbare PCM-Daten. Das belegt weder öffentliche TURN-/NAT-Konnektivität noch Wiedergabe auf einem physischen Telefon.
+- SDK und Browser-WSS verwenden bei aktivierter `private_managed_turn` dieselbe vorhandene ServiceNow-Relayermittlung. Der Browser erhält ausschließlich die pro Anruf gebundenen ICE-Zugangsdaten; private Host-Credentials werden nicht ausgegeben. Ohne diese Option bleiben die bisherigen Defaults erhalten.
+- Nach der sicheren lokalen Namensbestätigung kann die modellfreie Rückmeldung „Danke für die Bestätigung.“ spielen. Eine zugelassene aktuelle Backend-Antwort hat Vorrang; die Rückmeldung behauptet keinen fachlichen Fortschritt.
+- Geräteabnahme für iPhone, Android und Desktop sowie eine vollständig fortgesetzte fachliche Unterhaltung bleiben gesonderte Prüfpunkte.
 
 Historische Probeberichte im Repository beschreiben ihren damaligen Stand. Insbesondere frühere Halogen-Zeiten, Testaufträge, feste Demosprachen und einzelne Geräteerfolge sind keine aktuelle Gesamtfreigabe.
 
@@ -18,13 +19,13 @@ Der HTTP-Listener bindet an `127.0.0.1:8860`; `GET /health` ist ein begrenzter D
 
 Der native mobile SDK-Pfad unter `/api/webrtc/sessions` verwendet begrenzte Bearer-Authentisierung und die native ServiceNow-Service-/Agent-Autorisierung. Die zusätzliche eigene Settings-v1-Ressource akzeptiert plattformautorisierte opaque OAuth-Tokens; reine JWT-Formprüfung ist für diesen mobilen Pfad kein Ersatz. Ungültige oder abgelehnte native Autorisierung bleibt ein Fehler.
 
-Der separate Browser-Test-Assistant-WebSocketpfad prüft zusätzlich den exakten Instanz-Origin und besitzt weiterhin seinen eigenen JWT-Syntaxguard. Beide Einstiegspfade sind getrennt zu qualifizieren. Weder Tokenform noch eine private Entwicklungsidentität erteilen fachliche Rechte. Die Bot-Bridge verwendet ihre konfigurierte Integrationsidentität; Voice-Login bedeutet keine beliebige Benutzerimpersonation.
+Der separate Browser-Test-Assistant-WebSocketpfad prüft zusätzlich den exakten Instanz-Origin. Sein begrenzter ASCII-Syntaxguard akzeptiert opaque und JWT-förmige Bearer; die native ServiceNow-Autorisierung entscheidet über ihre Gültigkeit und Servicebindung. Beide Einstiegspfade sind getrennt zu qualifizieren. Weder Tokenform noch eine private Entwicklungsidentität erteilen fachliche Rechte. Die Bot-Bridge verwendet ihre konfigurierte Integrationsidentität; Voice-Login bedeutet keine beliebige Benutzerimpersonation.
 
 SessionCreate liefert für SDK 2.26 HTTP 200, nicht 201. Die SDP-Antwort behält ihren verschachtelten Vertrag. Mobile TURN-Zugangsdaten werden von beiden untersuchten SDKs durch ServiceNow-OAuth ersetzt; generische TURN-Passwörter werden deshalb nicht an die mobilen DTOs angehängt.
 
 ## Netzwerk
 
-Standardmäßig wird STUN verwendet; diese Version ist nicht mehr der historische reine Host-Kandidaten-Stand. HTTPS-Tunnel/Funnel transportieren die Signalisierung, aber keine UDP-Medien. Ein erfolgreicher Health- oder Session-Aufruf beweist keine erreichbare WebRTC-Verbindung.
+Ohne aktivierte Relaykonfiguration wird STUN verwendet. Bei vorhandenem verwaltetem Relay entfällt der zusätzliche öffentliche STUN-Server auf dem Host. Die Metadatenermittlung sendet keine SDP-, Audio- oder Gesprächsinhalte. HTTPS-Tunnel/Funnel transportieren die Signalisierung, aber keine UDP-Medien. Ein erfolgreicher Health- oder Session-Aufruf beweist keine erreichbare WebRTC-Verbindung.
 
 Die optionale private `host_ice_config_file` wird relativ zur Bridge-Konfigurationsdatei aufgelöst und beim Prozessstart geladen. Sie enthält genau einen TURN-Endpunkt und Environment-Verweise für die Credentials. Siehe [HOST-RELAY.md](HOST-RELAY.md). Ohne diese Option bleibt der bisherige STUN-Default erhalten.
 

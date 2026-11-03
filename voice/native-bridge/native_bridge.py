@@ -31,7 +31,8 @@ from sdk_deployment import SDKDeploymentPolicy, valid_call_duration
 from spoken_output import spoken_text
 from assistant_settings import CallSettings
 from host_ice import HostIceConfiguration, load_host_ice_file
-from managed_turn import ManagedTurnConfiguration, load_managed_turn_file, clear_session_ice
+from managed_turn import (ManagedTurnConfiguration, ManagedTurnBootstrap,
+                          load_managed_turn_file, session_host_ice, clear_session_ice)
 from mobile_relay import MobileRelayConfiguration, load_mobile_relay_file
 from speech_activity import (SpeechActivityConfiguration, StreamingSpeechActivity,
                              load_speech_activity_file)
@@ -2054,13 +2055,28 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
 
     app = web.Application(client_max_size=256*1024, middlewares=[request_diagnostics])
     active = set()
+    wss_creating = set()
+    stopping = False
+    managed_config = getattr(config, 'private_managed_turn', None)
+    managed_turn = (ManagedTurnBootstrap(managed_config)
+                    if managed_config is not None and managed_config.enabled else None)
+
+    async def stop_wss_creates(app):
+        nonlocal stopping
+        stopping = True
+        for operation in tuple(wss_creating):
+            if not operation.done() and not operation.cancelling():
+                operation.cancel()
+        # Shared pending owners drain metadata cleanup in lifecycle below.
+    app.on_shutdown.append(stop_wss_creates)
+
     async def before_create():
         await require_model_ready(app[HTTP_KEY], config.model_health_url,
                                   config.private_model_health_token)
         await require_asr_ready(app[HTTP_KEY], config)
     probe_dialog = Dialog(config) if dialog_factory is None and probe_backend else None
     async def lifecycle(app):
-        nonlocal responsive
+        nonlocal responsive, stopping
         slot_owner = None
         if profile and profile.grounded_answers_enabled:
             readiness = _grounded_readiness_module()
@@ -2118,6 +2134,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             target.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
             LOG.info('Safe backend probe ok=%s elapsed=%.2f', report['ok'], time.monotonic()-started)
         yield
+        stopping = True
         closing = {asyncio.create_task(call.close()) for call in list(active)}
         observation = asyncio.create_task(responsive.shutdown(5)) if responsive is not None else None
         if observation is not None:
@@ -2174,7 +2191,43 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                 raise RuntimeError('Authenticated caller bootstrap unavailable')
             binder(authorization)
 
+    async def make_managed_wss_call(settings, token):
+        from sdk_sessions import _PendingCreate
+        operation = asyncio.current_task()
+        reservation = _PendingCreate(operation)
+        active.add(reservation)
+        wss_creating.add(operation)
+        host_servers = None
+        try:
+            servers = await managed_turn.ice_servers(token, config.instance_name,
+                                                     config.voice_service_id)
+            if stopping:
+                raise web.HTTPServiceUnavailable(text=availability_notice)
+            host_servers = session_host_ice(servers, token, config.instance_name,
+                                            config.voice_service_id)
+            call = make_call(settings, ice_servers=host_servers)
+            active.add(call)
+            host_servers = None  # NativeCall owns and clears the session credentials.
+            return call
+        except Exception as error:
+            LOG.warning('Native signaling managed TURN failed type=%s', type(error).__name__)
+            raise web.HTTPServiceUnavailable(text=availability_notice) from None
+        finally:
+            if host_servers is not None:
+                clear_session_ice(host_servers)
+            active.discard(reservation)
+            wss_creating.discard(operation)
+
+    def wss_client_ice(call):
+        if managed_turn is None:
+            return [{'urls': [STUN_URL]}]
+        # Serialize only this authenticated call's managed snapshot, never host-private ICE.
+        return [{'urls': list(server.urls), 'username': server.username,
+                 'credential': server.credential} for server in call._session_ice_servers]
+
     async def connect(request):
+        if stopping:
+            raise web.HTTPServiceUnavailable(text=availability_notice)
         admission = await authorize(request, config, app[HTTP_KEY], with_settings=True)
         if not admission:
             LOG.info('Native signaling admission status=401')
@@ -2185,14 +2238,16 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             await before_create()
         except RuntimeError:
             raise web.HTTPServiceUnavailable(text=availability_notice) from None
-        if active or responsive is not None and not responsive.available:
+        if stopping or active or responsive is not None and not responsive.available:
             LOG.info('Native signaling admission status=503 native_sessions=%d', len(active))
             raise web.HTTPServiceUnavailable(text=availability_notice if responsive is not None else 'Demo voice session is busy')
         ws = web.WebSocketResponse(heartbeat=20, max_msg_size=256*1024)
         settings = admission if isinstance(admission,CallSettings) else None
-        call = make_call(settings)
-        # Reserve without yielding after checking capacity, including WS upgrade.
-        active.add(call)
+        if managed_turn is not None:
+            call = await make_managed_wss_call(settings, request.query.get('auth_token', ''))
+        else:
+            call = make_call(settings)
+            active.add(call)
         offered = False
         input_coordinator = None
         async def close_after_input_loss():
@@ -2219,7 +2274,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                             raise ValueError('Invalid offer')
                         await call.peer.setRemoteDescription(RTCSessionDescription(sdp['sdp'], 'offer'))
                         await call.peer.setLocalDescription(await call.peer.createAnswer())
-                        await ws.send_json({'type':'answer','sdp':call.peer.localDescription.sdp,'iceServers':[{'urls':[STUN_URL]}]})
+                        await ws.send_json({'type':'answer','sdp':call.peer.localDescription.sdp,'iceServers':wss_client_ice(call)})
                         offered = True
                     elif kind == 'candidate' and offered:
                         value = data.get('candidate')

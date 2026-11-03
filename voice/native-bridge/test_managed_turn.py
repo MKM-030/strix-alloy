@@ -478,7 +478,9 @@ class NativeIceTests(unittest.IsolatedAsyncioTestCase):
         projection['result']['assistant_settings']['service_id']=ASSISTANT
         projection['result']['assistant_settings']['prompt']['introduction']='Hallo aus dem Assistant'
         settings=CallSettings.from_authorized_response(projection,ASSISTANT,AGENT)
-        async def admit(*args,**kwargs):
+        admitted_authorizations=[]
+        async def admit(headers,*args,**kwargs):
+            admitted_authorizations.extend(value for name,value in headers if name.lower()=='authorization')
             return _VerifiedSettingsContext(deployment.instance_url,ASSISTANT,AGENT,'agent_operator',True,settings)
         peers=[];ice_configurations=[];calls=[]
         real_native=native_bridge.NativeCall
@@ -521,6 +523,8 @@ class NativeIceTests(unittest.IsolatedAsyncioTestCase):
                 connection._early_checks.append(object())
                 await client.delete(BASE+'/'+data['session_id'],headers={'Authorization':'Bearer '+TOKEN})
                 await asyncio.wait_for(calls[0].close_complete.wait(),1)
+                self.assertEqual(admitted_authorizations,['Bearer '+TOKEN])
+                self.assertEqual(calls[0].dialog.bound_authorizations,admitted_authorizations)
                 self.assertIsNone(connection.turn_username)
                 self.assertIsNone(connection.turn_password)
                 self.assertEqual(connection._check_list,[])

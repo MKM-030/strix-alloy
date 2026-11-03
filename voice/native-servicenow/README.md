@@ -1,5 +1,29 @@
 # SCC native voice instance customization
 
+## Current repair evidence — 2026-11-03
+
+The shared native Start handler now treats both ICE `connected` and `completed`
+as connected, catches asynchronous signaling and required playback failures,
+and closes only its own audio analysis context. Optional audio analysis failure
+does not invalidate otherwise working playback. The saved native record is
+revision 16; its stored CRLF differs from the canonical LF source only in line
+endings. The original helper and event mapping were independently unchanged.
+See `Start-voice-session.js` and `tests/browser-parity/` for the portable
+26-case regression suite and exact native preimages.
+
+The adapter now delegates bearer authority to native ServiceNow authorization,
+after bounded ASCII syntax and exact-origin checks. This supersedes the earlier
+JWT-only restriction described in the historical inspection below. SDK and WSS
+each require their own validation; local protocol success does not establish
+physical iPhone, Android or desktop microphone/playback acceptance.
+
+Both inspected welcome profiles use “Hallo und willkommen. Wie kann ich Ihnen
+helfen?”. Business execution stays in ServiceNow. Current model capability
+selection and reusable scripts are documented in
+`../../docs/servicenow-byollm/capability-model-management.md`.
+
+## Historical native inspection — 2026-10-13
+
 Inspected and edited through the ServiceNow native UI on 2026-10-13. Instance: `soprasteriaassvsdemo14.service-now.com`.
 
 ## Saved instance state

@@ -520,6 +520,8 @@ class NativeDuplex:
             emitted_samples=0, complete=False, interrupted=False)
         if inherited is not None and self._question_current(inherited):
             state['control_label'] = inherited.get('control_label', inherited['question'])
+        if item.kind == 'confirmation_ack':
+            state.update(output=item, generation=self.call.playback.generation, pcm_bytes=0)
         self._speech = state
         if question:
             self._spoken_question = state
@@ -528,6 +530,21 @@ class NativeDuplex:
     def _finish_speech(self, state, *, complete):
         self._update_speech_cursor()
         state['complete'] = complete and not state['interrupted']
+
+    def _buffered_confirmation_ack(self):
+        state = self._speech
+        playback = self.call.playback
+        if (state is None or state['kind'] != 'confirmation_ack' or not state['complete']
+                or state['interrupted'] or state.get('generation') != playback.generation
+                or not self._valid(state['output'])):
+            return None
+        size = state['pcm_bytes']
+        remaining = size - 2 * (playback.emitted_samples - state['emitted_start'])
+        # Other accepted PCM, even in this generation, is not ours to discard.
+        if (size <= 0 or remaining <= 0 or remaining != len(playback.data)
+                or playback.accepted_samples != state['accepted_start'] + size // 2):
+            return None
+        return state
 
     def begin_greeting(self, text):
         return self._begin_speech(SimpleNamespace(text=text, kind='greeting', question_binding=None))
@@ -955,6 +972,7 @@ class NativeDuplex:
             return True
         self._name_candidate = None
         self._queue_business_input(candidate['turn'])
+        self._enqueue('Danke für die Bestätigung.', turn, kind='confirmation_ack')
         return True
 
     @staticmethod
@@ -1189,10 +1207,14 @@ class NativeDuplex:
                     admitted_replies.add(reply)
                 # Only an admitted audible replacement owns playback. Stale
                 # or suppressed callbacks must leave current local speech intact.
-                if admitted and self._active_kind == 'conversation':
-                    self.call.playback.interrupt()
-                    if self._synthesis_task is not None:
-                        self._synthesis_task.cancel()
+                if admitted:
+                    buffered_ack = self._buffered_confirmation_ack()
+                    if self._active_kind in ('conversation', 'confirmation_ack') or buffered_ack is not None:
+                        if buffered_ack is not None:
+                            buffered_ack['interrupted'] = True
+                        self.call.playback.interrupt()
+                        if self._synthesis_task is not None:
+                            self._synthesis_task.cancel()
 
         async def on_reply(reply):
             replies.append(reply)
@@ -1619,6 +1641,10 @@ class NativeDuplex:
             if not self._valid(item):
                 self._outputs.popleft()
                 continue
+            if item.kind == 'confirmation_ack' and any(
+                    queued.kind == 'backend' and self._valid(queued) for queued in self._outputs):
+                self._outputs.popleft()
+                continue
             if (self.call.playback.data or self.call.synthesis_active or self.call.vad_active
                     or self.call.recognition_active or not self.call.turns.empty()):
                 await asyncio.sleep(.02)
@@ -1655,6 +1681,7 @@ class NativeDuplex:
         started = self.clock()
         queued = 0
         first = True
+        state = self._speech
         async for chunk in self.call.speech.synthesize(item.text):
             if not self._valid(item) or generation != self.call.playback.generation:
                 break
@@ -1663,6 +1690,8 @@ class NativeDuplex:
             if self._valid(item) and generation == self.call.playback.generation:
                 if chunk and self.call.playback.put(chunk, generation):
                     queued += len(chunk)
+                    if item.kind == 'confirmation_ack' and state is not None and state.get('output') is item:
+                        state['pcm_bytes'] += len(chunk)
                     if first:
                         first = False
                         LOG.info('Voice independent output call=%s stage=first_pcm kind=%s seconds=%.3f',

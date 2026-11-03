@@ -30,6 +30,12 @@ def private_payload(url='turn:relay.invalid:3478?transport=udp'):
 
 
 class _Dialog:
+    def __init__(self):
+        self.bound_authorizations = []
+
+    def bind_caller_authorization(self, authorization):
+        self.bound_authorizations.append(authorization)
+
     async def close(self):
         pass
 
@@ -177,13 +183,16 @@ class HostIceSessionTests(unittest.IsolatedAsyncioTestCase):
         payload['result']['authorized_agents']=[config.required_agent_id]
         payload['result']['assistant_settings']['service_id']=config.voice_service_id
         settings=CallSettings.from_authorized_response(payload,config.voice_service_id,config.required_agent_id)
-        async def grant(*args,**kwargs):
+        admitted_authorizations=[]
+        dialog=_Dialog()
+        async def grant(headers,*args,**kwargs):
+            admitted_authorizations.extend(value for name,value in headers if name.lower()=='authorization')
             return _VerifiedSettingsContext(config.instance_url,config.voice_service_id,
                 config.required_agent_id,'agent_operator',True,settings)
         with patch('sdk_admission.admit_sdk_session',side_effect=grant), \
              patch('native_bridge.RTCPeerConnection',wraps=RTCPeerConnection) as peer_factory:
             client=TestClient(TestServer(native_bridge.create_app(config,
-                speech_factory=lambda http:_Speech(),dialog_factory=_Dialog)))
+                speech_factory=lambda http:_Speech(),dialog_factory=lambda:dialog)))
             await client.start_server()
             try:
                 headers={'Authorization':'Bearer host-relay-offline-fixture'}
@@ -203,6 +212,8 @@ class HostIceSessionTests(unittest.IsolatedAsyncioTestCase):
                     self.assertNotIn(forbidden,text)
                 response=await client.delete('/api/webrtc/sessions/'+body['session_id'],headers=headers)
                 self.assertIn(response.status,(202,204))
+                self.assertEqual(admitted_authorizations,[headers['Authorization']])
+                self.assertEqual(dialog.bound_authorizations,admitted_authorizations)
             finally:
                 await client.close()
 
