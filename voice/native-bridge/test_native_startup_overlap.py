@@ -9,6 +9,7 @@ from native_bridge import Config, NativeCall
 from native_duplex import NativeDuplex
 from test_assistant_settings import authorized_settings, SERVICE, AGENT
 import test_voice_created_lifecycle as created_fixture
+from test_native_caller_fixture import TOKEN
 
 
 TOPIC = 'e34d0bc393b38354e7f2b9fa6aba10fb'
@@ -61,6 +62,7 @@ class NativeTopicStartupTests(unittest.IsolatedAsyncioTestCase):
     create_confirmed = created_fixture.CreatedLifecycleTests.create_confirmed
 
     def call(self):
+        self.dialog.bind_caller_authorization(TOKEN)
         self.dialog.config.initial_topic_id = TOPIC
         speech = CapturingSpeech()
         call = make_call(Config(backend_url=self.bridge.origin, greeting='Unused host introduction.'),

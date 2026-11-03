@@ -773,6 +773,8 @@ class Bridge:
             payload['nowSessionId'] = session.now_session
         if action:
             payload['action'] = action
+        if action == 'START_CREATED_CONVERSATION':
+            payload['syncResponse'] = True
         # Reset before the HTTP await: callbacks may arrive before its ACK.
         session.turn_texts.clear()
         session.completion_deadline = 0
@@ -796,6 +798,9 @@ class Bridge:
                 if response.status not in (200, 201, 202) or len(raw) > 65536:
                     raise RuntimeError('Bot request rejected')
                 ack = json.loads(raw) if raw else {}
+                if action == 'START_CREATED_CONVERSATION':
+                    self.consume_start_response(session, payload, ack)
+                    return
                 if not isinstance(ack, dict) or ack.get('error') or (isinstance(ack.get('result'), dict) and ack['result'].get('error')):
                     raise RuntimeError('Bot request failed')
                 ack_status = ack.get('status')
@@ -937,23 +942,73 @@ class Bridge:
                          data.get('requestId'), int(time.time()*1000), json.dumps(callback_metadata(data)))
             LOG.info('Bot callback stage=matched elapsed_ms=%d controls=%d',
                      max(0,int((time.monotonic()-session.pending_since)*1000)),len(data.get('body',[])))
-            fingerprint = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
-            if fingerprint not in session.fingerprints:
-                # Dedup the actual authenticated wire envelope, then normalize
-                # only its known request alias for the existing state machines.
-                if is_alias:
-                    data = dict(data, requestId=matched_request_id)
-                self.observe_conversation_binding(session, data)
-                session.fingerprints.append(fingerprint)
-                if session.progress.observe(data, now=time.monotonic(), clean_text=text_only):
-                    session.sequence += 1
-                    session.change.set()
-                self.consume(session, data)
-                if session.failed or session.ended or session.ending:
-                    self.retire_caller_bootstrap(session)
-                self.queue_start_created(session, data['requestId'])
+            self.ingest_output(session, data, matched_request_id)
         # No audio synthesis, downstream HTTP or long-running work in this handler.
         return web.json_response({'ok': True})
+
+    def consume_start_response(self, session, payload, response):
+        # HTTP supplies the session association, but content must independently
+        # match the exact outstanding START before it can mutate dialogue state.
+        if (self.stopping or self.sessions.get(session.sid) is not session
+                or session.ending or session.failed or session.ended
+                or session.pending_action != 'START_CREATED_CONVERSATION'
+                or not session.requests or session.requests[-1] != payload['requestId']):
+            return
+        if not isinstance(response, dict):
+            raise ValueError('Invalid START response')
+        content = response.get('result', response)
+        if not isinstance(content, dict):
+            raise ValueError('Invalid START content')
+        for envelope in (response, content):
+            if ('error' in envelope or 'errors' in envelope
+                    or 'status' in envelope and envelope['status'] != 'success'):
+                raise ValueError('START failed')
+        if content == {'status': 'success'}:
+            return  # Transport confirmation alone never establishes readiness.
+        if (content.get('requestId') != payload['requestId']
+                or content.get('userId') != payload['userId']
+                or any(key in content and content[key] != payload[key]
+                       for key in ('clientSessionId', 'appInboundId'))
+                or not isinstance(content.get('body'), list)):
+            raise ValueError('Invalid START correlation')
+        binding = session.conversation_binding
+        for control in content['body']:
+            if (not isinstance(control, dict) or not isinstance(control.get('uiType'), str)
+                    or not control['uiType']
+                    or 'options' in control and not isinstance(control['options'], list)):
+                raise ValueError('Invalid START control')
+            options = control.get('options', [])
+            if any(not isinstance(option, dict) or not isinstance(option.get('value'), str)
+                   for option in options):
+                raise ValueError('Invalid START options')
+            if 'uiMetadata' in control and not isinstance(control['uiMetadata'], dict):
+                raise ValueError('Invalid START metadata')
+            if control.get('actionType') == 'CreateConversation':
+                raise ValueError('Unexpected CREATE during START')
+            if control.get('actionType') == 'StartConversation' and binding is not None:
+                if any(key in control and control[key] != expected for key, expected in (
+                        ('conversationId', binding.conversation_id),
+                        ('interactionId', binding.interaction_id))):
+                    raise ValueError('START binding conflict')
+        self.ingest_output(session, content, payload['requestId'])
+
+    def ingest_output(self, session, data, matched_request_id):
+        # Both transport boundaries authenticate/correlate before entering here.
+        # Fingerprint the actual content before normalizing callback aliases.
+        fingerprint = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
+        if fingerprint in session.fingerprints:
+            return
+        if data.get('requestId') != matched_request_id:
+            data = dict(data, requestId=matched_request_id)
+        self.observe_conversation_binding(session, data)
+        session.fingerprints.append(fingerprint)
+        if session.progress.observe(data, now=time.monotonic(), clean_text=text_only):
+            session.sequence += 1
+            session.change.set()
+        self.consume(session, data)
+        if session.failed or session.ended or session.ending:
+            self.retire_caller_bootstrap(session)
+        self.queue_start_created(session, data['requestId'])
 
     def observe_conversation_binding(self, session, data):
         # Called only after callback authentication and current request matching.
