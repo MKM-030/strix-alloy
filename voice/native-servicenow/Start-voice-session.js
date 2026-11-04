@@ -274,12 +274,16 @@ async function handler({ api, event, helpers, imports }) {
                 console.log(`   Track readyState: ${event.track.readyState}`);
             }
 
-            if (event.streams && event.streams.length > 0) {
+            const hasStream = event.streams && event.streams.length > 0;
+            const bareLiveAudio = !hasStream && event.track && event.track.kind === 'audio'
+                && event.track.readyState === 'live';
+            if (hasStream || bareLiveAudio) {
                 if (voiceFailed || webrtc.pc !== peer || window.testVoiceUI.webrtc !== webrtc) return;
                 try {
                     const audio = window.document.getElementById("webrtc-audio");
                     if (!audio) throw new Error('Audio element unavailable');
-                    audio.srcObject = event.streams[0];
+                    const remoteStream = hasStream ? event.streams[0] : new window.MediaStream([event.track]);
+                    audio.srcObject = remoteStream;
                     // Required media playback is independent of the optional analysis graph.
                     const playback = (async () => audio.play())();
                     let audioContext;
@@ -297,7 +301,7 @@ async function handler({ api, event, helpers, imports }) {
                             audioContext = new (window.AudioContext || window.webkitAudioContext)();
                             webrtc.audioContext = audioContext;
                         }
-                        const source = audioContext.createMediaStreamSource(event.streams[0]);
+                        const source = audioContext.createMediaStreamSource(remoteStream);
                         const analyser = audioContext.createAnalyser();
                         analyser.fftSize = 256;
                         source.connect(analyser);

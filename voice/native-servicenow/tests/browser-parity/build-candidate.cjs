@@ -65,6 +65,10 @@ function derive(raw) {
             if (iceIsReady()) {
                 markIceReady();`);
     replace('        webrtc.pc.ontrack = (event) => {', '        webrtc.pc.ontrack = async (event) => {');
+    replace('            if (event.streams && event.streams.length > 0) {', `            const hasStream = event.streams && event.streams.length > 0;
+            const bareLiveAudio = !hasStream && event.track && event.track.kind === 'audio'
+                && event.track.readyState === 'live';
+            if (hasStream || bareLiveAudio) {`);
     replace(`                var audio = window.document.getElementById("webrtc-audio");
                 audio.srcObject = event.streams[0];
 
@@ -82,7 +86,8 @@ function derive(raw) {
                 try {
                     const audio = window.document.getElementById("webrtc-audio");
                     if (!audio) throw new Error('Audio element unavailable');
-                    audio.srcObject = event.streams[0];
+                    const remoteStream = hasStream ? event.streams[0] : new window.MediaStream([event.track]);
+                    audio.srcObject = remoteStream;
                     // Required media playback is independent of the optional analysis graph.
                     const playback = (async () => audio.play())();
                     let audioContext;
@@ -100,7 +105,7 @@ function derive(raw) {
                             audioContext = new (window.AudioContext || window.webkitAudioContext)();
                             webrtc.audioContext = audioContext;
                         }
-                        const source = audioContext.createMediaStreamSource(event.streams[0]);
+                        const source = audioContext.createMediaStreamSource(remoteStream);
                         const analyser = audioContext.createAnalyser();
                         analyser.fftSize = 256;
                         source.connect(analyser);

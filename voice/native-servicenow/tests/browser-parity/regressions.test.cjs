@@ -20,7 +20,7 @@ function deferred() {let resolve; const promise = new Promise(r => {resolve = r;
 
 async function setup(options = {}) {
     const observations = {sockets: [], peers: [], contexts: [], notices: [], timers: [], timerStarts: 0,
-        cleanup: 0, stopped: 0, played: 0, resumed: 0, order: []};
+        cleanup: 0, stopped: 0, played: 0, resumed: 0, order: [], remoteStreams: [], analysisStreams: []};
     const track = {readyState: 'live', stop() {observations.stopped++;}};
     const stream = {getAudioTracks: () => [track], getTracks: () => [track]};
     const audio = {srcObject: null, play() {
@@ -32,7 +32,8 @@ async function setup(options = {}) {
             if (options.constructorFailure) throw new Error('private-analysis-sentinel');
             this.state = options.contextState || 'running'; this.closes = 0; observations.contexts.push(this);
         }
-        createMediaStreamSource() {
+        createMediaStreamSource(stream) {
+            observations.analysisStreams.push(stream);
             if (options.sourceFailure) throw new Error('private-analysis-sentinel');
             return {connect() {}};
         }
@@ -77,12 +78,20 @@ async function setup(options = {}) {
         send(raw) {this.sent.push(JSON.parse(raw));}
         close() {this.closes++; this.readyState = 3;}
     }
+    class RemoteStream {
+        constructor(tracks) {
+            if (options.streamFailure) throw new Error('private-stream-sentinel');
+            this.tracks = [...tracks]; observations.remoteStreams.push(this);
+        }
+        getTracks() {return this.tracks;}
+        getAudioTracks() {return this.tracks.filter(track => track.kind === 'audio');}
+    }
     const window = {testVoiceUI: {}, navigator: {permissions: {query: async () => {
         if (options.permissionApiMissing) throw new TypeError('API unavailable');
         return {state: options.permissionDenied ? 'denied' : 'granted'};
     }}, mediaDevices: {getUserMedia: async () => stream}},
         document: {getElementById: () => audio}, RTCPeerConnection: Peer, WebSocket: Socket,
-        AudioContext: Context, URLSearchParams,
+        AudioContext: Context, MediaStream: RemoteStream, URLSearchParams,
         RTCSessionDescription: class {constructor(value) {Object.assign(this, value);}},
         RTCIceCandidate: class {constructor(value) {Object.assign(this, value);}}};
     const api = {state: {auth_token: 'synthetic-credential', instanceName: 'synthetic-instance', repeaterItems: []},
@@ -109,6 +118,7 @@ async function setup(options = {}) {
         get peer() {return window.testVoiceUI.webrtc.pc;}, get rtc() {return window.testVoiceUI.webrtc;}};
 }
 function remoteEvent() {return {track: {kind: 'audio'}, streams: [{id: 'synthetic-remote'}]};}
+function bareRemoteEvent(kind = 'audio', readyState = 'live') {return {track: {kind, readyState}, streams: []};}
 function answer() {return {data: JSON.stringify({type: 'answer', sdp: 'synthetic-answer',
     iceServers: [{urls: ['stun:synthetic.example.invalid']}]})};}
 
@@ -123,6 +133,74 @@ test('created AudioContext belongs to the native cleanup owner', async () => {
     assert.equal(env.observations.contexts[0].closes, 1);
     assert.equal(env.observations.stopped, 1);
     assert.equal(env.rtc.audioContext, null);
+});
+
+test('live bare remote audio reaches playback and the same optional analyzer stream', async () => {
+    const env = await setup(); const event = bareRemoteEvent();
+    await env.peer.ontrack(event);
+    assert.equal(env.observations.played, 1);
+    assert.equal(env.observations.remoteStreams.length, 1);
+    assert.equal(env.audio.srcObject, env.observations.remoteStreams[0]);
+    assert.equal(env.audio.srcObject.getTracks()[0], event.track);
+    assert.equal(env.observations.analysisStreams[0], env.audio.srcObject);
+    assert.equal(env.observations.cleanup, 0);
+});
+
+test('an existing remote stream is used without allocating a fallback wrapper', async () => {
+    const env = await setup(); const event = remoteEvent();
+    await env.peer.ontrack(event);
+    assert.equal(env.observations.played, 1);
+    assert.equal(env.observations.remoteStreams.length, 0);
+    assert.equal(env.audio.srcObject, event.streams[0]);
+    assert.equal(env.observations.analysisStreams[0], event.streams[0]);
+});
+
+for (const stale of ['owner', 'peer']) {
+    test(`stale ${stale} cannot allocate or play bare remote audio`, async () => {
+        const env = await setup(); const ontrack = env.peer.ontrack;
+        if (stale === 'owner') env.window.testVoiceUI.webrtc = {replacement: true};
+        else env.rtc.pc = {replacement: true};
+        await ontrack(bareRemoteEvent());
+        assert.equal(env.observations.played, 0); assert.equal(env.observations.remoteStreams.length, 0);
+        assert.equal(env.observations.contexts.length, 0); assert.equal(env.observations.cleanup, 0);
+        assert.equal(env.audio.srcObject, null);
+    });
+}
+
+for (const [kind, readyState] of [['video', 'live'], ['audio', 'ended']]) {
+    test(`bare ${kind}/${readyState} track is not admitted to playback`, async () => {
+        const env = await setup(); await env.peer.ontrack(bareRemoteEvent(kind, readyState));
+        assert.equal(env.observations.played, 0); assert.equal(env.observations.remoteStreams.length, 0);
+        assert.equal(env.observations.contexts.length, 0); assert.equal(env.observations.cleanup, 0);
+    });
+}
+
+for (const failure of ['streamFailure', 'playFailure']) {
+    test(`bare audio ${failure} uses the existing owned media failure cleanup`, async () => {
+        const env = await setup({[failure]: true});
+        await assert.doesNotReject(async () => env.peer.ontrack(bareRemoteEvent())); await flush();
+        assert.equal(env.observations.cleanup, 1); assert.equal(env.observations.stopped, 1);
+        assert.equal(env.audio.srcObject, null); assert.equal(env.api.state.callStarted, false);
+        assert.equal(env.observations.notices.length, 1);
+        assert.equal(JSON.stringify(env.observations.notices).includes('sentinel'), false);
+    });
+}
+
+test('bare audio playback survives an optional analysis failure', async () => {
+    const env = await setup({constructorFailure: true}); await env.peer.ontrack(bareRemoteEvent());
+    assert.equal(env.observations.played, 1); assert.equal(env.observations.remoteStreams.length, 1);
+    assert.equal(env.audio.srcObject, env.observations.remoteStreams[0]);
+    assert.equal(env.observations.cleanup, 0); assert.equal(env.observations.notices.length, 0);
+});
+
+test('disconnect clears the bare audio wrapper through the existing media owner', async () => {
+    const env = await setup(); const event = bareRemoteEvent(); let remoteStops = 0;
+    event.track.stop = () => remoteStops++;
+    const peer = env.peer; await peer.ontrack(event);
+    env.uiUtils.disconnectVoice(env.window, env.rtc);
+    assert.equal(peer.closed, true); assert.equal(env.observations.stopped, 1);
+    assert.equal(env.observations.contexts[0].closes, 1); assert.equal(env.audio.srcObject, null);
+    assert.equal(remoteStops, 0);
 });
 test('suspended analysis resume is attempted independently and repeated track reuses its owner', async () => {
     const env = await setup({contextState: 'suspended'}); const peer = env.peer;
