@@ -35,7 +35,7 @@ from caller_create_preflight import (
     requires_caller_create_preflight, require_caller_create_access, deadline_bound_context,
 )
 from spoken_output import spoken_text
-from native_backend import BackendEvent, BackendState, BackendControlChanged, UNSET
+from native_backend import BackendEvent, BackendState, BackendControlChanged, INPUT_TYPES, UNSET
 from assistant_settings import CallSettings
 from host_ice import HostIceConfiguration, load_host_ice_file
 from managed_turn import (ManagedTurnConfiguration, ManagedTurnBootstrap,
@@ -427,9 +427,18 @@ class Dialog:
             self.current_question = reply if '?' in reply and not self.conversation_ended else ''
             self.observation_revision += 1
 
+    def _remember_message_ack(self, value):
+        request_id = value.get('businessRequestId') if type(value) is dict and value.get('accepted') is True else None
+        if type(request_id) is not str or not re.fullmatch(r'[0-9a-f]{32}', request_id):
+            return
+        if self.business_request_id and self.business_request_id != request_id:
+            self._retired_business_requests.append(self.business_request_id)
+        self.business_request_id = request_id
+
     async def request(self, method, path, *, caller_authorization=None, **kwargs):
         conflict = None
         native_conflict_received = False
+        result = UNSET
         native_input = kwargs.get('json', {}).get('nativeInput') if type(kwargs.get('json')) is dict else None
         headers = {'Origin':self.config.backend_url, 'X-CSRF-Token':self.csrf}
         if caller_authorization is not None:
@@ -484,7 +493,13 @@ class Dialog:
                 if failure is None:
                     raise RuntimeError('ServiceNow conversation bridge unavailable') from None
             else:
-                return await response.json()
+                result = await response.json()
+        if result is not UNSET:
+            # Observe a valid ACK only after normal HTTP body/context closure.
+            # Legacy callers do not acquire a new requirement when the ID is absent.
+            if method == 'POST' and path == '/api/message':
+                self._remember_message_ack(result)
+            return result
         if native_conflict_received:
             # Negative authority exists only after the exact HTTP body/context closed.
             if (type(conflict) is not dict or set(conflict) != {'source', 'dispatch', 'attemptId', 'ownerId', 'inputControl'}
@@ -685,14 +700,12 @@ class Dialog:
         self.processing = None
         self.observation_revision += 1
         ack = await self.request('POST', '/api/message', json=payload)
+        self._remember_message_ack(ack)
         typed = on_event is not None or native_control_binding is not UNSET
         if typed:
             request_id = ack.get('businessRequestId') if type(ack) is dict and ack.get('accepted') is True else None
             if type(request_id) is not str or not re.fullmatch(r'[0-9a-f]{32}', request_id):
                 raise BackendTurnUnavailable('Backend did not bind its accepted request')
-            if self.business_request_id and self.business_request_id != request_id:
-                self._retired_business_requests.append(self.business_request_id)
-            self.business_request_id = request_id
         LOG.info('Voice dialog stage=request_ack elapsed_ms=%d', int((time.monotonic()-request_started)*1000))
         first_reply = True
         seen_events = set()
@@ -708,6 +721,8 @@ class Dialog:
                     self.backend_state = BackendState.parse(state.get('backendState'), request_id, self.backend_owner)
                     self.input_control = (BackendEvent.parse(state['inputControl'], request_id, self.backend_owner)
                                           if 'inputControl' in state else None)
+                    if self.input_control is not None and self.input_control.ui_type not in INPUT_TYPES:
+                        raise ValueError('Input control must be a genuine input type')
                     for raw_event in state.get('backendEvents', []):
                         old_id = raw_event.get('businessRequestId') if type(raw_event) is dict else None
                         if old_id in self._retired_business_requests:

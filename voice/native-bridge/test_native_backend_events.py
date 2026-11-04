@@ -10,6 +10,7 @@ from aiohttp.test_utils import TestClient, TestServer
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from voice.bridge import Bridge, Settings
 from native_bridge import Config, Dialog
+from native_duplex import BackendTurnUnavailable
 
 
 class BackendEventTests(unittest.IsolatedAsyncioTestCase):
@@ -154,6 +155,29 @@ class BackendEventTests(unittest.IsolatedAsyncioTestCase):
             [('OutputText', 'Actual output.', self.original['requestId']),
              ('Boolean', 'Genuine question?', self.original['requestId'])])
         self.assertEqual(received[-1].control_uid, 'control-8')
+
+    async def test_output_type_cannot_masquerade_as_the_current_input_control(self):
+        original_request = self.dialog.request
+        async def wrong_input_type(method, path, **kwargs):
+            value = await original_request(method, path, **kwargs)
+            if path == '/api/events' and 'inputControl' in value:
+                value['inputControl'] = dict(value['inputControl'], uiType='OutputText')
+            return value
+        self.dialog.request = wrong_input_type
+        received = []
+        async def deliver(event):
+            received.append(event)
+        turning = asyncio.create_task(self.dialog.turn('Typed original.', on_event=deliver))
+        self.tasks.append(turning)
+        self.original = await asyncio.wait_for(self.sent.get(), 1)
+        await self.callback([{'uiType':'InputText', 'label':'Genuine native question?'}])
+        error = None
+        try:
+            await asyncio.wait_for(turning, 1)
+        except Exception as caught:
+            error = caught
+        self.assertIsInstance(error, BackendTurnUnavailable)
+        self.assertEqual(received, [])
 
 
 if __name__ == '__main__':
