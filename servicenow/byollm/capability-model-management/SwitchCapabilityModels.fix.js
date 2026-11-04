@@ -4,7 +4,8 @@
  * model loading, inference, credentials, ACL changes or workflow suppression.
  * Run without concurrent prompt editing. Revision checks are NOT a transaction;
  * a partial_or_uncertain result requires review, never an automatic retry.
- * Native Model History is prompt config parent/version + generated bindings.
+ * Prompt ancestry uses parent/version and generated bindings. Native model
+ * version mappings are separate and remain unchanged by this switch.
  * Incompatible copied ancestry is reported, never rewritten by this script.
  */
 var PARAMETERS = {
