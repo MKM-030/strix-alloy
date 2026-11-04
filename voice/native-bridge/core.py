@@ -32,26 +32,39 @@ class PlaybackBuffer:
         self.data = bytearray()
         # Transport cursors count real PCM, never read padding or device hearing.
         self.accepted_samples = self.emitted_samples = self.discarded_samples = 0
+        self._drain_allowed = None
 
     def interrupt(self):
         self.generation += 1
         self.discarded_samples += len(self.data) // 2
         self.data.clear()
+        self._drain_allowed = None
         return self.generation
 
-    def put(self, pcm, generation):
+    def put(self, pcm, generation, *, drain_allowed=None):
         if generation != self.generation:
             return False
         pending_byte = len(self.data) % 2
+        if pcm and (not self.data or drain_allowed is not None):
+            self._drain_allowed = drain_allowed
         self.data.extend(pcm)
         self.accepted_samples += (pending_byte + len(pcm)) // 2
         return True
 
     def read(self, size):
+        if self.data and self._drain_allowed is not None:
+            try:
+                allowed = self._drain_allowed() is True
+            except Exception:
+                allowed = False
+            if not allowed:
+                self.interrupt()
         count = min(size, len(self.data)) // 2 * 2
         result = bytes(self.data[:count])
         del self.data[:count]
         self.emitted_samples += count // 2
+        if not self.data:
+            self._drain_allowed = None
         return result + bytes(size - len(result))
 
 

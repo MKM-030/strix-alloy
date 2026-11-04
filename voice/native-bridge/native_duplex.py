@@ -1799,10 +1799,12 @@ class NativeDuplex:
                 self._discard_output(item, 'pcm')
                 break
             if self._active_speech_current(item, generation, lease):
-                if chunk and self.call.playback.put(chunk, generation):
+                proposed = lease or _SpeechLease(item, generation, self.epoch,
+                    self.conversation if item.identity is not None else None, item.identity)
+                if chunk and self.call.playback.put(chunk, generation,
+                        drain_allowed=lambda bound=proposed: self._active_speech_current(item, generation, bound)):
                     if lease is None:
-                        lease = _SpeechLease(item, generation, self.epoch,
-                            self.conversation if item.identity is not None else None, item.identity)
+                        lease = proposed
                         if state is not None and state.get('output') is item:
                             state['lease'] = lease
                     queued += len(chunk)

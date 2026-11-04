@@ -130,6 +130,39 @@ class ActiveSentenceTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.call.playback.data), 0)
         self.assertTrue(self.lane._speech['interrupted'])
 
+    async def test_actual_drain_boundary_blocks_hard_closed_source_before_observer_runs(self):
+        item = self.item()
+        async def synthesize(text):
+            yield PREFIX
+        self.call.speech.synthesize = synthesize
+        await self.lane._synthesize(item, self.call.playback.generation)
+        self.lane._finish_speech(self.lane._speech, complete=True)
+        self.source.alive = False
+        self.assertEqual(self.call.playback.read(len(PREFIX)), bytes(len(PREFIX)))
+        self.assertEqual(self.call.playback.emitted_samples, 0)
+        self.lane._update_speech_cursor()
+        self.assertTrue(self.lane._speech['interrupted'])
+
+    async def test_streaming_rebinds_drain_guard_after_a_temporary_empty_buffer(self):
+        item = self.item()
+        release = asyncio.Event()
+        async def synthesize(text):
+            yield PREFIX
+            await release.wait()
+            yield TAIL
+        self.call.speech.synthesize = synthesize
+        speech = asyncio.create_task(self.lane._synthesize(item, self.call.playback.generation))
+        self.tasks.append(speech)
+        async with asyncio.timeout(1):
+            while len(self.call.playback.data) < len(PREFIX):
+                await asyncio.sleep(.002)
+        self.assertEqual(self.call.playback.read(len(PREFIX)), PREFIX)
+        release.set()
+        await speech
+        self.source.alive = False
+        self.assertEqual(self.call.playback.read(len(TAIL)), bytes(len(TAIL)))
+        self.assertEqual(self.call.playback.emitted_samples, len(PREFIX)//2)
+
 
 if __name__ == '__main__':
     unittest.main()
