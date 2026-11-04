@@ -211,7 +211,7 @@ class LoopbackSettingsContextTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.sent[0]['contextVariables'],CONTEXT)
         self.assertEqual(self.sent[0]['message']['text'],'Actual name')
         session=next(iter(self.bridge.sessions.values()))
-        self.bridge.consume(session,{'body':[{'uiType':'InputText'}]})
+        self.bridge.consume(session,{'requestId':self.sent[0]['requestId'],'body':[{'uiType':'InputText'}]})
         updated=dict(CONTEXT,interaction_requester_session_language='de',interaction_user_language='de',requester_session_language='de')
         await self.post('/api/message',{'text':'Bitte Deutsch','voice_context':updated})
         self.assertEqual(self.sent[1]['contextVariables'],updated)
