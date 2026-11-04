@@ -24,6 +24,7 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
 function deferred() {let resolve, reject; const promise = new Promise((r, j) => {resolve = r; reject = j;}); return {promise, resolve, reject};}
 
 async function setup(options = {}) {
+    let now = 0;
     const observations = {sockets: [], peers: [], contexts: [], notices: [], timers: [], timerStarts: 0,
         cleanup: 0, stopped: 0, played: 0, resumed: 0, order: [], remoteStreams: [], analysisStreams: [], stateWrites: []};
     const track = {readyState: options.endedAudio ? 'ended' : 'live', stop() {observations.stopped++;}};
@@ -116,7 +117,7 @@ async function setup(options = {}) {
         if (options.translateFailure) throw new Error('private-translation-sentinel');
         if (options.translateWait) await options.translateWait.promise;
         return value;
-    }, timing: {setTimeout(fn) {const t = {fn, cleared: false}; observations.timers.push(t); return t;},
+    }, timing: {setTimeout(fn, delay) {const t = {fn, delay, due: now + delay, cleared: false, fired: false}; observations.timers.push(t); return t;},
         clearTimeout(t) {if (t) t.cleared = true;}, clearInterval() {}}};
     const nativeDisconnect = vm.runInNewContext(cleanup + '\n;disconnectVoice;', {
         api, helpers, structuredClone, markAnalysisComplete() {}});
@@ -130,6 +131,22 @@ async function setup(options = {}) {
     const socket = observations.sockets[0];
     if (socket && !options.deferOpen) await socket.onopen();
     return {observations, window, api, helpers, uiUtils, socket, audio,
+        async advance(milliseconds) {
+            const target = now + milliseconds;
+            while (true) {
+                const timer = observations.timers.filter(t => !t.cleared && !t.fired && t.due <= target)
+                    .sort((a, b) => a.due - b.due)[0];
+                if (!timer) break;
+                now = timer.due; timer.fired = true;
+                await timer.fn(); await flush();
+            }
+            now = target;
+        },
+        async restart() {
+            await handler({api, helpers, event: {}, imports: {'sn_nowassist_va.VoiceTestingUIUtils': () => uiUtils,
+                'sn_uxf.core_libraries': () => ({})}});
+            await observations.sockets.at(-1).onopen();
+        },
         get peer() {return window.testVoiceUI.webrtc.pc;}, get rtc() {return window.testVoiceUI.webrtc;}};
 }
 function remoteEvent() {return {track: {kind: 'audio'}, streams: [{id: 'synthetic-remote'}]};}
@@ -542,4 +559,137 @@ test('a healthy Start does not depend on synchronous mutation of the captured fr
     assert.equal(env.observations.sockets.length, 1);
     assert.equal(env.observations.peers.length, 1);
     assert.ok(env.observations.stateWrites.some(([key, value]) => key === 'callStarted' && value === true));
+});
+
+for (const recovered of ['connected', 'completed']) test(`established ICE recovers as ${recovered} before ten seconds without replacing transport`, {skip: baseline}, async () => {
+    const env = await setup(), peer = env.peer;
+    peer.iceConnectionState = 'connected'; peer.oniceconnectionstatechange();
+    peer.iceConnectionState = 'disconnected'; peer.oniceconnectionstatechange();
+    assert.equal(env.socket.closes, 0);
+    await env.advance(9999);
+    assert.equal(env.observations.cleanup, 0); assert.equal(env.peer, peer);
+    const recovery = env.observations.timers.find(timer => timer.delay === 10000);
+    peer.iceConnectionState = recovered; peer.oniceconnectionstatechange();
+    await env.advance(1);
+    await recovery.fn(); await flush();
+    assert.equal(recovery.cleared, true); assert.equal(env.socket.closes, 0);
+    assert.equal(env.observations.cleanup, 0); assert.equal(env.observations.stopped, 0);
+    assert.equal(env.observations.sockets.length, 1); assert.equal(env.observations.peers.length, 1);
+    assert.equal(env.observations.timerStarts, 1); assert.equal(env.api.state.callStarted, true);
+});
+
+test('persistent established ICE disconnection cleans the owned call once at ten seconds', {skip: baseline}, async () => {
+    const env = await setup(), peer = env.peer;
+    peer.iceConnectionState = 'connected'; peer.oniceconnectionstatechange();
+    peer.iceConnectionState = 'disconnected'; peer.oniceconnectionstatechange();
+    await env.advance(9999);
+    assert.equal(env.socket.closes, 0); assert.equal(env.observations.cleanup, 0);
+    const recovery = env.observations.timers.find(timer => timer.delay === 10000);
+    await env.advance(1);
+    assert.equal(env.socket.closes, 1); assert.equal(env.observations.cleanup, 1);
+    assert.equal(peer.closed, true); assert.equal(env.observations.stopped, 1);
+    assert.equal(env.api.state.callStarted, false); assert.equal(env.api.state.isConnectionInProgress, false);
+    assert.equal(env.api.state.auth_token, 'synthetic-credential');
+    await recovery.fn(); await env.advance(10000); await flush();
+    assert.equal(env.observations.cleanup, 1); assert.equal(env.observations.notices.length, 1);
+    assert.equal(env.observations.sockets.length, 1); assert.equal(env.observations.peers.length, 1);
+});
+
+test('repeated disconnected events cannot extend the original recovery deadline', {skip: baseline}, async () => {
+    const env = await setup(), peer = env.peer;
+    peer.iceConnectionState = 'connected'; peer.oniceconnectionstatechange();
+    peer.iceConnectionState = 'disconnected'; peer.oniceconnectionstatechange();
+    await env.advance(4000); peer.oniceconnectionstatechange();
+    await env.advance(5000); peer.oniceconnectionstatechange();
+    await env.advance(999);
+    assert.equal(env.socket.closes, 0);
+    await env.advance(1);
+    assert.equal(env.socket.closes, 1); assert.equal(env.observations.cleanup, 1);
+    assert.equal(env.observations.timers.filter(timer => timer.delay === 10000).length, 1);
+});
+
+test('explicit Stop cancels ICE recovery and its retained callback cannot change stopped state', {skip: baseline}, async () => {
+    const env = await setup(), peer = env.peer;
+    peer.iceConnectionState = 'connected'; peer.oniceconnectionstatechange();
+    peer.iceConnectionState = 'disconnected'; peer.oniceconnectionstatechange();
+    const recovery = env.observations.timers.find(timer => timer.delay === 10000);
+    assert.ok(recovery, 'Established disconnection must retain one recovery deadline');
+    env.uiUtils.disconnectVoice(env.window, env.rtc);
+    assert.equal(recovery.cleared, true);
+    const writes = env.observations.stateWrites.length;
+    await recovery.fn(); await env.advance(10000); await flush();
+    assert.equal(env.observations.stateWrites.length, writes);
+    assert.equal(env.observations.cleanup, 1); assert.equal(env.socket.closes, 1);
+    assert.equal(env.observations.notices.length, 0); assert.equal(env.observations.sockets.length, 1);
+});
+
+test('a replacement Start cancels old recovery and stale callbacks cannot close the new call', {skip: baseline}, async () => {
+    const env = await setup(), oldPeer = env.peer;
+    oldPeer.iceConnectionState = 'connected'; oldPeer.oniceconnectionstatechange();
+    oldPeer.iceConnectionState = 'disconnected'; oldPeer.oniceconnectionstatechange();
+    const recovery = env.observations.timers.find(timer => timer.delay === 10000);
+    assert.ok(recovery, 'Established disconnection must retain one recovery deadline');
+    await env.restart();
+    const newPeer = env.peer, newSocket = env.observations.sockets.at(-1);
+    newPeer.iceConnectionState = 'connected'; newPeer.oniceconnectionstatechange();
+    assert.equal(recovery.cleared, true); assert.notEqual(newPeer, oldPeer);
+    const writes = env.observations.stateWrites.length;
+    await recovery.fn(); await env.advance(10000); await flush();
+    assert.equal(env.peer, newPeer); assert.equal(newPeer.closed, false); assert.equal(newSocket.closes, 0);
+    assert.equal(env.observations.stateWrites.length, writes); assert.equal(env.observations.cleanup, 1);
+    assert.equal(env.api.state.callStarted, true); assert.equal(env.api.state.auth_token, 'synthetic-credential');
+    assert.equal(env.observations.sockets.length, 2); assert.equal(env.observations.peers.length, 2);
+});
+
+for (const graceStarted of [false, true]) test(`failed ICE is terminal immediately with recovery active=${graceStarted}`, {skip: baseline}, async () => {
+    const env = await setup(), peer = env.peer;
+    peer.iceConnectionState = 'connected'; peer.oniceconnectionstatechange();
+    if (graceStarted) {peer.iceConnectionState = 'disconnected'; peer.oniceconnectionstatechange();}
+    const recovery = env.observations.timers.find(timer => timer.delay === 10000);
+    const lateState = peer.oniceconnectionstatechange;
+    peer.iceConnectionState = 'failed'; lateState(); await flush();
+    assert.equal(env.socket.closes, 1); assert.equal(env.observations.cleanup, 1); assert.equal(peer.closed, true);
+    if (recovery) {assert.equal(recovery.cleared, true); await recovery.fn();}
+    lateState(); await env.advance(10000); await flush();
+    assert.equal(env.observations.cleanup, 1); assert.equal(env.observations.notices.length, 1);
+    assert.equal(env.observations.sockets.length, 1);
+});
+
+test('preconnection disconnected retains existing immediate-close policy without recovery or retries', {skip: baseline}, async () => {
+    const env = await setup(), peer = env.peer;
+    peer.iceConnectionState = 'disconnected'; peer.oniceconnectionstatechange();
+    assert.equal(env.socket.closes, 1);
+    assert.equal(env.observations.timers.filter(timer => timer.delay === 10000).length, 0);
+    await env.advance(15000);
+    assert.equal(env.observations.sockets.length, 1);
+});
+
+test('checking during established recovery still cleans once at the original ten-second deadline', {skip: baseline}, async () => {
+    const env = await setup(), peer = env.peer;
+    peer.iceConnectionState = 'connected'; peer.oniceconnectionstatechange();
+    peer.iceConnectionState = 'disconnected'; peer.oniceconnectionstatechange();
+    await env.advance(4000);
+    peer.iceConnectionState = 'checking'; peer.oniceconnectionstatechange();
+    await env.advance(5999);
+    assert.equal(env.observations.cleanup, 0); assert.equal(env.socket.closes, 0);
+    await env.advance(1);
+    assert.equal(env.observations.cleanup, 1); assert.equal(env.socket.closes, 1);
+    assert.equal(peer.closed, true); assert.equal(env.api.state.callStarted, false);
+    await env.advance(30000);
+    assert.equal(env.observations.cleanup, 1); assert.equal(env.observations.sockets.length, 1);
+});
+
+test('checking then disconnected after expiry cannot obtain a second recovery interval', {skip: baseline}, async () => {
+    const env = await setup(), peer = env.peer;
+    peer.iceConnectionState = 'connected'; peer.oniceconnectionstatechange();
+    peer.iceConnectionState = 'disconnected'; peer.oniceconnectionstatechange();
+    const lateState = peer.oniceconnectionstatechange;
+    await env.advance(4000);
+    peer.iceConnectionState = 'checking'; lateState();
+    await env.advance(6000);
+    assert.equal(env.observations.cleanup, 1);
+    peer.iceConnectionState = 'disconnected'; lateState();
+    await env.advance(10000);
+    assert.equal(env.observations.cleanup, 1); assert.equal(env.observations.sockets.length, 1);
+    assert.equal(env.observations.timers.filter(timer => timer.delay === 10000).length, 1);
 });

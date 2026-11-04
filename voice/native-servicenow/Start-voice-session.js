@@ -24,7 +24,8 @@ async function handler({ api, event, helpers, imports }) {
         "localStream": null,
         "processedCandidates": new Set(),
         "token": api.state.auth_token,
-        "signalingWs": null
+        "signalingWs": null,
+        "sccIceDisconnectTimeoutId": null
     };
     const messages = [];
     const MAX_ICE_RETRIES = 2;
@@ -66,7 +67,15 @@ async function handler({ api, event, helpers, imports }) {
             || webrtc.pc.iceConnectionState === 'completed');
     }
 
+    function cancelIceRecovery() {
+        if (webrtc.sccIceDisconnectTimeoutId !== null) {
+            helpers.timing.clearTimeout(webrtc.sccIceDisconnectTimeoutId);
+            webrtc.sccIceDisconnectTimeoutId = null;
+        }
+    }
+
     function markIceReady() {
+        cancelIceRecovery();
         const firstConnection = !webrtc.isConnected;
         webrtc.isConnected = true;
         helpers.timing.clearTimeout(iceTimeoutId);
@@ -218,7 +227,21 @@ async function handler({ api, event, helpers, imports }) {
             if (voiceFailed || webrtc.pc !== peer || window.testVoiceUI.webrtc !== webrtc) return;
             if (iceIsReady()) {
                 markIceReady();
-            } else if (webrtc.pc.iceConnectionState === 'disconnected' || webrtc.pc.iceConnectionState === 'failed') {
+            } else if (webrtc.pc.iceConnectionState === 'disconnected' && webrtc.isConnected) {
+                if (webrtc.sccIceDisconnectTimeoutId === null) {
+                    const recovery = helpers.timing.setTimeout(() => {
+                        if (!currentStart() || webrtc.pc !== peer
+                                || webrtc.sccIceDisconnectTimeoutId !== recovery) return;
+                        webrtc.sccIceDisconnectTimeoutId = null;
+                        if (!iceIsReady()) {
+                            failVoice("Voice connection was lost. Start a new call.");
+                        }
+                    }, 10000);
+                    webrtc.sccIceDisconnectTimeoutId = recovery;
+                }
+            } else if (webrtc.pc.iceConnectionState === 'failed') {
+                failVoice("Voice connection was lost. Start a new call.");
+            } else if (webrtc.pc.iceConnectionState === 'disconnected') {
                 helpers.timing.clearTimeout(iceTimeoutId);
                 iceTimeoutId = null;
                 api.setState("isConnectionInProgress", false);
@@ -448,6 +471,7 @@ async function handler({ api, event, helpers, imports }) {
     }
 
     function disconnect() {
+        cancelIceRecovery();
         if (iceTimeoutId) {
             helpers.timing.clearTimeout(iceTimeoutId);
             iceTimeoutId = null;

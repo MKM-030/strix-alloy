@@ -262,6 +262,35 @@ function derive(raw) {
             failVoice("Voice signaling could not complete. Start a new call.");
             return;
         }`);
+    replace('        "signalingWs": null', `        "signalingWs": null,
+        "sccIceDisconnectTimeoutId": null`);
+    replace('    function markIceReady() {', `    function cancelIceRecovery() {
+        if (webrtc.sccIceDisconnectTimeoutId !== null) {
+            helpers.timing.clearTimeout(webrtc.sccIceDisconnectTimeoutId);
+            webrtc.sccIceDisconnectTimeoutId = null;
+        }
+    }
+
+    function markIceReady() {
+        cancelIceRecovery();`);
+    replace(`            } else if (webrtc.pc.iceConnectionState === 'disconnected' || webrtc.pc.iceConnectionState === 'failed') {`,
+        `            } else if (webrtc.pc.iceConnectionState === 'disconnected' && webrtc.isConnected) {
+                if (webrtc.sccIceDisconnectTimeoutId === null) {
+                    const recovery = helpers.timing.setTimeout(() => {
+                        if (!currentStart() || webrtc.pc !== peer
+                                || webrtc.sccIceDisconnectTimeoutId !== recovery) return;
+                        webrtc.sccIceDisconnectTimeoutId = null;
+                        if (!iceIsReady()) {
+                            failVoice("Voice connection was lost. Start a new call.");
+                        }
+                    }, 10000);
+                    webrtc.sccIceDisconnectTimeoutId = recovery;
+                }
+            } else if (webrtc.pc.iceConnectionState === 'failed') {
+                failVoice("Voice connection was lost. Start a new call.");
+            } else if (webrtc.pc.iceConnectionState === 'disconnected') {`);
+    replace('    function disconnect() {', `    function disconnect() {
+        cancelIceRecovery();`);
     return source;
 }
 module.exports = { derive, ORIGINAL_SHA256 };

@@ -642,6 +642,10 @@ function include({ imports }, _inApi, _inHelpers) {
 
     function disconnectVoice(window, webrtc) {
         webrtc.sccStartCancelled = true;
+        if (webrtc.sccIceDisconnectTimeoutId != null) {
+            helpers.timing.clearTimeout(webrtc.sccIceDisconnectTimeoutId);
+            webrtc.sccIceDisconnectTimeoutId = null;
+        }
         // Send disconnect signal then close signaling WebSocket
         if (webrtc.signalingWs) {
             if (webrtc.signalingWs.readyState === window.WebSocket.OPEN) {
