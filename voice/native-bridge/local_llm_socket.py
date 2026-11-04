@@ -7,17 +7,24 @@ import asyncio
 import json
 from pathlib import Path
 import re
+from types import MappingProxyType
 import uuid
 
 # Share the existing serial admission queue with ServiceNow model requests.
 CONTROLLER_CHAT_URL = 'http://127.0.0.1:8841/v1/chat/completions'
 CONTROLLER_MODELS_URL = 'http://127.0.0.1:8841/v1/models'
+# Direct access is a private configuration choice after two-slot qualification;
+# it is never selected automatically as a fallback from the shared queue.
+_MODELS_BY_CHAT = MappingProxyType({
+    CONTROLLER_CHAT_URL: CONTROLLER_MODELS_URL,
+    'http://127.0.0.1:8840/v1/chat/completions': 'http://127.0.0.1:8840/v1/models',
+})
 
 
 def validate_local_conversation(url, token_file):
     if url == '' and token_file == '':
         return
-    if (url != CONTROLLER_CHAT_URL or not isinstance(token_file, (str, Path))
+    if (not isinstance(url, str) or url not in _MODELS_BY_CHAT or not isinstance(token_file, (str, Path))
             or not str(token_file) or str(token_file).startswith(('\\\\', '//'))
             or any(ord(char) < 32 for char in str(token_file))
             or not Path(token_file).is_absolute()):
@@ -42,6 +49,7 @@ class LocalTextSocket:
         if not url:
             raise ValueError('Local conversation endpoint missing')
         self.url, self.token_file, self.http = url, token_file, http
+        self.models_url = _MODELS_BY_CHAT[url]
         self.transient_busy = False
         self.events = asyncio.Queue(maxsize=4096)
         self.closed = False
@@ -110,7 +118,7 @@ class LocalTextSocket:
             headers = {'Authorization': 'Bearer ' + _token(self.token_file)}
             # Resolve the central selection for each caller operation. A model
             # switch never causes a retry or a second inference for that input.
-            async with self.http.get(CONTROLLER_MODELS_URL, headers=headers,
+            async with self.http.get(self.models_url, headers=headers,
                     allow_redirects=False, timeout=ClientTimeout(total=3)) as response:
                 if response.status == 429:
                     self.transient_busy = True
