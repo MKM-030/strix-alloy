@@ -180,6 +180,7 @@ class PipecatDialogue:
 
     def __init__(self, conversation):
         self.conversation = conversation
+        self._source_owner = conversation
         self.context = LLMContext()
         self._started = asyncio.Event()
         self._scope = self._operation = self._worker = self._runner = self._run = None
@@ -264,6 +265,16 @@ class PipecatDialogue:
     def is_current(self, identity):
         return (not self._closed and identity is not None and self._scope is not None
                 and tuple(getattr(identity, name, None) for name in SCOPE) == self._scope
+                and self.conversation.is_stream_current(identity))
+
+    def is_source_current(self, identity):
+        """Source liveness for a sentence already admitted to PCM playback.
+
+        Presentation scope may advance while that sentence finishes. New or
+        queued sentences still require the strict ``is_current`` release gate.
+        """
+        return (not self._closed and self._run is not None and not self._run.done()
+                and self._model.owner is self and self.conversation is self._source_owner
                 and self.conversation.is_stream_current(identity))
 
     async def respond(self, final_asr_text, trusted_snapshot, response_key, *, on_sentence=None):

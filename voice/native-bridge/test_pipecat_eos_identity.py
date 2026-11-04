@@ -4,7 +4,9 @@ These tests reproduce mechanisms, not the cause of any unretained live reply.
 No HTTP client, credential file, model or business session is acquired.
 """
 import asyncio
-from contextlib import nullcontext
+from contextlib import asynccontextmanager, nullcontext
+from copy import copy
+from dataclasses import replace
 import json
 from pathlib import Path
 import sys
@@ -86,6 +88,100 @@ class FakeHTTP:
 
 
 class EOSIdentityTests(unittest.IsolatedAsyncioTestCase):
+    @asynccontextmanager
+    async def source_dialogue(self, *, turns=1):
+        http = FakeHTTP()
+        source = LocalTextSocket(CONTROLLER_CHAT_URL, 'C:/synthetic-token', http=http)
+        adapter = OmniConversation(lambda: source)
+        dialogue = PipecatDialogue(adapter)
+        with patch.object(local_llm_socket, '_token', return_value='synthetic-only-token'), \
+                patch('aiohttp.ClientSession', side_effect=AssertionError('Real HTTP forbidden')):
+            try:
+                async with asyncio.timeout(3):
+                    await dialogue.start('offline-call', 1, 'Offline rules')
+                    scope = dict(call_id='offline-call', task_id='offline-task', task_revision=1,
+                                 context_revision=1, observation_revision=0)
+                    key = dict(scope, output_epoch=1, request_id='offline-request')
+                    snapshot = dict(scope, raw_inputs=('Hörst du mich?',), public_findings=())
+                    result = await dialogue.respond('Hörst du mich?', snapshot, key)
+                self.assertIsNone(result.failure)
+                self.assertTrue(adapter.is_stream_current(result.identity))
+                self.assertTrue(callable(getattr(dialogue, 'is_source_current', None)),
+                                'Pipecat needs a source check separate from presentation scope')
+                yield dialogue, adapter, result.identity, key, snapshot
+                self.assertEqual(http.requests, [('GET', CONTROLLER_MODELS_URL),
+                                                 ('POST', CONTROLLER_CHAT_URL)] * turns)
+            finally:
+                dialogue.conversation = adapter
+                await dialogue.close()
+
+    async def test_source_lease_survives_observation_context_and_task_revision_updates(self):
+        async with self.source_dialogue() as (dialogue, adapter, identity, key, snapshot):
+            self.assertTrue(dialogue.is_current(identity))
+            for field in ('observation_revision', 'context_revision', 'task_revision'):
+                with self.subTest(field=field):
+                    key[field] += 1
+                    snapshot[field] += 1
+                    self.assertTrue(await dialogue.observe(snapshot, key))
+                    self.assertFalse(dialogue.is_current(identity))
+                    self.assertTrue(dialogue.is_source_current(identity))
+                    self.assertTrue(adapter.is_stream_current(identity))
+
+    async def test_source_lease_rejects_every_model_identity_mismatch(self):
+        async with self.source_dialogue() as (dialogue, adapter, identity, key, snapshot):
+            self.assertTrue(dialogue.is_source_current(identity))
+            replacements = dict(call_id='other-call', task_id='other-task', task_revision=2,
+                context_revision=2, observation_revision=1, output_epoch=2,
+                request_id='other-request', socket_instance='other-socket',
+                server_session_id='other-session', turn_id=2, generation_id=2)
+            for field, value in replacements.items():
+                with self.subTest(field=field):
+                    self.assertFalse(dialogue.is_source_current(replace(identity, **{field: value})))
+            self.assertFalse(dialogue.is_source_current(None))
+
+    async def test_source_lease_requires_the_started_wrapper_and_exact_adapter_owner(self):
+        async with self.source_dialogue() as (dialogue, adapter, identity, key, snapshot):
+            foreign_wrapper = PipecatDialogue(adapter)
+            self.assertFalse(foreign_wrapper.is_source_current(identity))
+            self.assertFalse(copy(dialogue).is_source_current(identity))
+            replacement = copy(adapter)
+            self.assertTrue(replacement.is_stream_current(identity))
+            dialogue.conversation = replacement
+            self.assertFalse(dialogue.is_source_current(identity))
+            dialogue.conversation = adapter
+            self.assertTrue(dialogue.is_source_current(identity))
+
+    async def test_source_lease_expires_at_synchronous_output_epoch_invalidation(self):
+        async with self.source_dialogue() as (dialogue, adapter, identity, key, snapshot):
+            self.assertTrue(dialogue.is_source_current(identity))
+            drain = dialogue.invalidate(2, 'Offline user interruption')
+            try:
+                self.assertFalse(dialogue.is_source_current(identity))
+            finally:
+                await drain
+
+    async def test_source_lease_expires_when_a_new_model_turn_takes_ownership(self):
+        async with self.source_dialogue(turns=2) as (dialogue, adapter, identity, key, snapshot):
+            key['request_id'] = 'offline-request-2'
+            result = await dialogue.respond('Bitte weiter.', snapshot, key)
+            self.assertIsNone(result.failure)
+            self.assertFalse(dialogue.is_source_current(identity))
+            self.assertTrue(dialogue.is_source_current(result.identity))
+            self.assertEqual(result.identity.turn_id, 2)
+            self.assertEqual(result.identity.generation_id, 2)
+
+    async def test_source_lease_expires_when_adapter_closes(self):
+        async with self.source_dialogue() as (dialogue, adapter, identity, key, snapshot):
+            self.assertTrue(dialogue.is_source_current(identity))
+            await adapter.close()
+            self.assertFalse(dialogue.is_source_current(identity))
+
+    async def test_source_lease_expires_when_wrapper_closes(self):
+        async with self.source_dialogue() as (dialogue, adapter, identity, key, snapshot):
+            self.assertTrue(dialogue.is_source_current(identity))
+            await dialogue.close()
+            self.assertFalse(dialogue.is_source_current(identity))
+
     async def exercise(self, *, delay_final=False, reject_second=False, terminal=True):
         http = FakeHTTP(terminal=terminal)
         source = LocalTextSocket(CONTROLLER_CHAT_URL, 'C:/synthetic-token', http=http)
@@ -110,6 +206,7 @@ class EOSIdentityTests(unittest.IsolatedAsyncioTestCase):
                 done=adapter._socket.done_at is not None,
                 stream_current=adapter.is_stream_current(candidate.identity),
                 completed_current=adapter.is_current(candidate.identity),
+                source_current=dialogue.is_source_current(candidate.identity),
                 pipecat_current=dialogue.is_current(candidate.identity)))
             if reject_second and len(observations) == 2:
                 raise ValueError('Synthetic release rejection')
@@ -153,7 +250,7 @@ class EOSIdentityTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(final['terminal'])
         self.assertTrue(final['done'])
         self.assertTrue(final['completed_current'])
-        self.assertTrue(all(item['stream_current'] and item['pipecat_current']
+        self.assertTrue(all(item['stream_current'] and item['pipecat_current'] and item['source_current']
                             for item in result['observations']))
         self.assertEqual(result['delayed_frames'], int(delay_final))
 
