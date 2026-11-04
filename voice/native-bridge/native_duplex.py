@@ -166,13 +166,15 @@ def _noncompletion_ordering(text, occurrence):
     This grants no result authority. Ambiguous/positive ordering stays held;
     actual ServiceNow results retain their separate native backend speech lane.
     """
-    if len(text) > 1200:
+    if len(text) > 1200 or re.search(r'''[:“”„"'«»–—]|\s-\s''', text):
         return False
     start, end = occurrence.span()
     left = next((m.end() for m in reversed(tuple(re.finditer(r'[.!?;\n]', text[:start])))), 0)
     following_boundary = re.search(r'[.!?;\n]', text[end:])
     right = end + following_boundary.start() if following_boundary else len(text)
     sentence = text[left:right].casefold()
+    if re.search(r'\b(?:falls|wenn|sofern)\b', sentence):
+        return False
     before, after = text[left:start].casefold(), text[end:right].casefold()
     separators = r',|\b(?:und|aber|sondern|doch|jedoch|dennoch)\b'
     boundaries = tuple(re.finditer(separators, before))
@@ -190,11 +192,6 @@ def _noncompletion_ordering(text, occurrence):
                            r'keineswegs|keinesfalls|ohne)\b', clause)
     if len(negatives) > 1:
         return False
-    # A leading condition applies only to its own clause. Concessive/factive
-    # "auch wenn/obwohl/nachdem" and postposed conditions are not exceptions.
-    if (re.match(r'^\s*(?:falls|sofern)\b', head) or
-            re.match(r'^\s*wenn\b', head) and not re.search(r'\b(?:auch|schon)\b', clause)):
-        return True
     modal = r'\b(?:kann|können|könnte|könnten|soll|sollen|sollte|sollten|muss|müssen|müsste|müssten|darf|dürfen|dürfte|dürften|würde|würden)\b'
     if re.match(r'\s+werden\b', tail) and (re.search(modal, head) or
             re.match(r'^\s*(?:wie|ob)\b', head) and re.search(modal, tail)):
@@ -204,9 +201,11 @@ def _noncompletion_ordering(text, occurrence):
     if (len(negatives) != 1 or re.search(r'\bnicht\b.*\bdass\b', before)
             or re.match(r'^\s*(?:dass|ob)\b', head) or re.search(separators, after)):
         return False
-    # Do not infer object scope from generic kein noun phrases: an adjunct
-    # such as "mit keinem Zweifel bestellt" can still assert completion.
-    return bool(re.search(r'\b(?:nicht|nichts)\s*$', head))
+    # Require a simple finite predicate, not approximate quantities or a
+    # generic kein/adjunct phrase. This is deliberately no general parser.
+    return bool(re.search(r'\b(?:wurde|wurden|wird|werden|ist|sind|war|waren|habe|haben|hat|hast|habt|hatte|hatten)\s+'
+        r'(?:(?:noch|bisher|bislang|aktuell|derzeit)\s+)?(?:nicht|nichts)\s*$', head)
+        and re.fullmatch(r'\s*(?:(?:worden|werden|wurde|wurden|wird|ist|sind|war|waren|habe|hat|haben|hatte|hatten)\s*)*', tail))
 
 
 class _JsonSocket:
