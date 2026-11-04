@@ -1,6 +1,6 @@
 """Validated, request-local native assistant projection (no network or credentials).
 
-Native cloud voice identifiers and neural-VAD amplitudes remain metadata. They
+Native voice identifiers select an exact registered voice for each call. They
 never select a local speech model or replace the host's PCM energy threshold.
 """
 from copy import deepcopy
@@ -426,6 +426,17 @@ class CallSettings:
         terms = next((value for code, value in self._projection['key_terms'].items()
                       if code.casefold() == self.language.casefold()), [])
         return {'language': self.language.split('-', 1)[0].lower(), 'terms': list(terms)}
+
+    def tts_context(self):
+        """Detached selected native ID; registration and engine support are separate."""
+        tts = self._projection['tts']
+        voice = next((value for code, value in tts.get('voices', {}).items()
+                      if code.casefold() == self.language.casefold()), {})
+        voice_id = voice.get('voice_id', '')
+        if not voice_id or voice_id.strip() != voice_id:
+            raise RuntimeError('Configured TTS voice is unavailable')
+        return {'voice_id': voice_id, 'language': self.language,
+                'voice_profile': tts.get('voice_profile', '')}
 
     @property
     def vad_start_ms(self):

@@ -260,7 +260,19 @@ class Speech:
             return accepted_transcript(data)
 
     async def synthesize(self, text):
-        payload = {'model':'scc-native-qwen3', 'voice':'scc-demo', 'input':text,
+        voice_id = 'scc-demo'
+        if self.call_settings is not None:
+            # Snapshot this call's exact selection before the HTTP request. The
+            # local registry rejects unavailable IDs; never substitute a voice.
+            context = self.call_settings.tts_context()
+            # The installed server exposes a startup language, not a request
+            # language field. Refuse unsupported locales instead of ignoring them.
+            if context['language'].split('-', 1)[0].casefold() != 'de':
+                raise RuntimeError('Configured TTS language is unsupported')
+            voice_id = context['voice_id']
+        elif self.config.auth_mode == 'servicenow':
+            raise RuntimeError('Authorized TTS settings are unavailable')
+        payload = {'model':'scc-native-qwen3', 'voice':voice_id, 'input':text,
                    'response_format':'pcm'}
         async with self.http.post(self.config.tts_url, json=payload, allow_redirects=False,
                                   timeout=ClientTimeout(total=120)) as response:
