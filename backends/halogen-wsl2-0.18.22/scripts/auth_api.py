@@ -1,4 +1,5 @@
-# Bearer-authenticated ASGI wrapper around the unmodified pinned image API.
+# Bearer auth and a narrow in-memory CacheOff correction for the pinned image API.
+import ast
 import hashlib
 import hmac
 import json
@@ -7,10 +8,83 @@ import re
 import runpy
 import sys
 import time
+import types
 
 TOKEN_FILE = Path('/candidate/api-token.txt')
 UPSTREAM = '/halogen/tools/serve_api.py'
 UPSTREAM_SHA256 = '0fc902343a816feb7a933f67c773e98025d8d09b55711545d874d6cddc07ea08'
+ENGINE = Path('/usr/local/bin/flash_serve')
+ENGINE_SHA256 = 'c69d064b528e21e5b722ab4a0618b67c29a9d84dd09ba3aa70c6a928b5741aca'
+
+# The pinned engine's zero-cache CSTAT literal has one redundant fixed zero
+# at field35. The following eleven values are live pool counters, even Off.
+_OFF_CSTAT_PREFIX = tuple(('C 0 0 0 0 0 0 0 0 0 0.0 0.0 0.0 0.0 0 0 0.0 '
+    '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0 0 0 0').split())
+_CACHE_WIRE_HELPER = '_scc_halogen01822_cache_wire_tokens'
+
+
+def normalize_cache_tokens(tokens):
+    """Only the two producer layouts from the pinned API/engine pair."""
+    if (type(tokens) is not list or not tokens or tokens[0] != 'C'
+            or any(type(v) is not str or not v or len(v)>4096 or any(c.isspace() for c in v) for v in tokens)):
+        raise ValueError('Unrecognized pinned CSTAT layout')
+    if len(tokens) == 57:
+        for index, value in enumerate(tokens[1:], 1):
+            if index == 52:
+                continue  # Upstream's cache-root string, unchanged.
+            pattern = r'-?[0-9]+\.[0-9]' if index in (10,11,12,13,16,35,40) else r'-?[0-9]+'
+            if re.fullmatch(pattern, value) is None:
+                raise ValueError('Invalid pinned CSTAT field')
+        return tokens
+    if len(tokens) != 51 or tuple(tokens[:40]) != _OFF_CSTAT_PREFIX:
+        raise ValueError('Unrecognized pinned CSTAT layout')
+    for index in range(40,51):
+        pattern = r'[0-9]+\.[0-9]' if index == 41 else r'[0-9]+'
+        if re.fullmatch(pattern, tokens[index]) is None:
+            raise ValueError('Invalid live CSTAT pool field')
+    return tokens[:35] + tokens[36:]
+
+
+def install_cache_stats(namespace, source):
+    """Compile only the exact upstream method, retaining its I/O and globals."""
+    if type(source) is not bytes or hashlib.sha256(source).hexdigest() != UPSTREAM_SHA256:
+        raise ValueError('Pinned upstream API identity changed')
+    engine = namespace.get('Engine')
+    method = getattr(engine, 'cache_stats', None)
+    if (not isinstance(engine,type) or not callable(method) or method.__globals__ is not namespace
+            or method.__code__.co_filename != UPSTREAM or _CACHE_WIRE_HELPER in namespace):
+        raise ValueError('Pinned Engine cache_stats binding changed')
+    tree = ast.parse(source, filename=UPSTREAM)
+    classes = [n for n in tree.body if isinstance(n,ast.ClassDef) and n.name == 'Engine']
+    methods = [n for n in classes[0].body if isinstance(n,ast.AsyncFunctionDef) and n.name == 'cache_stats'] if len(classes)==1 else []
+    if len(methods)!=1:
+        raise ValueError('Pinned Engine cache_stats shape changed')
+    function = methods[0]
+    def method_code(tree):
+        # Module imports affect CPython call compilation. Preserve the complete
+        # pinned compilation context without executing any upstream top level.
+        module = compile(ast.fix_missing_locations(tree),UPSTREAM,'exec',dont_inherit=True)
+        classes = [value for value in module.co_consts if isinstance(value,types.CodeType) and value.co_name=='Engine']
+        values = [value for value in classes[0].co_consts if isinstance(value,types.CodeType) and value.co_name=='cache_stats'] if len(classes)==1 else []
+        if len(values)!=1:
+            raise ValueError('Pinned Engine cache_stats code changed')
+        return values[0]
+    expected = method_code(tree)
+    actual = method.__code__
+    if any(getattr(actual,name)!=getattr(expected,name) for name in
+            ('co_code','co_consts','co_names','co_varnames','co_argcount','co_kwonlyargcount','co_flags')):
+        raise ValueError('Pinned Engine cache_stats method changed')
+    sentinel = ast.parse('if not p or p[0] != "C" or len(p) < 10:\n    return None').body[0]
+    positions = [i for i,node in enumerate(function.body) if ast.dump(node)==ast.dump(sentinel)]
+    if len(positions)!=1:
+        raise ValueError('Pinned CSTAT parser boundary changed')
+    insertion = ast.parse('p = '+_CACHE_WIRE_HELPER+'(p)').body[0]
+    ast.increment_lineno(insertion,function.body[positions[0]].lineno-1)
+    function.body.insert(positions[0],insertion)
+    patched = types.FunctionType(method_code(tree),namespace,'cache_stats',method.__defaults__,method.__closure__)
+    namespace[_CACHE_WIRE_HELPER] = normalize_cache_tokens
+    engine.cache_stats = patched
+
 
 class BearerAuth:
     def __init__(self, app, token):
@@ -48,12 +122,20 @@ class BearerAuth:
                 'seconds':round(time.monotonic()-began,3)},ensure_ascii=True), flush=True)
 
 def main():
-    if hashlib.sha256(Path(UPSTREAM).read_bytes()).hexdigest() != UPSTREAM_SHA256:
+    source = Path(UPSTREAM).read_bytes()
+    if hashlib.sha256(source).hexdigest() != UPSTREAM_SHA256:
         raise ValueError('Pinned upstream API identity changed')
+    digest = hashlib.sha256()
+    with ENGINE.open('rb') as stream:
+        for data in iter(lambda: stream.read(1024*1024), b''):
+            digest.update(data)
+    if digest.hexdigest() != ENGINE_SHA256:
+        raise ValueError('Pinned engine identity changed')
     token = TOKEN_FILE.read_text(encoding='ascii').strip()
     import uvicorn
     original = uvicorn.run
     def authenticated(app, *args, **kwargs):
+        install_cache_stats(vars(sys.modules['__main__']), source)
         kwargs['access_log'] = False
         return original(BearerAuth(app, token), *args, **kwargs)
     uvicorn.run = authenticated
