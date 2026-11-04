@@ -73,6 +73,13 @@ class NativeControlHandoffTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.lane._control_gate.heard)
         self.assertNotEqual(self.lane._control_gate.binding, binding)
 
+    async def test_control_output_loses_authority_immediately_on_owner_reset(self):
+        self.sync()
+        item = self.lane._outputs.popleft()
+        self.assertTrue(self.lane._valid(item))
+        self.call.dialog.backend_owner = object()
+        self.assertFalse(self.lane._valid(item))
+
     async def test_caller_interrupt_requeues_the_unheard_control_under_new_epoch(self):
         self.sync()
         item = self.lane._outputs.popleft()
