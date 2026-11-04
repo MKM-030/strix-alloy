@@ -160,6 +160,55 @@ def _question_kind(text):
     return 'help' if isinstance(text, str) and text.strip() and len(text) <= 4000 else None
 
 
+def _noncompletion_ordering(text, occurrence):
+    """Recognize only clear noncompletion grammar around one bestellt predicate.
+
+    This grants no result authority. Ambiguous/positive ordering stays held;
+    actual ServiceNow results retain their separate native backend speech lane.
+    """
+    if len(text) > 1200:
+        return False
+    start, end = occurrence.span()
+    left = next((m.end() for m in reversed(tuple(re.finditer(r'[.!?;\n]', text[:start])))), 0)
+    following_boundary = re.search(r'[.!?;\n]', text[end:])
+    right = end + following_boundary.start() if following_boundary else len(text)
+    sentence = text[left:right].casefold()
+    before, after = text[left:start].casefold(), text[end:right].casefold()
+    separators = r',|\b(?:und|aber|sondern|doch|jedoch|dennoch)\b'
+    boundaries = tuple(re.finditer(separators, before))
+    head = before[boundaries[-1].end():] if boundaries else before
+    tail = re.split(separators, after, maxsplit=1)[0]
+    clause = head + 'bestellt' + tail
+    # Keep exception/ellipsis tails: "nichts bestellt, außer einem Laptop"
+    # and "nicht bestellt, sondern der Monitor" still imply a real order.
+    if (re.search(r'\b(?:sondern|aber|jedoch|doch|hingegen|außer|ausser|ausgenommen|abgesehen)\b|'
+                  r'\bbis auf\b|\bmit ausnahme\b|\bes sei denn\b', sentence)
+            or re.search(r'\b(?:nur|bloß|bloss|lediglich|allein)\b|\bnicht\s+erst\b|'
+                         r'\b(?:fast|beinahe|kaum)\s+(?:nichts|kein\w*)\b', clause)):
+        return False
+    negatives = re.findall(r'\b(?:nicht|nichts|kein(?:e|en|em|er|es|s)?|nie|niemals|'
+                           r'keineswegs|keinesfalls|ohne)\b', clause)
+    if len(negatives) > 1:
+        return False
+    # A leading condition applies only to its own clause. Concessive/factive
+    # "auch wenn/obwohl/nachdem" and postposed conditions are not exceptions.
+    if (re.match(r'^\s*(?:falls|sofern)\b', head) or
+            re.match(r'^\s*wenn\b', head) and not re.search(r'\b(?:auch|schon)\b', clause)):
+        return True
+    modal = r'\b(?:kann|können|könnte|könnten|soll|sollen|sollte|sollten|muss|müssen|müsste|müssten|darf|dürfen|dürfte|dürften|würde|würden)\b'
+    if re.match(r'\s+werden\b', tail) and (re.search(modal, head) or
+            re.match(r'^\s*(?:wie|ob)\b', head) and re.search(modal, tail)):
+        return True
+    if re.match(r'^\s*wie\b', head) and re.match(r'\s+(?:wird|werden)\b', tail):
+        return True
+    if (len(negatives) != 1 or re.search(r'\bnicht\b.*\bdass\b', before)
+            or re.match(r'^\s*(?:dass|ob)\b', head) or re.search(separators, after)):
+        return False
+    # Do not infer object scope from generic kein noun phrases: an adjunct
+    # such as "mit keinem Zweifel bestellt" can still assert completion.
+    return bool(re.search(r'\b(?:nicht|nichts)\s*$', head))
+
+
 class _JsonSocket:
     def __init__(self, websocket, http):
         self.websocket, self.http = websocket, http
@@ -1145,9 +1194,11 @@ class NativeDuplex:
         # business evidence or completion authority. These guards hold
         # obvious success/control/identifier leakage, not prove semantics.
         text = candidate.text.strip()
-        forbidden = re.search(r'(?i)(?:<|https?://|\b(?:public-reply|processing-label)-|'
+        forbidden_matches = re.finditer(r'(?i)(?:<|https?://|\b(?:public-reply|processing-label)-|'
             r'\b[0-9a-f]{16,}\b|\b(?:analysis|reasoning|tool_call|'
             r'bestellt|abgeschlossen|genehmigt|freigegeben|erledigt|bestätigt)\b)', text)
+        forbidden = next((match for match in forbidden_matches
+            if match.group(0).casefold() != 'bestellt' or not _noncompletion_ordering(text, match)), None)
         source = ' '.join(fact['text'] for fact in snapshot['public_findings']
                           if fact['source_event'] != 'complete_emitted_assistant_speech')
         source += ' ' + ' '.join(snapshot['raw_inputs']) + ' ' + snapshot.get('question', '')
