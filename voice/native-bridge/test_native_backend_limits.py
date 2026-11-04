@@ -32,6 +32,25 @@ class BackendReceiptLimitsTests(unittest.TestCase):
         self.assertLessEqual(len(session.backend_events), 200)
         self.assertLessEqual(len(session.backend_fingerprints), 256)
 
+    def test_any_partial_marker_holds_a_control_even_with_an_end_marker(self):
+        bridge = Bridge(Settings(instance_url='https://fixture.example.test', user_id='offline'), 'offline', 'offline', 'offline')
+        session = self.session()
+        bridge.consume(session, dict(requestId='a'*32, body=[dict(uiType='Boolean',
+            label='Not complete?', streaming='END', streamingStatus='INPROGRESS')]))
+        self.assertEqual(list(session.backend_events), [])
+        self.assertTrue(session.busy)
+
+    def test_duplicate_active_control_survives_event_history_eviction(self):
+        bridge = Bridge(Settings(instance_url='https://fixture.example.test', user_id='offline'), 'offline', 'offline', 'offline')
+        session = self.session()
+        control = dict(uiType='Boolean', label='Genuine control?', uniqueIdentifier='stable-control')
+        bridge.consume(session, dict(requestId='a'*32, body=[control]))
+        original = session.input_control_receipt
+        for number in range(300):
+            session.emit_backend_once('a'*32, 'OutputText', f'Output{number}.')
+        bridge.consume(session, dict(requestId='a'*32, body=[control]))
+        self.assertIs(session.input_control_receipt, original)
+
 
 if __name__ == '__main__':
     unittest.main()

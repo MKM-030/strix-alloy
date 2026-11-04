@@ -34,7 +34,7 @@ from caller_create_preflight import (
     requires_caller_create_preflight, require_caller_create_access, deadline_bound_context,
 )
 from spoken_output import spoken_text
-from native_backend import BackendEvent, BackendState, UNSET
+from native_backend import BackendEvent, BackendState, BackendControlChanged, UNSET
 from assistant_settings import CallSettings
 from host_ice import HostIceConfiguration, load_host_ice_file
 from managed_turn import (ManagedTurnConfiguration, ManagedTurnBootstrap,
@@ -334,6 +334,7 @@ class Dialog:
         self._context_receipt = None
         self.conversation_ended = False
         self.backend_owner = object()
+        self.native_owner_id = uuid.uuid4().hex
         self.business_request_id = ''
         self.backend_state = None
         self.input_control = None
@@ -425,6 +426,8 @@ class Dialog:
             self.observation_revision += 1
 
     async def request(self, method, path, *, caller_authorization=None, **kwargs):
+        conflict = None
+        native_input = kwargs.get('json', {}).get('nativeInput') if type(kwargs.get('json')) is dict else None
         headers = {'Origin':self.config.backend_url, 'X-CSRF-Token':self.csrf}
         if caller_authorization is not None:
             if method != 'POST' or path != '/api/start':
@@ -439,7 +442,17 @@ class Dialog:
             if path == '/api/end' and response.status == 401 and not self._caller_bootstrap_bound:
                 # Only the trusted loopback owner can declare its cookie expired.
                 return {'ended':True,'expired':True}
-            if response.status not in (200, 202):
+            if response.status == 409 and method == 'POST' and path == '/api/message' and native_input is not None:
+                raw = bytearray()
+                async for chunk in response.content.iter_chunked(4096):
+                    raw.extend(chunk)
+                    if len(raw) > 65536:
+                        raise RuntimeError('Native conflict receipt too large')
+                try:
+                    conflict = json.loads(raw.decode('utf-8'))
+                except (ValueError, UnicodeError):
+                    raise RuntimeError('Unproven native input conflict') from None
+            elif response.status not in (200, 202):
                 failure = None
                 if (method == 'POST' and path == '/api/start' and response.status == 502
                         and self._caller_bootstrap_bound):
@@ -468,6 +481,22 @@ class Dialog:
                     raise RuntimeError('ServiceNow conversation bridge unavailable') from None
             else:
                 return await response.json()
+        if conflict is not None:
+            # Negative authority exists only after the exact HTTP body/context closed.
+            if (type(conflict) is not dict or set(conflict) != {'source', 'dispatch', 'attemptId', 'ownerId', 'inputControl'}
+                    or conflict.get('source') != 'servicenow_native_input_conflict'
+                    or conflict.get('dispatch') != 'not_started'
+                    or conflict.get('attemptId') != native_input.get('attemptId')
+                    or conflict.get('ownerId') != native_input.get('ownerId')
+                    or conflict.get('ownerId') != self.native_owner_id):
+                raise RuntimeError('Unproven native input conflict')
+            control = conflict['inputControl']
+            if control is not None:
+                try:
+                    control = BackendEvent.parse(control, control.get('businessRequestId'), self.backend_owner)
+                except (ValueError, AttributeError):
+                    raise RuntimeError('Unproven native input control') from None
+            raise BackendControlChanged(control, self.backend_owner, conflict['attemptId'])
         # Bind no negative receipt until the loopback response closes normally.
         reason, receipt_id = failure
         if self._create_failure_receipt_id and self._create_failure_receipt_id != receipt_id:
@@ -619,6 +648,10 @@ class Dialog:
         await require_model_ready(self.http, self.config.model_health_url,
                                   self.config.private_model_health_token)
         payload = {'text':text}
+        if native_control_binding is not UNSET:
+            payload['nativeInput'] = dict(version=1, attemptId=uuid.uuid4().hex,
+                ownerId=self.native_owner_id,
+                binding=native_control_binding.wire() if native_control_binding is not None else None)
         if isinstance(voice_context, dict) and set(voice_context) == {'language', 'assistant_id', 'profile'}:
             settings = self.call_settings
             languages = getattr(settings, 'language_selection', {}).get('languages', [])
@@ -731,6 +764,7 @@ class Dialog:
 
         self.metadata = {key: '' for key in self.metadata}
         self.backend_owner = object()
+        self.native_owner_id = uuid.uuid4().hex
         self.business_request_id = ''
         self.backend_state = None
         self.input_control = None

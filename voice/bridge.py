@@ -43,6 +43,7 @@ TERMINAL_DRAIN_SECONDS = 2.0
 CALLER_BOOTSTRAP_SECONDS = 45
 MAX_END_RECEIPTS = 128
 LOG = logging.getLogger('voice-bridge')
+NATIVE_INPUT_UNSET = object()
 
 
 @dataclass
@@ -152,6 +153,10 @@ class Conversation:
 
     def emit_backend_once(self, request_id, ui_type, text, control_uid=''):
         key = (request_id, ui_type, text, control_uid)
+        current = self.input_control_receipt
+        if current is not None and (current['businessRequestId'], current['uiType'],
+                current['text'], current['controlUid']) == key:
+            return current
         if key in self.backend_fingerprints:
             return next((item for item in reversed(self.backend_events)
                 if (item['businessRequestId'], item['uiType'], item['text'], item['controlUid']) == key), None)
@@ -791,7 +796,8 @@ class Bridge:
                         or context.get('global_context_profile') != session.voice_context.get('global_context_profile')):
                     raise web.HTTPBadRequest(text='Voice assistant/profile binding cannot change')
                 session.voice_context = context
-            request_id = await self.send(session, value.strip() if typed else value, typed, history=history)
+            request_id = await self.send(session, value.strip() if typed else value, typed, history=history,
+                native_input=data.get('nativeInput', NATIVE_INPUT_UNSET))
         return web.json_response({'accepted': True, 'businessRequestId': request_id}, status=202)
 
     async def context_update(self, request):
@@ -967,13 +973,44 @@ class Bridge:
                     and session.input_boundary_request_id == saved['businessRequestId']),
                 'promptIncluded': receipt['promptIncluded'], 'ingested': receipt['promptIncluded']})
 
-    async def send(self, session, text, typed, action='', history=None):
+    async def send(self, session, text, typed, action='', history=None, *, native_input=NATIVE_INPUT_UNSET):
         # Serialize HTTP dispatch only. Callbacks never acquire this lock, and
         # it is never held for the ensuing business conversation/callback wait.
         async with session.context_lock:
-            return await self._send_locked(session, text, typed, action, history)
+            return await self._send_locked(session, text, typed, action, history, native_input=native_input)
 
-    async def _send_locked(self, session, text, typed, action='', history=None):
+    def _check_native_input(self, session, native):
+        if native is NATIVE_INPUT_UNSET:
+            return
+        if (type(native) is not dict or set(native) != {'version', 'attemptId', 'ownerId', 'binding'}
+                or type(native.get('version')) is not int or native['version'] != 1
+                or any(type(native.get(key)) is not str or not re.fullmatch(r'[0-9a-f]{32}', native[key])
+                       for key in ('attemptId', 'ownerId'))):
+            raise web.HTTPBadRequest(text='Invalid native input binding')
+        binding = native['binding']
+        if binding is not None and (type(binding) is not dict
+                or set(binding) != {'businessRequestId', 'controlType', 'label', 'eventId', 'controlUid'}
+                or type(binding.get('businessRequestId')) is not str
+                or not re.fullmatch(r'[0-9a-f]{32}', binding['businessRequestId'])
+                or binding.get('controlType') != 'Boolean'
+                or type(binding.get('label')) is not str or not 0 < len(binding['label']) <= 8000
+                or type(binding.get('eventId')) is not int or binding['eventId'] <= 0
+                or type(binding.get('controlUid')) is not str or len(binding['controlUid']) > 256):
+            raise web.HTTPBadRequest(text='Invalid native control binding')
+        receipt = session.input_control_receipt
+        current = (dict(businessRequestId=receipt['businessRequestId'], controlType='Boolean',
+            label=receipt['text'], eventId=receipt['id'], controlUid=receipt['controlUid'])
+            if session.input_boundary_kind == 'Boolean' and receipt is not None else None)
+        if (binding != current or session.busy or session.ended or session.failed or session.ending
+                or not session.started or session.input_boundary_kind == 'Boolean' and current is None):
+            payload = dict(source='servicenow_native_input_conflict', dispatch='not_started',
+                attemptId=native['attemptId'], ownerId=native['ownerId'],
+                inputControl=dict(receipt) if receipt is not None and not session.ended else None)
+            raise web.HTTPConflict(text=json.dumps(payload), content_type='application/json')
+
+    async def _send_locked(self, session, text, typed, action='', history=None, *, native_input=NATIVE_INPUT_UNSET):
+        # Compare after context_lock acquisition and before any request mutation.
+        self._check_native_input(session, native_input)
         if ('global_context_profile' in session.voice_context
                 and (not session.caller_user_id or not session.caller_email)):
             raise ValueError('Authenticated caller binding required')
@@ -1441,8 +1478,7 @@ class Bridge:
         for control in data.get('body', [])[:100]:
             if not isinstance(control, dict):
                 continue
-            streaming = control.get('streaming') or control.get('streamingStatus')
-            if streaming and streaming != 'END':
+            if any(control.get(name) and control[name] != 'END' for name in ('streaming', 'streamingStatus')):
                 continue
             kind = control.get('uiType')
             if session.ended and kind != 'OutputText':
