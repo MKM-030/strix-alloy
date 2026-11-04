@@ -23,6 +23,7 @@ from types import SimpleNamespace
 from conversation_repair import (conversational_snapshot,
                                  NATURAL_CONVERSATION_PROMPT, _polar, _pure_kind,
                                  _passive_signal)
+from conversation_claims import unproven_storage_or_check_claim
 from servicenow_voice_context import (build_servicenow_voice_context,
                                      append_servicenow_context)
 
@@ -1220,12 +1221,17 @@ class NativeDuplex:
         return key, snapshot, observation
 
     def _admit_conversation(self, candidate, turn, epoch, observation, snapshot):
+        return self._release_conversation_sentence(candidate, turn, epoch, observation, snapshot) == 'enqueued'
+
+    def _release_conversation_sentence(self, candidate, turn, epoch, observation, snapshot, *,
+                                       skip_unsupported_claim=False):
+        """Report actual queue admission separately from a safe streaming skip."""
         if epoch != self.epoch:
             self._log_dialogue_discard('caller_epoch_changed', 'sentence')
-            return False
+            return 'rejected'
         if not self._observation_current(observation):
             self._log_dialogue_discard('context_changed', 'sentence')
-            return False
+            return 'rejected'
         # Read-only wording uses bound public observations; it supplies no
         # business evidence or completion authority. These guards hold
         # obvious success/control/identifier leakage, not prove semantics.
@@ -1265,14 +1271,18 @@ class NativeDuplex:
             reason = 'identifier_in_text'
         elif not self.conversation.is_current(candidate.identity):
             reason = 'identity_not_current'
+        elif unproven_storage_or_check_claim(text):
+            reason = 'unproven_storage_or_check_claim'
         if reason is not None:
             self._log_dialogue_discard(reason, 'sentence')
-            return False
+            if skip_unsupported_claim and reason == 'unproven_storage_or_check_claim':
+                return 'skipped_claim'
+            return 'rejected'
         admitted = self._enqueue(text, turn, kind='conversation', observation=observation,
                                  identity=candidate.identity)
         if not admitted:
             self._log_dialogue_discard('output_queue_rejected', 'sentence')
-        return admitted
+        return 'enqueued' if admitted else 'rejected'
 
     def _queue_dialogue_observation(self):
         observe = getattr(self.conversation, 'observe', None)
@@ -1353,7 +1363,11 @@ class NativeDuplex:
             admitted = 0
             async def sentence(candidate):
                 nonlocal admitted
-                if not self._admit_conversation(candidate, turn, epoch, observation, snapshot):
+                disposition = self._release_conversation_sentence(candidate, turn, epoch, observation, snapshot,
+                                                                    skip_unsupported_claim=True)
+                if disposition == 'skipped_claim':
+                    return
+                if disposition != 'enqueued':
                     raise ValueError('Conversation sentence release rejected')
                 admitted += 1
             streaming = getattr(self.conversation, 'sentence_streaming', False)
