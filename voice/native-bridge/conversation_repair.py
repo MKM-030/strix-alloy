@@ -8,7 +8,7 @@ import re
 
 
 NATURAL_CONVERSATION_PROMPT = (
-    'Sprich natürlich, hilfreich und knapp auf Deutsch, in höchstens drei kurzen Sätzen. '
+    'Sprich natürlich, hilfreich und knapp in der Anrufsprache, in höchstens drei kurzen Sätzen. '
     'Beantworte die Frage der Person im Zusammenhang mit dem bisher Gesagten. '
     'Wenn du dich unklar ausgedrückt hast, korrigiere das und erkläre konkret, was du meintest. '
     'Die Person spricht mit dir: Sage ich, meine Frage oder Ihre Angabe. '
@@ -81,7 +81,7 @@ def _passive_signal(text):
 
 def _bound_question(question, source):
     return (question.strip() if isinstance(question, str) and 0 < len(question.strip()) <= 800
-            and source in ('greeting', 'servicenow_input_control') else '')
+            and source in ('greeting', 'servicenow_input_control', 'local_clarification') else '')
 
 
 def _polar(question):
@@ -143,8 +143,8 @@ def conversational_snapshot(snapshot, *, question='', question_source='', busy=F
     result = dict(snapshot)
     result['question'] = _bound_question(question, question_source)
     result['capability_limits'] = (
-        'Antworte auf die aktuelle Rückfrage im Zusammenhang mit den unveränderten bisherigen Eingaben.',
-        'Wenn eine aktuelle Frage angegeben ist, erkläre diese konkrete Frage statt einen neuen Auftrag anzunehmen.',
+        'Beantworte die tatsächliche aktuelle Äußerung im Zusammenhang mit dem bisherigen Gespräch.',
+        'Erkläre eine angegebene Rückfrage nur, wenn die Person danach fragt. Andere freie Fragen beantwortest du direkt.',
         'Korrigiere unklare eigene Worte in Alltagssprache. Erfinde keine Bedeutung für ein Gesprächssignal.',
         'Du kannst erklären und Angaben klären. ServiceNow allein führt Bestellungen und Bestätigungen durch.',
         'Eine Bearbeitungsanzeige belegt weder ein Ergebnis noch einen abgeschlossenen Schritt.',
