@@ -54,12 +54,11 @@ class MappedHTTP:
 
 
 class SharedGatewayEndpointTests(unittest.TestCase):
-    def test_only_shared_queue_endpoint_is_admitted(self):
+    def test_shared_queue_is_default_and_arbitrary_endpoints_are_rejected(self):
         self.assertEqual(local_llm_socket.CONTROLLER_CHAT_URL, CHAT)
         self.assertEqual(local_llm_socket.CONTROLLER_MODELS_URL, MODELS)
         validate_local_conversation(CHAT, 'C:/synthetic-only-token')
-        for bad in ['http://127.0.0.1:8840/v1/chat/completions',
-                    'http://127.0.0.1:8731/v1/chat/completions',
+        for bad in ['http://127.0.0.1:8731/v1/chat/completions',
                     'http://localhost:8841/v1/chat/completions',
                     'https://127.0.0.1:8841/v1/chat/completions',
                     CHAT + '?route=other', CHAT + '#fragment',
