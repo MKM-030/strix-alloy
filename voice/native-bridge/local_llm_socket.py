@@ -9,8 +9,9 @@ from pathlib import Path
 import re
 import uuid
 
-CONTROLLER_CHAT_URL = 'http://127.0.0.1:8840/v1/chat/completions'
-CONTROLLER_MODELS_URL = 'http://127.0.0.1:8840/v1/models'
+# Share the existing serial admission queue with ServiceNow model requests.
+CONTROLLER_CHAT_URL = 'http://127.0.0.1:8841/v1/chat/completions'
+CONTROLLER_MODELS_URL = 'http://127.0.0.1:8841/v1/models'
 
 
 def validate_local_conversation(url, token_file):
