@@ -165,5 +165,14 @@ class PendingContextTests(unittest.IsolatedAsyncioTestCase):
         await asyncio.gather(*tasks, return_exceptions=True)
         self.assertIsNone(self.lane._dialogue_observation_state)
 
+    async def test_observation_cancelled_before_start_releases_its_scheduled_signature(self):
+        self.call.dialog.input_boundary = dict(source='servicenow_input_control',
+            businessRequestId='control', controlType='InputText', label='A')
+        self.lane._queue_dialogue_observation()
+        tasks = tuple(self.lane._observations)
+        for task in tasks: task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        self.assertIsNone(self.lane._dialogue_observation_state)
+
 
 if __name__ == '__main__': unittest.main()
