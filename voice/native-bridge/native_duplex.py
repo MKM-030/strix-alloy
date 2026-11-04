@@ -1282,7 +1282,10 @@ class NativeDuplex:
                     await owned.close()
                 else:
                     self._model_failed = True
-                emit_fallback('controller_busy' if busy else 'unavailable')
+                if epoch == self.epoch:
+                    emit_fallback('controller_busy' if busy else 'unavailable')
+                else:
+                    self._log_dialogue_discard('caller_epoch_changed', 'failure_cleanup')
                 return
             if not streaming and not self._admit_conversation(candidate, turn, epoch, observation, snapshot):
                 emit_fallback()

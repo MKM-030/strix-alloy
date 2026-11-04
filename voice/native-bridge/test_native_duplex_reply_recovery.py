@@ -17,6 +17,7 @@ class Conversation:
     def __init__(self, failure=None, close_error=False):
         self.failure, self.close_error = failure, close_error
         self.inputs, self.close_count = [], 0
+        self.close_gate = None
         self.identity = SimpleNamespace(server_session_id='owned-offline-session')
 
     async def invalidate(self, epoch, reason):
@@ -39,6 +40,8 @@ class Conversation:
 
     async def close(self):
         self.close_count += 1
+        if self.close_gate is not None:
+            await self.close_gate.wait()
         if self.close_error:
             raise RuntimeError('Synthetic close failure')
 
@@ -103,6 +106,24 @@ class ReplyRecoveryTests(unittest.IsolatedAsyncioTestCase):
         await self.until(lambda: self.lane.pending_count == 2 and not self.lane._local_busy)
         self.assertEqual(len(self.factories), 1)
         self.assertEqual(self.second.inputs, [])
+
+    async def test_new_input_during_owned_close_cannot_receive_the_old_turn_fallback(self):
+        self.first.close_gate = asyncio.Event()
+        transcripts = []
+        def transcript(turn, role, text):
+            transcripts.append((turn[3], role, text))
+        self.call.transcript = transcript
+        self.call.feed('Welche Unterstützung bieten Sie?', 1)
+        await self.until(lambda: self.first.close_count == 1)
+        self.call.feed('Welche Angabe fehlt noch?', 2)
+        await self.until(lambda: self.lane.pending_count == 2)
+        self.first.close_gate.set()
+        await self.until(lambda: bool(self.second.inputs))
+        await self.until(lambda: not self.lane._local_busy and not self.lane.output_pending
+                         and not self.call.synthesis_active)
+        self.assertTrue(any(turn == '2' for turn, _, _ in transcripts))
+        self.assertFalse(any(turn == '1' for turn, _, _ in transcripts),
+                         'Old fallback must not be rebound to a new caller epoch during close')
 
     async def test_failed_owned_close_cannot_silently_reuse_the_rejected_session(self):
         self.first.close_error = True
