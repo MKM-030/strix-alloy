@@ -24,7 +24,7 @@ from conversation_repair import (conversational_snapshot,
                                  NATURAL_CONVERSATION_PROMPT, _polar, _pure_kind,
                                  _passive_signal)
 from conversation_claims import unproven_storage_or_check_claim
-from native_backend import BackendControlChanged, ControlBinding, ControlGate
+from native_backend import BackendControlChanged, BackendEvent, ControlBinding, ControlGate
 from servicenow_voice_context import (build_servicenow_voice_context,
                                      append_servicenow_context)
 
@@ -433,7 +433,7 @@ class NativeDuplex:
     def _question_current(self, state):
         if state is not None and state.get('control_binding') is not None:
             return (self._live() and state['control_binding'] == self._control_gate.binding
-                    and state['control_binding'].owner is getattr(self.call.dialog, 'backend_owner', None)
+                    and self._native_control_current(state['control_binding'])
                     and not self._control_gate.dispatched)
         if (state is None or not self._live() or self._pending
                 or state['task_revision'] != self.task_revision):
@@ -658,7 +658,7 @@ class NativeDuplex:
     def _valid(self, item):
         if item.control_binding is not None:
             return (self._live() and item.epoch == self.epoch
-                and item.control_binding.owner is getattr(self.call.dialog, 'backend_owner', None)
+                and self._native_control_current(item.control_binding)
                 and item.control_binding == self._control_gate.binding and not self._control_gate.dispatched)
         return (self._live() and item.epoch == self.epoch and item.task_revision == self.task_revision
                 and (item.question_binding is None or self._question_current(item.question_binding))
@@ -808,7 +808,7 @@ class NativeDuplex:
         if self._control_gate.binding is not None:
             bound = onset[4] if len(onset) > 4 and onset[2] and isinstance(onset[4], ControlBinding) else None
             self._submission_onsets[turn[3]]['control'] = bound
-            if self._control_gate.binding.owner is not getattr(self.call.dialog, 'backend_owner', None):
+            if not self._native_control_current(self._control_gate.binding):
                 self._control_gate.hold(turn, bound, self.call.turn_contexts.pop(number, None), 'control_owner_changed')
                 self._submission_onsets.pop(turn[3], None)
                 return
@@ -838,7 +838,7 @@ class NativeDuplex:
     def _reask_control(self, turn):
         control = self._control_gate.binding
         if control is not None:
-            if control.owner is not getattr(self.call.dialog, 'backend_owner', None):
+            if not self._native_control_current(control):
                 return
             if (control.label and not self._control_gate.dispatched
                     and not any(item.control_binding == control and self._valid(item) for item in self._outputs)
@@ -852,9 +852,15 @@ class NativeDuplex:
                 and boundary.get('source') == 'servicenow_input_control' and boundary.get('label')):
             self._enqueue(boundary['label'], turn, kind='backend')
 
+    def _native_control_current(self, binding):
+        event = getattr(self.call.dialog, 'input_control', None)
+        return (isinstance(event, BackendEvent) and event.owner is getattr(self.call.dialog, 'backend_owner', None)
+                and binding == ControlBinding.from_event(event))
+
     def _sync_native_control(self):
         event = getattr(self.call.dialog, 'input_control', None)
-        if event is not None and event.owner is not getattr(self.call.dialog, 'backend_owner', None):
+        if event is not None and (not isinstance(event, BackendEvent)
+                or event.owner is not getattr(self.call.dialog, 'backend_owner', None)):
             return
         binding = ControlBinding.from_event(event)
         changed = binding != self._control_gate.binding
@@ -933,7 +939,7 @@ class NativeDuplex:
         native_binding = self._control_gate.binding
         if native_binding is not None:
             bound = submitted.get('control') if submitted else None
-            if native_binding.owner is not getattr(self.call.dialog, 'backend_owner', None):
+            if not self._native_control_current(native_binding):
                 self._control_gate.hold(turn, bound, self.call.turn_contexts.pop(number, None), 'control_owner_changed')
                 return
             if not self._control_gate.admit(turn, bound, self.call.turn_contexts.get(number)):

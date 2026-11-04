@@ -80,6 +80,12 @@ class NativeControlHandoffTests(unittest.IsolatedAsyncioTestCase):
         self.call.dialog.backend_owner = object()
         self.assertFalse(self.lane._valid(item))
 
+    async def test_control_output_cannot_keep_authority_after_typed_receipt_disappears(self):
+        self.sync()
+        item = self.lane._outputs.popleft()
+        self.call.dialog.input_control = SimpleNamespace(owner=None)
+        self.assertFalse(self.lane._valid(item))
+
     async def test_caller_interrupt_requeues_the_unheard_control_under_new_epoch(self):
         self.sync()
         item = self.lane._outputs.popleft()
