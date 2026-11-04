@@ -64,17 +64,19 @@ class PendingContextTests(unittest.IsolatedAsyncioTestCase):
                 await asyncio.sleep(.002)
     async def drain_observations(self):
         if self.lane._observations: await asyncio.gather(*tuple(self.lane._observations))
-    async def test_hidden_old_reply_preserves_new_answer_and_never_observes_equal_context(self):
+    async def test_genuine_backend_evidence_refreshes_context_and_rejects_unreleased_old_candidate(self):
         _, before, _ = self.lane._dialogue_snapshot(self.q2, self.lane.epoch)
         self.call.dialog.release.put_nowait('Diese Rückmeldung gehört zur ersten Frage.')
         await self.business
         await self.drain_observations()
         _, after, _ = self.lane._dialogue_snapshot(self.q2, self.lane.epoch)
-        self.assertEqual([key for key in before if before[key] != after[key]], ['observation_revision'])
-        self.assertEqual(self.model.observations, [])
+        self.assertEqual([key for key in before if before[key] != after[key]],
+                         ['observation_revision', 'public_findings'])
+        self.assertEqual(len(self.model.observations), 1)
         self.model.release.set()
         await self.help
-        await self.until(lambda: REPLY in self.call.spoken)
+        await self.until(lambda: 'Diese Rückmeldung gehört zur ersten Frage.' in self.call.spoken)
+        self.assertNotIn(REPLY, self.call.spoken)
         self.assertEqual(self.call.dialog.calls, ['Erste Frage.'])
         self.assertEqual([turn[3] for turn in self.lane._pending], ['q2'])
     async def test_hidden_native_control_change_still_invalidates_pending_binding(self):

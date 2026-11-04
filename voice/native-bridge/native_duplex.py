@@ -24,7 +24,8 @@ from conversation_repair import (conversational_snapshot,
                                  NATURAL_CONVERSATION_PROMPT, _polar, _pure_kind,
                                  _passive_signal)
 from conversation_claims import unproven_storage_or_check_claim
-from native_backend import BackendControlChanged, BackendEvent, ControlBinding, ControlGate
+from native_backend import BackendControlChanged, BackendEvent, BackendState, ControlBinding, ControlGate
+from spoken_output import spoken_text
 from servicenow_voice_context import (build_servicenow_voice_context,
                                      append_servicenow_context)
 
@@ -323,6 +324,7 @@ class _Output:
     expires_at: float | None = None
     question_binding: object = None
     control_binding: object = None
+    backend_event: object = None
 
 
 class NativeDuplex:
@@ -330,6 +332,9 @@ class NativeDuplex:
                  conversation_factory=open_conversation, clock=time.monotonic):
         self.call, self.clock = call, clock
         self._control_gate = ControlGate()
+        self._backend_receipts = {}
+        self._backend_outputs = deque()
+        self._backend_input_closed = False
         if conversation_factory is open_conversation:
             self._factory = lambda url, call_id, epoch: open_conversation(url, call_id, epoch,
                 controller_url=getattr(call.config, 'conversation_http_url', ''),
@@ -405,7 +410,7 @@ class NativeDuplex:
 
     @property
     def output_pending(self):
-        return bool(self._outputs)
+        return bool(self._outputs or self._backend_outputs)
 
     def _live(self):
         return not (self._closed or self.call.closed or self.call.closing or self.call.input_lost or self.call.failed)
@@ -422,6 +427,11 @@ class NativeDuplex:
                     and not state.get('history_recorded')):
                 if state.get('control_binding') is not None and not state['interrupted']:
                     self._control_gate.mark_emitted(state['control_binding'])
+                event = state.get('backend_event')
+                if event is not None:
+                    record = self._backend_receipts.get(self._backend_key(event))
+                    if record is not None:
+                        record['state'] = 'fully_host_emitted'
                 state['history_recorded'] = True
                 if 0 < len(state['text']) <= 2000:
                     self._spoken_sequence += 1
@@ -489,6 +499,7 @@ class NativeDuplex:
         state = dict(text=item.text, kind=item.kind, question=question, source=source,
             binding=binding, task_revision=self.task_revision,
             control_binding=control,
+            backend_event=getattr(item, 'backend_event', None),
             accepted_start=self.call.playback.accepted_samples,
             emitted_start=self.call.playback.emitted_samples, accepted_samples=0,
             emitted_samples=0, complete=False, interrupted=False)
@@ -540,6 +551,7 @@ class NativeDuplex:
             state = self._speech
             if not state['complete'] or state['emitted_samples'] < state['accepted_samples']:
                 state['interrupted'] = True
+                self._interrupt_backend_speech(state)
                 self._interrupted_speech = state
                 LOG.info('Voice independent output call=%s stage=interrupted_pcm '
                          'emitted_samples=%d accepted_samples=%d device_playback_known=false',
@@ -656,6 +668,8 @@ class NativeDuplex:
             self._log_dialogue_discard(reason, boundary)
 
     def _valid(self, item):
+        if item.backend_event is not None:
+            return self._backend_event_current(item.backend_event)
         if item.control_binding is not None:
             return (self._live() and item.epoch == self.epoch
                 and self._native_control_current(item.control_binding)
@@ -669,6 +683,10 @@ class NativeDuplex:
                      self.conversation.is_current(item.identity)))
 
     def _current_public_findings(self):
+        receipts = tuple(record['finding'] for record in self._backend_receipts.values()
+            if record['state'] != 'suppressed_processing' and self._backend_event_current(record['event']))
+        if receipts:
+            return receipts[-8:]
         if self._pending or self._bootstrap_state != 'ready':
             return ()
         if self._request:
@@ -693,6 +711,13 @@ class NativeDuplex:
 
     def _status(self):
         dialog = self.call.dialog
+        received = self._current_public_findings() if self._backend_receipts else ()
+        if received:
+            quote, complete = self._excerpt(received[-1].text)
+            if quote:
+                return ('Die letzte vollständige Rückmeldung von ServiceNow lautet: „' if complete else
+                        'Ein Auszug aus der letzten ServiceNow-Rückmeldung lautet: „') + quote + '“' + (
+                        '' if complete else ' Die Rückmeldung ist länger. Welchen Teil möchten Sie besprechen?')
         if self.bootstrap_pending:
             return ('Die Verbindung zu ServiceNow wird noch vorbereitet. Wir können Ihr Anliegen schon besprechen. '
                     'Ihre Angaben bleiben bis zur Bereitschaft lokal vorgemerkt.' if self._pending or self._supplements else
@@ -761,7 +786,7 @@ class NativeDuplex:
         quote, complete = self._excerpt(replies[-1].text)
         return (('Die letzte Rückmeldung von ServiceNow war: „' if complete else
                  'Ein Auszug aus der letzten Rückmeldung von ServiceNow war: „') + quote
-                + '“ Eine abschließende Antwort auf die laufende Anfrage liegt weiterhin nicht vor.'
+                + '“'
                 if quote else self._status())
 
     async def _accept(self, turn):
@@ -805,6 +830,12 @@ class NativeDuplex:
                 boundary.get('businessRequestId', ''), self.task_revision)
             and self._question_current(self._spoken_question)
             and self._speech is self._spoken_question))
+        if self._backend_input_closed:
+            self._control_gate.hold(turn, onset, self.call.turn_contexts.pop(number, None), 'backend_ended')
+            self._submission_onsets.pop(turn[3], None)
+            if not self._local_questions.full():
+                self._local_questions.put_nowait((turn, 'help', self.epoch))
+            return
         if self._control_gate.binding is not None:
             bound = onset[4] if len(onset) > 4 and onset[2] and isinstance(onset[4], ControlBinding) else None
             self._submission_onsets[turn[3]]['control'] = bound
@@ -857,6 +888,69 @@ class NativeDuplex:
         return (isinstance(event, BackendEvent) and event.owner is getattr(self.call.dialog, 'backend_owner', None)
                 and binding == ControlBinding.from_event(event))
 
+    @staticmethod
+    def _backend_key(event):
+        return (id(event.owner), event.business_request_id, event.event_id)
+
+    def _backend_event_current(self, event):
+        record = self._backend_receipts.get(self._backend_key(event))
+        return (self._live() and event.owner is not None and event.owner is getattr(self.call.dialog, 'backend_owner', None)
+                and record is not None and record['event'] is event)
+
+    def _admit_backend_event(self, event, turn):
+        if (not isinstance(event, BackendEvent) or event.ui_type != 'OutputText'
+                or event.owner is None
+                or event.owner is not getattr(self.call.dialog, 'backend_owner', None)
+                or event.business_request_id != getattr(self.call.dialog, 'business_request_id', None)):
+            return False
+        key = self._backend_key(event)
+        if key in self._backend_receipts:
+            return False
+        text = spoken_text(event.text)
+        if not text:
+            return False
+        if len(self._backend_receipts) >= 200:
+            retired = next((old for old, record in self._backend_receipts.items()
+                if record['state'] not in ('pending', 'active')), None)
+            if retired is None:
+                raise RuntimeError('Owned backend receipt queue full')
+            del self._backend_receipts[retired]
+        current = getattr(self.call.dialog, 'input_control', None)
+        coalesced = (isinstance(current, BackendEvent) and current.ui_type == 'Boolean'
+            and current.owner is event.owner and current.business_request_id == event.business_request_id
+            and current.text == text and self._control_gate.binding == ControlBinding.from_event(current))
+        state = ('coalesced_control' if coalesced else
+                 'suppressed_processing' if _generic_processing_reply(text) else 'pending')
+        finding = _PublicFinding(self._request, self.task_revision, event.event_id, self.clock(), text)
+        self._backend_receipts[key] = dict(event=event, state=state, finding=finding)
+        if state == 'pending':
+            self._backend_outputs.append(_Output(text, turn, self.epoch, self.task_revision,
+                None, 'backend', backend_event=event))
+            self._output_ready.set()
+        LOG.info('Voice independent backend call=%s stage=receipt_%s event=%s request=%s',
+                 self.call.call_id, state, event.event_id, event.business_request_id)
+        return True
+
+    def _interrupt_backend_speech(self, state):
+        event = state.get('backend_event') if state is not None else None
+        record = self._backend_receipts.get(self._backend_key(event)) if event is not None else None
+        if record is not None and record['state'] in ('pending', 'active'):
+            record['state'] = 'interrupted'
+
+    def _settle_backend_state(self):
+        state = getattr(self.call.dialog, 'backend_state', None)
+        if (not isinstance(state, BackendState) or state.owner is None
+                or state.owner is not getattr(self.call.dialog, 'backend_owner', None)
+                or state.request_id != getattr(self.call.dialog, 'business_request_id', None) or not state.ended):
+            return
+        self._backend_input_closed = True
+        self._backend_unavailable = True
+        self._control_gate.retire()
+        while self._pending:
+            turn = self._pending.popleft()
+            self._control_gate.hold(turn, self._submission_onsets.pop(turn[3], None),
+                self.call.turn_contexts.pop(turn[2], None), 'backend_ended')
+
     def _sync_native_control(self):
         event = getattr(self.call.dialog, 'input_control', None)
         if event is not None and (not isinstance(event, BackendEvent)
@@ -866,6 +960,14 @@ class NativeDuplex:
         changed = binding != self._control_gate.binding
         self._control_gate.observe(binding)
         if binding is not None:
+            if changed:
+                # Supplemental cumulative context must not carry held originals
+                # into a later business request after this control retires.
+                self._context_snapshot = ''
+                self._context_covered.clear()
+                self._context_full = False
+                LOG.info('Voice independent control call=%s stage=observed ui_type=Boolean event=%s request=%s',
+                    self.call.call_id, binding.event_id, binding.business_request_id)
             while self._pending and (changed or not self._control_gate.heard):
                 turn = self._pending.popleft()
                 submitted = self._submission_onsets.pop(turn[3], None)
@@ -934,6 +1036,9 @@ class NativeDuplex:
 
     async def _business(self, turn):
         _, text, number, _, _ = turn
+        if self._backend_input_closed:
+            self._control_gate.hold(turn, None, self.call.turn_contexts.pop(number, None), 'backend_ended')
+            return
         submitted = self._submission_onsets.pop(turn[3], None)
         self._sync_native_control()
         native_binding = self._control_gate.binding
@@ -1025,7 +1130,11 @@ class NativeDuplex:
             self._queue_dialogue_observation()
         async def on_event(event):
             self._sync_native_control()
-            if event.ui_type != 'Boolean':
+            self._settle_backend_state()
+            if event.ui_type == 'OutputText':
+                self._admit_backend_event(event, turn)
+                self._queue_dialogue_observation()
+            elif event.ui_type != 'Boolean':
                 await on_reply(event.text)
         context = self.call.turn_contexts.pop(number, None)
         try:
@@ -1043,6 +1152,7 @@ class NativeDuplex:
             self._control_gate.hold(turn, submitted, context, 'control_changed_before_dispatch')
             self._reask_control(turn)
             return
+        self._settle_backend_state()
         label = input_label()
         if label:
             # This label is an observed ServiceNow input control, not a locally
@@ -1160,8 +1270,7 @@ class NativeDuplex:
                 if self._backend is not None and self._backend in ready:
                     try:
                         self._backend.result()
-                        if getattr(self.call.dialog, 'conversation_ended', False):
-                            raise BackendConversationEnded('ServiceNow ended this conversation')
+                        self._settle_backend_state()
                     except BackendTurnUnavailable:
                         self._backend_unavailable = True
                         self._context_pending = None
@@ -1543,24 +1652,27 @@ class NativeDuplex:
 
     async def _speak_loop(self):
         while self._live():
-            if not self._outputs:
+            if not self._outputs and not self._backend_outputs:
                 self._output_ready.clear()
                 await self._output_ready.wait()
                 continue
-            item = self._outputs[0]
+            queue = self._backend_outputs if self._backend_outputs else self._outputs
+            item = queue[0]
             if not self._valid(item):
                 self._discard_output(item, 'queue')
-                self._outputs.popleft()
+                queue.popleft()
                 continue
             if item.kind == 'confirmation_ack' and any(
                     queued.kind == 'backend' and self._valid(queued) for queued in self._outputs):
-                self._outputs.popleft()
+                queue.popleft()
                 continue
             if (self.call.playback.data or self.call.synthesis_active or self.call.vad_active
                     or self.call.recognition_active or not self.call.turns.empty()):
                 await asyncio.sleep(.02)
                 continue
-            self._outputs.popleft()
+            queue.popleft()
+            if item.backend_event is not None:
+                self._backend_receipts[self._backend_key(item.backend_event)]['state'] = 'active'
             generation = self.call.playback.generation
             self._active_kind = item.kind
             self._active_output = item
@@ -1583,6 +1695,10 @@ class NativeDuplex:
                 self.call.playback.interrupt()
             finally:
                 self._finish_speech(speech_state, complete=speech_complete)
+                if item.backend_event is not None and not speech_complete:
+                    record = self._backend_receipts.get(self._backend_key(item.backend_event))
+                    if record is not None:
+                        record['state'] = 'interrupted'
                 self.call.synthesis_active = False
                 self._active_kind = None
                 self._active_output = None
@@ -1662,7 +1778,7 @@ class NativeDuplex:
                     synthesizing=self.call.synthesis_active,
                     user_busy=(self.call.vad_active or self.call.recognition_active or not self.call.turns.empty()
                                or not self.call.recognized_turns.empty()),
-                    output_pending=bool(self._outputs), local_busy=self._local_busy or not self._local_questions.empty()):
+                    output_pending=self.output_pending, local_busy=self._local_busy or not self._local_questions.empty()):
                 # Keep unsolicited speech brief: a complete backend reply can
                 # arrive while this audio is playing. Detailed status remains
                 # available when the caller asks for it.
@@ -1681,6 +1797,7 @@ class NativeDuplex:
         self._closed = True
         self._dialogue_observation_state = None
         self._outputs.clear()
+        self._backend_outputs.clear()
         self._context_pending = None
         self._context_snapshot = ''
         self._context_candidate = None

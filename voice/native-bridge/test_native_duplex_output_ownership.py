@@ -11,7 +11,7 @@ from test_native_duplex import FakeCall
 
 
 class CallbackOutputOwnershipTests(unittest.IsolatedAsyncioTestCase):
-    async def check_callback(self, reply, *, stale=False, pending=0, replaces=False):
+    async def check_callback(self, reply, *, stale=False, pending=0, delivers=True):
         call = FakeCall()
         lane = NativeDuplex(call)
         local_text = 'Wir können die Schreibweise gemeinsam klären.'
@@ -25,6 +25,7 @@ class CallbackOutputOwnershipTests(unittest.IsolatedAsyncioTestCase):
                 local_started.set()
                 yield prefix
                 await local_release.wait()
+                yield prefix
             else:
                 yield bytes(480)
 
@@ -51,13 +52,18 @@ class CallbackOutputOwnershipTests(unittest.IsolatedAsyncioTestCase):
             await asyncio.wait_for(business, 1)
             await asyncio.sleep(0)
 
-            if replaces:
+            self.assertFalse(local_task.done(), 'A newly admitted callback cut the current sentence')
+            self.assertEqual(bytes(call.playback.data), prefix)
+            self.assertEqual(call.spoken, [local_text])
+            if delivers:
+                self.assertTrue(lane.output_pending)
+                local_release.set()
                 async with asyncio.timeout(1):
                     while reply not in call.spoken:
-                        await asyncio.sleep(0)
-                self.assertTrue(local_task.cancelled())
+                        call.playback.read(len(call.playback.data))
+                        await asyncio.sleep(.002)
+                self.assertFalse(local_task.cancelled())
                 self.assertEqual(call.spoken, [local_text, reply])
-                self.assertNotEqual(bytes(call.playback.data), prefix)
                 self.assertEqual([event for event in call.events if event[0] == 'assistant'],
                                  [('assistant', reply)])
             else:
@@ -84,21 +90,20 @@ class CallbackOutputOwnershipTests(unittest.IsolatedAsyncioTestCase):
     async def test_stale_reply_without_pending_inputs_keeps_current_speech(self):
         await self.check_callback('Bitte wählen Sie ein Gerät.', stale=True)
 
-    async def test_pending_inputs_fence_reply_without_cancelling_current_speech(self):
+    async def test_pending_inputs_do_not_drop_typed_information_or_cut_current_sentence(self):
         await self.check_callback('Bitte wählen Sie ein Gerät.', pending=1)
 
     async def test_suppressed_generic_processing_keeps_current_speech(self):
-        await self.check_callback('Bitte warten Sie einen Moment.')
+        await self.check_callback('Bitte warten Sie einen Moment.', delivers=False)
 
     async def test_empty_callback_keeps_current_speech(self):
-        await self.check_callback('')
+        await self.check_callback('', delivers=False)
 
-    async def test_current_concrete_reply_replaces_local_speech(self):
-        await self.check_callback('Bitte wählen Sie ein Gerät.', replaces=True)
+    async def test_current_concrete_reply_follows_complete_local_sentence(self):
+        await self.check_callback('Bitte wählen Sie ein Gerät.')
 
-    async def test_current_error_reply_replaces_local_speech(self):
-        await self.check_callback('Zurzeit sind keine Service-Desk-Mitarbeiter verfügbar.',
-                                  replaces=True)
+    async def test_current_error_reply_follows_complete_local_sentence(self):
+        await self.check_callback('Zurzeit sind keine Service-Desk-Mitarbeiter verfügbar.')
 
 
 if __name__ == '__main__':

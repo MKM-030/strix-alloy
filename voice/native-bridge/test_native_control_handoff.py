@@ -86,6 +86,24 @@ class NativeControlHandoffTests(unittest.IsolatedAsyncioTestCase):
         self.call.dialog.input_control = SimpleNamespace(owner=None)
         self.assertFalse(self.lane._valid(item))
 
+    async def test_held_prequestion_context_cannot_be_published_in_a_later_request(self):
+        async def publisher(*args):
+            return None
+        self.lane._context_publisher = publisher
+        self.lane._backend = asyncio.create_task(asyncio.Event().wait())
+        early = self.turn('EARLY_UNBOUND_REMARK')
+        self.lane._pending.append(early)
+        self.lane._queue_context_update(early)
+        self.sync()
+        self.call.dialog.input_control = self.call.dialog.input_boundary = None
+        self.lane._sync_native_control()
+        self.lane._request = 2
+        later = self.turn('LATER_NEW_INPUT', 2)
+        self.lane._pending.append(later)
+        self.lane._queue_context_update(later)
+        self.assertEqual(self.lane._context_pending['snapshot'], 'LATER_NEW_INPUT')
+        self.assertEqual(self.lane._control_gate.held[0].turn[1], 'EARLY_UNBOUND_REMARK')
+
     async def test_caller_interrupt_requeues_the_unheard_control_under_new_epoch(self):
         self.sync()
         item = self.lane._outputs.popleft()
