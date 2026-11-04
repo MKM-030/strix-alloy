@@ -252,21 +252,32 @@ def _conversation_class():
     return sys.modules['omni_conversation'].OmniConversation
 
 
+def prepare_conversation_dependencies():
+    """Import selected dialogue classes without constructing any call owner."""
+    conversation_class = _conversation_class()
+    from local_llm_socket import LocalTextSocket
+    from pipecat_dialogue import PipecatDialogue
+    return conversation_class, LocalTextSocket, PipecatDialogue
+
+
 async def open_conversation(url, call_id, epoch, *, controller_url='', controller_token_file='', call_settings=None):
     from aiohttp import ClientSession, ClientTimeout
+    began = time.monotonic()
+    conversation_class, socket_class, dialogue_class = prepare_conversation_dependencies()
+    dependencies_ms = round((time.monotonic() - began) * 1000)
+    began = time.monotonic()
     if controller_url:
-        conversation_class = _conversation_class()
-        from local_llm_socket import LocalTextSocket
-        from pipecat_dialogue import PipecatDialogue
-        source = LocalTextSocket(controller_url, controller_token_file)
+        source = socket_class(controller_url, controller_token_file)
         adapter = conversation_class(lambda: source,
             deadlines={'handshake_seconds': 3, 'turn_seconds': 20, 'control_seconds': 1})
-        dialogue = PipecatDialogue(adapter)
+        dialogue = dialogue_class(adapter)
         dialogue.controller_transport = source
         try:
             await dialogue.start(call_id, epoch, NATURAL_CONVERSATION_PROMPT + '\n' +
                                  build_servicenow_voice_context(call_settings).system_prompt_fragment)
-            LOG.info('Voice independent dialogue call=%s pipeline=pipecat controller_selected=true', call_id)
+            LOG.info('Voice independent dialogue call=%s pipeline=pipecat controller_selected=true '
+                     'dependencies_ms=%d initialization_ms=%d', call_id, dependencies_ms,
+                     round((time.monotonic() - began) * 1000))
             return dialogue
         except BaseException:
             await dialogue.close()
@@ -275,13 +286,14 @@ async def open_conversation(url, call_id, epoch, *, controller_url='', controlle
     try:
         async with asyncio.timeout(4):
             websocket = await http.ws_connect(validate_conversation_url(url), heartbeat=20, max_msg_size=65536)
-        adapter = _conversation_class()(lambda: _JsonSocket(websocket, http),
+        adapter = conversation_class(lambda: _JsonSocket(websocket, http),
             deadlines={'handshake_seconds': 3, 'turn_seconds': 10, 'control_seconds': 1})
-        from pipecat_dialogue import PipecatDialogue
-        dialogue = PipecatDialogue(adapter)
+        dialogue = dialogue_class(adapter)
         await dialogue.start(call_id, epoch, NATURAL_CONVERSATION_PROMPT + '\n' +
                              build_servicenow_voice_context(call_settings).system_prompt_fragment)
-        LOG.info('Voice independent dialogue call=%s pipeline=pipecat-1.13 sentence_streaming=true', call_id)
+        LOG.info('Voice independent dialogue call=%s pipeline=pipecat-1.13 sentence_streaming=true '
+                 'dependencies_ms=%d initialization_ms=%d', call_id, dependencies_ms,
+                 round((time.monotonic() - began) * 1000))
         return dialogue
     except BaseException:
         await http.close()

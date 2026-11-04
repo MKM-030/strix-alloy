@@ -46,7 +46,7 @@ from speech_activity import (SpeechActivityConfiguration, StreamingSpeechActivit
 from responsive_config import ResponsiveConfig, load_responsive_config
 from noise_guard import SpeechNoiseGuard, accepted_transcript
 from pcm_denoise import StreamingPCM16Denoiser
-from native_duplex import (NativeDuplex, BackendTurnUnavailable,
+from native_duplex import (NativeDuplex, BackendTurnUnavailable, prepare_conversation_dependencies,
                            BackendConversationEnded, validate_conversation_url)
 from model_health import require_model_ready, validate_model_health
 from local_llm_socket import validate_local_conversation
@@ -2278,6 +2278,12 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
     probe_dialog = Dialog(config) if dialog_factory is None and probe_backend else None
     async def lifecycle(app):
         nonlocal responsive, stopping
+        if config.conversation_http_url or config.conversation_ws_url:
+            began = time.monotonic()
+            LOG.info('Voice conversation dependencies stage=begin')
+            prepare_conversation_dependencies()
+            LOG.info('Voice conversation dependencies stage=ready elapsed_ms=%d',
+                     round((time.monotonic() - began) * 1000))
         slot_owner = None
         if profile and profile.grounded_answers_enabled:
             readiness = _grounded_readiness_module()
