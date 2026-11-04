@@ -5,6 +5,37 @@ from conversation_claims import unproven_storage_or_check_claim
 
 
 class ClaimTests(unittest.TestCase):
+    def test_comma_enumerations_do_not_hide_storage_claims(self):
+        for text in (
+                'Ich habe mir den Namen Mara Testfeld, den Lieferort Hamburg und das Eintrittsdatum notiert.',
+                'Ich habe Name, Lieferort und Eintrittsdatum notiert.',
+                'Wir haben den Namen, die Kostenstelle und den Lieferort gespeichert.',
+                'Der Name, die Kostenstelle und der Lieferort wurden geprüft.'):
+            with self.subTest(text=text):
+                self.assertTrue(unproven_storage_or_check_claim(text))
+
+    def test_comma_enumeration_support_does_not_join_complement_clauses_into_claims(self):
+        for text in (
+                'Ich habe verstanden, dass die Angaben gespeichert sind.',
+                'Ich habe gefragt, ob die Angaben gespeichert sind.',
+                'Ich habe gefragt, wie die Angaben gespeichert werden.'):
+            with self.subTest(text=text):
+                self.assertFalse(unproven_storage_or_check_claim(text))
+
+    def test_fronted_condition_preserves_future_passive_without_excusing_completed_claims(self):
+        for text in (
+                'Wenn Sie einverstanden sind, werden die Angaben gespeichert.',
+                'Falls Sie einverstanden sind, wird der Lieferort gespeichert.',
+                'Sofern die Freigabe vorliegt, dann werden die Angaben geprüft.',
+                'Wenn die Freigabe vorliegt, werden Name, Lieferort und Eintrittsdatum gespeichert.'):
+            with self.subTest(text=text):
+                self.assertFalse(unproven_storage_or_check_claim(text))
+        for text in (
+                'Wenn Sie einverstanden sind, habe ich die Angaben gespeichert.',
+                'Wenn Sie einverstanden sind, werden die Angaben gespeichert, ich habe den Namen notiert.'):
+            with self.subTest(text=text):
+                self.assertTrue(unproven_storage_or_check_claim(text))
+
     def test_clear_first_person_or_passive_claims_are_detected(self):
         for text in (
                 'Danke, ich habe mir den Namen Mara Testfeld und den Lieferort Hamburg notiert.',

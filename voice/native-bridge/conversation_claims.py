@@ -11,10 +11,14 @@ def unproven_storage_or_check_claim(text):
                       r'\u00ab[^\u00bb]*\u00bb|"[^"]*"|'
                       r'\u201a[^\u2018]*\u2018|\u2018[^\u2019]*\u2019|'
                       r"(?<!\w)'[^']*'(?!\w)", ' ', text)
-    direct = (r'\b(?P<aux>ich\s+(?:habe|hatte)|(?:habe|hatte)\s+ich|'
-              r'wir\s+(?:haben|hatten)|(?:haben|hatten)\s+wir|'
-              r'ist|sind|wird|werden|wurde|wurden|war|waren)\b'
-              r'(?P<between>[^,.!?;\n]*?)\b(?:notiert|gespeichert|gepr\u00fcft)\b')
+    auxiliary = (r'ich\s+(?:habe|hatte)|(?:habe|hatte)\s+ich|'
+                 r'wir\s+(?:haben|hatten)|(?:haben|hatten)\s+wir|'
+                 r'ist|sind|wird|werden|wurde|wurden|war|waren')
+    # Commas may enumerate fields; another auxiliary or complement clause
+    # cannot connect an earlier "habe" to a later reported participle.
+    direct = (r'\b(?P<aux>' + auxiliary + r')\b(?P<between>(?:(?!\b(?:'
+              + auxiliary + r')\b|,\s*(?:dass|ob|wie)\b)[^.!?;\n])*?)'
+              r'\b(?:notiert|gespeichert|gepr\u00fcft)\b')
     negative = r'\b(?:nicht(?!\s+nur\b)|nichts|keinerlei|kein(?:e[rmns]?)?|nie(?:mals)?|weder)\b'
     planned = (r'\b(?:muss|müssen|müsste|müssten|musste|mussten|kann|können|könnte|könnten|'
                r'soll|sollen|sollte|sollten|darf|dürfen|dürfte|dürften|würde|würden|'
@@ -29,8 +33,10 @@ def unproven_storage_or_check_claim(text):
                 continue
             # A future/conditional passive is not a report that work happened.
             if claim.group('aux').casefold() in ('wird', 'werden'):
+                preceding = value[:claim.start()]
                 following = value[claim.end():]
-                if (re.match(r'\s+werden\b', following, re.I)
+                if (re.search(r'\b(?:wenn|falls|sofern)\b[^,]*,\s*(?:dann\s+)?$', preceding, re.I)
+                        or re.match(r'\s+werden\b', following, re.I)
                         or re.search(r'\b(?:sobald|wenn|falls|sofern)\b', following, re.I)):
                     continue
             return True
