@@ -79,6 +79,19 @@ class TranscriptGroupingTests(unittest.TestCase):
         self.assertEqual(result.text, 'Der begonnene Satz läuft weiter.')
         self.assertEqual(result.reason, 'partial_response')
 
+    def test_queue_replacement_retires_only_unstarted_parts_missing_from_live_outputs(self):
+        self.assertTrue(callable(getattr(self.ledger, 'retain_pending', None)),
+                        'Queue replacement must retire unspoken transcript parts without touching active speech')
+        self.admit(self.first, 'Ein weiterhin aktiver Satz.')
+        self.ledger.started(self.key, self.owner, self.first, 10.1)
+        self.admit(self.second, 'Eine verworfene spätere Frage?')
+        self.ledger.finish(self.key, self.owner)
+        self.ledger.retain_pending({self.first})
+        self.assertEqual(self.ledger.take_ready(), [])
+        self.ledger.emitted(self.key, self.owner, self.first)
+        self.assertEqual([x.text for x in self.ledger.take_ready()], ['Ein weiterhin aktiver Satz.'])
+        self.assertFalse(self.ledger.started(self.key, self.owner, self.second, 11.8))
+
     def test_native_boundary_flushes_completed_local_prefix_before_native_text(self):
         self.spoken(self.first, 'Wir können die Angaben gemeinsam klären.', 10.1)
         self.admit(self.second, 'Eine überholte zusätzliche Frage?')

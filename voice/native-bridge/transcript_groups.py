@@ -90,6 +90,14 @@ class TranscriptGroups:
         self._complete(key, group)
         return True
 
+    def retain_pending(self, live_parts):
+        """Retire removed queue entries while active/emitted parts retain evidence."""
+        for key, group in tuple(self._groups.items()):
+            for part, entry in group['parts'].items():
+                if entry['state'] == 'pending' and part not in live_parts:
+                    entry['state'] = 'retired'
+            self._complete(key, group)
+
     def _complete(self, key, group):
         if group['finished'] and all(x['state'] in ('emitted', 'retired') for x in group['parts'].values()):
             reason = ('partial_response' if any(x['state'] == 'retired' for x in group['parts'].values())
