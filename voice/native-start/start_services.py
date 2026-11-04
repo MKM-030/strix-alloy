@@ -104,16 +104,29 @@ def speech_start(selected):
             profile = manager.selected_profile()
             if profile is None:
                 raise RuntimeError('No validated German voice reference is available')
+            # UUIDs have their own immutable local profile binding. Do not
+            # replace an arbitrary vendor voice with the current alias voice.
+            plan = [(manager.VOICE_ALIAS, profile)]
+            plan += [(item['voice_id'], item['profile']) for item in manager.native_registrations()]
             owner = speech.owners()['tts']
             receipt = RUNTIME / 'registered-voice.json'
-            stamp = {'pid':owner['pid'], 'created':owner['created'],
-                     'reference_sha256':profile['reference_sha256']}
-            if receipt.exists() and json.loads(receipt.read_text()) == stamp:
+            stamp = {'schema_version': 2, 'pid':owner['pid'], 'created':owner['created'],
+                     'registrations': [dict(voice_id=voice_id, profile_id=item['profile_id'],
+                                            reference_sha256=item['reference_sha256'])
+                                       for voice_id, item in plan]}
+            if receipt.exists() and manager.read_json(receipt) == stamp:
                 print('TTS: existing owned voice registration reused', flush=True)
             else:
-                manager.native_register(profile)
+                # A lost response can still have committed. Never cache a
+                # previous plan after the first possibly committing POST.
+                receipt.unlink(missing_ok=True)
+                for voice_id, item in plan:
+                    manager.native_register(item, voice_id=voice_id)
+                current = speech.owners()['tts']
+                if (current['pid'], current['created']) != (owner['pid'], owner['created']):
+                    raise RuntimeError('TTS identity changed during voice registration; receipt withheld')
                 manager.atomic_json(receipt, stamp)
-                print('TTS: selected German voice registered: ' + profile['name'], flush=True)
+                print('TTS: selected German voice and explicit local bindings registered', flush=True)
 
 
 def start_python(name, ports, script, config, health):

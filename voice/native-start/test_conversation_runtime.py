@@ -761,8 +761,10 @@ class DesktopSeamTests(unittest.TestCase):
         def lock():
             self.events.append('lock')
             yield
-        self.start.services = SimpleNamespace(startup_lock=lock, voice_start=lambda *a, **k: self.events.append('voice'))
-        self.start.speech_services = SimpleNamespace(startup_lock=lock, speech_start=lambda *a: self.events.append('speech'))
+        self.start.services = SimpleNamespace(RUNTIME=HERE / 'fixture-primary-runtime',
+            startup_lock=lock, voice_start=lambda *a, **k: self.events.append('voice'))
+        self.start.speech_services = SimpleNamespace(RUNTIME=HERE / 'fixture-speech-runtime',
+            startup_lock=lock, speech_start=lambda *a: self.events.append('speech'))
         for name in ('preflight', 'model_start', 'gateway_start', 'funnel_check'):
             setattr(self.start, name, lambda *a, n=name: self.events.append(n))
         self.start.validate_profile = lambda: {}
