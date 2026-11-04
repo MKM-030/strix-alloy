@@ -479,6 +479,19 @@ class NativeDuplex:
                     if record is not None:
                         record['state'] = 'fully_host_emitted'
                 state['history_recorded'] = True
+                item, lease = state.get('output'), state.get('lease')
+                if (item is not None and item.kind in ('backend', 'backend_control') and lease is not None
+                        and self._active_speech_current(item, lease.generation, lease)):
+                    try:
+                        caller = item.turn[3] if item.turn is not None else ''
+                    except (TypeError, IndexError, KeyError):
+                        caller = ''
+                    if type(caller) is not str or not re.fullmatch('[0-9a-f]{32}', caller):
+                        caller = '-'
+                    LOG.info('Voice independent output call=%s stage=host_emitted kind=%s caller_turn_id=%s '
+                             'text_sha256=%s generation=%d accepted_samples=%d emitted_samples=%d',
+                             self.call.call_id, item.kind, caller, hashlib.sha256(state['text'].encode('utf-8')).hexdigest(),
+                             state['generation'], state['accepted_samples'], state['emitted_samples'])
                 part = getattr(state.get('output'), 'transcript_part', None)
                 if part is not None:
                     self._transcripts.emitted(*part)
