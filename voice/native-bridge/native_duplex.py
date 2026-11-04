@@ -8,6 +8,7 @@ import asyncio
 from collections import deque
 from dataclasses import dataclass, replace
 import importlib.util
+import hashlib
 import json
 import logging
 from startup_reason import startup_reason, caller_create_failure_notice
@@ -245,12 +246,20 @@ class _PublicFinding:
 
 
 @dataclass(frozen=True)
+class _BootstrapObservation:
+    revision: int
+    fingerprint: str
+    exposed_question: tuple
+    native_question: tuple | None
+
+
+@dataclass(frozen=True)
 class _Output:
     text: str
     turn: object
     epoch: int
     task_revision: int
-    observation_revision: int | None
+    observation_revision: int | _BootstrapObservation | None
     kind: str
     request: int | None = None
     identity: object = None
@@ -279,6 +288,7 @@ class NativeDuplex:
         self._context_covered = set()
         self.conversation = None
         self._dialogue_turn = None
+        self._dialogue_discard_count = 0
         self._model_failed = False
         self.epoch = 1
         self.task_revision = self.context_revision = 1
@@ -510,11 +520,61 @@ class NativeDuplex:
         self._output_ready.set()
         return True
 
+    def _bootstrap_native_question(self):
+        state = self._spoken_question
+        if state is None or state['kind'] == 'conversation':
+            return None
+        return tuple(state.get(key) for key in
+                     ('question', 'source', 'binding', 'control_label', 'task_revision'))
+
+    def _bootstrap_context_fingerprint(self, exposed_question, native_question):
+        question = self.question_context()[:2]
+        spoken_question = self._bootstrap_native_question()
+        # This response's own question/history may grow as its sentences drain.
+        # Native public replies and control bindings below remain independent.
+        if self._spoken_question is not None and self._spoken_question['kind'] == 'conversation':
+            question = exposed_question
+            spoken_question = native_question
+        dialog = self.call.dialog
+        context = dict(public_replies=tuple(getattr(dialog, 'public_replies', ())),
+            current_question=getattr(dialog, 'current_question', ''), exposed_question=question,
+            native_question=spoken_question,
+            input_boundary=getattr(dialog, 'input_boundary', None),
+            conversation_ended=bool(getattr(dialog, 'conversation_ended', False)),
+            bootstrap_state=self._bootstrap_state, backend_unavailable=self._backend_unavailable,
+            epoch=self.epoch, task_revision=self.task_revision, context_revision=self.context_revision,
+            raw_inputs=tuple(self._raw), pending_count=len(self._pending),
+            supplement_count=len(self._supplements), context_snapshot=self._context_snapshot)
+        encoded = json.dumps(context, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
+        return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
+
+    def _observation_current(self, observation):
+        if isinstance(observation, _BootstrapObservation):
+            # Progress is absent from a bootstrap prompt. Do not invalidate that
+            # answer for loader-only revisions while every guarded fact is stable.
+            try:
+                return (self.bootstrap_pending and observation.fingerprint ==
+                        self._bootstrap_context_fingerprint(observation.exposed_question,
+                                                            observation.native_question))
+            except (TypeError, ValueError):
+                return False
+        return observation is None or observation == getattr(self.call.dialog, 'observation_revision', 0)
+
+    def _log_dialogue_discard(self, reason, boundary):
+        if self._dialogue_discard_count < 8:
+            self._dialogue_discard_count += 1
+            LOG.info('Voice independent dialogue call=%s stage=discarded reason=%s at=%s',
+                     self.call.call_id, reason, boundary)
+
+    def _discard_output(self, item, boundary):
+        if item.kind == 'conversation':
+            reason = 'context_changed' if not self._observation_current(item.observation_revision) else 'output_superseded'
+            self._log_dialogue_discard(reason, boundary)
+
     def _valid(self, item):
         return (self._live() and item.epoch == self.epoch and item.task_revision == self.task_revision
                 and (item.question_binding is None or self._question_current(item.question_binding))
-                and (item.observation_revision is None or item.observation_revision ==
-                     getattr(self.call.dialog, 'observation_revision', 0))
+                and self._observation_current(item.observation_revision)
                 and (item.request is None or item.request == self._request and self.busy)
                 and (item.expires_at is None or self.clock() < item.expires_at and not self._pending)
                 and (item.identity is None or self.conversation is not None and
@@ -1067,10 +1127,19 @@ class NativeDuplex:
             encoded = json.dumps(candidate, ensure_ascii=False, separators=(',', ':'))
             if len(encoded) <= 10000 and len(encoded.encode('utf-8')) <= 32768:
                 snapshot = candidate
+        if self.bootstrap_pending:
+            question = (actual_question, question_source)
+            native_question = self._bootstrap_native_question()
+            observation = _BootstrapObservation(observation,
+                self._bootstrap_context_fingerprint(question, native_question), question, native_question)
         return key, snapshot, observation
 
     def _admit_conversation(self, candidate, turn, epoch, observation, snapshot):
-        if (epoch != self.epoch or observation != getattr(self.call.dialog, 'observation_revision', 0)):
+        if epoch != self.epoch:
+            self._log_dialogue_discard('caller_epoch_changed', 'sentence')
+            return False
+        if not self._observation_current(observation):
+            self._log_dialogue_discard('context_changed', 'sentence')
             return False
         # Read-only wording uses bound public observations; it supplies no
         # business evidence or completion authority. These guards hold
@@ -1140,6 +1209,7 @@ class NativeDuplex:
                 self.conversation = await self._factory(self.call.config.conversation_ws_url,
                                                         self.call.call_id, self.epoch)
             if epoch != self.epoch:
+                self._log_dialogue_discard('caller_epoch_changed', 'connection')
                 return
             if self.conversation.output_epoch < self.epoch:
                 await self.conversation.invalidate(self.epoch, 'input during connection')
@@ -1157,13 +1227,16 @@ class NativeDuplex:
             else:
                 candidate = await self.conversation.respond(turn[1], snapshot, key)
             if epoch != self.epoch:
+                self._log_dialogue_discard('caller_epoch_changed', 'completion')
                 return
-            if observation != getattr(self.call.dialog, 'observation_revision', 0):
+            if not self._observation_current(observation):
+                self._log_dialogue_discard('context_changed', 'completion')
                 self._revoke_dialogue_output(turn)
                 return
             if candidate.failure is not None:
                 self._revoke_dialogue_output(turn)
                 if candidate.failure == 'superseded':
+                    self._log_dialogue_discard('output_superseded', 'completion')
                     return
                 busy = getattr(getattr(self.conversation, 'controller_transport', None), 'transient_busy', False)
                 if busy:
@@ -1201,6 +1274,7 @@ class NativeDuplex:
                 continue
             item = self._outputs[0]
             if not self._valid(item):
+                self._discard_output(item, 'queue')
                 self._outputs.popleft()
                 continue
             if item.kind == 'confirmation_ack' and any(
@@ -1246,9 +1320,13 @@ class NativeDuplex:
         state = self._speech
         async for chunk in self.call.speech.synthesize(item.text):
             if not self._valid(item) or generation != self.call.playback.generation:
+                self._discard_output(item, 'pcm')
                 break
             while len(self.call.playback.data) > 48000 and self._valid(item):
                 await asyncio.sleep(.02)
+            if not self._valid(item) or generation != self.call.playback.generation:
+                self._discard_output(item, 'pcm')
+                break
             if self._valid(item) and generation == self.call.playback.generation:
                 if chunk and self.call.playback.put(chunk, generation):
                     queued += len(chunk)
