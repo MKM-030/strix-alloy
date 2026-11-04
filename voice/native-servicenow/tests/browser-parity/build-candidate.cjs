@@ -182,6 +182,86 @@ function derive(raw) {
         };`, `                console.log(\x60Signaling WebSocket closed: \x24{event.code} \x24{event.reason}\x60);
             failBeforeConnection();
         };`);
+    replace('    function failVoice(message) {', `    function currentStart() {
+        return !voiceFailed && !webrtc.sccStartCancelled
+            && window.testVoiceUI.webrtc === webrtc;
+    }
+
+    function failVoice(message) {`);
+    replace(`            .then(value => api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
+                items: [{ id: 'auth_request_failure', status: 'critical',
+                    icon: 'exclamation-triangle-outline',
+                    content: { type: 'html', value }, action: { type: 'dismiss' } }]
+            })).catch(() => {});`, `            .then(value => {
+                if (window.testVoiceUI.webrtc !== webrtc) return;
+                return api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
+                    items: [{ id: 'auth_request_failure', status: 'critical',
+                        icon: 'exclamation-triangle-outline',
+                        content: { type: 'html', value }, action: { type: 'dismiss' } }]
+                });
+            }).catch(() => {});`);
+    const permissionStart = source.indexOf('    // Pre-check microphone permission');
+    const permissionEnd = source.indexOf('    function setupPeerConnection()');
+    if (permissionStart < 0 || permissionEnd <= permissionStart) throw new Error('Native media block changed');
+    replace(source.slice(permissionStart, permissionEnd), `    // Permission and media acquisition may settle after another Start owns the UI.
+    try {
+        const permResult = await window.navigator.permissions.query({ name: 'microphone' });
+        if (!currentStart()) return;
+        if (permResult.state === 'denied') {
+            failVoice("Microphone access is blocked by browser permissions.");
+            return;
+        }
+    } catch (permErr) {
+        // Permissions API not supported — proceed to getUserMedia.
+    }
+    if (!currentStart()) return;
+
+    try {
+        const localStream = await window.navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true
+            },
+            video: false
+        });
+        if (!currentStart()) {
+            localStream.getTracks().forEach(track => track.stop());
+            return;
+        }
+        webrtc.localStream = localStream;
+    } catch (mediaErr) {
+        if (!currentStart()) return;
+        if (mediaErr.name === 'NotAllowedError')
+            failVoice("Microphone permission was denied. Please allow microphone access and try again.");
+        else if (mediaErr.name === 'NotFoundError')
+            failVoice("No microphone found. Please connect a microphone and try again.");
+        else
+            failVoice("Microphone error. Please check your device and try again.");
+        return;
+    }
+
+    const audioTracks = webrtc.localStream.getAudioTracks();
+    if (audioTracks.length === 0 || audioTracks[0].readyState !== 'live') {
+        failVoice("Microphone stream is not active. Please reset audio permissions and refresh the page.");
+        return;
+    }
+
+`);
+    replace(`    function connectSignalingWebSocket() {
+        answerReceived = false;`, `    function connectSignalingWebSocket() {
+        if (!currentStart()) return;
+        answerReceived = false;`);
+    replace('    window.testVoiceUI.webrtc = webrtc;', `    window.testVoiceUI.webrtc = webrtc;
+    api.setState("isConnectionInProgress", true);`);
+    replace(`            if (voiceFailed || webrtc.isConnected || webrtc.signalingWs !== socket
+                    || window.testVoiceUI.webrtc !== webrtc) return;`, `            if (!currentStart() || webrtc.isConnected || webrtc.signalingWs !== socket) return;`);
+    replace('        webrtc.signalingWs = new window.WebSocket(wsUrl);', `        try {
+            webrtc.signalingWs = new window.WebSocket(wsUrl);
+        } catch (error) {
+            failVoice("Voice signaling could not complete. Start a new call.");
+            return;
+        }`);
     return source;
 }
 module.exports = { derive, ORIGINAL_SHA256 };

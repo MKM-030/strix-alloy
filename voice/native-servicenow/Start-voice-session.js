@@ -33,6 +33,11 @@ async function handler({ api, event, helpers, imports }) {
     let answerReceived = false;
     let voiceFailed = false;
 
+    function currentStart() {
+        return !voiceFailed && !webrtc.sccStartCancelled
+            && window.testVoiceUI.webrtc === webrtc;
+    }
+
     function failVoice(message) {
         if (voiceFailed || window.testVoiceUI.webrtc !== webrtc) return;
         voiceFailed = true;
@@ -46,11 +51,14 @@ async function handler({ api, event, helpers, imports }) {
         uiUtils.disconnectVoice(window, webrtc);
         api.setState("isConnectionInProgress", false);
         Promise.resolve().then(() => helpers.translate(message)).catch(() => message)
-            .then(value => api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
-                items: [{ id: 'auth_request_failure', status: 'critical',
-                    icon: 'exclamation-triangle-outline',
-                    content: { type: 'html', value }, action: { type: 'dismiss' } }]
-            })).catch(() => {});
+            .then(value => {
+                if (window.testVoiceUI.webrtc !== webrtc) return;
+                return api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
+                    items: [{ id: 'auth_request_failure', status: 'critical',
+                        icon: 'exclamation-triangle-outline',
+                        content: { type: 'html', value }, action: { type: 'dismiss' } }]
+                });
+            }).catch(() => {});
     }
 
     function iceIsReady() {
@@ -68,6 +76,7 @@ async function handler({ api, event, helpers, imports }) {
     }
     const remoteCandidateQueue = [];
     window.testVoiceUI.webrtc = webrtc;
+    api.setState("isConnectionInProgress", true);
     api.setState("callStarted", true);
     api.setState("timer", "-");
     api.setState("timerIntervalId", 0);
@@ -76,33 +85,21 @@ async function handler({ api, event, helpers, imports }) {
     repeaterItems.length = 0;
     api.setState("sequenceAgentMap", {});
 
-    // Pre-check microphone permission
+    // Permission and media acquisition may settle after another Start owns the UI.
     try {
         const permResult = await window.navigator.permissions.query({ name: 'microphone' });
+        if (!currentStart()) return;
         if (permResult.state === 'denied') {
-            api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
-                items: [{
-                    id: 'auth_request_failure',
-                    status: 'critical',
-                    icon: 'exclamation-triangle-outline',
-                    content: {
-                        type: "html",
-                        value: await helpers.translate("Microphone access is blocked by browser permissions.")
-                    },
-                    action: {
-                        type: 'dismiss'
-                    }
-                }]
-            });
-            api.setState("callStarted", false);
+            failVoice("Microphone access is blocked by browser permissions.");
             return;
         }
     } catch (permErr) {
-        // Permissions API not supported — proceed to getUserMedia
+        // Permissions API not supported — proceed to getUserMedia.
     }
+    if (!currentStart()) return;
 
     try {
-        webrtc.localStream = await window.navigator.mediaDevices.getUserMedia({
+        const localStream = await window.navigator.mediaDevices.getUserMedia({
             audio: {
                 echoCancellation: true,
                 noiseSuppression: true,
@@ -110,50 +107,25 @@ async function handler({ api, event, helpers, imports }) {
             },
             video: false
         });
+        if (!currentStart()) {
+            localStream.getTracks().forEach(track => track.stop());
+            return;
+        }
+        webrtc.localStream = localStream;
     } catch (mediaErr) {
-        let error;
-        api.setState("callStarted", false);
+        if (!currentStart()) return;
         if (mediaErr.name === 'NotAllowedError')
-            error = await helpers.translate("Microphone permission was denied. Please allow microphone access and try again.");
+            failVoice("Microphone permission was denied. Please allow microphone access and try again.");
         else if (mediaErr.name === 'NotFoundError')
-            error = await helpers.translate("No microphone found. Please connect a microphone and try again.");
+            failVoice("No microphone found. Please connect a microphone and try again.");
         else
-            error = await helpers.translate("Microphone error. Please check your device and try again.");
-
-        api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
-            items: [{
-                id: 'auth_request_failure',
-                status: 'critical',
-                icon: 'exclamation-triangle-outline',
-                content: {
-                    type: "html",
-                    value: error
-                },
-                action: {
-                    type: 'dismiss'
-                }
-            }]
-        });
+            failVoice("Microphone error. Please check your device and try again.");
         return;
     }
 
-    // Validate stream has active audio tracks
     const audioTracks = webrtc.localStream.getAudioTracks();
     if (audioTracks.length === 0 || audioTracks[0].readyState !== 'live') {
-        api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
-            items: [{
-                id: 'auth_request_failure',
-                status: 'critical',
-                icon: 'exclamation-triangle-outline',
-                content: {
-                    type: "html",
-                    value: await helpers.translate("Microphone stream is not active. Please reset audio permissions and refresh the page.")
-                },
-                action: {
-                    type: 'dismiss'
-                }
-            }]
-        });
+        failVoice("Microphone stream is not active. Please reset audio permissions and refresh the page.");
         return;
     }
 
@@ -488,6 +460,7 @@ async function handler({ api, event, helpers, imports }) {
     }
 
     function connectSignalingWebSocket() {
+        if (!currentStart()) return;
         answerReceived = false;
         remoteCandidateQueue.length = 0;
         // Close existing WebSocket if any
@@ -520,12 +493,16 @@ async function handler({ api, event, helpers, imports }) {
         const wsUrl = `wss://${orchestratorHost}/webrtc/connect/agent_operator?${params.toString()}`;
         if (webrtc.debug)
             console.log(`Signaling WebSocket URL: ${wsUrl}`);
-        webrtc.signalingWs = new window.WebSocket(wsUrl);
+        try {
+            webrtc.signalingWs = new window.WebSocket(wsUrl);
+        } catch (error) {
+            failVoice("Voice signaling could not complete. Start a new call.");
+            return;
+        }
 
         const socket = webrtc.signalingWs;
         function failBeforeConnection() {
-            if (voiceFailed || webrtc.isConnected || webrtc.signalingWs !== socket
-                    || window.testVoiceUI.webrtc !== webrtc) return;
+            if (!currentStart() || webrtc.isConnected || webrtc.signalingWs !== socket) return;
             if (api.state.auth_token === webrtc.token) api.setState("auth_token", "");
             failVoice("Voice signaling could not complete. Start a new call.");
         }

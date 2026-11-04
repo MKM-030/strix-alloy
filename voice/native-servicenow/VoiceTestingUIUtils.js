@@ -641,6 +641,7 @@ function include({ imports }, _inApi, _inHelpers) {
     }
 
     function disconnectVoice(window, webrtc) {
+        webrtc.sccStartCancelled = true;
         // Send disconnect signal then close signaling WebSocket
         if (webrtc.signalingWs) {
             if (webrtc.signalingWs.readyState === window.WebSocket.OPEN) {
@@ -678,6 +679,7 @@ function include({ imports }, _inApi, _inHelpers) {
 
         api.setState("callStarted", false);
         api.setState("activeInteractionId", "");
+        api.setState("isConnectionInProgress", false);
         api.setState("timer", "-");
         api.setState("timerIntervalId", 0);
 
