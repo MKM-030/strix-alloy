@@ -1307,7 +1307,11 @@ class NativeDuplex:
                 LOG.warning('Voice dialogue observation unavailable type=%s', type(error).__name__)
         task = asyncio.create_task(apply())
         self._observations.add(task)
-        task.add_done_callback(self._observations.discard)
+        def finished(operation):
+            self._observations.discard(operation)
+            if operation.cancelled() and self._dialogue_observation_state is scheduled:
+                self._dialogue_observation_state = None
+        task.add_done_callback(finished)
 
     def _revoke_dialogue_output(self, turn):
         self._outputs = deque(item for item in self._outputs
