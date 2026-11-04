@@ -434,6 +434,10 @@ class NativeDuplex:
             state['accepted_samples'] = max(0, playback.accepted_samples - state['accepted_start'])
             state['emitted_samples'] = min(state['accepted_samples'],
                 max(0, playback.emitted_samples - state['emitted_start']))
+            snapshot = getattr(state.get('output'), 'fallback_snapshot', None)
+            if (snapshot is not None and state['emitted_samples'] > 0
+                    and snapshot not in self._help_failure_seen):
+                self._help_failure_seen.append(snapshot)
             lease = state.get('lease')
             pending = (state['accepted_samples'] > state['emitted_samples']
                        or self._active_output is state.get('output') and self.call.synthesis_active)
@@ -693,6 +697,8 @@ class NativeDuplex:
             self._log_dialogue_discard(reason, boundary)
 
     def _valid(self, item):
+        if item.fallback_snapshot is not None and item.fallback_snapshot != self._help_failure_snapshot():
+            return False
         if item.backend_event is not None:
             return self._backend_event_current(item.backend_event)
         if item.control_binding is not None:
@@ -820,6 +826,12 @@ class NativeDuplex:
         ends = [match.end() for match in re.finditer(r'[.!?](?:\s|$)', text[:limit])]
         return (text[:ends[-1]].strip() if ends else ''), False
 
+    def _help_failure_snapshot(self):
+        current = getattr(self.call.dialog, 'input_control', None)
+        current_key = (current.business_request_id, current.event_id) if isinstance(current, BackendEvent) else None
+        return (self._bootstrap_state, self._backend_unavailable, self._backend_input_closed,
+                current_key, next(reversed(self._backend_receipts), None))
+
     def _enqueue_help_fallback(self, turn, *, reason='unavailable'):
         if turn is not None and turn[3] in self._turn_speech_started:
             return
@@ -829,11 +841,7 @@ class NativeDuplex:
         if self._control_gate.binding is not None and not self._control_gate.dispatched:
             self._reask_control(turn)
             return
-        current = getattr(self.call.dialog, 'input_control', None)
-        current_key = (current.business_request_id, current.event_id) if isinstance(current, BackendEvent) else None
-        last_receipt = next(reversed(self._backend_receipts), None)
-        snapshot = (self._bootstrap_state, self._backend_unavailable, self._backend_input_closed,
-                    current_key, last_receipt)
+        snapshot = self._help_failure_snapshot()
         active = self._active_output
         if (snapshot in self._help_failure_seen
                 or any(item.fallback_snapshot == snapshot and self._valid(item) for item in self._outputs)
@@ -1802,8 +1810,6 @@ class NativeDuplex:
                         state['pcm_bytes'] += len(chunk)
                     if first:
                         first = False
-                        if item.fallback_snapshot is not None:
-                            self._help_failure_seen.append(item.fallback_snapshot)
                         if item.turn is not None:
                             self._turn_speech_started.append(item.turn[3])
                         LOG.info('Voice independent output call=%s stage=first_pcm kind=%s seconds=%.3f',
