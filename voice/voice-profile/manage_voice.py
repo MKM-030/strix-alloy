@@ -15,6 +15,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import shutil
 import sys
 import tempfile
@@ -207,6 +208,76 @@ def selected_profile(profile_root=PROFILE_ROOT):
     return profile
 
 
+def _native_voice_id(value):
+    try:
+        if type(value) is str and str(uuid.UUID(value)) == value:
+            return value
+    except ValueError:
+        pass
+    raise ValueError('An explicit canonical UUID is required for an extra native voice')
+
+
+def native_registrations(profile_root=PROFILE_ROOT):
+    """Read explicit local UUID ownership; never infer a vendor voice mapping."""
+    root = Path(profile_root).resolve()
+    path = root / 'native-registrations.json'
+    if not path.exists():
+        return []
+    manifest = read_json(path)
+    if (type(manifest) is not dict or set(manifest) != {'schema_version', 'registrations'}
+            or type(manifest['schema_version']) is not int or manifest['schema_version'] != 1
+            or type(manifest['registrations']) is not list or len(manifest['registrations']) > 32):
+        raise ValueError('Invalid native voice registration manifest')
+    result, seen = [], set()
+    for item in manifest['registrations']:
+        if type(item) is not dict or set(item) != {'voice_id', 'profile_id', 'reference_sha256'}:
+            raise ValueError('Invalid native voice registration entry')
+        voice_id = _native_voice_id(item['voice_id'])
+        if voice_id in seen:
+            raise ValueError('Duplicate native voice UUID')
+        seen.add(voice_id)
+        profile_id, expected = item['profile_id'], item['reference_sha256']
+        if (type(profile_id) is not str or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,79}', profile_id)
+                or type(expected) is not str or not re.fullmatch(r'[0-9a-f]{64}', expected)):
+            raise ValueError('Invalid native voice profile identity or reference hash')
+        folder = (root / 'revisions' / profile_id).resolve()
+        if folder.parent != root / 'revisions':
+            raise ValueError('Native voice profile escapes the local revisions directory')
+        profile = read_profile(folder)
+        if (profile['profile_id'] != profile_id or profile.get('kind') != 'authorized_own_voice'
+                or profile['reference_sha256'] != expected):
+            raise ValueError('Native voice binding differs from its consented profile or reference hash')
+        result.append(dict(voice_id=voice_id, profile=profile))
+    return result
+
+
+def bind_native_registration(profile_dir, voice_id, *, profile_root=PROFILE_ROOT):
+    """Persist metadata only under the activation lock; never register or select."""
+    voice_id = _native_voice_id(voice_id)
+    root, folder = Path(profile_root).resolve(), Path(profile_dir).resolve()
+    if folder.parent != root / 'revisions':
+        raise ValueError('Bind a staged revision under the configured voice profiles')
+    with activation_lock(root):
+        profile = read_profile(folder)
+        if (profile.get('kind') != 'authorized_own_voice' or profile['profile_id'] != folder.name
+                or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]{0,79}', profile['profile_id'])):
+            raise ValueError('An immutable consented own-voice profile is required')
+        entry = dict(voice_id=voice_id, profile_id=profile['profile_id'],
+                     reference_sha256=profile['reference_sha256'])
+        entries = [dict(voice_id=item['voice_id'], profile_id=item['profile']['profile_id'],
+                        reference_sha256=item['profile']['reference_sha256'])
+                   for item in native_registrations(root)]
+        for existing in entries:
+            if existing['voice_id'] == voice_id:
+                if existing != entry:
+                    raise ValueError('Native voice UUID is already bound to another profile')
+                return entry
+        if len(entries) >= 32:
+            raise ValueError('Native voice registration manifest is full')
+        atomic_json(root / 'native-registrations.json', dict(schema_version=1, registrations=entries + [entry]))
+        return entry
+
+
 def native_module():
     path = HERE.parent / 'native-speech-validation' / 'speech_probe.py'
     spec = importlib.util.spec_from_file_location('scc_owned_speech', path)
@@ -214,16 +285,29 @@ def native_module():
     return module
 
 
-def native_register(profile):
+def native_register(profile, *, voice_id=VOICE_ALIAS, profile_root=PROFILE_ROOT):
     import base64
     try:
+        validated = read_profile(profile['profile_dir'])
+        if (validated['profile_id'] != profile['profile_id']
+                or validated['reference_sha256'] != profile['reference_sha256']):
+            raise ValueError('Voice profile changed before registration')
+        if voice_id != VOICE_ALIAS:
+            _native_voice_id(voice_id)
+            if not any(item['voice_id'] == voice_id and item['profile'] == validated
+                       for item in native_registrations(profile_root)):
+                raise ValueError('Native voice UUID has no matching explicit local binding')
+        profile = validated
+        audio = (Path(profile['profile_dir']) / 'reference.wav').read_bytes()
+        if hashlib.sha256(audio).hexdigest() != profile['reference_sha256']:
+            raise ValueError('Reference audio hash changed before registration')
         native = native_module()
         native.assert_owned_listener(8862)
         import psutil
         if psutil.virtual_memory().available < 18 * 1024**3:
             raise RuntimeError('Free memory is below the existing 18 GiB reserve')
-        payload = {'name': VOICE_ALIAS, 'ref_text': profile['reference_text'],
-            'wav_b64': base64.b64encode((Path(profile['profile_dir']) / 'reference.wav').read_bytes()).decode('ascii')}
+        payload = {'name': voice_id, 'ref_text': profile['reference_text'],
+            'wav_b64': base64.b64encode(audio).decode('ascii')}
         # A POST can commit even if its response is lost. Never let startup
         # reuse a receipt that could describe the previous registry entry.
         REGISTRATION_RECEIPT.unlink(missing_ok=True)
