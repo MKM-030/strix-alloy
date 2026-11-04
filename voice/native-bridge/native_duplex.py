@@ -1687,7 +1687,39 @@ class NativeDuplex:
             if self._synthesis_task is not None:
                 self._synthesis_task.cancel()
 
+    def _bootstrap_refresh_allowed(self, observation, turn, epoch, source, failure):
+        if (not isinstance(observation, _BootstrapObservation) or self._bootstrap_state != 'ready'
+                or not self._live() or epoch != self.epoch or self._dialogue_turn is not turn
+                or self.conversation is not source or getattr(source, '_closed', False)
+                or getattr(source, 'output_epoch', None) != epoch or self._model_failed
+                or self._backend_unavailable or self._backend_input_closed
+                or getattr(self.call.dialog, 'conversation_ended', False)
+                or failure not in (None, 'superseded', 'output_callback_failed')
+                or turn[3] in self._turn_speech_started or self._control_gate.binding is not None):
+            return False
+        boundary = getattr(self.call.dialog, 'input_boundary', None)
+        control = getattr(self.call.dialog, 'input_control', None)
+        if (type(boundary) is dict and boundary.get('controlType') == 'Boolean'
+                or isinstance(control, BackendEvent) and control.ui_type == 'Boolean'):
+            return False
+        active = self._active_output
+        return not (self._backend_outputs
+            or any(item.kind in ('backend', 'backend_control') and self._valid(item) for item in self._outputs)
+            or active is not None and active.kind in ('backend', 'backend_control') and self._valid(active))
+
     async def _general_help(self, turn, epoch, kind='help'):
+        # Readiness can expire an unspoken bootstrap answer. Recompute once from
+        # current context, within one original budget; never replay the VA input.
+        deadline = asyncio.get_running_loop().time() + 35
+        for attempt in range(2):
+            refresh = await self._general_help_attempt(turn, epoch, kind,
+                refresh_bootstrap=attempt == 0, deadline=deadline)
+            if refresh is not True:
+                return
+            LOG.info('Voice independent dialogue call=%s stage=refresh reason=bootstrap_ready attempt=1',
+                     self.call.call_id)
+
+    async def _general_help_attempt(self, turn, epoch, kind, *, refresh_bootstrap, deadline):
         if self._control_gate.binding is not None and not self._control_gate.dispatched:
             self._reask_control(turn)
             return
@@ -1716,6 +1748,7 @@ class NativeDuplex:
             if self.conversation.output_epoch < self.epoch:
                 await self.conversation.invalidate(self.epoch, 'input during connection')
             self._dialogue_turn = turn
+            source = self.conversation
             key, snapshot, observation = self._dialogue_snapshot(turn, epoch)
             self._dialogue_observation_state = (self.conversation,
                 self._dialogue_signature(snapshot, key), object())
@@ -1735,10 +1768,11 @@ class NativeDuplex:
                     raise ValueError('Conversation sentence release rejected')
                 admitted += 1
             streaming = getattr(self.conversation, 'sentence_streaming', False)
-            if streaming:
-                candidate = await self.conversation.respond(turn[1], snapshot, key, on_sentence=sentence)
-            else:
-                candidate = await self.conversation.respond(turn[1], snapshot, key)
+            async with asyncio.timeout_at(deadline):
+                if streaming:
+                    candidate = await self.conversation.respond(turn[1], snapshot, key, on_sentence=sentence)
+                else:
+                    candidate = await self.conversation.respond(turn[1], snapshot, key)
             if self._control_gate.binding is not None and not self._control_gate.dispatched:
                 self._revoke_dialogue_output(turn)
                 self._reask_control(turn)
@@ -1749,7 +1783,8 @@ class NativeDuplex:
             if not self._observation_current(observation):
                 self._log_dialogue_discard('context_changed', 'completion')
                 self._revoke_dialogue_output(turn)
-                return
+                return (refresh_bootstrap and self._bootstrap_refresh_allowed(
+                    observation, turn, epoch, source, candidate.failure))
             if candidate.failure is not None:
                 self._revoke_dialogue_output(turn)
                 if candidate.failure == 'superseded':

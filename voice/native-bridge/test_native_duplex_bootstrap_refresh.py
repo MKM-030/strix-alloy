@@ -170,11 +170,39 @@ class BootstrapRefreshTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.model.inputs), 1)
         self.assertNotIn(FRESH, self.call.spoken)
 
-    async def test_ended_or_unavailable_backend_cannot_trigger_bootstrap_refresh(self):
+    async def test_ended_backend_cannot_trigger_bootstrap_refresh(self):
         await self.start()
         self.ready()
         self.call.dialog.conversation_ended = True
+        await self.finish()
+        self.assertEqual(len(self.model.inputs), 1)
+
+    async def test_unavailable_backend_cannot_trigger_bootstrap_refresh(self):
+        await self.start()
+        self.ready()
         self.lane._backend_unavailable = True
+        await self.finish()
+        self.assertEqual(len(self.model.inputs), 1)
+
+    async def test_closed_backend_input_cannot_trigger_bootstrap_refresh(self):
+        await self.start()
+        self.ready()
+        self.lane._backend_input_closed = True
+        await self.finish()
+        self.assertEqual(len(self.model.inputs), 1)
+
+    async def test_active_backend_replacement_prevents_local_refresh_even_before_first_pcm(self):
+        await self.start()
+        self.ready()
+        self.lane._enqueue('Die fachliche Rückfrage liegt vor.', self.turn, kind='backend')
+        self.lane._active_output = self.lane._outputs.popleft()
+        await self.finish()
+        self.assertEqual(len(self.model.inputs), 1)
+
+    async def test_closed_model_source_cannot_receive_a_refresh(self):
+        await self.start()
+        self.ready()
+        self.model._closed = True
         await self.finish()
         self.assertEqual(len(self.model.inputs), 1)
 

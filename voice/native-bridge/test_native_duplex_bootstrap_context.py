@@ -197,11 +197,16 @@ class BootstrapContextTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_bootstrap_readiness_without_revision_increment_rejects_old_candidate(self):
         await self.start_local()
+        turn = self.lane._pending[-1]
+        _, _, old_observation = self.lane._dialogue_snapshot(turn, self.lane.epoch)
         self.bootstrap_release.set()
         await self.until(lambda: not self.lane.bootstrap_pending)
+        self.assertFalse(self.lane._observation_current(old_observation))
         await self.finish_model()
         await self.until(lambda: not self.lane.output_pending and not self.call.synthesis_active)
-        self.assertNotIn(FIRST, self.call.spoken)
+        self.assertEqual(len(self.model.inputs), 2)
+        self.assertNotEqual(self.model.inputs[0][1]['capability_limits'], self.model.inputs[1][1]['capability_limits'])
+        self.assertEqual(self.call.spoken.count(FIRST), 1, 'Only the fresh-context attempt may release its sentence')
 
     async def test_processing_fact_exposed_after_bootstrap_retains_strict_invalidation(self):
         self.bootstrap_release.set()
