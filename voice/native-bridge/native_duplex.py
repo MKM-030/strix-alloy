@@ -1273,6 +1273,13 @@ class NativeDuplex:
                     # user question may use a fresh session; never retry input.
                     await self.conversation.close()
                     self.conversation = None
+                elif candidate.failure == 'output_callback_failed':
+                    # A rejected sentence is this reply's release failure, not
+                    # evidence that every later model turn is unavailable. Close
+                    # only its owned session; a NEW input may start another one.
+                    owned = self.conversation
+                    self.conversation = None
+                    await owned.close()
                 else:
                     self._model_failed = True
                 emit_fallback('controller_busy' if busy else 'unavailable')

@@ -16,6 +16,10 @@ class RejectionDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         lane = NativeDuplex(call)
         identity = SimpleNamespace(server_session_id='offline-session', socket_instance='offline-socket')
         lane.conversation = SimpleNamespace(is_current=lambda candidate: candidate is identity)
+        owned = lane.conversation
+        async def close():
+            owned.closed = True
+        owned.close = close
         turn = (0, 'Eine Frage zum Onboarding.', 1, 'offline-request', 0)
         lane._observe_raw(turn[1])
         return call, lane, identity, turn
@@ -73,9 +77,9 @@ class RejectionDiagnosticTests(unittest.IsolatedAsyncioTestCase):
                     await lane._general_help(turn, lane.epoch)
                 self.assertTrue(any('reason=' + reason + ' at=completion' in line for line in captured.output))
                 self.assertNotIn('private-token-marker', '\n'.join(captured.output))
-                self.assertTrue(lane._model_failed, 'The existing failure policy must remain unchanged')
+                self.assertEqual(lane._model_failed, failure != 'output_callback_failed')
 
-    async def test_synthetic_second_sentence_rejection_reproduces_partial_speech_and_model_failure(self):
+    async def test_synthetic_second_sentence_rejection_reproduces_partial_speech_and_per_reply_failure(self):
         # The actual discarded sentence was not retained. This demonstrates the
         # existing mechanism only, without asserting what that sentence contained.
         call, lane, identity, turn = self.lane()
@@ -107,15 +111,14 @@ class RejectionDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         try:
             with self.assertLogs('native-voice', level='INFO') as captured:
                 await lane._general_help(turn, lane.epoch)
-                await lane._general_help((0, 'Eine weitere Frage.', 2, 'next-request', 0), lane.epoch)
             self.assertTrue(first_pcm.is_set())
             self.assertEqual(attempts, [turn[1]])
-            self.assertTrue(lane._model_failed)
+            self.assertFalse(lane._model_failed)
+            self.assertIsNone(lane.conversation)
             logs = '\n'.join(captured.output)
             self.assertIn('reason=completion_confirmed at=sentence', logs)
             self.assertIn('reason=candidate_callback_failed at=completion', logs)
             self.assertIn('stage=fallback reason=unavailable', logs)
-            self.assertIn('stage=fallback reason=model_failed', logs)
             self.assertNotIn('Die Bestellung ist nicht bestätigt.', logs)
         finally:
             call.closed = True
