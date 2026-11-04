@@ -302,12 +302,19 @@ class _BootstrapObservation:
 
 
 @dataclass(frozen=True)
+class _PendingObservation:
+    turn: tuple
+    epoch: int
+    fingerprint: str
+
+
+@dataclass(frozen=True)
 class _Output:
     text: str
     turn: object
     epoch: int
     task_revision: int
-    observation_revision: int | _BootstrapObservation | None
+    observation_revision: int | _BootstrapObservation | _PendingObservation | None
     kind: str
     request: int | None = None
     identity: object = None
@@ -336,6 +343,7 @@ class NativeDuplex:
         self._context_covered = set()
         self.conversation = None
         self._dialogue_turn = None
+        self._dialogue_observation_state = None
         self._dialogue_discard_count = 0
         self._model_failed = False
         self.epoch = 1
@@ -597,6 +605,15 @@ class NativeDuplex:
         return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
 
     def _observation_current(self, observation):
+        if isinstance(observation, _PendingObservation):
+            if self.bootstrap_pending or not self._pending or observation.epoch != self.epoch:
+                return False
+            try:
+                key, snapshot, _ = self._dialogue_snapshot(observation.turn, observation.epoch,
+                                                          bind_observation=False)
+                return observation.fingerprint == self._dialogue_signature(snapshot, key)
+            except (TypeError, ValueError):
+                return False
         if isinstance(observation, _BootstrapObservation):
             # Progress is absent from a bootstrap prompt. Do not invalidate that
             # answer for loader-only revisions while every guarded fact is stable.
@@ -1093,7 +1110,25 @@ class NativeDuplex:
                 self._local_busy = False
                 self._local_questions.task_done()
 
-    def _dialogue_snapshot(self, turn, epoch):
+    def _dialogue_signature(self, snapshot, key):
+        def normalize(value):
+            if isinstance(value, dict):
+                return {name: normalize(item) for name, item in value.items()
+                        if name != 'observation_revision'}
+            if isinstance(value, (tuple, list)):
+                return [normalize(item) for item in value]
+            return value
+        exposed = dict(snapshot, public_findings=tuple(fact for fact in snapshot['public_findings']
+            if fact['source_event'] != 'complete_emitted_assistant_speech'))
+        context = dict(snapshot=exposed, key=key,
+            pending_ids=tuple(turn[3] for turn in self._pending),
+            input_boundary=getattr(self.call.dialog, 'input_boundary', None),
+            bootstrap_state=self._bootstrap_state, backend_unavailable=self._backend_unavailable,
+            conversation_ended=bool(getattr(self.call.dialog, 'conversation_ended', False)))
+        encoded = json.dumps(normalize(context), sort_keys=True, ensure_ascii=False, separators=(',', ':'))
+        return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
+
+    def _dialogue_snapshot(self, turn, epoch, *, bind_observation=True):
         observation = getattr(self.call.dialog, 'observation_revision', 0)
         key = dict(call_id=self.call.call_id, task_id=self.call.call_id + '-va',
                    task_revision=self.task_revision, context_revision=self.context_revision,
@@ -1175,11 +1210,13 @@ class NativeDuplex:
             encoded = json.dumps(candidate, ensure_ascii=False, separators=(',', ':'))
             if len(encoded) <= 10000 and len(encoded.encode('utf-8')) <= 32768:
                 snapshot = candidate
-        if self.bootstrap_pending:
+        if bind_observation and self.bootstrap_pending:
             question = (actual_question, question_source)
             native_question = self._bootstrap_native_question()
             observation = _BootstrapObservation(observation,
                 self._bootstrap_context_fingerprint(question, native_question), question, native_question)
+        elif bind_observation and self._pending:
+            observation = _PendingObservation(tuple(turn), epoch, self._dialogue_signature(snapshot, key))
         return key, snapshot, observation
 
     def _admit_conversation(self, candidate, turn, epoch, observation, snapshot):
@@ -1244,12 +1281,29 @@ class NativeDuplex:
             return
         try:
             key, snapshot, _ = self._dialogue_snapshot(self._dialogue_turn, self.epoch)
+            conversation = self.conversation
+            signature = self._dialogue_signature(snapshot, key)
+            current = self._dialogue_observation_state
+            if current is not None and current[0] is conversation and current[1] == signature:
+                return
+            scheduled = (conversation, signature, object())
+            self._dialogue_observation_state = scheduled
         except Exception:
             return
         async def apply():
             try:
-                await observe(snapshot, key)
+                if (self._dialogue_observation_state is not scheduled
+                        or self.conversation is not conversation or self.epoch != key['output_epoch']):
+                    return
+                if await observe(snapshot, key) is not True and self._dialogue_observation_state is scheduled:
+                    self._dialogue_observation_state = None
+            except asyncio.CancelledError:
+                if self._dialogue_observation_state is scheduled:
+                    self._dialogue_observation_state = None
+                raise
             except Exception as error:
+                if self._dialogue_observation_state is scheduled:
+                    self._dialogue_observation_state = None
                 LOG.warning('Voice dialogue observation unavailable type=%s', type(error).__name__)
         task = asyncio.create_task(apply())
         self._observations.add(task)
@@ -1280,6 +1334,7 @@ class NativeDuplex:
             if self._invalidations:
                 await asyncio.gather(*tuple(self._invalidations), return_exceptions=True)
             if self.conversation is None:
+                self._dialogue_observation_state = None
                 self.conversation = await self._factory(self.call.config.conversation_ws_url,
                                                         self.call.call_id, self.epoch)
             if epoch != self.epoch:
@@ -1289,6 +1344,8 @@ class NativeDuplex:
                 await self.conversation.invalidate(self.epoch, 'input during connection')
             self._dialogue_turn = turn
             key, snapshot, observation = self._dialogue_snapshot(turn, epoch)
+            self._dialogue_observation_state = (self.conversation,
+                self._dialogue_signature(snapshot, key), object())
             admitted = 0
             async def sentence(candidate):
                 nonlocal admitted
@@ -1323,12 +1380,14 @@ class NativeDuplex:
                     # user question may use a fresh session; never retry input.
                     await self.conversation.close()
                     self.conversation = None
+                    self._dialogue_observation_state = None
                 elif candidate.failure == 'output_callback_failed':
                     # A rejected sentence is this reply's release failure, not
                     # evidence that every later model turn is unavailable. Close
                     # only its owned session; a NEW input may start another one.
                     owned = self.conversation
                     self.conversation = None
+                    self._dialogue_observation_state = None
                     await owned.close()
                 else:
                     self._model_failed = True
@@ -1349,6 +1408,7 @@ class NativeDuplex:
             if busy:
                 await self.conversation.close()
                 self.conversation = None
+                self._dialogue_observation_state = None
             else:
                 self._model_failed = True
             LOG.warning('Voice independent dialogue stage=unavailable type=%s', type(error).__name__)
@@ -1493,6 +1553,7 @@ class NativeDuplex:
         if self._closed:
             return
         self._closed = True
+        self._dialogue_observation_state = None
         self._outputs.clear()
         self._context_pending = None
         self._context_snapshot = ''
