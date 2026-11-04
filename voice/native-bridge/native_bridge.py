@@ -34,6 +34,7 @@ from caller_create_preflight import (
     requires_caller_create_preflight, require_caller_create_access, deadline_bound_context,
 )
 from spoken_output import spoken_text
+from native_backend import BackendEvent, BackendState, UNSET
 from assistant_settings import CallSettings
 from host_ice import HostIceConfiguration, load_host_ice_file
 from managed_turn import (ManagedTurnConfiguration, ManagedTurnBootstrap,
@@ -332,6 +333,10 @@ class Dialog:
         self.input_boundary = None
         self._context_receipt = None
         self.conversation_ended = False
+        self.backend_owner = object()
+        self.business_request_id = ''
+        self.backend_state = None
+        self.input_control = None
         self._initial_topic_attempted = False
         self._caller_bootstrap = None
         self._caller_bootstrap_bound = False
@@ -607,7 +612,7 @@ class Dialog:
             raise RuntimeError('Exact context prompt receipt was not corroborated')
         return result
 
-    async def turn(self, text, on_reply=None, voice_context=None):
+    async def turn(self, text, on_reply=None, voice_context=None, *, on_event=None, native_control_binding=UNSET):
         if self.conversation_ended:
             raise BackendConversationEnded('ServiceNow ended this conversation')
         self.input_boundary = None
@@ -642,9 +647,16 @@ class Dialog:
         request_started = time.monotonic()
         self.processing = None
         self.observation_revision += 1
-        await self.request('POST', '/api/message', json=payload)
+        ack = await self.request('POST', '/api/message', json=payload)
+        typed = on_event is not None or native_control_binding is not UNSET
+        if typed:
+            request_id = ack.get('businessRequestId') if type(ack) is dict and ack.get('accepted') is True else None
+            if type(request_id) is not str or not re.fullmatch(r'[0-9a-f]{32}', request_id):
+                raise BackendTurnUnavailable('Backend did not bind its accepted request')
+            self.business_request_id = request_id
         LOG.info('Voice dialog stage=request_ack elapsed_ms=%d', int((time.monotonic()-request_started)*1000))
         first_reply = True
+        seen_events = set()
         until = time.monotonic() + 185
         result = []
         while time.monotonic() < until:
@@ -652,6 +664,21 @@ class Dialog:
             state = await self.request('GET', '/api/events', params={'after':str(self.cursor),'wait':'20'})
             self.cursor = state['cursor']
             self.observe_state(state, sampled_at=sampled_at)
+            if typed:
+                try:
+                    self.backend_state = BackendState.parse(state.get('backendState'), request_id, self.backend_owner)
+                    self.input_control = (BackendEvent.parse(state['inputControl'], request_id, self.backend_owner)
+                                          if 'inputControl' in state else None)
+                    for raw_event in state.get('backendEvents', []):
+                        event = BackendEvent.parse(raw_event, request_id, self.backend_owner)
+                        if event.event_id in seen_events:
+                            continue
+                        seen_events.add(event.event_id)
+                        event = replace(event, text=spoken_text(event.text))
+                        if on_event is not None:
+                            await on_event(event)
+                except ValueError as error:
+                    raise BackendTurnUnavailable('Backend event ownership unavailable') from error
             for event in state.get('events', []):
                 if event.get('kind') == 'bot' and event.get('text'):
                     reply = spoken_text(event['text'])
@@ -703,6 +730,10 @@ class Dialog:
         self._initial_topic_attempted = False
 
         self.metadata = {key: '' for key in self.metadata}
+        self.backend_owner = object()
+        self.business_request_id = ''
+        self.backend_state = None
+        self.input_control = None
         self.public_replies = []
         self.current_question = ''
         self.processing = None

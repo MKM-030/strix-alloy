@@ -119,6 +119,9 @@ class Conversation:
     requests: deque = field(default_factory=lambda: deque(maxlen=128))
     fingerprints: deque = field(default_factory=lambda: deque(maxlen=256))
     events: deque = field(default_factory=lambda: deque(maxlen=200))
+    backend_events: deque = field(default_factory=lambda: deque(maxlen=200))
+    backend_fingerprints: set = field(default_factory=set, repr=False)
+    input_control_receipt: dict | None = field(default=None, repr=False)
     turn_texts: deque = field(default_factory=lambda: deque(maxlen=200))
     sequence: int = 0
     choices: list = field(default_factory=list)
@@ -146,6 +149,19 @@ class Conversation:
         if text and text not in self.turn_texts:
             self.turn_texts.append(text)
             self.emit(text)
+
+    def emit_backend_once(self, request_id, ui_type, text, control_uid=''):
+        key = (request_id, ui_type, text, control_uid)
+        if key in self.backend_fingerprints:
+            return next((item for item in reversed(self.backend_events)
+                if (item['businessRequestId'], item['uiType'], item['text'], item['controlUid']) == key), None)
+        self.backend_fingerprints.add(key)
+        self.sequence += 1
+        receipt = dict(id=self.sequence, source='servicenow_bridge_event', businessRequestId=request_id,
+            uiType=ui_type, text=text, streamComplete=True, controlUid=control_uid)
+        self.backend_events.append(receipt)
+        self.change.set()
+        return receipt
 
 
 class PlainText(HTMLParser):
@@ -775,8 +791,8 @@ class Bridge:
                         or context.get('global_context_profile') != session.voice_context.get('global_context_profile')):
                     raise web.HTTPBadRequest(text='Voice assistant/profile binding cannot change')
                 session.voice_context = context
-            await self.send(session, value.strip() if typed else value, typed, history=history)
-        return web.json_response({'accepted': True}, status=202)
+            request_id = await self.send(session, value.strip() if typed else value, typed, history=history)
+        return web.json_response({'accepted': True, 'businessRequestId': request_id}, status=202)
 
     async def context_update(self, request):
         """Independent control lane; never advances the active MESSAGE request."""
@@ -955,7 +971,7 @@ class Bridge:
         # Serialize HTTP dispatch only. Callbacks never acquire this lock, and
         # it is never held for the ensuing business conversation/callback wait.
         async with session.context_lock:
-            await self._send_locked(session, text, typed, action, history)
+            return await self._send_locked(session, text, typed, action, history)
 
     async def _send_locked(self, session, text, typed, action='', history=None):
         if ('global_context_profile' in session.voice_context
@@ -980,6 +996,8 @@ class Bridge:
             payload['syncResponse'] = True
         # Reset before the HTTP await: callbacks may arrive before its ACK.
         session.turn_texts.clear()
+        session.backend_fingerprints.clear()
+        session.input_control_receipt = None
         session.completion_deadline = 0
         session.context_requests.clear()
         session.input_boundary_request_id = session.input_boundary_kind = ''
@@ -996,7 +1014,7 @@ class Bridge:
         try:
             if action == 'CREATE_CONVERSATION' and self.settings.caller_create_api_path:
                 await self.send_owned_create(session, payload)
-                return
+                return request_id
             async with self.http.post(self.bot_url, json=payload, headers={'token': self.sn_token,
                     'Accept': 'application/json'}, allow_redirects=False, timeout=ClientTimeout(total=30)) as response:
                 raw = await read_limited(response.content, 65536)
@@ -1005,7 +1023,7 @@ class Bridge:
                 ack = json.loads(raw) if raw else {}
                 if action == 'START_CREATED_CONVERSATION':
                     self.consume_start_response(session, payload, ack)
-                    return
+                    return request_id
                 if not isinstance(ack, dict) or ack.get('error') or (isinstance(ack.get('result'), dict) and ack['result'].get('error')):
                     raise RuntimeError('Bot request failed')
                 ack_status = ack.get('status')
@@ -1025,6 +1043,7 @@ class Bridge:
             if failure is not None:
                 raise web.HTTPBadGateway(text=json.dumps(failure), content_type='application/json') from None
             raise web.HTTPBadGateway(text='ServiceNow request failed; delivery may be uncertain')
+        return request_id
 
     async def send_owned_create(self, session, payload):
         request_id = payload['requestId']
@@ -1114,10 +1133,14 @@ class Bridge:
                 pass
         self.expire()
         state = {'events': [item for item in session.events if item['id'] > cursor],
+            'backendEvents': [item for item in session.backend_events if item['id'] > cursor],
             'cursor': session.sequence, 'busy': session.busy, 'ended': session.ended,
             'failed': session.failed, 'started': session.started, 'choices': session.choices,
             'inputLabel': session.input_label,
             'processing': session.progress.snapshot(now=time.monotonic()) if session.busy else None}
+        if session.requests:
+            state['backendState'] = dict(source='servicenow_bridge_state', requestId=session.requests[-1],
+                action=session.pending_action or 'MESSAGE', busy=session.busy, ended=session.ended, failed=session.failed)
         if session.conversation_binding is not None:
             state['conversationBinding'] = session.conversation_binding.snapshot()
         if (session.input_boundary_request_id and not session.busy and not session.ended
@@ -1126,6 +1149,8 @@ class Bridge:
             state['inputBoundary'] = {'source': 'servicenow_input_control',
                 'businessRequestId': session.input_boundary_request_id,
                 'controlType': session.input_boundary_kind}
+            if session.input_control_receipt is not None:
+                state['inputControl'] = dict(session.input_control_receipt)
         return web.json_response(state)
 
     async def callback(self, request):
@@ -1428,6 +1453,8 @@ class Bridge:
                 if not suppress_startup_text:
                     text = text_only(control.get('value') or control.get('label'))
                     session.emit_bot_once(text)
+                    if text:
+                        session.emit_backend_once(data['requestId'], kind, text)
             elif kind in ('InputText', 'Picker', 'TopicPickerControl', 'Boolean', 'Date', 'DateTime', 'Time'):
                 if session.requests and (active_message or
                         session.pending_action == 'START_CREATED_CONVERSATION'):
@@ -1442,6 +1469,10 @@ class Bridge:
                 session.input_label = text_only(control.get('label') or control.get('promptMsg'))
                 if not suppress_startup_text:
                     session.emit_bot_once(session.input_label)
+                uid = control.get('uniqueIdentifier', '')
+                uid = uid if type(uid) is str and len(uid) <= 256 else ''
+                session.input_control_receipt = session.emit_backend_once(data['requestId'], kind,
+                    session.input_label, uid)
                 choices = control.get('options', [])
                 # The installed topic picker stores its actual offered options
                 # under uiMetadata.categories. Submit only those server choices.
