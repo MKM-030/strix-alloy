@@ -120,7 +120,7 @@ class Conversation:
     fingerprints: deque = field(default_factory=lambda: deque(maxlen=256))
     events: deque = field(default_factory=lambda: deque(maxlen=200))
     backend_events: deque = field(default_factory=lambda: deque(maxlen=200))
-    backend_fingerprints: set = field(default_factory=set, repr=False)
+    backend_fingerprints: deque = field(default_factory=lambda: deque(maxlen=256), repr=False)
     input_control_receipt: dict | None = field(default=None, repr=False)
     turn_texts: deque = field(default_factory=lambda: deque(maxlen=200))
     sequence: int = 0
@@ -155,7 +155,7 @@ class Conversation:
         if key in self.backend_fingerprints:
             return next((item for item in reversed(self.backend_events)
                 if (item['businessRequestId'], item['uiType'], item['text'], item['controlUid']) == key), None)
-        self.backend_fingerprints.add(key)
+        self.backend_fingerprints.append(key)
         self.sequence += 1
         receipt = dict(id=self.sequence, source='servicenow_bridge_event', businessRequestId=request_id,
             uiType=ui_type, text=text, streamComplete=True, controlUid=control_uid)
@@ -1440,6 +1440,9 @@ class Bridge:
             session.now_session = now_id
         for control in data.get('body', [])[:100]:
             if not isinstance(control, dict):
+                continue
+            streaming = control.get('streaming') or control.get('streamingStatus')
+            if streaming and streaming != 'END':
                 continue
             kind = control.get('uiType')
             if session.ended and kind != 'OutputText':
