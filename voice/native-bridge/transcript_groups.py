@@ -19,38 +19,39 @@ class TranscriptGroups:
         if any(type(x) is not int or x < 1 for x in self.limits):
             raise ValueError('invalid_transcript_group_limits')
         self._groups = {}
-        self._retired = deque(maxlen=256)
         self._ready = deque()
         self._closed = False
+
+    def open(self, owner, turn):
+        """Issue a unique live response token; a retired token can never reopen."""
+        if self._closed or owner is None or turn is None:
+            return None
+        if len(self._groups) >= self.limits[0] or len(self._ready) >= self.limits[0]:
+            raise ValueError('transcript_group_overflow')
+        key = object()
+        self._groups[key] = dict(owner=owner, turn=turn, parts={}, finished=False)
+        return key
 
     def _group(self, key, owner):
         group = self._groups.get(key)
         return group if group is not None and group['owner'] is owner else None
 
     def admit(self, key, owner, turn, part, text):
-        if self._closed or key in self._retired:
+        if self._closed:
             return False
         group = self._groups.get(key)
-        if group is not None and (group['owner'] is not owner or group['turn'] is not turn or group['finished']):
+        if group is None or group['owner'] is not owner or group['turn'] is not turn or group['finished']:
             return False
         if owner is None or turn is None or type(text) is not str or not text.strip():
             return False
-        if group is not None and part in group['parts']:
+        if part in group['parts']:
             return False
-        groups, parts, chars, size = self.limits
-        previous = tuple(group['parts'].values()) if group else ()
+        _, parts, chars, size = self.limits
+        previous = tuple(group['parts'].values())
         joined = ' '.join([entry['text'] for entry in previous] + [text.strip()])
-        if ((group is None and len(self._groups) >= groups) or len(previous) >= parts
-                or len(joined) > chars or len(joined.encode('utf-8')) > size
-                or len(self._ready) >= groups):
-            if group is not None:
-                self._flush(key, group, 'transcript_group_overflow')
-            else:
-                self._retired.append(key)
+        if len(previous) >= parts or len(joined) > chars or len(joined.encode('utf-8')) > size:
+            self._flush(key, group, 'transcript_group_overflow')
             raise ValueError('transcript_group_overflow')
-        if group is None:
-            group = dict(owner=owner, turn=turn, parts={}, finished=False)
-            self._groups[key] = group
         group['parts'][part] = dict(text=text.strip(), state='pending', first_pcm_at=None)
         return True
 
@@ -105,7 +106,6 @@ class TranscriptGroups:
             self._ready.append(GroupedTranscript(' '.join(x['text'] for x in prefix),
                 group['turn'], group['owner'], prefix[0]['first_pcm_at'], reason))
         del self._groups[key]
-        self._retired.append(key)
 
     def interrupt(self, key, owner, reason):
         group = self._group(key, owner)
