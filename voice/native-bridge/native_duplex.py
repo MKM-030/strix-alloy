@@ -1156,12 +1156,36 @@ class NativeDuplex:
         identifiers = (self.call.call_id, self.call.call_id + '-va', turn[3],
                        getattr(candidate.identity, 'server_session_id', ''),
                        getattr(candidate.identity, 'socket_instance', ''))
-        if (not text or len(text) > 1200 or forbidden or unbound_numbers or
-                any(value and value in text for value in identifiers) or
-                not self.conversation.is_current(candidate.identity)):
+        reason = None
+        if not text:
+            reason = 'empty_text'
+        elif len(text) > 1200:
+            reason = 'text_too_long'
+        elif forbidden:
+            match = forbidden.group(0).casefold()
+            reason = {'bestellt': 'completion_ordered', 'abgeschlossen': 'completion_closed',
+                'genehmigt': 'completion_approved', 'freigegeben': 'completion_released',
+                'erledigt': 'completion_done', 'bestätigt': 'completion_confirmed',
+                'analysis': 'internal_control_word', 'reasoning': 'internal_control_word',
+                'tool_call': 'internal_control_word', '<': 'markup'}.get(match)
+            if reason is None:
+                reason = ('external_url' if match.startswith(('http://', 'https://')) else
+                          'internal_evidence_id' if match.startswith(('public-reply-', 'processing-label-'))
+                          else 'opaque_identifier')
+        elif unbound_numbers:
+            reason = 'unbound_number'
+        elif any(value and value in text for value in identifiers):
+            reason = 'identifier_in_text'
+        elif not self.conversation.is_current(candidate.identity):
+            reason = 'identity_not_current'
+        if reason is not None:
+            self._log_dialogue_discard(reason, 'sentence')
             return False
-        return self._enqueue(text, turn, kind='conversation', observation=observation,
-                      identity=candidate.identity)
+        admitted = self._enqueue(text, turn, kind='conversation', observation=observation,
+                                 identity=candidate.identity)
+        if not admitted:
+            self._log_dialogue_discard('output_queue_rejected', 'sentence')
+        return admitted
 
     def _queue_dialogue_observation(self):
         observe = getattr(self.conversation, 'observe', None)
@@ -1238,6 +1262,11 @@ class NativeDuplex:
                 if candidate.failure == 'superseded':
                     self._log_dialogue_discard('output_superseded', 'completion')
                     return
+                reasons = {'output_callback_failed': 'candidate_callback_failed',
+                    'unavailable': 'candidate_protocol_unavailable', 'busy': 'candidate_busy',
+                    'invalid_input': 'candidate_invalid_input'}
+                reason = reasons.get(candidate.failure, 'candidate_failure_unknown') if type(candidate.failure) is str else 'candidate_failure_unknown'
+                self._log_dialogue_discard(reason, 'completion')
                 busy = getattr(getattr(self.conversation, 'controller_transport', None), 'transient_busy', False)
                 if busy:
                     # Admission429 ends only this optional model attempt. A new
