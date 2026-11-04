@@ -129,6 +129,27 @@ class NativeControlHandoffTests(unittest.IsolatedAsyncioTestCase):
                 self.lane._outputs.clear()
                 self.call.playback.read(len(self.call.playback.data))
 
+    async def test_fresh_short_boolean_yes_no_and_mixed_raw_are_not_legacy_gated_again(self):
+        for raw in ('Ja', 'Nein', 'Ja, und bitte erkläre mir den nächsten Schritt.'):
+            with self.subTest(raw=raw):
+                await self.lane.close()
+                await self.asyncSetUp()
+                label = 'Soll ich das bestellen?'
+                event = self.call.dialog.input_control
+                self.call.dialog.input_control = BackendEvent(event.event_id, event.business_request_id,
+                    'Boolean', label, event.control_uid, event.owner)
+                self.call.dialog.input_boundary['label'] = label
+                self.sync()
+                state = self.lane._begin_speech(self.lane._outputs.popleft())
+                self.call.playback.put(bytes(480), self.call.playback.generation)
+                self.lane._finish_speech(state, complete=True)
+                self.call.playback.read(480)
+                onset = self.lane._input_question_snapshot()
+                await self.lane._accept(self.turn(raw, onset=onset))
+                self.call.dialog.release.put_nowait('Native Rückmeldung.')
+                await self.lane._business(self.lane._pending.popleft())
+                self.assertEqual(self.call.dialog.calls, [raw])
+
 
 if __name__ == '__main__':
     unittest.main()

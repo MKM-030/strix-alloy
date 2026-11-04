@@ -930,7 +930,7 @@ class NativeDuplex:
                 self._reask_control(turn)
                 return
         boundary = getattr(self.call.dialog, 'input_boundary', None)
-        if (_polar_answer(text) and type(boundary) is dict
+        if (native_binding is None and _polar_answer(text) and type(boundary) is dict
                 and boundary.get('source') == 'servicenow_input_control'
                 and _polar(boundary.get('label', ''))):
             expected = (boundary['label'], 'servicenow_input_control', True,
