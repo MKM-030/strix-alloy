@@ -78,6 +78,7 @@ class EndpointGate:
         self.voiced = self.quiet = self.run = 0
         self.audio = bytearray()
         self.pending_deadline = None
+        self.candidate_id = 0
 
     def _reset(self):
         self.active = False
@@ -122,6 +123,7 @@ class EndpointGate:
                 self.audio = bytearray(b''.join(self.preroll))
                 self.preroll.clear()
                 self.preroll_samples = 0
+                self.candidate_id += 1
             # Preserve the entire candidate onset, including brief phonetic gaps.
             # Count only voiced samples toward the configured onset duration.
             n = min(n, max(0, self.maximum - len(self.audio) // 2))
