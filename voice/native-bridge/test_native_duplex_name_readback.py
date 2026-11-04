@@ -1,4 +1,4 @@
-"""Offline contract for exact person-name readback at a genuine VA input."""
+"""Native name validation and confirmation own the caller's unchanged text."""
 import asyncio
 from pathlib import Path
 import sys
@@ -17,10 +17,12 @@ class ObservedTurn(tuple):
         return turn
 
 
-class PersonNameReadbackTests(unittest.IsolatedAsyncioTestCase):
+class NativeNameOwnershipTests(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.call = FakeCall()
-        self.lane = NativeDuplex(self.call)
+        async def unavailable(*args):
+            raise RuntimeError('offline optional model')
+        self.lane = NativeDuplex(self.call, conversation_factory=unavailable)
         self.number = 0
         self.running = asyncio.create_task(self.lane.run())
 
@@ -30,16 +32,15 @@ class PersonNameReadbackTests(unittest.IsolatedAsyncioTestCase):
         await asyncio.gather(self.running, return_exceptions=True)
         await self.lane.close()
 
-    async def until(self, predicate, *, drain=True):
+    async def until(self, predicate):
         async with asyncio.timeout(1):
             while not predicate():
-                if drain:
-                    self.call.playback.read(len(self.call.playback.data))
+                self.call.playback.read(len(self.call.playback.data))
                 await asyncio.sleep(.002)
 
-    async def ask(self, label='Wie heißt dein neuer Mitarbeiter?', **changes):
+    async def ask(self, label='Wie heißt dein neuer Mitarbeiter?', *, request='name-boundary'):
         self.call.dialog.input_boundary = dict(source='servicenow_input_control',
-            controlType='InputText', businessRequestId='name-boundary', label=label, **changes)
+            controlType='InputText', businessRequestId=request, label=label)
         self.call.dialog.current_question = label
         self.lane._enqueue(label, kind='backend')
         await self.until(lambda: self.lane.question_context() ==
@@ -53,164 +54,124 @@ class PersonNameReadbackTests(unittest.IsolatedAsyncioTestCase):
         await asyncio.wait_for(self.call.recognized_turns.join(), 1)
         return turn
 
-    async def readback(self, raw):
-        await self.say(raw)
-        # The exact raw input must be read back, without guessing a spelling.
-        await self.until(lambda: bool(self.call.dialog.calls) or self.lane.question_context()[1:] ==
-                         ('local_clarification', True))
-        self.assertEqual(self.call.dialog.calls, [], 'Unconfirmed name was submitted to ServiceNow')
-        self.assertIn('„' + raw + '“', self.lane.question_context()[0])
-        self.assertEqual(self.call.dialog.calls, [])
-        self.assertEqual(list(self.lane._pending), [])
-        return self.lane.question_context()[0]
+    async def next_business(self):
+        return await asyncio.wait_for(self.call.dialog.started.get(), 1)
 
-    async def test_actual_employee_prompt_holds_first_raw_name_until_exact_readback_confirmation(self):
+    async def test_native_employee_prompt_receives_first_raw_name_without_local_readback(self):
         await self.ask()
-        raw = 'Muthighefke'
-        await self.readback(raw)
-        self.assertEqual(tuple(self.lane._raw), (raw,))
-        self.assertEqual(list(self.lane._supplements), [])
-        await self.say('Ja, genau so.')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), raw)
-        self.assertEqual(self.call.dialog.calls, [raw])
-        await self.say('Ja, genau so.')
-        self.assertEqual(self.call.dialog.calls, [raw], 'A repeated yes must not resubmit the name')
+        await self.say('Muthighefke')
+        self.assertEqual(await self.next_business(), 'Muthighefke')
+        self.assertEqual(self.call.dialog.calls, ['Muthighefke'])
+        self.assertFalse(any('Ich habe „' in text for text in self.call.spoken))
 
-    async def test_ordinary_well_spelled_name_has_the_same_confirmation_gate(self):
+    async def test_well_spelled_name_is_delivered_directly(self):
         await self.ask('Bitte nennen Sie den Vor- und Nachnamen.')
-        await self.readback('Mara Lühders')
+        await self.say('Mara Lühders')
+        self.assertEqual(await self.next_business(), 'Mara Lühders')
 
-    async def test_rejection_asks_spelling_without_sending_name_or_no(self):
+    async def test_correction_waits_fifo_then_reaches_native_verbatim_once(self):
         await self.ask()
-        await self.readback('Muthighefke')
-        await self.say('Nein')
-        await self.until(lambda: self.lane.question_context()[0] == self.lane._correction_question()
-                         and self.lane.question_context()[2])
-        self.assertEqual(self.call.dialog.calls, [])
-        spelling = 'M, a, r, a!'
-        await self.readback(spelling)
+        first, correction = 'Muthighefke', 'Nein, der richtige Name ist Mara Lühders.'
+        await self.say(first)
+        self.assertEqual(await self.next_business(), first)
+        await self.say(correction)
+        self.assertEqual(self.call.dialog.calls, [first])
+        self.assertEqual([turn[1] for turn in self.lane._pending], [correction])
+        self.call.dialog.release.put_nowait('Bitte nennen Sie den Namen erneut.')
+        self.assertEqual(await self.next_business(), correction)
+        self.assertEqual(self.call.dialog.calls, [first, correction])
+        self.assertFalse(any('buchstabieren' in text for text in self.call.spoken))
+
+    async def test_spelling_remains_exact_native_input(self):
+        await self.ask()
+        raw = 'M, a, r, a!'
+        await self.say(raw)
+        self.assertEqual(await self.next_business(), raw)
+
+    async def test_device_name_is_ordinary_raw_input(self):
+        await self.ask('Wie lautet der Name des Geräts?')
+        await self.say('Laptop Blau')
+        self.assertEqual(await self.next_business(), 'Laptop Blau')
+
+    async def test_complete_native_name_confirmation_receives_yes_once(self):
+        await self.ask('Ist der Name Mara Lühders korrekt?')
         await self.say('Ja')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), spelling)
-        self.assertEqual(self.call.dialog.calls, [spelling])
+        self.assertEqual(await self.next_business(), 'Ja')
+        self.assertEqual(self.call.dialog.calls, ['Ja'])
 
-    async def test_confirmation_with_incomplete_readback_onset_cannot_submit_name(self):
-        await self.ask()
-        question = await self.readback('Mara Lühders')
-        early = ((question, 'local_clarification', False, 'name-boundary', self.lane.task_revision), False)
-        await self.say('Ja', onset=early)
-        self.assertEqual(self.call.dialog.calls, [])
+    async def test_name_confirmation_does_not_approve_later_native_order(self):
+        await self.ask('Ist der Name Mara Lühders korrekt?')
+        await self.say('Ja')
+        self.assertEqual(await self.next_business(), 'Ja')
+        label = 'Soll ich diese Bestellung ausführen?'
+        self.call.dialog.release.put_nowait(dict(reply=label, input_boundary=dict(
+            source='servicenow_input_control', controlType='InputText',
+            businessRequestId='order-boundary', label=label)))
         await self.until(lambda: self.lane.question_context() ==
-                         (question, 'local_clarification', True))
-        await self.say('Ja')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), 'Mara Lühders')
+                         (label, 'servicenow_input_control', True))
+        self.assertEqual(self.call.dialog.calls, ['Ja'])
+        self.assertEqual(list(self.lane._pending), [])
 
-    async def test_changed_boundary_rejects_stale_confirmation_and_keeps_raw_local(self):
-        await self.ask()
-        await self.readback('Mara Lühders')
-        old_onset = self.lane.speech_onset()
-        self.call.dialog.input_boundary = dict(source='servicenow_input_control',
-            controlType='InputText', businessRequestId='new-boundary', label='Welche Abteilung?')
-        await self.say('Ja', onset=old_onset)
-        await self.until(lambda: 'Welche Abteilung?' in self.call.spoken)
+    async def test_incomplete_native_confirmation_onset_reasks_without_submission(self):
+        label = 'Ist der Name Mara Lühders korrekt?'
+        await self.ask(label)
+        early = ((label, 'servicenow_input_control', False,
+                  'name-boundary', self.lane.task_revision), False)
+        await self.say('Ja', onset=early)
+        await self.until(lambda: self.lane.question_context() ==
+                         (label, 'servicenow_input_control', True))
         self.assertEqual(self.call.dialog.calls, [])
-        self.assertIn('Mara Lühders', self.lane._raw)
-        self.assertEqual(list(self.lane._supplements), [])
+        await self.say('Ja')
+        self.assertEqual(await self.next_business(), 'Ja')
 
-    async def test_changed_task_revision_rejects_stale_confirmation(self):
-        await self.ask()
-        await self.readback('Mara Lühders')
+    async def test_changed_native_request_rejects_stale_confirmation(self):
+        label = 'Soll ich diese Bestellung ausführen?'
+        await self.ask(label, request='old-order')
+        old_onset = self.lane.speech_onset()
+        self.call.dialog.input_boundary['businessRequestId'] = 'new-order'
+        await self.say('Ja', onset=old_onset)
+        await self.until(lambda: self.lane.question_context() ==
+                         (label, 'servicenow_input_control', True))
+        self.assertEqual(self.call.dialog.calls, [])
+
+    async def test_changed_revision_rejects_stale_native_confirmation(self):
+        label = 'Soll ich diese Bestellung ausführen?'
+        await self.ask(label)
         old_onset = self.lane.speech_onset()
         self.lane.task_revision += 1
         await self.say('Ja', onset=old_onset)
+        await self.until(lambda: self.lane.question_context() ==
+                         (label, 'servicenow_input_control', True))
         self.assertEqual(self.call.dialog.calls, [])
-        await self.until(lambda: self.lane.question_context()[1:] ==
-                         ('servicenow_input_control', True))
 
-    async def test_replacement_is_read_back_exactly_instead_of_confirming_prior_candidate(self):
-        await self.ask()
-        await self.readback('Muthighefke')
-        replacement = 'Mara Lühders'
-        await self.readback(replacement)
-        await self.say('Ja')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), replacement)
-        self.assertEqual(self.call.dialog.calls, [replacement])
-
-    async def test_device_name_control_remains_an_ordinary_business_input(self):
-        await self.ask('Wie lautet der Name des Geräts?')
-        await self.say('Laptop Blau')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), 'Laptop Blau')
-
-    async def test_genuine_polar_name_confirmation_remains_a_service_now_input(self):
-        await self.ask('Ist der Name Mara Lühders korrekt?')
-        self.lane._request = 1
-        await self.say('Ja')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), 'Ja')
-
-    async def test_unverified_source_cannot_create_a_person_name_gate(self):
+    async def test_unverified_planner_text_cannot_create_local_name_workflow(self):
         self.call.dialog.input_boundary = dict(source='planner_text', controlType='InputText',
             businessRequestId='not-an-input', label='Wie heißt dein neuer Mitarbeiter?')
         await self.say('Mara Lühders')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), 'Mara Lühders')
+        self.assertEqual(await self.next_business(), 'Mara Lühders')
+        self.assertFalse(any('Ich habe „' in text for text in self.call.spoken))
 
-    async def test_mixed_rejection_keeps_replacement_raw_and_asks_spelling_without_submitting_it(self):
+    async def test_name_beginning_with_nein_remains_raw_text(self):
         await self.ask()
-        await self.readback('Muthighefke')
-        rejection = 'Nein, der richtige Name ist Mara Lühders.'
-        await self.say(rejection)
-        await self.until(lambda: self.lane.question_context()[0] == self.lane._correction_question())
-        self.assertEqual(self.call.dialog.calls, [])
-        self.assertIn(rejection, self.lane._raw)
-        self.assertEqual(list(self.lane._supplements), [])
+        await self.say('Neinhold')
+        self.assertEqual(await self.next_business(), 'Neinhold')
 
-    async def test_subsequent_unrelated_local_question_cannot_approve_an_older_readback(self):
-        from types import SimpleNamespace
-        await self.ask()
-        question = await self.readback('Mara Lühders')
-        spoken_count = self.call.spoken.count(question)
-        state = self.lane._begin_speech(SimpleNamespace(
-            text='Möchten Sie den Ablauf erklärt haben?', kind='conversation', question_binding=None))
-        self.call.playback.put(bytes(480), self.call.playback.generation)
-        self.call.playback.read(len(self.call.playback.data))
-        self.lane._finish_speech(state, complete=True)
-        await self.say('Ja')
-        await self.until(lambda: bool(self.call.dialog.calls) or
-                         self.call.spoken.count(question) > spoken_count)
-        self.assertEqual(self.call.dialog.calls, [])
-        await self.until(lambda: self.lane.question_context()[1:] == ('local_clarification', True))
-        await self.say('Ja')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), 'Mara Lühders')
-
-    async def test_name_beginning_with_nein_is_a_replacement_name_not_a_rejection(self):
-        await self.ask()
-        await self.readback('Mara Lühders')
-        await self.readback('Neinhold')
-
-    async def test_spelling_a_serial_number_does_not_create_a_person_name_gate(self):
+    async def test_serial_spelling_does_not_create_person_name_gate(self):
         await self.ask('Bitte buchstabieren Sie die Seriennummer.')
         await self.say('A, B, C!')
-        await self.until(lambda: bool(self.call.dialog.calls) or
-                         self.lane.question_context()[1] == 'local_clarification')
-        self.assertEqual(self.lane.question_context()[1], '')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), 'A, B, C!')
+        self.assertEqual(await self.next_business(), 'A, B, C!')
 
-    async def test_positive_answers_without_a_candidate_reask_name_without_submitting(self):
-        label = 'Wie heißt dein neuer Mitarbeiter?'
-        await self.ask(label)
-        for positive in ('Ja', 'genau', 'richtig', 'Ja, das stimmt', 'Ich bestätige das', 'einverstanden'):
-            with self.subTest(positive=positive):
-                await self.say(positive)
-                await self.until(lambda: bool(self.call.dialog.calls) or
-                                 self.lane.question_context() == (label, 'servicenow_input_control', True))
-                self.assertEqual(self.call.dialog.calls, [], 'A positive answer is not a supplied person name')
-                self.assertIsNone(self.lane._name_candidate)
+    async def test_positive_at_open_name_question_is_for_native_validation(self):
+        await self.ask()
+        await self.say('Ja')
+        self.assertEqual(await self.next_business(), 'Ja')
+        self.assertFalse(any('Bestätigung' in text for text in self.call.spoken))
 
-    async def test_negative_without_a_candidate_asks_spelling_without_submitting_no(self):
+    async def test_negative_at_open_name_question_is_for_native_validation(self):
         await self.ask()
         await self.say('Nein')
-        await self.until(lambda: bool(self.call.dialog.calls) or self.lane.question_context()[0] ==
-                         self.lane._correction_question())
-        self.assertEqual(self.call.dialog.calls, [], 'A rejection is not a supplied person name')
-        self.assertIsNone(self.lane._name_candidate)
+        self.assertEqual(await self.next_business(), 'Nein')
+        self.assertFalse(any('buchstabieren' in text for text in self.call.spoken))
 
 
 if __name__ == '__main__':

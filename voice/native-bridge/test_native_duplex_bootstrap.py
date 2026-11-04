@@ -121,21 +121,19 @@ class BootstrapDialogueTests(unittest.IsolatedAsyncioTestCase):
                          'A startup question superseded by the queued intent must not be replayed')
         self.assertEqual(self.open_count, 1)
 
-    async def test_second_early_utterance_stays_raw_context_not_future_control_answer(self):
+    async def test_second_early_utterance_is_delivered_in_original_fifo_order(self):
         first, extra = 'Bitte einen Mitarbeiter vorbereiten.', 'Nachname: L, ü, h, d, e, r, s!'
         self.call.feed(first)
         await self.consumed()
         self.call.feed(extra, 2)
         await self.consumed()
-        self.assertEqual([item[1] for item in self.lane._pending], [first])
-        self.assertEqual([item[0][1] for item in self.lane._supplements], [extra])
+        self.assertEqual([item[1] for item in self.lane._pending], [first, extra])
+        self.assertEqual(list(self.lane._supplements), [])
         await self.settle()
         self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), first)
-        self.call.dialog.release.put_nowait({'reply': QUESTION, 'input_boundary': dict(BOUNDARY)})
-        await self.until(lambda: self.lane._backend is None)
-        self.assertEqual(self.call.dialog.calls, [first])
-        self.assertEqual([item[0][1] for item in self.lane._supplements], [extra])
-        self.assertIsNone(self.lane._context_candidate)
+        self.call.dialog.release.put_nowait({'reply':QUESTION, 'input_boundary':dict(BOUNDARY)})
+        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), extra)
+        self.assertEqual(self.call.dialog.calls, [first, extra])
 
     async def test_partial_startup_question_and_progress_are_not_business_evidence(self):
         await self.until(lambda: self.open_count == 1)
@@ -196,61 +194,38 @@ class BootstrapDialogueTests(unittest.IsolatedAsyncioTestCase):
                          'Unsubmitted held data cannot disable normal idle expiry after failed startup')
         self.assertEqual(self.call.dialog.calls, [])
 
-    async def test_early_name_requires_readback_at_actual_person_name_boundary_after_readiness(self):
-        from test_native_duplex_name_readback import ObservedTurn
+    async def test_early_name_reaches_native_once_without_local_readback(self):
         raw = 'Muthighefke'
-        await self.until(lambda: self.lane.bootstrap_pending)
-        introduction = self.lane.begin_greeting('Wie heißt dein neuer Mitarbeiter?')
-        self.call.playback.put(bytes(480), self.call.playback.generation)
-        self.call.playback.read(len(self.call.playback.data))
-        self.lane.finish_greeting(introduction, complete=True)
         self.call.feed(raw)
         await self.consumed()
-        self.assertEqual([item[1] for item in self.lane._pending], [raw])
         self.call.dialog.input_boundary = dict(BOUNDARY)
-        self.call.dialog.current_question = QUESTION
         await self.settle([QUESTION])
-        self.assertEqual(self.call.dialog.calls, [], 'Preboot name bypassed confirmation')
-        await self.until(lambda: self.lane.question_context()[1:] == ('local_clarification', True))
-        question = self.lane.question_context()[0]
-        self.assertIn('„' + raw + '“', question)
-        self.assertEqual(list(self.lane._pending), [])
-        onset = self.lane.speech_onset()
-        self.call.recognized_turns.put_nowait(ObservedTurn(self.call.playback.generation, 'Ja', 2, onset))
-        await self.consumed()
         self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), raw)
         self.assertEqual(self.call.dialog.calls, [raw])
+        self.assertFalse(any('Ich habe „' in text for text in self.call.spoken))
         self.assertEqual(self.open_count, 1)
 
-    async def test_early_topic_intent_is_not_reinterpreted_as_a_later_person_name(self):
+    async def test_early_topic_intent_is_delivered_as_original_text_not_a_local_name(self):
         raw = 'Ich möchte einen Laptop bestellen.'
         self.call.feed(raw)
         await self.consumed()
         self.call.dialog.input_boundary = dict(BOUNDARY)
-        self.call.dialog.current_question = QUESTION
         await self.settle([QUESTION])
-        self.assertIsNone(self.lane._name_candidate,
-                          'An early topic intent is not an answer to a later person-name field')
-        await self.until(lambda: self.lane.question_context() == (QUESTION, 'servicenow_input_control', True))
-        self.assertEqual(self.call.dialog.calls, [])
-        self.assertEqual(list(self.lane._pending), [])
-        self.assertEqual([item[0][1] for item in self.lane._supplements], [raw])
-        self.call.feed('Ja', 2)
-        await self.consumed()
-        self.assertEqual(self.call.dialog.calls, [])
+        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), raw)
+        self.assertEqual(self.call.dialog.calls, [raw])
+        self.assertEqual(list(self.lane._supplements), [])
+        self.assertFalse(any('Ich habe „' in text for text in self.call.spoken))
 
-    async def test_unprompted_early_name_is_held_until_current_question_is_answered_freshly(self):
+    async def test_unprompted_early_name_remains_raw_for_native_validation(self):
         raw = 'Muthighefke'
         self.call.feed(raw)
         await self.consumed()
         self.call.dialog.input_boundary = dict(BOUNDARY)
         await self.settle([QUESTION])
-        self.assertIsNone(self.lane._name_candidate)
-        await self.until(lambda: QUESTION in self.call.spoken)
-        self.assertEqual(self.call.dialog.calls, [])
-        self.assertEqual([item[0][1] for item in self.lane._supplements], [raw])
+        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), raw)
+        self.assertEqual(list(self.lane._supplements), [])
 
-    async def test_unprompted_early_data_retains_original_fifo_when_name_control_arrives(self):
+    async def test_unprompted_early_intent_and_extra_are_not_stranded_at_name_control(self):
         first, extra = 'Ich möchte einen Laptop bestellen.', 'Zusätzlich einen Monitor.'
         self.call.feed(first)
         await self.consumed()
@@ -258,36 +233,29 @@ class BootstrapDialogueTests(unittest.IsolatedAsyncioTestCase):
         await self.consumed()
         self.call.dialog.input_boundary = dict(BOUNDARY)
         await self.settle([QUESTION])
-        self.assertEqual([item[0][1] for item in self.lane._supplements], [first, extra])
-        self.assertIsNone(self.lane._name_candidate)
-        self.assertEqual(self.call.dialog.calls, [])
+        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), first)
+        self.call.dialog.release.put_nowait({'reply':QUESTION, 'input_boundary':dict(BOUNDARY)})
+        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), extra)
+        self.assertEqual(self.call.dialog.calls, [first, extra])
+        self.assertEqual(list(self.lane._supplements), [])
 
-    async def test_early_positive_after_greeting_name_question_is_not_a_supplied_name(self):
-        await self.until(lambda: self.lane.bootstrap_pending)
-        introduction = self.lane.begin_greeting('Wie heißt dein neuer Mitarbeiter?')
-        self.call.playback.put(bytes(480), self.call.playback.generation)
-        self.call.playback.read(len(self.call.playback.data))
-        self.lane.finish_greeting(introduction, complete=True)
+    async def test_early_positive_is_raw_text_not_a_locally_invented_name(self):
         raw = 'Ja, das stimmt'
         self.call.feed(raw)
         await self.consumed()
         self.call.dialog.input_boundary = dict(BOUNDARY)
         await self.settle([QUESTION])
-        self.assertIsNone(self.lane._name_candidate, 'A yes after a name question supplies no name')
-        await self.until(lambda: QUESTION in self.call.spoken)
-        self.assertEqual(self.call.dialog.calls, [])
-        self.assertEqual([item[0][1] for item in self.lane._supplements], [raw])
+        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), raw)
+        self.assertFalse(any('Buchstaben' in text or 'Ich habe „' in text for text in self.call.spoken))
 
-    async def test_greeting_repair_during_bootstrap_does_not_duplicate_future_input_question(self):
-        await self.until(lambda: self.lane.bootstrap_pending)
-        self.call.dialog.input_boundary = dict(BOUNDARY)
-        self.call.dialog.current_question = QUESTION
-        self.call.vad_active = True
+    async def test_hearing_question_during_bootstrap_is_delivered_without_replaying_startup_question(self):
         self.call.feed('Hörst du mich?')
         await self.consumed()
+        self.call.dialog.input_boundary = dict(BOUNDARY)
         await self.settle([QUESTION])
-        self.call.vad_active = False
-        await self.until(lambda: not self.lane.output_pending and not self.call.synthesis_active)
+        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), 'Hörst du mich?')
+        self.call.dialog.release.put_nowait({'reply':QUESTION, 'input_boundary':dict(BOUNDARY)})
+        await self.until(lambda: QUESTION in self.call.spoken)
         self.assertEqual(self.call.spoken.count(QUESTION), 1)
 
     async def test_cancelled_bootstrap_is_observed_without_cancelling_local_dialogue(self):

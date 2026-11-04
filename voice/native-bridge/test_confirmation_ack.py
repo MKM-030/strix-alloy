@@ -1,4 +1,4 @@
-"""Model-free regression candidate; source remains frozen during Root WSS run."""
+"""Native confirmation ownership and retained playback precedence contracts."""
 import asyncio
 import time
 import unittest
@@ -27,7 +27,7 @@ class ConfirmationAckTests(unittest.IsolatedAsyncioTestCase):
         self.model_calls = []
         async def no_model(*args):
             self.model_calls.append(args)
-            raise AssertionError('confirmation receipt must not call a model')
+            raise RuntimeError('offline optional model')
         self.lane = NativeDuplex(self.call, conversation_factory=no_model)
         self.number = 0
         self.running = asyncio.create_task(self.lane.run())
@@ -55,61 +55,54 @@ class ConfirmationAckTests(unittest.IsolatedAsyncioTestCase):
         await asyncio.wait_for(self.call.recognized_turns.join(), 1)
         return turn
 
-    async def readback(self):
-        label = 'Wie heißt dein neuer Mitarbeiter?'
+    async def native_confirmation(self):
+        label = 'Ist der Name Testperson Sprachprüfung korrekt?'
         self.call.dialog.input_boundary = dict(source='servicenow_input_control',
             controlType='InputText', businessRequestId='name-boundary', label=label)
         self.call.dialog.current_question = label
         self.lane._enqueue(label, kind='backend')
         await self.until(lambda: self.lane.question_context() ==
                          (label, 'servicenow_input_control', True))
-        original = await self.say('Testperson Sprachprüfung')
-        await self.until(lambda: self.lane.question_context()[1:] == ('local_clarification', True))
         self.assertEqual(self.call.dialog.calls, [])
-        return original
+        return label
 
-    async def test_exact_yes_receipt_speaks_before_unresolved_backend_once_without_model_or_extra_post(self):
-        original = await self.readback()
+    async def test_native_yes_posts_original_once_without_manufacturing_confirmation_receipt(self):
+        await self.native_confirmation()
         yes = await self.say('Ja')
-        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), original[1])
-        await self.until(lambda: ACK in self.call.spoken,
-                         reason='accepted exact name confirmation produced no local receipt while backend waited')
-        self.assertEqual(self.call.dialog.calls, [original[1]])
+        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), 'Ja')
+        await self.until(lambda: bool(self.model_calls))
+        self.assertEqual(self.call.dialog.calls, [yes[1]])
         self.assertTrue(self.lane._backend is not None and not self.lane._backend.done())
-        self.assertIsNone(self.lane._name_candidate)
-        self.assertEqual([event for event in self.call.bound_events if event[3] == ACK],
-                         [(yes[3], yes[2], 'assistant', ACK)])
-        self.assertEqual(self.model_calls, [])
+        self.assertEqual([event for event in self.call.bound_events if event[3] == ACK], [])
         self.assertEqual(list(self.lane._public_findings), [])
         self.assertNotIn(ACK, self.call.dialog.public_replies)
         self.assertEqual(self.lane.question_context(), ('', '', False))
         await self.say('Ja')
-        self.assertEqual(self.call.spoken.count(ACK), 1)
-        self.assertEqual(self.call.dialog.calls, [original[1]])
+        self.assertNotIn(ACK, self.call.spoken)
+        self.assertEqual(self.call.dialog.calls, ['Ja'])
 
-    async def test_rejection_has_no_success_receipt_or_business_post(self):
-        await self.readback()
+    async def test_native_rejection_is_forwarded_without_local_success_receipt(self):
+        await self.native_confirmation()
         await self.say('Nein')
-        await self.until(lambda: self.lane._correction_question() in self.call.spoken)
+        self.assertEqual(await asyncio.wait_for(self.call.dialog.started.get(), 1), 'Nein')
         self.assertNotIn(ACK, self.call.spoken)
-        self.assertEqual(self.call.dialog.calls, [])
+        self.assertEqual(self.call.dialog.calls, ['Nein'])
 
-    async def test_incomplete_readback_confirmation_has_no_success_receipt_or_post(self):
-        await self.readback()
-        question = self.lane.question_context()[0]
-        early = ((question, 'local_clarification', False, 'name-boundary', self.lane.task_revision), False)
+    async def test_incomplete_native_confirmation_has_no_success_receipt_or_post(self):
+        question = await self.native_confirmation()
+        early = ((question, 'servicenow_input_control', False, 'name-boundary', self.lane.task_revision), False)
         await self.say('Ja', onset=early)
-        await self.until(lambda: self.lane.question_context() == (question, 'local_clarification', True))
+        await self.until(lambda: self.lane.question_context() == (question, 'servicenow_input_control', True))
         self.assertNotIn(ACK, self.call.spoken)
         self.assertEqual(self.call.dialog.calls, [])
 
-    async def test_stale_name_control_confirmation_has_no_receipt_or_post(self):
-        await self.readback()
+    async def test_stale_native_confirmation_has_no_receipt_or_post(self):
+        question = await self.native_confirmation()
         onset = self.lane.speech_onset()
         self.call.dialog.input_boundary = dict(source='servicenow_input_control', controlType='InputText',
-            businessRequestId='other-boundary', label='Welche Abteilung?')
+            businessRequestId='other-boundary', label=question)
         await self.say('Ja', onset=onset)
-        await self.until(lambda: 'Welche Abteilung?' in self.call.spoken)
+        await self.until(lambda: self.lane.question_context() == (question, 'servicenow_input_control', True))
         self.assertNotIn(ACK, self.call.spoken)
         self.assertEqual(self.call.dialog.calls, [])
 

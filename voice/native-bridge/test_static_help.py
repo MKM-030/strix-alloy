@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from native_bridge import Dialog
@@ -67,18 +68,16 @@ class StaticHelpTests(unittest.IsolatedAsyncioTestCase):
                             and 'current=True' in line for line in captured.output))
         self.assertEqual(call.events, [('assistant', item.text)])
 
-    async def test_question_suffix_remains_bound_while_invariant_explanation_survives(self):
+    async def test_short_fallback_does_not_repeat_stale_question_after_progress(self):
         call = self.call()
         call.dialog.record_public_reply(QUESTION)
         lane = await self.fallback(call, pending=False)
-        self.assertEqual(len(lane._outputs), 2,
-                         'A mutable question still shares the invariant explanation output')
-        explanation, suffix = lane._outputs
+        self.assertEqual(len(lane._outputs), 1)
+        explanation = lane._outputs[0]
         self.assertNotIn(QUESTION, explanation.text)
-        self.assertIn(QUESTION, suffix.text)
+        self.assertLessEqual(len(explanation.text), 120)
         progress(call.dialog)
         self.assertTrue(lane._valid(explanation))
-        self.assertFalse(lane._valid(suffix), 'A stale current-question suffix lost its observation guard')
 
     async def test_generated_and_status_outputs_keep_observation_guards(self):
         for kind in ('help', 'status'):
@@ -198,24 +197,17 @@ class StaticHelpTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(len(lane._outputs), 1)
 
     async def test_local_worker_error_boundary_retains_help_and_status_guard_policy(self):
-        class OnceFailingDialog(Dialog):
-            def __getattribute__(self, name):
-                if name == 'current_question' and self.fail_once:
-                    self.fail_once = False
-                    raise RuntimeError('private-observation-error')
-                return super().__getattribute__(name)
         for kind in ('help', 'status'):
             with self.subTest(kind=kind):
                 call = self.call()
-                call.dialog = OnceFailingDialog(call.config)
-                call.dialog.fail_once = True
                 lane = NativeDuplex(call)
                 lane._model_failed = True
                 turn = (0, 'Was kannst du für mich tun?', 1, 'help-turn', 0)
                 lane._local_questions.put_nowait((turn, kind, lane.epoch))
                 worker = asyncio.create_task(lane._local_loop())
                 try:
-                    with self.assertLogs('native-voice', level='WARNING'):
+                    with patch.object(lane, '_general_help', side_effect=RuntimeError('private-observation-error')), \
+                            self.assertLogs('native-voice', level='WARNING'):
                         await asyncio.wait_for(lane._local_questions.join(), 1)
                     self.assertFalse(worker.done(), 'The local fallback error boundary killed its worker')
                     self.assertEqual(len(lane._outputs), 1)

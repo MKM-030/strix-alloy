@@ -41,7 +41,7 @@ class FakeDialog:
 
 class FakeCall:
     def __init__(self):
-        self.config = SimpleNamespace(conversation_ws_url='ws://127.0.0.1:8795/')
+        self.config = SimpleNamespace(conversation_ws_url='offline-conversation-fixture')
         self.call_id = 'test-call'
         self.dialog = FakeDialog()
         self.playback = PlaybackBuffer()
@@ -100,63 +100,56 @@ class DuplexTests(unittest.IsolatedAsyncioTestCase):
     async def next_business(self):
         return await asyncio.wait_for(self.call.dialog.started.get(), 1)
 
-    async def test_question_answered_while_backend_pending_without_parallel_business_post(self):
-        self.call.feed('Bitte einen neuen Mitarbeiter vorbereiten.')
-        self.assertEqual(await self.next_business(), 'Bitte einen neuen Mitarbeiter vorbereiten.')
-        self.call.dialog.processing = {'revision': 1, 'messages': ['Verfügbarkeit wird geprüft'],
-            'ageSeconds': 0, 'source': 'servicenow_processing', 'agentCompletionKnown': False}
-        self.call.feed('Gibt es schon etwas Konkretes?', 2)
-        await self.until(lambda: bool(self.call.spoken))
-        self.assertIn('Verfügbarkeit wird geprüft', self.call.spoken[-1])
-        self.assertIn('Ergebnis', self.call.spoken[-1])
-        self.assertEqual(self.call.dialog.calls, ['Bitte einen neuen Mitarbeiter vorbereiten.'])
-        self.assertFalse(self.running.done())
-
-    async def test_busy_correction_is_retained_until_fresh_input_at_current_boundary(self):
-        self.call.feed('Mara Lueders')
-        await self.next_business()
-        raw = 'Nein: L, ü, h, d, e, r, s!'
-        self.call.feed(raw, 2)
-        await self.until(lambda: len(self.lane._supplements) == 1)
-        self.assertEqual(self.call.dialog.calls, ['Mara Lueders'])
-        self.call.dialog.release.put_nowait({'reply': 'Bitte buchstabieren Sie den Vornamen.',
-            'input_boundary': {'source': 'servicenow_input_control', 'controlType': 'InputText',
-                'businessRequestId': 'business-1', 'label': 'Bitte buchstabieren Sie den Vornamen.'}})
-        await self.until(lambda: not self.lane.busy)
-        self.assertEqual(self.call.dialog.calls, ['Mara Lueders'])
-        self.assertEqual([turn[0][1] for turn in self.lane._supplements], [raw])
-        fresh = 'L, ü, h, d, e, r, s!'
-        self.call.feed(fresh, 3)
-        await self.until(lambda: self.lane.question_context()[1:] == ('local_clarification', True)
-                         and fresh in self.lane.question_context()[0])
-        self.assertEqual(self.call.dialog.calls, ['Mara Lueders'])
-        # This text-only fixture has no microphone envelope. Stamp the fresh
-        # confirmation onset after the complete readback, as Native ASR does.
-        self.lane._input_questions[self.call.playback.generation] = self.lane._input_question_snapshot()
-        self.call.feed('Ja', 4)
-        self.assertEqual(await self.next_business(), fresh)
-        self.call.dialog.release.put_nowait('Meinen Sie Mara Lühders?')
-        await self.until(lambda: not self.lane.busy)
-        self.assertEqual(self.call.dialog.calls.count(fresh), 1)
-        self.assertNotIn(raw, self.call.dialog.calls)
-        self.assertFalse(any('Meinen Sie Mara Lueders?' == s for s in self.call.spoken))
-
-    async def test_unbound_yes_is_not_submitted_but_mixed_business_question_remains_verbatim(self):
-        self.call.feed('Ja, genau so.')
+    async def test_free_question_waits_in_raw_fifo_without_parallel_business_post(self):
+        first, question = 'Bitte einen neuen Mitarbeiter vorbereiten.', 'Gibt es schon etwas Konkretes?'
+        self.call.feed(first)
+        self.assertEqual(await self.next_business(), first)
+        self.call.feed(question, 2)
         await asyncio.wait_for(self.call.recognized_turns.join(), 1)
-        self.assertEqual(self.call.dialog.calls, [])
-        self.call.feed('Wie lange dauert das und bitte verwende Lühders?', 2)
-        self.assertEqual(await self.next_business(),
-                         'Wie lange dauert das und bitte verwende Lühders?')
-        self.assertEqual(len(self.call.dialog.calls), 1)
-
-    async def test_optional_model_outage_does_not_fail_call_or_block_later_business_turn(self):
-        self.call.feed('Was kannst du?', 1)
         await self.until(lambda: bool(self.call.spoken))
-        self.assertIn('ServiceNow', self.call.spoken[-1])
-        self.assertEqual(self.call.dialog.calls, [])
-        self.call.feed('Mara Lühders', 2)
-        self.assertEqual(await self.next_business(), 'Mara Lühders')
+        self.assertLessEqual(len(self.call.spoken[-1]), 120)
+        self.assertEqual(self.call.dialog.calls, [first])
+        self.assertEqual([turn[1] for turn in self.lane._pending], [question])
+        self.call.dialog.release.put_nowait('Native erste Antwort.')
+        self.assertEqual(await self.next_business(), question)
+        self.assertEqual(self.call.dialog.calls, [first, question])
+
+    async def test_busy_correction_reaches_native_once_without_local_spelling_workflow(self):
+        first, correction = 'Mara Lueders', 'Nein: L, ü, h, d, e, r, s!'
+        self.call.feed(first)
+        await self.next_business()
+        self.call.feed(correction, 2)
+        await self.until(lambda: bool(self.lane._pending))
+        self.assertEqual(self.call.dialog.calls, [first])
+        self.call.dialog.release.put_nowait({'reply':'Bitte erläutern Sie Ihre Angabe.',
+            'input_boundary':dict(source='servicenow_input_control', controlType='InputText',
+                businessRequestId='business-1', label='Bitte erläutern Sie Ihre Angabe.')})
+        self.assertEqual(await self.next_business(), correction)
+        self.assertEqual(self.call.dialog.calls, [first, correction])
+        self.assertEqual(self.call.dialog.calls.count(correction), 1)
+        self.assertFalse(any('buchstabieren Sie zuerst' in text for text in self.call.spoken))
+
+    async def test_raw_yes_creates_no_local_approval_and_mixed_question_remains_verbatim(self):
+        self.call.feed('Ja, genau so.')
+        self.assertEqual(await self.next_business(), 'Ja, genau so.')
+        self.assertFalse(any('Bestätigung' in text for text in self.call.spoken))
+        self.call.dialog.release.put_nowait('Welche Angabe möchten Sie erläutern?')
+        await self.until(lambda: not self.lane.busy)
+        raw = 'Wie lange dauert das und bitte verwende Lühders?'
+        self.call.feed(raw, 2)
+        self.assertEqual(await self.next_business(), raw)
+        self.assertEqual(self.call.dialog.calls, ['Ja, genau so.', raw])
+
+    async def test_optional_model_outage_preserves_first_and_later_native_input(self):
+        first, second = 'Was kannst du?', 'Mara Lühders'
+        self.call.feed(first)
+        self.assertEqual(await self.next_business(), first)
+        await self.until(lambda: bool(self.call.spoken))
+        self.assertLessEqual(len(self.call.spoken[-1]), 120)
+        self.call.feed(second, 2)
+        self.call.dialog.release.put_nowait('Native Rückfrage.')
+        self.assertEqual(await self.next_business(), second)
+        self.assertEqual(self.call.dialog.calls, [first, second])
         self.assertFalse(self.call.failed)
 
     async def test_new_input_invalidates_queued_local_speech(self):
@@ -168,7 +161,7 @@ class DuplexTests(unittest.IsolatedAsyncioTestCase):
         await asyncio.sleep(.05)
         self.assertEqual(self.call.spoken, [])
 
-    async def test_barge_in_releases_stalled_old_tts_for_new_reply(self):
+    async def test_barge_in_releases_stalled_old_tts_for_brief_new_feedback(self):
         entered = asyncio.Event()
         async def synthesis(text):
             self.call.spoken.append(text)
@@ -182,19 +175,17 @@ class DuplexTests(unittest.IsolatedAsyncioTestCase):
         self.lane.interrupt()
         self.call.feed('Was weißt du sicher?', 2)
         await self.until(lambda: len(self.call.spoken) == 2)
-        self.assertIn('bestätigtes Ergebnis', self.call.spoken[-1])
+        self.assertLessEqual(len(self.call.spoken[-1]), 120)
+        self.assertNotIn('Welche Angabe', self.call.spoken[-1])
 
-    async def test_complete_backend_reply_is_quoted_and_never_inferred_as_completion(self):
+    async def test_actual_backend_evidence_stays_current_without_inventing_completion(self):
         self.call.feed('Auftrag')
         await self.next_business()
         self.call.dialog.release.put_nowait('Das angefragte Modell ist nicht verfügbar.')
         await self.until(lambda: not self.lane.busy)
+        self.assertIn('Das angefragte Modell ist nicht verfügbar.', self.lane._status())
         self.call.feed('Was weißt du sicher?', 2)
-        await self.until(lambda: any('Rückmeldung' in s for s in self.call.spoken))
-        self.assertIn('Das angefragte Modell ist nicht verfügbar.', self.call.spoken[-1])
-        self.assertEqual(self.call.dialog.calls, ['Auftrag'])
-        self.call.feed('Bitte die Angaben prüfen.', 3)
-        await self.next_business()
+        self.assertEqual(await self.next_business(), 'Was weißt du sicher?')
         self.call.dialog.release.put_nowait('Ein öffentlicher Satz. ' * 400)
         await self.until(lambda: not self.lane.busy)
         excerpt = self.lane._status()
@@ -202,12 +193,11 @@ class DuplexTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn('Auszug', excerpt)
         self.assertIn('länger', excerpt)
 
-    async def test_natural_help_uses_persistent_candidate_and_current_snapshot(self):
+    async def test_natural_dialogue_persists_while_raw_questions_reach_native(self):
         class Conversation:
             output_epoch = 1
             def __init__(inner):
-                inner.inputs = []
-                inner.closed = False
+                inner.inputs, inner.closed = [], False
                 inner.identity = SimpleNamespace(server_session_id='private-session')
             def invalidate(inner, epoch, reason):
                 inner.output_epoch = epoch
@@ -216,8 +206,7 @@ class DuplexTests(unittest.IsolatedAsyncioTestCase):
                 return done()
             async def respond(inner, raw, snapshot, key):
                 inner.inputs.append((raw, snapshot, key))
-                return SimpleNamespace(text='Wir können die Angaben gemeinsam klären. Welche Frage möchten Sie zuerst besprechen?',
-                                       failure=None, identity=inner.identity)
+                return SimpleNamespace(text='Gern, welche Frage möchten Sie besprechen?', failure=None, identity=inner.identity)
             def is_current(inner, identity):
                 return identity is inner.identity
             async def close(inner):
@@ -228,17 +217,16 @@ class DuplexTests(unittest.IsolatedAsyncioTestCase):
             return conversation
         self.lane._factory = factory
         self.call.feed('Was kannst du?')
-        await self.until(lambda: bool(self.call.spoken))
-        self.call.dialog.public_replies = ['Das angefragte Modell ist nicht verfügbar.']
+        self.assertEqual(await self.next_business(), 'Was kannst du?')
+        await self.until(lambda: len(conversation.inputs) == 1)
+        self.call.dialog.release.put_nowait('Das angefragte Modell ist nicht verfügbar.')
+        await self.until(lambda: not self.lane.busy)
         self.call.feed('Wie kannst du mir helfen?', 2)
+        self.assertEqual(await self.next_business(), 'Wie kannst du mir helfen?')
         await self.until(lambda: len(conversation.inputs) == 2)
-        self.assertEqual(conversation.inputs[0][0], 'Was kannst du?')
-        self.assertEqual(conversation.inputs[1][1]['raw_inputs'],
-                         ('Was kannst du?', 'Wie kannst du mir helfen?'))
-        self.assertEqual(conversation.inputs[1][1]['public_findings'][0]['text'],
-                         'Das angefragte Modell ist nicht verfügbar.')
+        self.assertEqual(conversation.inputs[1][1]['raw_inputs'], ('Was kannst du?', 'Wie kannst du mir helfen?'))
         self.assertEqual(conversation.inputs[1][2]['call_id'], 'test-call')
-        self.assertEqual(self.call.dialog.calls, [])
+        self.assertEqual(self.call.dialog.calls, ['Was kannst du?', 'Wie kannst du mir helfen?'])
         await self.lane.close()
         self.assertTrue(conversation.closed)
 
@@ -277,14 +265,14 @@ class NativeSeamTests(unittest.IsolatedAsyncioTestCase):
 
 
 class DurationTests(unittest.TestCase):
-    def test_natural_status_paraphrases_take_readonly_lane(self):
-        self.assertEqual(_question_kind('Sag mir bitte kurz, was du bisher weißt.'), 'status')
-        self.assertEqual(_question_kind('Wie weit seid ihr denn inzwischen?'), 'status')
+    def test_status_and_other_questions_share_optional_conversation_without_consuming_raw_input(self):
+        self.assertEqual(_question_kind('Sag mir bitte kurz, was du bisher weißt.'), 'help')
+        self.assertEqual(_question_kind('Wie weit seid ihr denn inzwischen?'), 'help')
 
-    def test_mixed_action_correction_and_confirmation_stay_business(self):
-        self.assertIsNone(_question_kind('Wie weit seid ihr und bitte verwende Lühders?'))
-        self.assertIsNone(_question_kind('Ja, genau so.'))
-        self.assertIsNone(_question_kind('Wie lange dauert das und bestelle bitte den Laptop?'))
+    def test_optional_dialogue_kind_never_decides_business_submission(self):
+        for text in ('Wie weit seid ihr und bitte verwende Lühders?', 'Ja, genau so.',
+                     'Wie lange dauert das und bestelle bitte den Laptop?'):
+            self.assertEqual(_question_kind(text), 'help')
 
     def test_real_audio_duration_no_overlap_spacing_and_two_update_cap(self):
         self.assertEqual(DurationUpdates(240).delay, 240)

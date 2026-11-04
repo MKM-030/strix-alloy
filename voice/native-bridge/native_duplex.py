@@ -1,13 +1,14 @@
 """Independent Native conversation while the existing VA business turn waits.
 
-The VA remains the only business executor. Uncertain/data/confirmation input is
-kept verbatim and submitted once, serially, at its next settled input boundary.
-Read-only conversational questions take the independent local lane.
+The VA remains the only business executor. Caller input is kept verbatim and
+submitted once, serially, after readiness. Optional local conversation never
+consumes those original messages or invents a name-validation workflow.
 """
 import asyncio
 from collections import deque
 from dataclasses import dataclass, replace
 import importlib.util
+import json
 import logging
 from startup_reason import startup_reason, caller_create_failure_notice
 import math
@@ -18,7 +19,7 @@ import time
 from urllib.parse import urlsplit
 from types import SimpleNamespace
 
-from conversation_repair import (classify_repair, conversational_snapshot,
+from conversation_repair import (conversational_snapshot,
                                  NATURAL_CONVERSATION_PROMPT, _polar, _pure_kind,
                                  _passive_signal)
 from servicenow_voice_context import (build_servicenow_voice_context,
@@ -130,57 +131,14 @@ def _forward_solicitation(text):
 
 
 def _polar_answer(text):
+    # Pure acknowledgments can also answer a native confirmation. Mixed
+    # corrections/requests remain original business text, never local consent.
+    if _pure_kind(text) == 'backchannel':
+        return True
     value = _progress_key(text)
     return bool(re.fullmatch(r'(?:ja(?: (?:genau(?: so)?|bitte|das stimmt|das ist richtig|'
         r'das ist korrekt))?|nein(?: danke)?|genau(?: so)?|richtig|korrekt|'
         r'ich bestätige(?: das)?|einverstanden)', value))
-
-
-def _name_correction(text):
-    value = _progress_key(text)
-    return bool(re.search(r'\bname\b', value) and re.search(
-        r'\b(?:falsch\w*|anders|nicht richtig|nicht korrekt|stimmt nicht|richtige name)\b', value))
-
-
-def _name_control(boundary):
-    return (type(boundary) is dict and boundary.get('source') == 'servicenow_input_control'
-        and type(boundary.get('label')) is str
-        and not re.search(r'\b(?:bestell\w*|abschick\w*|absend\w*)\b',
-                          _progress_key(boundary['label']))
-        and bool(re.search(
-            r'\b(?:name\w*|vorname\w*|nachname\w*|schreibweise|buchstab\w*|'
-            r'wie (?:heißt|heisst|heißen|heissen)\b.*\b(?:mitarbeiter\w*|person|kolleg\w*))\b',
-            _progress_key(boundary['label']))))
-
-
-def _person_name_control(boundary):
-    """A genuine free-text person-name control, never a product/account name."""
-    if (not _name_control(boundary) or boundary.get('controlType') != 'InputText'
-            or _polar(boundary['label'])):
-        return False
-    label = _progress_key(boundary['label'])
-    person = re.search(r'\b(?:name\w*|vorname\w*|nachname\w*|mitarbeiter\w*|person|kolleg\w*)\b', label)
-    return bool(person) and not re.search(r'\b(?:gerät\w*|geraet\w*|produkt\w*|modell\w*|datei\w*|'
-        r'firm\w*|unternehmen\w*|benutzername\w*|nutzername\w*|account\w*|'
-        r'computer\w*|server\w*|drucker\w*|software\w*|anwendung\w*|'
-        r'device\w*|product\w*|model\w*|file\w*|company|username)\b', label)
-
-
-def _mixed_negative(text):
-    return bool(re.match(r'\s*nein\b[\s,:;]+\S+', text, re.IGNORECASE)) and not _polar_answer(text)
-
-
-def _spelled_letters(text):
-    # Detect letter chains only. Preserve and read back the complete raw input;
-    # never join the letters into an assumed name or choose a first/last name.
-    return bool(re.search(r'(?<!\w)[a-zäöüß](?:[- ,.;:/]+[a-zäöüß]){2,}(?!\w)',
-                          text, re.IGNORECASE))
-
-
-def _spelling_control(boundary):
-    return (_name_control(boundary) and not _polar(boundary['label'])
-        and bool(re.search(r'\b(?:buchstab\w*|schreibweise)\b',
-                           _progress_key(boundary['label']))))
 
 
 def _non_speech_annotation(text):
@@ -196,88 +154,9 @@ def _non_speech_annotation(text):
         'unverstaendlich', 'no speech', 'blank audio', 'noise', 'silence'}
 
 
-def _missing_name_rejection(text):
-    # Recognize the rejection, never extract or approve a replacement name.
-    parts = [_progress_key(part) for part in re.split(r'[.!?;]+', text) if part.strip()]
-    patterns = (
-        r'(?:(?:und|aber|nein) )?(?:das|dies) ist (?:der|ein) falsche[rn]? name',
-        r'(?:(?:und|aber) )?(?:der|dieser|mein|sein|ihr) name ist (?:falsch|anders|nicht richtig|nicht korrekt)',
-        r'(?:(?:und|aber) )?(?:der|dieser|mein|sein|ihr) name stimmt nicht',
-        r'(?:das|so) ist nicht der richtige name')
-    return (bool(parts) and any(re.search(r'\bname\b', part) for part in parts)
-        and all(part == 'nein' or any(re.fullmatch(pattern, part) for pattern in patterns) for part in parts))
-
-
-def _social_frustration(value):
-    # Whole social utterances only; a supplied name, spelling or mixed request
-    # containing a swear word must still reach the ordinary business FIFO.
-    return bool(re.fullmatch(r'(?:fick (?:dich|deine mutter)|halt (?:die klappe|dein maul)|'
-        r'das (?:ist (?:(?:doch|ja) )?(?:scheiße|scheisse|mist)|nervt(?: mich)?|regt mich auf)|'
-        r'was soll (?:der|dieser) (?:scheiß|scheiss)|so funktioniert das nicht)', value))
-
-
 def _question_kind(text):
-    value = re.sub(r'[\s?!.,]+', ' ', text.casefold()).strip()
-    if len(value) > 350 or len(value.split()) > 55 or re.search(r'\d|;', text):
-        return None
-    if _social_frustration(value):
-        return 'frustration'
-    # These complete questions contain no supplied name or approval. They can
-    # be explained immediately; actual spelling/correction remains raw VA input.
-    name = r'(?:(?:den|meinen|einen|ihren) )?(?:vollständigen )?(?:namen|vornamen|nachnamen)'
-    if any(re.fullmatch(pattern, value) for pattern in (
-            rf'(?:kann|darf|soll|muss) ich (?:(?:dir|ihnen) )?{name} (?:bitte )?buchstabieren(?: bitte)?',
-            rf'wie (?:kann|soll|muss) ich {name} (?:am besten |richtig )?buchstabieren',
-            rf'wie buchstabiere ich {name}(?: am besten| richtig)?')):
-        return 'spelling_help'
-    if re.fullmatch(rf'(?:warum|weshalb|wieso) (?:soll|muss) ich {name} '
-                    r'(?:(?:noch einmal|nochmal|erneut) )?bestätigen', value):
-        return 'name_help'
-    # Mixed business data/actions remain verbatim VA input. Read-only German
-    # paraphrases need no magic sentence and give Omni no execution authority.
-    if (re.search(r'\b(?:nein|ja|korrektur|falsch|name|vorname|nachname|schreibweise|'
-                r'buchstab\w*|korrigier\w*|bestell\w*|beauftrag\w*|stornier\w*|'
-                r'änder\w*|aender\w*|verwende\w*|nimm|setz\w*|füge|fuege|'
-                r'schick\w*|sende\w*|beantrag\w*|buche\w*|lösch\w*|loesch\w*|'
-                r'bestätige|bestaetige|abschicken)\b', value)):
-        return None
-    status = {
-        'gibt es schon etwas konkretes', 'gibt es schon etwas neues', 'wie ist der stand',
-        'was ist der aktuelle stand', 'was weißt du sicher', 'was weisst du sicher',
-        'was hat die prüfung ergeben', 'wie lange dauert das', 'warum dauert das so lange',
-        'woran liegt die verzögerung', 'ist meine anfrage noch in bearbeitung',
-        'kannst du schon abschließen', 'kannst du schon abschliessen', 'was passiert gerade',
-        'gibt es einen zwischenstand', 'was bedeutet das für meine anfrage',
-    }
-    help_questions = {
-        'was kannst du', 'was kannst du für mich tun', 'wie kannst du mir helfen',
-        'wie funktioniert das', 'was brauchst du von mir', 'welche angaben brauchst du',
-        'ich möchte erst verstehen welche angaben du brauchst',
-        'erklär mir bitte den nächsten schritt etwas genauer',
-        'was kannst du für die vorbereitung eines neuen mitarbeiters übernehmen',
-    }
-    if value in status:
-        return 'status'
-    question = re.search(r'\b(?:was|wie|woran|warum|weshalb|wieso|gibt es|liegt|'
-                         r'kannst du|sag|sagen|erklär|erkläre|erklären)\b', value)
-    progress = re.search(r'\b(?:stand|status|fortschritt|weit|bisher|inzwischen|ergebnis\w*|'
-        r'rückmeldung\w*|rueckmeldung\w*|weißt|weisst|wei[sß]|wissen|dauert|dauer|'
-        r'verzöger\w*|verzoeger\w*|warte\w*|passiert|konkretes|neues|bedeutet|'
-        r'prüfung|pruefung|fertig|abschließ\w*|abschliess\w*|verfügbar|verfuegbar)\b', value)
-    if question and progress or re.search(r'\bwas (?:heißt|heisst) das\b', value):
-        return 'status'
-    if value in help_questions or re.search(r'\b(?:was kannst du|wie kannst du|wie funktioniert|'
-            r'welche angaben|was brauchst du|welche informationen|was muss ich wissen|'
-            r'(?:erklär|erkläre|erklärst)\b.*\b(?:schritt|ablauf)|'
-            r'(?:möchte|will)\b.*\bverstehen|wie geht\b.*\bweiter|'
-            r'was\b.*\bnächste\w* schritt)\b', value):
-        return 'help'
-    # Open conversational questions need no fixed status/help phrase. Names,
-    # dates, spellings, mixed changes and approvals have already been excluded.
-    if re.match(r'^(?:warum|weshalb|wieso|was|wie|welche\w*|woher|worum|'
-                r'kannst du|können sie|erklär\w*|erlaeuter\w*)\b', value):
-        return 'help'
-    return None
+    """Optional conversation never decides whether raw input reaches ServiceNow."""
+    return 'help' if isinstance(text, str) and text.strip() and len(text) <= 4000 else None
 
 
 class _JsonSocket:
@@ -320,7 +199,7 @@ def _conversation_class():
     return sys.modules['omni_conversation'].OmniConversation
 
 
-async def open_conversation(url, call_id, epoch, *, controller_url='', controller_token_file=''):
+async def open_conversation(url, call_id, epoch, *, controller_url='', controller_token_file='', call_settings=None):
     from aiohttp import ClientSession, ClientTimeout
     if controller_url:
         conversation_class = _conversation_class()
@@ -333,7 +212,7 @@ async def open_conversation(url, call_id, epoch, *, controller_url='', controlle
         dialogue.controller_transport = source
         try:
             await dialogue.start(call_id, epoch, NATURAL_CONVERSATION_PROMPT + '\n' +
-                                 build_servicenow_voice_context().system_prompt_fragment)
+                                 build_servicenow_voice_context(call_settings).system_prompt_fragment)
             LOG.info('Voice independent dialogue call=%s pipeline=pipecat controller_selected=true', call_id)
             return dialogue
         except BaseException:
@@ -348,7 +227,7 @@ async def open_conversation(url, call_id, epoch, *, controller_url='', controlle
         from pipecat_dialogue import PipecatDialogue
         dialogue = PipecatDialogue(adapter)
         await dialogue.start(call_id, epoch, NATURAL_CONVERSATION_PROMPT + '\n' +
-                             build_servicenow_voice_context().system_prompt_fragment)
+                             build_servicenow_voice_context(call_settings).system_prompt_fragment)
         LOG.info('Voice independent dialogue call=%s pipeline=pipecat-1.13 sentence_streaming=true', call_id)
         return dialogue
     except BaseException:
@@ -386,7 +265,7 @@ class NativeDuplex:
         if conversation_factory is open_conversation:
             self._factory = lambda url, call_id, epoch: open_conversation(url, call_id, epoch,
                 controller_url=getattr(call.config, 'conversation_http_url', ''),
-                controller_token_file=getattr(call.config, 'conversation_token_file', ''))
+                controller_token_file=getattr(call.config, 'conversation_token_file', ''), call_settings=call.call_settings)
         else:
             self._factory = conversation_factory
         self._context_publisher = context_publisher
@@ -408,11 +287,12 @@ class NativeDuplex:
         self._public_findings = deque(maxlen=8)
         self._public_sequence = 0
         self._pending = deque()
-        # Early data is context, never an answer to a control that arrives later.
+        # Kept empty for the existing context/status interface. Early original
+        # messages live only in _pending and are not parked as supplements.
         self._supplements = deque()
-        self._correction_request = None
-        self._name_correction_context = None
-        self._name_candidate = None
+        self._submission_onsets = {}
+        self._spoken_history = deque(maxlen=8)
+        self._spoken_sequence = 0
         self._input_questions = {}
         self._raw = deque()
         self._outputs = deque()
@@ -467,6 +347,16 @@ class NativeDuplex:
             state['accepted_samples'] = max(0, playback.accepted_samples - state['accepted_start'])
             state['emitted_samples'] = min(state['accepted_samples'],
                 max(0, playback.emitted_samples - state['emitted_start']))
+            if (state.get('complete') and state['accepted_samples'] > 0
+                    and state['emitted_samples'] == state['accepted_samples']
+                    and not state.get('history_recorded')):
+                state['history_recorded'] = True
+                if 0 < len(state['text']) <= 2000:
+                    self._spoken_sequence += 1
+                    self._spoken_history.append(dict(text=state['text'], sequence=self._spoken_sequence,
+                                                     observed_at=self.clock()))
+                    while sum(len(item['text']) for item in self._spoken_history) > 4000:
+                        self._spoken_history.popleft()
 
     def _question_current(self, state):
         if (state is None or not self._live() or self._pending
@@ -478,8 +368,6 @@ class NativeDuplex:
             return False
         boundary = getattr(self.call.dialog, 'input_boundary', None)
         return (state['source'] in ('servicenow_input_control', 'local_clarification')
-            and not (state['source'] == 'servicenow_input_control'
-                     and self._correction_request == self._request)
             and type(boundary) is dict
             and boundary.get('source') == 'servicenow_input_control'
             and boundary.get('businessRequestId') == state['binding']
@@ -531,6 +419,7 @@ class NativeDuplex:
     def _finish_speech(self, state, *, complete):
         self._update_speech_cursor()
         state['complete'] = complete and not state['interrupted']
+        self._update_speech_cursor()
 
     def _buffered_confirmation_ack(self):
         state = self._speech
@@ -649,8 +538,6 @@ class NativeDuplex:
                 or self._bootstrap_state != 'ready'):
             return ''
         if self._request:
-            if self._correction_request == self._request:
-                return self._correction_question()
             boundary = getattr(self.call.dialog, 'input_boundary', None)
             return (boundary.get('label', '') if type(boundary) is dict
                 and boundary.get('source') == 'servicenow_input_control' else '')
@@ -716,19 +603,8 @@ class NativeDuplex:
         return (text[:ends[-1]].strip() if ends else ''), False
 
     def _enqueue_help_fallback(self, turn, *, reason='unavailable'):
-        question = self._current_question()
         LOG.info('Voice independent help call=%s stage=fallback reason=%s', self.call.call_id, reason)
-        base = ('Ich kann Angaben mit Ihnen klären und vorhandene Rückmeldungen verständlich erklären. '
-                'ServiceNow führt den Vorgang und fragt notwendige Bestätigungen ab.')
-        if question and len(question) <= 350:
-            # The capability explanation carries no mutable backend fact.
-            # Only the separate question quote depends on this observation.
-            self._enqueue(base, turn, kind='local')
-            self._enqueue('Die aktuelle Rückfrage lautet: „' + question + '“', turn, kind='local',
-                observation=getattr(self.call.dialog, 'observation_revision', 0))
-        else:
-            self._enqueue(base + ' Welche Angabe oder welchen Schritt möchten Sie besprechen?',
-                turn, kind='local')
+        self._enqueue('Ihre Nachricht ist angekommen. Ich warte noch auf die Antwort.', turn, kind='local')
 
     def _repeat_last_reply(self):
         replies = self._current_public_findings()
@@ -744,33 +620,25 @@ class NativeDuplex:
         _, text, number, _, _ = turn
         if (number not in self.call.turn_controls and
                 re.fullmatch(r'\s*(?:äh|ähm)[.!?,…]*\s*', text, re.IGNORECASE)):
-            # A whole hesitation cannot express a topic, name or confirmation.
-            # Keep single spelled Ä/M/A, em/emm and mixed name input verbatim.
             self.call.turn_contexts.pop(number, None)
             self._observe_raw(text)
-            LOG.info('Voice independent input call=%s stage=hesitation_ignored', self.call.call_id)
             return
         if number not in self.call.turn_controls and _non_speech_annotation(text):
             self.call.turn_contexts.pop(number, None)
-            LOG.info('Voice independent input call=%s stage=non_speech_annotation_ignored', self.call.call_id)
             return
-        observed_onset = getattr(turn, 'duplex_onset', None)
-        if observed_onset is not None:
-            onset, overlapped = observed_onset
+        observed = getattr(turn, 'duplex_onset', None)
+        if observed is not None:
+            onset, overlapped = observed
         else:
             onset = self._input_questions.get(turn[0], self._input_question_snapshot())
             overlapped = bool(self.call.synthesis_active or self.call.playback.data)
-        # A casual overlap is not a request to erase the remaining output.
-        # Real polar answers still go through the complete-control onset gate.
-        bound_polar = (onset[1] == 'servicenow_input_control' and onset[2]
-                       and _polar(onset[0]))
-        if (overlapped or self.busy) and _passive_signal(text) and not (
-                bound_polar and _pure_kind(text) == 'backchannel'):
+        # An overlapping listening signal is not a fresh business approval.
+        native_polar = onset[1] == 'servicenow_input_control' and onset[2] and _polar(onset[0])
+        if (overlapped or self.busy) and _passive_signal(text) and not native_polar:
             self.call.turn_contexts.pop(number, None)
             self._observe_raw(text)
-            LOG.info('Voice independent input call=%s stage=backchannel_preserved', self.call.call_id)
             return
-        if observed_onset is not None or turn[0] == self._last_input_generation:
+        if observed is not None or turn[0] == self._last_input_generation:
             self.interrupt(onset=onset)
         self._last_input_generation = self.call.playback.generation
         self.context_revision += 1
@@ -779,270 +647,37 @@ class NativeDuplex:
         if control is not None:
             self.call.turn_contexts.pop(number, None)
             await self.call.speak_language_control(control[1], self.call.playback.generation,
-                                                   'LANGUAGE_SELECTED' if control[0] == 'selected' else 'LANGUAGE_SELECTION_RETRY')
+                'LANGUAGE_SELECTED' if control[0] == 'selected' else 'LANGUAGE_SELECTION_RETRY')
             return
-        question, source, complete = self.question_context()
         boundary = getattr(self.call.dialog, 'input_boundary', None)
-        label = (boundary.get('label', '') if type(boundary) is dict
-                 and boundary.get('source') == 'servicenow_input_control' else '')
-        if self._answer_name_readback(turn, onset):
-            return
-        bound_name_rejection = (_name_control(boundary)
-            and (_mixed_negative(text) or _progress_key(text) == 'nein'))
-        if (_person_name_control(boundary) and not self.busy
-                and (_polar_answer(text) or bound_name_rejection or _missing_name_rejection(text))):
-            # Yes/no without a held name is neither a person name nor business
-            # approval. Keep the free-text name question local and explicit.
-            self.call.turn_contexts.pop(number, None)
-            if bound_name_rejection or _missing_name_rejection(text):
-                self._remember_name_correction(turn, self._request)
-                self._correction_request = self._request
-            self._reask_control(turn)
-            return
-        if self._request and _polar_answer(text) and (
-                self._correction_request == self._request or label and _polar(label)):
-            ready = (type(boundary) is dict and bool(label)
-                     and onset == (label, 'servicenow_input_control', True,
-                               boundary.get('businessRequestId', ''), self.task_revision)
-                     and self._correction_request != self._request
-                     and self._question_current(self._spoken_question))
-            if not ready:
-                self._retain_supplement(turn)
-                self._reask_control(turn)
-                return
-            if _name_control(boundary) and not _progress_key(text).startswith('nein'):
-                # Only a fresh positive answer to the fully emitted genuine
-                # name control closes this local spelling-wait context.
-                self._name_correction_context = None
-        repair = classify_repair(text, question=question, question_source=source,
-            question_complete=complete, business_started=bool(self._request),
-            busy=self.busy, raw_history=tuple(self._raw))
-        if repair is not None:
-            self.call.turn_contexts.pop(number, None)
-            if not repair.reply:
-                return
-            if _passive_signal(text):
-                question_key = (question, source, self.task_revision,
-                    boundary.get('businessRequestId') if type(boundary) is dict else None)
-                if question_key == self._passive_question_reasked:
-                    return
-                self._passive_question_reasked = question_key
-            binding = self._spoken_question if question else None
-            self._enqueue(repair.reply, turn, kind='local',
-                question_binding=binding if question and repair.reply.endswith(question) else None)
-            if repair.resume_question and self._question_current(binding):
-                self._enqueue(question, turn, kind='local', question_binding=binding)
-            elif label and (not question or source == 'local_clarification'):
-                # A caller can greet while the actual control is queued but
-                # has not begun. Input invalidation must not lose that question.
-                self._reask_control(turn)
-            return
-        kind = _question_kind(text)
-        if kind == 'frustration':
-            self.call.turn_contexts.pop(number, None)
-            recent_rejection = any(_missing_name_rejection(item) for item in tuple(self._raw)[:-1])
-            pending_rejection = any(_missing_name_rejection(item[1]) for item in self._pending)
-            question = self._current_question()
-            if recent_rejection and pending_rejection:
-                response = ('Lassen Sie uns den Namen richtig aufnehmen. Wie lautet er? '
-                            'Sie können ihn buchstabieren.')
-            elif question and len(question) <= 350:
-                response = ('Bleiben wir bei der aktuellen Rückfrage: „' + question +
-                            '“ Soll ich sie näher erklären?')
-            else:
-                response = 'Ich höre, dass Sie verärgert sind. Was möchten Sie als Nächstes klären?'
-            self._enqueue(response, turn, kind='local',
-                observation=getattr(self.call.dialog, 'observation_revision', 0))
-            return
-        rejected_name = _missing_name_rejection(text) or bound_name_rejection
-        clarification = self._correction_question()
-        if self._backend_unavailable and not (self._bootstrap_state == 'failed' and kind is not None):
-            self.call.turn_contexts.pop(number, None)
-            repeat = re.sub(r'[\s?!.,]+', ' ', text.casefold()).strip() in {
-                'wiederhole bitte die letzte rückmeldung', 'bitte wiederhole die letzte antwort',
-                'wiederhole das bitte', 'kannst du das bitte wiederholen'}
-            if kind is None and not repeat:
-                self.task_revision += 1
-                self._outputs.clear()
-                self._pending.append(turn)
-            self._enqueue(clarification if rejected_name else self._repeat_last_reply() if repeat else self._status(),
-                          turn, kind='recovery')
-            return
-        if kind is not None:
-            self.call.turn_contexts.pop(number, None)
-            if self._local_questions.full():
-                self._enqueue(self._status(), turn, kind='status')
-            else:
-                self._local_questions.put_nowait((turn, kind, self.epoch))
-            return
-        if self.bootstrap_pending:
-            # The first intent waits for real readiness. Further early data is
-            # context, never an answer to a question that has not arrived yet.
-            if self._pending:
-                self._retain_supplement(turn)
-            else:
-                self._bootstrap_onset = onset
-                self._pending.append(turn)
-            return
-        if self._backend is not None and not self._backend.done():
-            if _name_correction(text) or bound_name_rejection:
-                self._remember_name_correction(turn, self._request)
-                self._correction_request = self._request
-                self._spoken_question = None
-            self._retain_supplement(turn)
-            if _name_correction(text) or bound_name_rejection:
-                self._enqueue(clarification, turn, kind='local')
-            return
-        if _person_name_control(boundary) and not _polar_answer(text) and not rejected_name:
-            # ASR supplies no verified person-name confidence. Every first name
-            # follows the same exact readback rule, regardless of its spelling.
-            self._hold_name_candidate(turn)
-            return
-        corrective = (_name_correction(text) or bool(re.match(
-            r'\s*nein\b[\s,:;]+\S+', text, re.IGNORECASE)))
-        if (label and _polar(label) and self._correction_request != self._request
-                and not corrective
-                and onset != (label, 'servicenow_input_control', True,
-                              boundary.get('businessRequestId', ''), self.task_revision)):
-            self._retain_supplement(turn)
-            self._reask_control(turn)
-            return
-        self._queue_business_input(turn, rejected_name=rejected_name)
+        label = boundary.get('label', '') if type(boundary) is dict else ''
+        self._submission_onsets[turn[3]] = dict(onset=onset,
+            current_complete=bool(label and onset == (label, 'servicenow_input_control', True,
+                boundary.get('businessRequestId', ''), self.task_revision)
+            and self._question_current(self._spoken_question)
+            and self._speech is self._spoken_question))
+        self._queue_business_input(turn)
+        # Local speech is optional. It never consumes or replaces the raw FIFO.
+        if not self._local_questions.full():
+            self._local_questions.put_nowait((turn, 'help', self.epoch))
 
-    def _queue_business_input(self, turn, *, rejected_name=False):
+    def _queue_business_input(self, turn):
         self._spoken_question = self._interrupted_speech = None
-        if rejected_name:
-            self._remember_name_correction(turn, self._request + 1)
-        elif (self._name_correction_context is not None
-              and self._name_correction_context['request'] == self._request):
-            # A fresh caller answer goes raw to ServiceNow. It is not local
-            # name normalization or approval, even if it contains only letters.
-            self._name_correction_context.update(request=self._request + 1,
-                needs_spelling=False, wait_sent=False)
         if self._request:
             self.task_revision += 1
             self._outputs.clear()
         was_busy = self.busy
         self._pending.append(turn)
         if was_busy:
-            # The original is queued, never rewritten or posted as business
-            # input to a busy VA; the optional context channel is separate.
+            # Optional prompt context can describe an input, never retire its send.
             self._queue_context_update(turn)
-        if rejected_name:
-            self._enqueue(self._correction_question(), turn, kind='local')
 
-    def _hold_name_candidate(self, turn):
-        boundary = self.call.dialog.input_boundary
-        previous = self._name_candidate
-        if previous is not None:
-            self.call.turn_contexts.pop(previous['turn'][2], None)
-        question = 'Ich habe „' + turn[1] + '“ verstanden. Ist das genau richtig?'
-        binding = dict(question=question, control_label=boundary['label'],
-            source='local_clarification', binding=boundary.get('businessRequestId', ''),
-            task_revision=self.task_revision)
-        # Keep the original locally. Neither the name nor a later yes is a
-        # supplement/context update before this exact readback is confirmed.
-        self._name_candidate = dict(turn=turn, question_binding=binding)
-        self._enqueue(question, turn, kind='local', question_binding=binding)
-
-    def _answer_name_readback(self, turn, onset):
-        candidate = self._name_candidate
-        if candidate is None:
-            return False
-        text = turn[1]
-        binding = candidate['question_binding']
-        current = (_person_name_control(getattr(self.call.dialog, 'input_boundary', None))
-                   and self._question_current(binding))
-        negative = (bool(re.match(r'^nein(?: |$)', _progress_key(text))) or _name_correction(text)
-                    or _missing_name_rejection(text))
-        if not current:
-            self._name_candidate = None
-            self.call.turn_contexts.pop(candidate['turn'][2], None)
-            if _polar_answer(text) or negative:
-                self.call.turn_contexts.pop(turn[2], None)
-                self._reask_control(turn)
-                return True
-            return False
-        if negative:
-            self._name_candidate = None
-            self.call.turn_contexts.pop(candidate['turn'][2], None)
-            self.call.turn_contexts.pop(turn[2], None)
-            self._remember_name_correction(turn, self._request)
-            self._correction_request = self._request
-            self._reask_control(turn)
-            return True
-        if not _polar_answer(text):
-            return False
-        self.call.turn_contexts.pop(turn[2], None)
-        ready = (onset == (binding['question'], 'local_clarification', True,
-                           binding['binding'], binding['task_revision'])
-                 and self._question_current(self._spoken_question)
-                 and self._speech is self._spoken_question
-                 and self._spoken_question['question'] == binding['question'])
-        if not ready:
-            self._enqueue(binding['question'], turn, kind='local', question_binding=binding)
-            return True
-        self._name_candidate = None
-        self._queue_business_input(candidate['turn'])
-        self._enqueue('Danke für die Bestätigung.', turn, kind='confirmation_ack')
-        return True
-
-    @staticmethod
-    def _correction_question():
-        return ('Bitte buchstabieren Sie zuerst nur den Vornamen. '
-                'Den Nachnamen klären wir danach.')
-
-    def _remember_name_correction(self, turn, request):
-        self._name_correction_context = dict(request=request, original=turn,
-            needs_spelling=True, spelling_turns=[], offered=set(), wait_sent=False)
-
-    def _offer_held_spelling(self, turn):
-        context = self._name_correction_context
-        boundary = getattr(self.call.dialog, 'input_boundary', None)
-        if (context is None or context['request'] != self._request
-                or not _spelling_control(boundary)):
-            return
-        for original in context['spelling_turns']:
-            if id(original) in context['offered'] or len(original[1]) > 600:
-                continue
-            text = ('Sie hatten bereits buchstabiert: „' + original[1] +
-                    '“ Bitte antworten Sie jetzt mit der Schreibweise passend zur aktuellen Frage; '
-                    'korrigieren Sie sie bei Bedarf.')
-            if self._enqueue(text, turn, kind='local'):
-                context['offered'].add(id(original))
-
-    def _retain_supplement(self, turn):
-        self._supplements.append((turn, self.call.turn_contexts.get(turn[2])))
-        self._queue_context_update(turn)
-        context = self._name_correction_context
-        if (context is not None and context['request'] == self._request
-                and _spelled_letters(turn[1]) and not _mixed_negative(turn[1])):
-            context['spelling_turns'].append(turn)
-            if len(turn[1]) <= 600:
-                self._enqueue('Ich habe diese Buchstaben aufgenommen: „' + turn[1] +
-                    '“ Ich halte sie für die nächste Namensrückfrage fest.', turn, kind='local')
-        LOG.info('Voice independent input call=%s stage=held_context turn=%s request=%s',
-                 self.call.call_id, turn[2], self._request)
 
     def _reask_control(self, turn):
-        if self._bootstrap_state != 'ready':
-            # Partial startup controls cannot become valid queued questions
-            # merely because readiness changes while another output plays.
-            return
         boundary = getattr(self.call.dialog, 'input_boundary', None)
-        if type(boundary) is not dict or boundary.get('source') != 'servicenow_input_control':
-            if self._correction_request == self._request:
-                self._enqueue(self._correction_question(), turn, kind='local')
-            return
-        label = boundary.get('label', '')
-        if not label:
-            return
-        correcting = self._correction_request == self._request
-        question = self._correction_question() if correcting else label
-        binding = dict(question=question, control_label=label,
-            source='local_clarification' if correcting else 'servicenow_input_control',
-            binding=boundary.get('businessRequestId', ''), task_revision=self.task_revision)
-        self._enqueue(question, turn, kind='local', question_binding=binding)
+        if (self._bootstrap_state == 'ready' and type(boundary) is dict
+                and boundary.get('source') == 'servicenow_input_control' and boundary.get('label')):
+            self._enqueue(boundary['label'], turn, kind='backend')
 
     def _queue_context_update(self, turn):
         if (self._context_publisher is None or not self._live() or self._context_full
@@ -1061,18 +696,12 @@ class NativeDuplex:
         self._context_covered.add(id(turn))
         prefix = tuple(self._pending)
         supplements = tuple(self._supplements)
-        confirmations = {'ja', 'nein', 'ok', 'okay', 'genau', 'richtig', 'korrekt',
-            'bestätigt', 'bestätigen', 'ich bestätige', 'ich bestätige das',
-            'einverstanden', 'ja bitte', 'ja genau', 'nein danke'}
-        retirable = all(id(item) in self._context_covered and
-            re.sub(r'[\s.!?,;:]+', ' ', item[1].casefold()).strip() not in confirmations
-            for item in prefix + tuple(item[0] for item in supplements))
         # Coalesce unsent revisions; the newest snapshot still contains every
         # raw update in order. Only one context request may be in flight.
         self._context_candidate = {'request': self._request,
             'revision': self._context_publish_revision, 'snapshot': snapshot,
             'task_revision': self.task_revision, 'prefix': prefix, 'supplements': supplements,
-            'retirable': retirable,
+            'retirable': False,
             'done': asyncio.Event(), 'ack': None}
         self._context_pending = self._context_candidate
         self._context_ready.set()
@@ -1102,89 +731,28 @@ class NativeDuplex:
                 item['done'].set()
 
     async def _reconcile_context(self, turn, replies):
-        """Retire only exactly covered queued input after an exact prompt receipt."""
-        item = self._context_candidate
-        if item is None or self._context_reconciler is None or not item['retirable']:
-            return False
-        prefix, supplements, epoch = item['prefix'], item['supplements'], self.epoch
-
-        def current():
-            incoming = self._incoming_turn
-            return (self._live() and self._context_candidate is item
-                and item['request'] == self._request
-                and item['revision'] == self._context_publish_revision
-                and item['task_revision'] == self.task_revision and self.epoch == epoch
-                and bool(prefix or supplements) and len(self._pending) == len(prefix)
-                and all(left is right for left, right in zip(self._pending, prefix))
-                and len(self._supplements) == len(supplements)
-                and all(left is right for left, right in zip(self._supplements, supplements))
-                and not (incoming is not None and incoming.done())
-                and self.call.recognized_turns.empty())
-
-        if not current():
-            return False
-        try:
-            await asyncio.wait_for(item['done'].wait(), 12)
-            if not current():
-                return False
-            ack = item['ack']
-            boundary = getattr(self.call.dialog, 'input_boundary', None)
-            keys = ('contextRequestId', 'businessRequestId', 'conversationId', 'executionPlanId')
-            if (type(ack) is not dict or ack.get('contextStored') is not True
-                    or ack.get('revision') != item['revision']
-                    or any(type(ack.get(key)) is not str or not re.fullmatch(r'[0-9a-f]{32}', ack[key])
-                           for key in keys)
-                    or type(boundary) is not dict
-                    or boundary.get('source') != 'servicenow_input_control'
-                    or boundary.get('businessRequestId') != ack['businessRequestId']):
-                return False
-            status = await self._context_reconciler(item['revision'])
-            if (not current() or getattr(self.call.dialog, 'input_boundary', None) is not boundary
-                    or type(status) is not dict or status.get('state') != 'context_prompt_status'
-                    or status.get('revision') != item['revision']
-                    or status.get('contextStored') is not True
-                    or status.get('inputBoundaryConfirmed') is not True
-                    or status.get('promptIncluded') is not True or status.get('ingested') is not True
-                    or any(status.get(key) != ack[key] for key in keys)):
-                return False
-        except asyncio.CancelledError:
-            raise
-        except Exception as error:
-            LOG.warning('Voice independent context stage=status_unavailable type=%s', type(error).__name__)
-            return False
-        for pending in prefix:
-            self._pending.popleft()
-            self._context_covered.discard(id(pending))
-            self.call.turn_contexts.pop(pending[2], None)
-        for original, _ in supplements:
-            self._supplements.popleft()
-            self._context_covered.discard(id(original))
-            self.call.turn_contexts.pop(original[2], None)
-        self._context_candidate = None
-        if self._context_pending is item:
-            self._context_pending = None
-        self.task_revision += 1
-        self._reply_revision = self.task_revision
-        self._outputs.clear()
-        latest = boundary.get('label') or (replies[-1] if prefix and replies else '')
-        # Exact prompt/input proof can advance this actual boundary callback;
-        # unrelated earlier replies retain their old revision and stay fenced.
-        self._public_findings = deque((replace(item, task_revision=self.task_revision)
-            if item.request == self._request and item.text == latest else item
-            for item in self._public_findings), maxlen=8)
-        self._enqueue(latest, turn, kind='backend')
-        LOG.info('Voice independent context stage=prompt_included revision=%d retired=%d supplements=%d; '
-                 'no task success or approval inferred', item['revision'],
-                 len(prefix) + len(supplements), len(supplements))
-        return True
+        """Prompt-context uptake never replaces delivery of original input."""
+        return False
 
     async def _business(self, turn):
         _, text, number, _, _ = turn
+        submitted = self._submission_onsets.pop(turn[3], None)
+        boundary = getattr(self.call.dialog, 'input_boundary', None)
+        if (_polar_answer(text) and type(boundary) is dict
+                and boundary.get('source') == 'servicenow_input_control'
+                and _polar(boundary.get('label', ''))):
+            expected = (boundary['label'], 'servicenow_input_control', True,
+                        boundary.get('businessRequestId', ''))
+            if (submitted is None or not submitted['current_complete']
+                    or tuple(submitted['onset'][:4]) != expected):
+                # A bare old yes/no cannot become the answer to a new native
+                # confirmation. The native agent owns the confirmation itself.
+                self.call.turn_contexts.pop(number, None)
+                self._reask_control(turn)
+                LOG.info('Voice independent input call=%s stage=stale_confirmation_held', self.call.call_id)
+                return
         revision = self.task_revision
         self._request += 1
-        name_context = self._name_correction_context
-        self._correction_request = (self._request if name_context is not None
-            and name_context['request'] == self._request and name_context['needs_spelling'] else None)
         request = self._request
         self._public_findings.clear()
         self._public_sequence = 0
@@ -1254,13 +822,6 @@ class NativeDuplex:
             # inferred question or approval. A callback is not guaranteed.
             if label not in replies:
                 self.call.dialog.record_public_reply(label)
-            if self._correction_request == request and not _spelling_control(self.call.dialog.input_boundary):
-                # Preserve the old callback as backend evidence; do not repeat
-                # a name the caller has already explicitly rejected.
-                self._reask_control(turn)
-                return
-            if _spelling_control(self.call.dialog.input_boundary):
-                self._correction_request = None
             if label not in published:
                 sequence = next((seq for text, seq in reversed(deferred) if text == label), None)
                 if sequence is None:
@@ -1287,8 +848,6 @@ class NativeDuplex:
             for reply in release:
                 if reply not in admitted_replies:
                     admit(reply)
-        if revision == self.task_revision and not self._pending:
-            self._offer_held_spelling(turn)
         self._queue_dialogue_observation()
 
     def _start_worker(self, name, coroutine):
@@ -1309,7 +868,7 @@ class NativeDuplex:
                         self.call.call_id, task.get_name())
 
     def _settle_bootstrap(self, opening):
-        """Observe the call-owned task once; never create, retry or cancel it."""
+        """Settle the same owned bootstrap without consuming any caller FIFO item."""
         try:
             replies = opening.result()
             if type(replies) is not list or any(type(reply) is not str for reply in replies):
@@ -1317,44 +876,23 @@ class NativeDuplex:
         except (asyncio.CancelledError, Exception) as error:
             self._bootstrap_state = 'failed'
             self._bootstrap_failure_reason = startup_reason(error)
+            LOG.warning('Voice independent startup call=%s stage=failed type=%s reason=%s',
+                        self.call.call_id, type(error).__name__, self._bootstrap_failure_reason)
             self._backend_unavailable = True
             self._reply_revision = None
             self.interrupt()
             self._enqueue(self._status(), kind='recovery')
-            LOG.warning('Voice independent startup call=%s stage=unavailable type=%s reason=%s local_dialogue=retained',
-                        self.call.call_id, type(error).__name__, startup_reason(error))
             return
         self._bootstrap_state = 'ready'
         publish_metadata = getattr(self.call, 'publish_dialog_metadata', None)
         if callable(publish_metadata):
             publish_metadata()
-        LOG.info('Voice independent startup call=%s stage=ready pending=%d supplements=%d',
-                 self.call.call_id, len(self._pending), len(self._supplements))
-        # New caller intent supersedes startup output. Original early data
-        # remains in its FIFO/context storage until genuine consumption proof.
-        early_input = bool(self._pending or self._supplements)
-        boundary = getattr(self.call.dialog, 'input_boundary', None)
-        onset, self._bootstrap_onset = self._bootstrap_onset, None
-        if self._pending and _person_name_control(boundary):
-            original = self._pending.popleft()
-            solicited_name = (onset is not None and onset[1] == 'greeting' and onset[2]
-                and not _polar_answer(original[1])
-                and _person_name_control(dict(source='servicenow_input_control',
-                    controlType='InputText', label=onset[0])))
-            if solicited_name:
-                # A fully emitted earlier name question can support readback;
-                # the new actual input boundary still requires explicit yes.
-                self._hold_name_candidate(original)
-            else:
-                # Never turn an earlier intent/unprompted datum into an answer
-                # to a new name field. Retain it and ask the actual question.
-                self._supplements.appendleft((original, self.call.turn_contexts.get(original[2])))
-                self._enqueue(boundary['label'], kind='backend')
-        if not early_input:
+        self._bootstrap_onset = None
+        LOG.info('Voice independent startup call=%s stage=ready pending=%d', self.call.call_id, len(self._pending))
+        if not self._pending:
             introduction = getattr(self.call.config, 'greeting', '')
             selection = getattr(self.call.call_settings, 'selection_prompt', '')
-            own_intro = ' '.join(part for part in (introduction, selection) if part)
-            seen = {value for value in (introduction, own_intro) if value}
+            seen = {value for value in (introduction, ' '.join(p for p in (introduction, selection) if p)) if value}
             for reply in replies:
                 if reply and reply not in seen:
                     seen.add(reply)
@@ -1515,6 +1053,20 @@ class NativeDuplex:
                 context_updates_enabled=self._context_publisher is not None and not self.bootstrap_pending,
                 pending_count=len(self._pending), supplement_count=len(self._supplements),
                 question_source=question_source)))
+        # Optional history is admitted last, after current processing and
+        # capability limits, so it cannot overflow the final wire snapshot.
+        # Complete emitted PCM is conversation context, not proof of a
+        # business result or physical-device playback.
+        for spoken in tuple(self._spoken_history)[-3:]:
+            fact = {name: key[name] for name in ('call_id', 'task_id', 'task_revision',
+                                               'context_revision', 'observation_revision')}
+            fact.update(evidence_id='spoken-assistant-' + str(spoken['sequence']),
+                source_event='complete_emitted_assistant_speech', sequence=spoken['sequence'],
+                observed_at=spoken['observed_at'], text=spoken['text'], superseded=False)
+            candidate = dict(snapshot, public_findings=snapshot['public_findings'] + (fact,))
+            encoded = json.dumps(candidate, ensure_ascii=False, separators=(',', ':'))
+            if len(encoded) <= 10000 and len(encoded.encode('utf-8')) <= 32768:
+                snapshot = candidate
         return key, snapshot, observation
 
     def _admit_conversation(self, candidate, turn, epoch, observation, snapshot):
@@ -1527,7 +1079,9 @@ class NativeDuplex:
         forbidden = re.search(r'(?i)(?:<|https?://|\b(?:public-reply|processing-label)-|'
             r'\b[0-9a-f]{16,}\b|\b(?:analysis|reasoning|tool_call|'
             r'bestellt|abgeschlossen|genehmigt|freigegeben|erledigt|bestätigt)\b)', text)
-        source = ' '.join(fact['text'] for fact in snapshot['public_findings'])
+        source = ' '.join(fact['text'] for fact in snapshot['public_findings']
+                          if fact['source_event'] != 'complete_emitted_assistant_speech')
+        source += ' ' + ' '.join(snapshot['raw_inputs']) + ' ' + snapshot.get('question', '')
         unbound_numbers = any(number not in re.findall(r'\d+', source)
                               for number in re.findall(r'\d+', text))
         identifiers = (self.call.call_id, self.call.call_id + '-va', turn[3],
@@ -1572,18 +1126,6 @@ class NativeDuplex:
             # An explicit progress question needs observed state, not a model's
             # guess about hidden agent work or the meaning of silence.
             self._enqueue(self._status(), turn, kind='status',
-                observation=getattr(self.call.dialog, 'observation_revision', 0))
-            return
-        if kind in ('spelling_help', 'name_help'):
-            # Explain the existing readback procedure without waiting for a
-            # model or changing any current ServiceNow data/approval state.
-            text = ('Gern. Nennen Sie die Buchstaben bitte einzeln. Bei Bedarf können Sie '
-                    'Vor- und Nachnamen getrennt buchstabieren. Danach lesen wir die '
-                    'Schreibweise zur Bestätigung vor.' if kind == 'spelling_help' else
-                    'Damit ein Hörfehler nicht weitergegeben wird, lesen wir den Namen '
-                    'noch einmal vor. Bestätigen Sie ihn nur, wenn die vollständige '
-                    'Schreibweise stimmt.')
-            self._enqueue(text, turn, kind='local',
                 observation=getattr(self.call.dialog, 'observation_revision', 0))
             return
         def emit_fallback(reason='unavailable'):
@@ -1791,6 +1333,8 @@ class NativeDuplex:
         self._context_covered.clear()
         self._supplements.clear()
         self._input_questions.clear()
+        self._submission_onsets.clear()
+        self._spoken_history.clear()
         self._incoming_turn = None
         current = asyncio.current_task()
         tasks = set(self._workers) | self._invalidations | self._observations
