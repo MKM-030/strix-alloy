@@ -363,6 +363,32 @@ def validate_halogen_capacity_profile(configuration, repo):
             raise ValueError('Capacity health expectation differs: ' + key)
 
 
+def halogen_request_entry_guard():
+    """Fresh Windows admission for each opt-in request, separate from runtime reserve."""
+    from host_frames import frame
+    began = time.monotonic()
+    snapshot = frame()
+    elapsed = time.monotonic() - began
+    if not math.isfinite(elapsed) or not 0 <= elapsed < 1:
+        raise ValueError('Request-entry memory sample is stale or slow')
+    fields = ('available_bytes', 'committed_bytes', 'commit_limit_bytes', 'commit_headroom_bytes')
+    if (type(snapshot) is not dict or any(type(snapshot.get(key)) is not int
+            or snapshot[key] < 0 for key in fields)):
+        raise ValueError('Invalid request-entry physical/commit telemetry')
+    if (snapshot['committed_bytes'] > snapshot['commit_limit_bytes']
+            or snapshot['commit_headroom_bytes'] != snapshot['commit_limit_bytes'] - snapshot['committed_bytes']):
+        raise ValueError('Inconsistent request-entry commit telemetry')
+    if min(snapshot['available_bytes'], snapshot['commit_headroom_bytes']) < 22 * 1024 ** 3:
+        raise ValueError('Request entry requires 22/22 GiB physical/commit headroom')
+
+
+def install_halogen_request_entry_guard(configuration, gateway, repo):
+    engine = configuration.get('engine', {})
+    if engine.get('kind') == 'halogen' and type(engine.get('slots')) is int and engine['slots'] == 2:
+        validate_halogen_capacity_profile(configuration, repo)
+        gateway._inference_entry_guard = halogen_request_entry_guard
+
+
 def validate_engine(engine, repo):
     if engine.get('kind')=='halogen':
         halogen_draft_arguments(engine)
@@ -612,6 +638,7 @@ async def run(config_path, port):
             configuration['backend'].get('context') != 262144):
         raise ValueError('Private HSA requires the singleton Stock8K gateway with its 18 GiB reserve')
     gateway=load_config(config_path)
+    install_halogen_request_entry_guard(configuration, gateway, ROOT.parent)
     if Path(config_path).read_bytes()!=profile_bytes:
         raise ValueError('Selected profile changed while loading')
     if not 1024<=port<=65535 or int(gateway.backend.upstream.rsplit(':',1)[1])==port:
