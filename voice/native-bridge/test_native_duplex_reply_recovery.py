@@ -110,7 +110,7 @@ class ReplyRecoveryTests(unittest.IsolatedAsyncioTestCase):
     async def test_new_input_during_owned_close_cannot_receive_the_old_turn_fallback(self):
         self.first.close_gate = asyncio.Event()
         transcripts = []
-        def transcript(turn, role, text):
+        def transcript(turn, role, text, *, started_at=None):
             transcripts.append((turn[3], role, text))
         self.call.transcript = transcript
         self.call.feed('Welche Unterstützung bieten Sie?', 1)
@@ -120,7 +120,7 @@ class ReplyRecoveryTests(unittest.IsolatedAsyncioTestCase):
         self.first.close_gate.set()
         await self.until(lambda: bool(self.second.inputs))
         await self.until(lambda: not self.lane._local_busy and not self.lane.output_pending
-                         and not self.call.synthesis_active)
+                         and not self.call.synthesis_active and any(turn == '2' for turn, _, _ in transcripts))
         self.assertTrue(any(turn == '2' for turn, _, _ in transcripts))
         self.assertFalse(any(turn == '1' for turn, _, _ in transcripts),
                          'Old fallback must not be rebound to a new caller epoch during close')

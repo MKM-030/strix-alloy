@@ -26,6 +26,7 @@ from conversation_repair import (conversational_snapshot,
 from conversation_claims import unproven_storage_or_check_claim
 from native_backend import BackendControlChanged, BackendEvent, BackendState, ControlBinding, ControlGate
 from spoken_output import spoken_text
+from transcript_groups import TranscriptGroups
 from servicenow_voice_context import (build_servicenow_voice_context,
                                      append_servicenow_context)
 
@@ -326,6 +327,7 @@ class _Output:
     control_binding: object = None
     backend_event: object = None
     fallback_snapshot: object = None
+    transcript_part: object = None
 
 
 @dataclass(frozen=True)
@@ -347,6 +349,7 @@ class NativeDuplex:
         self._backend_input_closed = False
         self._turn_speech_started = deque(maxlen=128)
         self._help_failure_seen = deque(maxlen=16)
+        self._transcripts = TranscriptGroups()
         if conversation_factory is open_conversation:
             self._factory = lambda url, call_id, epoch: open_conversation(url, call_id, epoch,
                 controller_url=getattr(call.config, 'conversation_http_url', ''),
@@ -429,6 +432,8 @@ class NativeDuplex:
 
     def _update_speech_cursor(self):
         state = self._speech
+        if state is not None and state['interrupted']:
+            self._interrupt_transcript(state, 'speech_interrupted')
         if state is not None and not state['interrupted']:
             playback = self.call.playback
             state['accepted_samples'] = max(0, playback.accepted_samples - state['accepted_start'])
@@ -448,6 +453,8 @@ class NativeDuplex:
                 if self._synthesis_task is not None:
                     self._synthesis_task.cancel()
                 LOG.info('Voice independent output call=%s stage=hard_lease_revoked', self.call.call_id)
+                self._interrupt_transcript(state, 'hard_lease_revoked')
+                self._sync_transcript_groups()
                 return
             if (state.get('complete') and state['accepted_samples'] > 0
                     and state['emitted_samples'] == state['accepted_samples']
@@ -460,12 +467,32 @@ class NativeDuplex:
                     if record is not None:
                         record['state'] = 'fully_host_emitted'
                 state['history_recorded'] = True
+                part = getattr(state.get('output'), 'transcript_part', None)
+                if part is not None:
+                    self._transcripts.emitted(*part)
                 if 0 < len(state['text']) <= 2000:
                     self._spoken_sequence += 1
                     self._spoken_history.append(dict(text=state['text'], sequence=self._spoken_sequence,
                                                      observed_at=self.clock()))
                     while sum(len(item['text']) for item in self._spoken_history) > 4000:
                         self._spoken_history.popleft()
+        self._sync_transcript_groups()
+
+    def _interrupt_transcript(self, state, reason):
+        part = getattr(state.get('output'), 'transcript_part', None)
+        if part is not None:
+            self._transcripts.interrupt(part[0], part[1], reason)
+
+    def _sync_transcript_groups(self):
+        items = [*self._outputs, *self._backend_outputs, self._active_output]
+        self._transcripts.retain_pending({item.transcript_part[2] for item in items
+            if item is not None and item.transcript_part is not None})
+        for group in self._transcripts.take_ready():
+            try:
+                self.call.transcript(group.turn, 'assistant', group.text, started_at=group.first_pcm_at)
+            except Exception as error:
+                LOG.warning('Voice transcript group call=%s stage=publish_failed type=%s',
+                            self.call.call_id, type(error).__name__)
 
     def _question_current(self, state):
         if state is not None and state.get('control_binding') is not None:
@@ -543,6 +570,8 @@ class NativeDuplex:
     def _finish_speech(self, state, *, complete):
         self._update_speech_cursor()
         state['complete'] = complete and not state['interrupted']
+        if not state['complete']:
+            self._interrupt_transcript(state, 'speech_incomplete')
         self._update_speech_cursor()
 
     def _buffered_confirmation_ack(self):
@@ -614,7 +643,8 @@ class NativeDuplex:
             self._raw.popleft()
 
     def _enqueue(self, text, turn=None, *, kind='local', observation=None, request=None, identity=None,
-                 expires_at=None, question_binding=None, control_binding=None, fallback_snapshot=None):
+                 expires_at=None, question_binding=None, control_binding=None, fallback_snapshot=None,
+                 transcript_part=None):
         if not text or not self._live():
             return
         if kind == 'backend' and _generic_processing_reply(text):
@@ -632,7 +662,7 @@ class NativeDuplex:
                 raise RuntimeError('Public backend output queue full')
         self._outputs.append(_Output(text, turn, self.epoch, self.task_revision,
             observation, kind, request, identity, expires_at, question_binding, control_binding,
-            fallback_snapshot=fallback_snapshot))
+            fallback_snapshot=fallback_snapshot, transcript_part=transcript_part))
         self._output_ready.set()
         return True
 
@@ -1508,11 +1538,12 @@ class NativeDuplex:
             observation = _PendingObservation(tuple(turn), epoch, self._dialogue_signature(snapshot, key))
         return key, snapshot, observation
 
-    def _admit_conversation(self, candidate, turn, epoch, observation, snapshot):
-        return self._release_conversation_sentence(candidate, turn, epoch, observation, snapshot) == 'enqueued'
+    def _admit_conversation(self, candidate, turn, epoch, observation, snapshot, *, transcript_group=None):
+        return self._release_conversation_sentence(candidate, turn, epoch, observation, snapshot,
+            transcript_group=transcript_group) == 'enqueued'
 
     def _release_conversation_sentence(self, candidate, turn, epoch, observation, snapshot, *,
-                                       skip_unsupported_claim=False):
+                                       skip_unsupported_claim=False, transcript_group=None):
         """Report actual queue admission separately from a safe streaming skip."""
         if epoch != self.epoch:
             self._log_dialogue_discard('caller_epoch_changed', 'sentence')
@@ -1566,8 +1597,16 @@ class NativeDuplex:
             if skip_unsupported_claim and reason == 'unproven_storage_or_check_claim':
                 return 'skipped_claim'
             return 'rejected'
+        part = None
+        if transcript_group is not None:
+            key, owner = transcript_group
+            part = (key, owner, object())
+            try:
+                self._transcripts.admit(key, owner, turn, part[2], text)
+            except ValueError:
+                LOG.info('Voice transcript group call=%s stage=bounded_overflow', self.call.call_id)
         admitted = self._enqueue(text, turn, kind='conversation', observation=observation,
-                                 identity=candidate.identity)
+                                 identity=candidate.identity, transcript_part=part)
         if not admitted:
             self._log_dialogue_discard('output_queue_rejected', 'sentence')
         return 'enqueued' if admitted else 'rejected'
@@ -1638,6 +1677,7 @@ class NativeDuplex:
         if self._model_failed:
             emit_fallback('model_failed')
             return
+        transcript_group = None
         try:
             if self._invalidations:
                 await asyncio.gather(*tuple(self._invalidations), return_exceptions=True)
@@ -1654,11 +1694,16 @@ class NativeDuplex:
             key, snapshot, observation = self._dialogue_snapshot(turn, epoch)
             self._dialogue_observation_state = (self.conversation,
                 self._dialogue_signature(snapshot, key), object())
+            try:
+                transcript_group = (self._transcripts.open(self.conversation, turn), self.conversation)
+            except ValueError:
+                transcript_group = (None, self.conversation)
+                LOG.info('Voice transcript group call=%s stage=bounded_overflow', self.call.call_id)
             admitted = 0
             async def sentence(candidate):
                 nonlocal admitted
                 disposition = self._release_conversation_sentence(candidate, turn, epoch, observation, snapshot,
-                                                                    skip_unsupported_claim=True)
+                    skip_unsupported_claim=True, transcript_group=transcript_group)
                 if disposition == 'skipped_claim':
                     return
                 if disposition != 'enqueued':
@@ -1712,7 +1757,8 @@ class NativeDuplex:
                 else:
                     self._log_dialogue_discard('caller_epoch_changed', 'failure_cleanup')
                 return
-            if not streaming and not self._admit_conversation(candidate, turn, epoch, observation, snapshot):
+            if not streaming and not self._admit_conversation(candidate, turn, epoch, observation, snapshot,
+                                                              transcript_group=transcript_group):
                 emit_fallback()
             elif streaming and not admitted:
                 emit_fallback()
@@ -1730,6 +1776,10 @@ class NativeDuplex:
             LOG.warning('Voice independent dialogue stage=unavailable type=%s', type(error).__name__)
             if epoch == self.epoch:
                 emit_fallback('controller_busy' if busy else 'unavailable')
+        finally:
+            if transcript_group is not None:
+                self._transcripts.finish(*transcript_group)
+                self._sync_transcript_groups()
 
     async def _speak_loop(self):
         while self._live():
@@ -1812,12 +1862,22 @@ class NativeDuplex:
                         state['pcm_bytes'] += len(chunk)
                     if first:
                         first = False
+                        if item.transcript_part is not None:
+                            self._transcripts.started(*item.transcript_part, self.clock())
                         if item.turn is not None:
                             self._turn_speech_started.append(item.turn[3])
                         LOG.info('Voice independent output call=%s stage=first_pcm kind=%s seconds=%.3f',
                                  self.call.call_id, item.kind, self.clock() - started)
                         try:
-                            if item.turn is not None:
+                            if item.kind in ('backend', 'backend_control'):
+                                self._transcripts.before_native()
+                                self._sync_transcript_groups()
+                            if item.control_binding is not None:
+                                self.call.transcript(item.turn, 'assistant', item.text,
+                                                     control_type=item.control_binding.control_type)
+                            elif item.transcript_part is not None:
+                                pass  # Only completed, host-emitted response text is published later.
+                            elif item.turn is not None:
                                 self.call.transcript(item.turn, 'assistant', item.text)
                             else:
                                 self.call.notice('PROCESSING_UPDATE', item.text)
@@ -1884,6 +1944,9 @@ class NativeDuplex:
     async def close(self):
         if self._closed:
             return
+        self._update_speech_cursor()
+        self._transcripts.close()
+        self._sync_transcript_groups()
         self._closed = True
         self._dialogue_observation_state = None
         self._outputs.clear()

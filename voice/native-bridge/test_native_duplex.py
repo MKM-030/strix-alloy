@@ -88,7 +88,7 @@ class FakeCall:
     async def wait_for_user_turn(self):
         return await self.recognized_turns.get()
 
-    def transcript(self, turn, role, text):
+    def transcript(self, turn, role, text, *, started_at=None, control_type=None):
         self.events.append((role, text))
 
     def notice(self, code, text):

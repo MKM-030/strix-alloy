@@ -1519,11 +1519,19 @@ class NativeCall:
                 self.turns.task_done()
                 self._notify_input_changed()
 
-    def transcript(self, turn, role, content):
-        _, _, number, turn_id, started = turn
-        self.emit('transcript', {'role':role,'content':content,'message_id':uuid.uuid4().hex,
+    def transcript(self, turn, role, content, *, started_at=None, control_type=None):
+        if turn is None:
+            number, turn_id, started = 0, '', time.monotonic() if started_at is None else started_at
+        else:
+            _, _, number, turn_id, started = turn
+        data = {'role':role,'content':content,'message_id':uuid.uuid4().hex,
             'caller_turn_id':turn_id,'turn_num':number,
-            'latency_ms':int((time.monotonic()-started)*1000)})
+            'latency_ms':max(0, int(((time.monotonic() if started_at is None else started_at)-started)*1000))}
+        if control_type is not None:
+            if role != 'assistant' or control_type not in INPUT_TYPES:
+                raise ValueError('Invalid native transcript control type')
+            data.update(source='servicenow_input_control', control_type=control_type)
+        self.emit('transcript', data)
 
     async def report_backend_failure(self):
         self.failed = True

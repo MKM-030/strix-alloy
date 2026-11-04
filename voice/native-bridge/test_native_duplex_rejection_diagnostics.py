@@ -84,11 +84,13 @@ class RejectionDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         # existing mechanism only, without asserting what that sentence contained.
         call, lane, identity, turn = self.lane()
         release_audio, first_pcm = asyncio.Event(), asyncio.Event()
-        original_transcript = call.transcript
-        def transcript(*args):
-            original_transcript(*args)
-            first_pcm.set()
-        call.transcript = transcript
+        original_put = call.playback.put
+        def put(pcm, generation, **kwargs):
+            accepted = original_put(pcm, generation, **kwargs)
+            if accepted and pcm:
+                first_pcm.set()
+            return accepted
+        call.playback.put = put
         async def speech(text):
             call.spoken.append(text)
             yield bytes(480)
