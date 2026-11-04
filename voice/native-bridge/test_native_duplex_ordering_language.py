@@ -37,8 +37,6 @@ class OrderingLanguageTests(unittest.TestCase):
             'Der Laptop könnte nach Ihrer Freigabe bestellt werden.',
             'Ich kann erklären, wie ein Laptop bestellt wird.',
             'Wir besprechen, ob ein Laptop bestellt werden soll.',
-            'Falls der Laptop schon bestellt wurde, können wir die Lieferadresse prüfen.',
-            'Wenn ein Laptop bestellt wird, übernimmt ServiceNow die Ausführung.',
         ):
             with self.subTest(text=text):
                 self.assertTrue(self.admitted(text))
@@ -72,6 +70,13 @@ class OrderingLanguageTests(unittest.TestCase):
             'Es wurde nie nichts bestellt.',
             'Der Laptop wurde niemals nicht bestellt.',
             'Wenn auch der Laptop bestellt wurde, fehlt die Adresse.',
+            'Falls der Laptop schon bestellt wurde, können wir die Lieferadresse prüfen.',
+            'Wenn ein Laptop bestellt wird, übernimmt ServiceNow die Ausführung.',
+            'Falls das hilft: Ich habe den Laptop bestellt.',
+            'Wenn es hilft - der Laptop ist bestellt.',
+            'Es wurde so gut wie nichts bestellt.',
+            'Es wurde nahezu nichts bestellt.',
+            "Die Aussage 'Es wurde nichts bestellt' ist falsch.",
             'Ich habe noch keinen Laptop bestellt.',
             'Bislang wurde kein neuer Laptop bestellt.',
             'Der Laptop muss bestellt worden sein.',
