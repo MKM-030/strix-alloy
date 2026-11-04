@@ -8,6 +8,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from core import PlaybackBuffer
+from native_backend import BackendEvent, BackendState, UNSET
 from native_duplex import NativeDuplex, DurationUpdates, validate_conversation_url, _question_kind
 
 
@@ -21,21 +22,45 @@ class FakeDialog:
         self.input_boundary = None
         self.processing = None
         self.observation_revision = 0
+        self.backend_owner = object()
+        self.backend_state = self.input_control = None
+        self.business_request_id = ''
+        self._event_id = 0
 
     def record_public_reply(self, reply):
         if reply:
             self.public_replies.append(reply)
 
-    async def turn(self, text, on_reply=None, voice_context=None):
+    async def turn(self, text, on_reply=None, voice_context=None, *, on_event=None, native_control_binding=UNSET):
         self.calls.append(text)
+        self.business_request_id = f'{len(self.calls):032x}'
         await self.started.put(text)
         response = await self.release.get()
         reply = response['reply'] if isinstance(response, dict) else response
         self.input_boundary = response.get('input_boundary') if isinstance(response, dict) else None
+        if self.input_boundary is not None:
+            self.input_boundary = dict(self.input_boundary, businessRequestId=self.business_request_id)
+            self._event_id += 1
+            self.input_control = BackendEvent(self._event_id, self.business_request_id,
+                self.input_boundary['controlType'], self.input_boundary['label'],
+                'offline-control-' + str(self._event_id), self.backend_owner)
+        else:
+            self.input_control = None
+        self.backend_state = BackendState(self.business_request_id, 'MESSAGE', False, False, False, self.backend_owner)
         self.record_public_reply(reply)
         self.current_question = self.input_boundary['label'] if self.input_boundary else ''
         self.observation_revision += 1
-        await on_reply(reply)
+        if on_event is not None:
+            if self.input_control is not None and reply == self.input_control.text:
+                await on_event(self.input_control)
+            elif reply:
+                self._event_id += 1
+                await on_event(BackendEvent(self._event_id, self.business_request_id, 'OutputText',
+                    reply, '', self.backend_owner))
+            if self.input_control is not None and reply != self.input_control.text:
+                await on_event(self.input_control)
+        elif on_reply is not None:
+            await on_reply(reply)
         return [reply]
 
 

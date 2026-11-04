@@ -6,6 +6,7 @@ ServiceNow OAuth authorization are required for a native browser deployment.
 """
 import argparse
 import asyncio
+from collections import deque
 from dataclasses import dataclass, field, replace
 from functools import partial
 from fractions import Fraction
@@ -336,6 +337,7 @@ class Dialog:
         self.backend_owner = object()
         self.native_owner_id = uuid.uuid4().hex
         self.business_request_id = ''
+        self._retired_business_requests = deque(maxlen=128)
         self.backend_state = None
         self.input_control = None
         self._initial_topic_attempted = False
@@ -427,6 +429,7 @@ class Dialog:
 
     async def request(self, method, path, *, caller_authorization=None, **kwargs):
         conflict = None
+        native_conflict_received = False
         native_input = kwargs.get('json', {}).get('nativeInput') if type(kwargs.get('json')) is dict else None
         headers = {'Origin':self.config.backend_url, 'X-CSRF-Token':self.csrf}
         if caller_authorization is not None:
@@ -443,6 +446,7 @@ class Dialog:
                 # Only the trusted loopback owner can declare its cookie expired.
                 return {'ended':True,'expired':True}
             if response.status == 409 and method == 'POST' and path == '/api/message' and native_input is not None:
+                native_conflict_received = True
                 raw = bytearray()
                 async for chunk in response.content.iter_chunked(4096):
                     raw.extend(chunk)
@@ -481,7 +485,7 @@ class Dialog:
                     raise RuntimeError('ServiceNow conversation bridge unavailable') from None
             else:
                 return await response.json()
-        if conflict is not None:
+        if native_conflict_received:
             # Negative authority exists only after the exact HTTP body/context closed.
             if (type(conflict) is not dict or set(conflict) != {'source', 'dispatch', 'attemptId', 'ownerId', 'inputControl'}
                     or conflict.get('source') != 'servicenow_native_input_conflict'
@@ -686,6 +690,8 @@ class Dialog:
             request_id = ack.get('businessRequestId') if type(ack) is dict and ack.get('accepted') is True else None
             if type(request_id) is not str or not re.fullmatch(r'[0-9a-f]{32}', request_id):
                 raise BackendTurnUnavailable('Backend did not bind its accepted request')
+            if self.business_request_id and self.business_request_id != request_id:
+                self._retired_business_requests.append(self.business_request_id)
             self.business_request_id = request_id
         LOG.info('Voice dialog stage=request_ack elapsed_ms=%d', int((time.monotonic()-request_started)*1000))
         first_reply = True
@@ -703,6 +709,11 @@ class Dialog:
                     self.input_control = (BackendEvent.parse(state['inputControl'], request_id, self.backend_owner)
                                           if 'inputControl' in state else None)
                     for raw_event in state.get('backendEvents', []):
+                        old_id = raw_event.get('businessRequestId') if type(raw_event) is dict else None
+                        if old_id in self._retired_business_requests:
+                            # Validate known old lineage, never relabel it as this ACK.
+                            BackendEvent.parse(raw_event, old_id, self.backend_owner)
+                            continue
                         event = BackendEvent.parse(raw_event, request_id, self.backend_owner)
                         if event.event_id in seen_events:
                             continue
@@ -766,6 +777,7 @@ class Dialog:
         self.backend_owner = object()
         self.native_owner_id = uuid.uuid4().hex
         self.business_request_id = ''
+        self._retired_business_requests.clear()
         self.backend_state = None
         self.input_control = None
         self.public_replies = []

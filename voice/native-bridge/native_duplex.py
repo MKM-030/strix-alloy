@@ -24,6 +24,7 @@ from conversation_repair import (conversational_snapshot,
                                  NATURAL_CONVERSATION_PROMPT, _polar, _pure_kind,
                                  _passive_signal)
 from conversation_claims import unproven_storage_or_check_claim
+from native_backend import BackendControlChanged, ControlBinding, ControlGate
 from servicenow_voice_context import (build_servicenow_voice_context,
                                      append_servicenow_context)
 
@@ -321,12 +322,14 @@ class _Output:
     identity: object = None
     expires_at: float | None = None
     question_binding: object = None
+    control_binding: object = None
 
 
 class NativeDuplex:
     def __init__(self, call, *, context_publisher=None, context_reconciler=None,
                  conversation_factory=open_conversation, clock=time.monotonic):
         self.call, self.clock = call, clock
+        self._control_gate = ControlGate()
         if conversation_factory is open_conversation:
             self._factory = lambda url, call_id, epoch: open_conversation(url, call_id, epoch,
                 controller_url=getattr(call.config, 'conversation_http_url', ''),
@@ -417,6 +420,8 @@ class NativeDuplex:
             if (state.get('complete') and state['accepted_samples'] > 0
                     and state['emitted_samples'] == state['accepted_samples']
                     and not state.get('history_recorded')):
+                if state.get('control_binding') is not None and not state['interrupted']:
+                    self._control_gate.mark_emitted(state['control_binding'])
                 state['history_recorded'] = True
                 if 0 < len(state['text']) <= 2000:
                     self._spoken_sequence += 1
@@ -426,6 +431,9 @@ class NativeDuplex:
                         self._spoken_history.popleft()
 
     def _question_current(self, state):
+        if state is not None and state.get('control_binding') is not None:
+            return (self._live() and state['control_binding'] == self._control_gate.binding
+                    and not self._control_gate.dispatched)
         if (state is None or not self._live() or self._pending
                 or state['task_revision'] != self.task_revision):
             return False
@@ -452,6 +460,11 @@ class NativeDuplex:
     def _input_question_snapshot(self):
         question, source, complete = self.question_context()
         state = self._spoken_question
+        control = self._control_gate.binding
+        if control is not None:
+            heard = bool(complete and self._control_gate.heard and not self._control_gate.dispatched
+                and state is not None and state.get('control_binding') == control and self._speech is state)
+            return (control.label, 'servicenow_input_control', heard, control.business_request_id, control)
         return (question, source, complete, state['binding'] if question else '',
                 state['task_revision'] if question else None)
 
@@ -459,7 +472,10 @@ class NativeDuplex:
         self._update_speech_cursor()
         inherited = getattr(item, 'question_binding', None)
         question = source = binding = ''
-        if self._question_current(inherited):
+        control = getattr(item, 'control_binding', None)
+        if control is not None and control == self._control_gate.binding:
+            question, source, binding = control.label, 'servicenow_input_control', control.business_request_id
+        elif self._question_current(inherited):
             question, source, binding = (inherited[key] for key in ('question', 'source', 'binding'))
         elif item.kind == 'greeting':
             match = re.search(r'(?:^|[.!])\s*([^.!?]+\?)\s*$', item.text)
@@ -471,6 +487,7 @@ class NativeDuplex:
                 question, source, binding = item.text, boundary['source'], boundary.get('businessRequestId', '')
         state = dict(text=item.text, kind=item.kind, question=question, source=source,
             binding=binding, task_revision=self.task_revision,
+            control_binding=control,
             accepted_start=self.call.playback.accepted_samples,
             emitted_start=self.call.playback.emitted_samples, accepted_samples=0,
             emitted_samples=0, complete=False, interrupted=False)
@@ -556,7 +573,7 @@ class NativeDuplex:
             self._raw.popleft()
 
     def _enqueue(self, text, turn=None, *, kind='local', observation=None, request=None, identity=None,
-                 expires_at=None, question_binding=None):
+                 expires_at=None, question_binding=None, control_binding=None):
         if not text or not self._live():
             return
         if kind == 'backend' and _generic_processing_reply(text):
@@ -573,7 +590,7 @@ class NativeDuplex:
             if len(self._outputs) >= 32:
                 raise RuntimeError('Public backend output queue full')
         self._outputs.append(_Output(text, turn, self.epoch, self.task_revision,
-            observation, kind, request, identity, expires_at, question_binding))
+            observation, kind, request, identity, expires_at, question_binding, control_binding))
         self._output_ready.set()
         return True
 
@@ -638,6 +655,9 @@ class NativeDuplex:
             self._log_dialogue_discard(reason, boundary)
 
     def _valid(self, item):
+        if item.control_binding is not None:
+            return (self._live() and item.epoch == self.epoch
+                and item.control_binding == self._control_gate.binding and not self._control_gate.dispatched)
         return (self._live() and item.epoch == self.epoch and item.task_revision == self.task_revision
                 and (item.question_binding is None or self._question_current(item.question_binding))
                 and self._observation_current(item.observation_revision)
@@ -743,6 +763,7 @@ class NativeDuplex:
                 if quote else self._status())
 
     async def _accept(self, turn):
+        self._sync_native_control()
         _, text, number, _, _ = turn
         if (number not in self.call.turn_controls and
                 re.fullmatch(r'\s*(?:äh|ähm)[.!?,…]*\s*', text, re.IGNORECASE)):
@@ -760,7 +781,7 @@ class NativeDuplex:
             overlapped = bool(self.call.synthesis_active or self.call.playback.data)
         # An overlapping listening signal is not a fresh business approval.
         native_polar = onset[1] == 'servicenow_input_control' and onset[2] and _polar(onset[0])
-        if (overlapped or self.busy) and _passive_signal(text) and not native_polar:
+        if (overlapped or self.busy) and _passive_signal(text) and not native_polar and self._control_gate.binding is None:
             self.call.turn_contexts.pop(number, None)
             self._observe_raw(text)
             return
@@ -782,6 +803,15 @@ class NativeDuplex:
                 boundary.get('businessRequestId', ''), self.task_revision)
             and self._question_current(self._spoken_question)
             and self._speech is self._spoken_question))
+        if self._control_gate.binding is not None:
+            bound = onset[4] if len(onset) > 4 and onset[2] and isinstance(onset[4], ControlBinding) else None
+            self._submission_onsets[turn[3]]['control'] = bound
+            if (not self._control_gate.heard or bound != self._control_gate.binding
+                    or self._control_gate.dispatched):
+                self._control_gate.admit(turn, bound, self.call.turn_contexts.pop(number, None))
+                self._submission_onsets.pop(turn[3], None)
+                self._reask_control(turn)
+                return
         self._queue_business_input(turn)
         # Local speech is optional. It never consumes or replaces the raw FIFO.
         if not self._local_questions.full():
@@ -800,10 +830,38 @@ class NativeDuplex:
 
 
     def _reask_control(self, turn):
+        control = self._control_gate.binding
+        if control is not None:
+            if (control.label and not self._control_gate.dispatched
+                    and not any(item.control_binding == control and self._valid(item) for item in self._outputs)
+                    and not (self._active_output is not None and self._active_output.control_binding == control
+                             and self._valid(self._active_output))):
+                self._outputs = deque(item for item in self._outputs if item.kind == 'backend')
+                self._enqueue(control.label, turn, kind='backend_control', control_binding=control)
+            return
         boundary = getattr(self.call.dialog, 'input_boundary', None)
         if (self._bootstrap_state == 'ready' and type(boundary) is dict
                 and boundary.get('source') == 'servicenow_input_control' and boundary.get('label')):
             self._enqueue(boundary['label'], turn, kind='backend')
+
+    def _sync_native_control(self):
+        event = getattr(self.call.dialog, 'input_control', None)
+        if event is not None and event.owner is not getattr(self.call.dialog, 'backend_owner', None):
+            return
+        binding = ControlBinding.from_event(event)
+        changed = binding != self._control_gate.binding
+        self._control_gate.observe(binding)
+        if binding is not None:
+            while self._pending and (changed or not self._control_gate.heard):
+                turn = self._pending.popleft()
+                submitted = self._submission_onsets.pop(turn[3], None)
+                bound = submitted.get('control') if submitted else None
+                self._control_gate.hold(turn, bound, self.call.turn_contexts.pop(turn[2], None), 'control_prequestion')
+            self._context_pending = self._context_candidate = None
+            if changed:
+                self._outputs = deque(item for item in self._outputs if item.control_binding is None)
+            if not self._control_gate.heard:
+                self._reask_control(None)
 
     def _queue_context_update(self, turn):
         if (self._context_publisher is None or not self._live() or self._context_full
@@ -863,6 +921,14 @@ class NativeDuplex:
     async def _business(self, turn):
         _, text, number, _, _ = turn
         submitted = self._submission_onsets.pop(turn[3], None)
+        self._sync_native_control()
+        native_binding = self._control_gate.binding
+        if native_binding is not None:
+            bound = submitted.get('control') if submitted else None
+            if not self._control_gate.admit(turn, bound, self.call.turn_contexts.get(number)):
+                self.call.turn_contexts.pop(number, None)
+                self._reask_control(turn)
+                return
         boundary = getattr(self.call.dialog, 'input_boundary', None)
         if (_polar_answer(text) and type(boundary) is dict
                 and boundary.get('source') == 'servicenow_input_control'
@@ -907,6 +973,9 @@ class NativeDuplex:
                 published.add(reply)
 
         def admit(reply):
+            if self._control_gate.binding is not None and reply == self._control_gate.binding.label:
+                self._reask_control(turn)
+                return
             if revision == self.task_revision and not self._pending:
                 admitted = self._enqueue(reply, turn, kind='backend')
                 if admitted:
@@ -937,11 +1006,26 @@ class NativeDuplex:
             publish(reply, self._public_sequence)
             admit(reply)
             self._queue_dialogue_observation()
+        async def on_event(event):
+            self._sync_native_control()
+            if event.ui_type != 'Boolean':
+                await on_reply(event.text)
         context = self.call.turn_contexts.pop(number, None)
-        if context is None:
-            await self.call.dialog.turn(text, on_reply=on_reply)
-        else:
-            await self.call.dialog.turn(text, on_reply=on_reply, voice_context=context)
+        try:
+            await self.call.dialog.turn(text, on_event=on_event, voice_context=context,
+                                        native_control_binding=native_binding)
+        except BackendControlChanged as conflict:
+            if conflict.owner is not getattr(self.call.dialog, 'backend_owner', None):
+                raise BackendTurnUnavailable('Unowned input conflict') from None
+            self.call.dialog.input_control = conflict.input_control
+            event = conflict.input_control
+            self.call.dialog.input_boundary = (dict(source='servicenow_input_control',
+                controlType=event.ui_type, businessRequestId=event.business_request_id, label=event.text)
+                if event is not None else None)
+            self._sync_native_control()
+            self._control_gate.hold(turn, submitted, context, 'control_changed_before_dispatch')
+            self._reask_control(turn)
+            return
         label = input_label()
         if label:
             # This label is an observed ServiceNow input control, not a locally
@@ -1333,6 +1417,9 @@ class NativeDuplex:
                 self._synthesis_task.cancel()
 
     async def _general_help(self, turn, epoch, kind='help'):
+        if self._control_gate.binding is not None and not self._control_gate.dispatched:
+            self._reask_control(turn)
+            return
         if kind == 'status':
             # An explicit progress question needs observed state, not a model's
             # guess about hidden agent work or the meaning of silence.
@@ -1375,6 +1462,10 @@ class NativeDuplex:
                 candidate = await self.conversation.respond(turn[1], snapshot, key, on_sentence=sentence)
             else:
                 candidate = await self.conversation.respond(turn[1], snapshot, key)
+            if self._control_gate.binding is not None and not self._control_gate.dispatched:
+                self._revoke_dialogue_output(turn)
+                self._reask_control(turn)
+                return
             if epoch != self.epoch:
                 self._log_dialogue_discard('caller_epoch_changed', 'completion')
                 return
