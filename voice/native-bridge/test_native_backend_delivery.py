@@ -130,6 +130,48 @@ class BackendDeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.lane.interrupt()
         self.assertEqual(self.lane._backend_receipts[self.lane._backend_key(event)]['state'], 'interrupted')
 
+    async def test_old_input_control_from_same_poll_cannot_follow_current_boolean(self):
+        request = 'a'*32
+        old_label = 'Beschreiben Sie Ihr Anliegen.'
+        question = 'Soll ich das bestellen?'
+        current = BackendEvent(4, request, 'Boolean', question, 'new-bool', self.call.dialog.backend_owner)
+        old = BackendEvent(2, request, 'InputText', old_label, 'old-input', self.call.dialog.backend_owner)
+        async def turn(raw, on_event=None, **kwargs):
+            self.call.dialog.business_request_id = request
+            self.call.dialog.input_control = current
+            self.call.dialog.input_boundary = dict(source='servicenow_input_control',
+                businessRequestId=request, controlType='Boolean', label=question)
+            self.call.dialog.backend_state = BackendState(request, 'MESSAGE', False, False, False,
+                                                          self.call.dialog.backend_owner)
+            await on_event(old)
+            await on_event(current)
+            return [old_label, question]
+        self.call.dialog.turn = turn
+        await self.lane._business((0, 'Ursprüngliche Angabe.', 1, 'first', 0))
+        self.assertEqual([item.text for item in self.lane._outputs], [question])
+
+    async def test_backend_owner_reset_flushes_buffered_post_synthesis_audio(self):
+        self.call.dialog.business_request_id = 'a'*32
+        event = BackendEvent(1, 'a'*32, 'OutputText', RESULT, '', self.call.dialog.backend_owner)
+        self.lane._admit_backend_event(event, None)
+        self.tasks.append(asyncio.create_task(self.lane._speak_loop()))
+        await self.until(lambda: RESULT in self.call.spoken)
+        self.assertGreater(len(self.call.playback.data), 0)
+        self.call.dialog.backend_owner = object()
+        self.lane._update_speech_cursor()
+        self.assertEqual(len(self.call.playback.data), 0)
+        self.assertEqual(self.lane._backend_receipts[self.lane._backend_key(event)]['state'], 'interrupted')
+
+    async def test_close_retires_unemitted_receipt_and_flushes_owned_pcm(self):
+        self.call.dialog.business_request_id = 'a'*32
+        event = BackendEvent(1, 'a'*32, 'OutputText', RESULT, '', self.call.dialog.backend_owner)
+        self.lane._admit_backend_event(event, None)
+        self.tasks.append(asyncio.create_task(self.lane._speak_loop()))
+        await self.until(lambda: RESULT in self.call.spoken)
+        await self.lane.close()
+        self.assertEqual(len(self.call.playback.data), 0)
+        self.assertEqual(self.lane._backend_receipts[self.lane._backend_key(event)]['state'], 'retired_by_call_close')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -118,7 +118,8 @@ class RejectionDiagnosticTests(unittest.IsolatedAsyncioTestCase):
             logs = '\n'.join(captured.output)
             self.assertIn('reason=completion_confirmed at=sentence', logs)
             self.assertIn('reason=candidate_callback_failed at=completion', logs)
-            self.assertIn('stage=fallback reason=unavailable', logs)
+            self.assertNotIn('stage=fallback reason=unavailable', logs)
+            self.assertFalse(lane.output_pending, 'A later failure must not overlay already started speech')
             self.assertNotIn('Die Bestellung ist nicht bestätigt.', logs)
         finally:
             call.closed = True

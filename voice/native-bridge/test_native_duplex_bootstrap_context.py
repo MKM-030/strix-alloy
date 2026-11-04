@@ -164,7 +164,7 @@ class BootstrapContextTests(unittest.IsolatedAsyncioTestCase):
         await self.until(lambda: not self.lane.output_pending and not self.call.synthesis_active)
         self.assertNotIn(FIRST, self.call.spoken)
 
-    async def test_native_control_change_between_pcm_chunks_stops_stale_audio(self):
+    async def test_native_control_change_finishes_already_started_local_sentence(self):
         second_chunk = asyncio.Event()
         async def speech(text):
             yield bytes(480)
@@ -178,8 +178,8 @@ class BootstrapContextTests(unittest.IsolatedAsyncioTestCase):
             controlType='InputText', businessRequestId='new-control', label='Andere Angabe?')
         second_chunk.set()
         await self.until(lambda: not self.call.synthesis_active)
-        self.assertEqual(self.call.playback.accepted_samples, 240)
-        self.assertFalse(self.lane._speech['complete'])
+        self.assertEqual(self.call.playback.accepted_samples, 480)
+        self.assertTrue(self.lane._speech['complete'])
 
     async def test_caller_context_change_rejects_candidate(self):
         def mutate():

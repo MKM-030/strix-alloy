@@ -12,7 +12,7 @@ from test_native_duplex import FakeCall
 RAW = 'Der Laptop ist für Mara Testfeld und soll nach Hamburg geliefert werden.'
 UNSAFE = 'Danke, ich habe mir den Namen Mara Testfeld und den Lieferort Hamburg notiert.'
 QUESTION = 'Wann ist das Eintrittsdatum?'
-FALLBACK = 'Ihre Nachricht ist angekommen. Ich warte noch auf die Antwort.'
+FALLBACK = 'Ich kann Ihre Frage gerade nicht zuverlässig beantworten.'
 
 
 class SentenceModel:

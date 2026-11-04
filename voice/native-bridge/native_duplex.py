@@ -325,6 +325,16 @@ class _Output:
     question_binding: object = None
     control_binding: object = None
     backend_event: object = None
+    fallback_snapshot: object = None
+
+
+@dataclass(frozen=True)
+class _SpeechLease:
+    output: object
+    generation: int
+    epoch: int
+    source_owner: object
+    identity: object
 
 
 class NativeDuplex:
@@ -335,6 +345,8 @@ class NativeDuplex:
         self._backend_receipts = {}
         self._backend_outputs = deque()
         self._backend_input_closed = False
+        self._turn_speech_started = deque(maxlen=128)
+        self._help_failure_seen = deque(maxlen=16)
         if conversation_factory is open_conversation:
             self._factory = lambda url, call_id, epoch: open_conversation(url, call_id, epoch,
                 controller_url=getattr(call.config, 'conversation_http_url', ''),
@@ -422,6 +434,17 @@ class NativeDuplex:
             state['accepted_samples'] = max(0, playback.accepted_samples - state['accepted_start'])
             state['emitted_samples'] = min(state['accepted_samples'],
                 max(0, playback.emitted_samples - state['emitted_start']))
+            lease = state.get('lease')
+            pending = (state['accepted_samples'] > state['emitted_samples']
+                       or self._active_output is state.get('output') and self.call.synthesis_active)
+            if lease is not None and pending and not self._active_speech_current(lease.output, lease.generation, lease):
+                state['interrupted'] = True
+                self._interrupt_backend_speech(state)
+                playback.interrupt()
+                if self._synthesis_task is not None:
+                    self._synthesis_task.cancel()
+                LOG.info('Voice independent output call=%s stage=hard_lease_revoked', self.call.call_id)
+                return
             if (state.get('complete') and state['accepted_samples'] > 0
                     and state['emitted_samples'] == state['accepted_samples']
                     and not state.get('history_recorded')):
@@ -500,6 +523,7 @@ class NativeDuplex:
             binding=binding, task_revision=self.task_revision,
             control_binding=control,
             backend_event=getattr(item, 'backend_event', None),
+            output=item, generation=self.call.playback.generation, lease=None,
             accepted_start=self.call.playback.accepted_samples,
             emitted_start=self.call.playback.emitted_samples, accepted_samples=0,
             emitted_samples=0, complete=False, interrupted=False)
@@ -586,7 +610,7 @@ class NativeDuplex:
             self._raw.popleft()
 
     def _enqueue(self, text, turn=None, *, kind='local', observation=None, request=None, identity=None,
-                 expires_at=None, question_binding=None, control_binding=None):
+                 expires_at=None, question_binding=None, control_binding=None, fallback_snapshot=None):
         if not text or not self._live():
             return
         if kind == 'backend' and _generic_processing_reply(text):
@@ -603,7 +627,8 @@ class NativeDuplex:
             if len(self._outputs) >= 32:
                 raise RuntimeError('Public backend output queue full')
         self._outputs.append(_Output(text, turn, self.epoch, self.task_revision,
-            observation, kind, request, identity, expires_at, question_binding, control_binding))
+            observation, kind, request, identity, expires_at, question_binding, control_binding,
+            fallback_snapshot=fallback_snapshot))
         self._output_ready.set()
         return True
 
@@ -681,6 +706,26 @@ class NativeDuplex:
                 and (item.expires_at is None or self.clock() < item.expires_at and not self._pending)
                 and (item.identity is None or self.conversation is not None and
                      self.conversation.is_current(item.identity)))
+
+    def _active_speech_current(self, item, generation, lease):
+        if lease is None:
+            return self._valid(item) and generation == self.call.playback.generation
+        if (not self._live() or lease.output is not item or lease.generation != generation
+                or generation != self.call.playback.generation or lease.epoch != self.epoch):
+            return False
+        if item.backend_event is not None and not self._backend_event_current(item.backend_event):
+            return False
+        if item.control_binding is not None and (not self._native_control_current(item.control_binding)
+                or item.control_binding != self._control_gate.binding or self._control_gate.dispatched):
+            return False
+        if lease.identity is not None:
+            if self.conversation is not lease.source_owner:
+                return False
+            check = getattr(lease.source_owner, 'is_source_current', None)
+            if not callable(check):
+                check = getattr(lease.source_owner, 'is_current', None)
+            return callable(check) and check(lease.identity) is True
+        return True
 
     def _current_public_findings(self):
         receipts = tuple(record['finding'] for record in self._backend_receipts.values()
@@ -776,8 +821,27 @@ class NativeDuplex:
         return (text[:ends[-1]].strip() if ends else ''), False
 
     def _enqueue_help_fallback(self, turn, *, reason='unavailable'):
+        if turn is not None and turn[3] in self._turn_speech_started:
+            return
+        if self._backend_outputs or any(item.kind in ('backend', 'backend_control') and self._valid(item)
+                                        for item in self._outputs):
+            return
+        if self._control_gate.binding is not None and not self._control_gate.dispatched:
+            self._reask_control(turn)
+            return
+        current = getattr(self.call.dialog, 'input_control', None)
+        current_key = (current.business_request_id, current.event_id) if isinstance(current, BackendEvent) else None
+        last_receipt = next(reversed(self._backend_receipts), None)
+        snapshot = (self._bootstrap_state, self._backend_unavailable, self._backend_input_closed,
+                    current_key, last_receipt)
+        active = self._active_output
+        if (snapshot in self._help_failure_seen
+                or any(item.fallback_snapshot == snapshot and self._valid(item) for item in self._outputs)
+                or active is not None and active.fallback_snapshot == snapshot and self._valid(active)):
+            return
         LOG.info('Voice independent help call=%s stage=fallback reason=%s', self.call.call_id, reason)
-        self._enqueue('Ihre Nachricht ist angekommen. Ich warte noch auf die Antwort.', turn, kind='local')
+        self._enqueue('Ich kann Ihre Frage gerade nicht zuverlässig beantworten.', turn, kind='local',
+                      fallback_snapshot=snapshot)
 
     def _repeat_last_reply(self):
         replies = self._current_public_findings()
@@ -1107,6 +1171,10 @@ class NativeDuplex:
                 if admitted:
                     buffered_ack = self._buffered_confirmation_ack()
                     if self._active_kind in ('conversation', 'confirmation_ack') or buffered_ack is not None:
+                        lease = self._speech.get('lease') if self._speech is not None else None
+                        if (self._active_kind == 'conversation' and lease is not None
+                                and self._active_speech_current(lease.output, lease.generation, lease)):
+                            return
                         if buffered_ack is not None:
                             buffered_ack['interrupted'] = True
                         self.call.playback.interrupt()
@@ -1134,7 +1202,9 @@ class NativeDuplex:
             if event.ui_type == 'OutputText':
                 self._admit_backend_event(event, turn)
                 self._queue_dialogue_observation()
-            elif event.ui_type != 'Boolean':
+            elif (event.ui_type != 'Boolean'
+                    and isinstance(getattr(self.call.dialog, 'input_control', None), BackendEvent)
+                    and self._backend_key(event) == self._backend_key(self.call.dialog.input_control)):
                 await on_reply(event.text)
         context = self.call.turn_contexts.pop(number, None)
         try:
@@ -1538,6 +1608,9 @@ class NativeDuplex:
             if not (item.kind == 'conversation' and item.turn is not None and item.turn[3] == turn[3]))
         active = self._active_output
         if active is not None and active.kind == 'conversation' and active.turn[3] == turn[3]:
+            lease = self._speech.get('lease') if self._speech is not None else None
+            if lease is not None and self._active_speech_current(active, lease.generation, lease):
+                return
             self.call.playback.interrupt()
             if self._synthesis_task is not None:
                 self._synthesis_task.cancel()
@@ -1684,7 +1757,7 @@ class NativeDuplex:
                          self.call.call_id, item.kind, self._request, generation)
                 self._synthesis_task = asyncio.create_task(self._synthesize(item, generation))
                 await self._synthesis_task
-                speech_complete = self._valid(item) and generation == self.call.playback.generation
+                speech_complete = self._active_speech_current(item, generation, speech_state.get('lease'))
             except asyncio.CancelledError:
                 LOG.info('Voice independent output call=%s stage=tts_cancelled kind=%s',
                          self.call.call_id, item.kind)
@@ -1696,9 +1769,7 @@ class NativeDuplex:
             finally:
                 self._finish_speech(speech_state, complete=speech_complete)
                 if item.backend_event is not None and not speech_complete:
-                    record = self._backend_receipts.get(self._backend_key(item.backend_event))
-                    if record is not None:
-                        record['state'] = 'interrupted'
+                    self._interrupt_backend_speech(speech_state)
                 self.call.synthesis_active = False
                 self._active_kind = None
                 self._active_output = None
@@ -1709,22 +1780,32 @@ class NativeDuplex:
         queued = 0
         first = True
         state = self._speech
+        lease = None
         async for chunk in self.call.speech.synthesize(item.text):
-            if not self._valid(item) or generation != self.call.playback.generation:
+            if not self._active_speech_current(item, generation, lease):
                 self._discard_output(item, 'pcm')
                 break
-            while len(self.call.playback.data) > 48000 and self._valid(item):
+            while len(self.call.playback.data) > 48000 and self._active_speech_current(item, generation, lease):
                 await asyncio.sleep(.02)
-            if not self._valid(item) or generation != self.call.playback.generation:
+            if not self._active_speech_current(item, generation, lease):
                 self._discard_output(item, 'pcm')
                 break
-            if self._valid(item) and generation == self.call.playback.generation:
+            if self._active_speech_current(item, generation, lease):
                 if chunk and self.call.playback.put(chunk, generation):
+                    if lease is None:
+                        lease = _SpeechLease(item, generation, self.epoch,
+                            self.conversation if item.identity is not None else None, item.identity)
+                        if state is not None and state.get('output') is item:
+                            state['lease'] = lease
                     queued += len(chunk)
                     if item.kind == 'confirmation_ack' and state is not None and state.get('output') is item:
                         state['pcm_bytes'] += len(chunk)
                     if first:
                         first = False
+                        if item.fallback_snapshot is not None:
+                            self._help_failure_seen.append(item.fallback_snapshot)
+                        if item.turn is not None:
+                            self._turn_speech_started.append(item.turn[3])
                         LOG.info('Voice independent output call=%s stage=first_pcm kind=%s seconds=%.3f',
                                  self.call.call_id, item.kind, self.clock() - started)
                         try:
@@ -1738,7 +1819,7 @@ class NativeDuplex:
                                         self.call.call_id, item.kind, type(error).__name__)
         LOG.info('Voice independent output call=%s stage=tts_finished kind=%s queued_bytes=%d seconds=%.3f current=%s',
                  self.call.call_id, item.kind, queued, self.clock() - started,
-                 self._valid(item) and generation == self.call.playback.generation)
+                 self._active_speech_current(item, generation, lease))
 
     def _automatic_update(self):
         if self._bootstrap_state != 'ready':
@@ -1767,6 +1848,7 @@ class NativeDuplex:
     async def _update_loop(self):
         while self._live():
             await asyncio.sleep(.2)
+            self._update_speech_cursor()
             if (self._active_kind == 'processing' and self._active_output is not None
                     and not self._valid(self._active_output)):
                 self.call.playback.interrupt()
@@ -1798,6 +1880,10 @@ class NativeDuplex:
         self._dialogue_observation_state = None
         self._outputs.clear()
         self._backend_outputs.clear()
+        for record in self._backend_receipts.values():
+            if record['state'] in ('pending', 'active'):
+                record['state'] = 'retired_by_call_close'
+        self.call.playback.interrupt()
         self._context_pending = None
         self._context_snapshot = ''
         self._context_candidate = None
