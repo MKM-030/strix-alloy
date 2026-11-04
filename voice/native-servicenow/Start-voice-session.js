@@ -523,6 +523,12 @@ async function handler({ api, event, helpers, imports }) {
         webrtc.signalingWs = new window.WebSocket(wsUrl);
 
         const socket = webrtc.signalingWs;
+        function failBeforeConnection() {
+            if (voiceFailed || webrtc.isConnected || webrtc.signalingWs !== socket
+                    || window.testVoiceUI.webrtc !== webrtc) return;
+            if (api.state.auth_token === webrtc.token) api.setState("auth_token", "");
+            failVoice("Voice signaling could not complete. Start a new call.");
+        }
         webrtc.signalingWs.onopen = async () => {
             if (webrtc.debug)
                 console.log("Signaling WebSocket connected");
@@ -556,28 +562,13 @@ async function handler({ api, event, helpers, imports }) {
         webrtc.signalingWs.onerror = async (error) => {
             if (webrtc.debug)
                 console.error(`Signaling WebSocket error: ${error.message || "Connection failed"}`);
-            if (!webrtc.isConnected) {
-                api.setState("isConnectionInProgress", false);
-                api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
-                    items: [{
-                        id: 'auth_request_failure',
-                        status: 'critical',
-                        icon: 'exclamation-triangle-outline',
-                        content: {
-                            type: "html",
-                            value: await helpers.translate("Signaling WebSocket error occurred: connection failed.")
-                        },
-                        action: {
-                            type: 'dismiss'
-                        }
-                    }]
-                });
-            }
+            failBeforeConnection();
         };
 
         webrtc.signalingWs.onclose = (event) => {
             if (webrtc.debug)
                 console.log(`Signaling WebSocket closed: ${event.code} ${event.reason}`);
+            failBeforeConnection();
         };
     }
 

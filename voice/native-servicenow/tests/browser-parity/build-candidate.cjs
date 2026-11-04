@@ -128,6 +128,12 @@ function derive(raw) {
                     }
                 }`);
     replace(`        webrtc.signalingWs.onopen = async () => {`, `        const socket = webrtc.signalingWs;
+        function failBeforeConnection() {
+            if (voiceFailed || webrtc.isConnected || webrtc.signalingWs !== socket
+                    || window.testVoiceUI.webrtc !== webrtc) return;
+            if (api.state.auth_token === webrtc.token) api.setState("auth_token", "");
+            failVoice("Voice signaling could not complete. Start a new call.");
+        }
         webrtc.signalingWs.onopen = async () => {`);
     replace(`            setupPeerConnection();
             await createAndSendOffer();`, `            if (voiceFailed || webrtc.signalingWs !== socket || window.testVoiceUI.webrtc !== webrtc) return;
@@ -155,6 +161,27 @@ function derive(raw) {
                     failVoice("Voice signaling could not complete. Start a new call.");
                 }
             }`);
+    replace(`            if (!webrtc.isConnected) {
+                api.setState("isConnectionInProgress", false);
+                api.emit('NOW_UXF_PAGE#ADD_NOTIFICATIONS', {
+                    items: [{
+                        id: 'auth_request_failure',
+                        status: 'critical',
+                        icon: 'exclamation-triangle-outline',
+                        content: {
+                            type: "html",
+                            value: await helpers.translate("Signaling WebSocket error occurred: connection failed.")
+                        },
+                        action: {
+                            type: 'dismiss'
+                        }
+                    }]
+                });
+            }`, `            failBeforeConnection();`);
+    replace(`                console.log(\x60Signaling WebSocket closed: \x24{event.code} \x24{event.reason}\x60);
+        };`, `                console.log(\x60Signaling WebSocket closed: \x24{event.code} \x24{event.reason}\x60);
+            failBeforeConnection();
+        };`);
     return source;
 }
 module.exports = { derive, ORIGINAL_SHA256 };

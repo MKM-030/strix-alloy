@@ -349,3 +349,72 @@ test('permission API fallback and explicit denial stay native', async () => {
     const denied = await setup({permissionDenied: true}); assert.equal(denied.observations.sockets.length, 0);
     assert.equal(denied.api.state.callStarted, false);
 });
+
+test('failed WSS before a peer exists retires the owned call and matching cached token once', {skip: baseline}, async () => {
+    const env = await setup({deferOpen: true}); const oldOpen = env.socket.onopen;
+    await env.socket.onerror({message: 'private-wss-error-sentinel'}); await flush();
+    assert.equal(env.observations.cleanup, 1); assert.equal(env.observations.stopped, 1);
+    assert.equal(env.observations.peers.length, 0); assert.equal(env.api.state.callStarted, false);
+    assert.equal(env.api.state.isConnectionInProgress, false); assert.equal(env.api.state.auth_token, '');
+    assert.equal(env.observations.notices.length, 1); assert.equal(env.socket.closes, 1);
+    assert.equal(JSON.stringify(env.observations.notices).includes('sentinel'), false);
+    await oldOpen(); assert.equal(env.observations.peers.length, 0);
+    assert.equal(env.observations.sockets.length, 1, 'failure cannot reconnect automatically');
+});
+
+test('early WSS close followed by error cleans once and permits a fresh login next time', {skip: baseline}, async () => {
+    const env = await setup({deferOpen: true}), oldClose = env.socket.onclose, oldError = env.socket.onerror;
+    oldClose({code: 1006, reason: 'private-close-sentinel'}); await oldError({message: 'late error'}); await flush();
+    oldClose({code: 1006, reason: 'late close'}); await flush();
+    assert.equal(env.observations.cleanup, 1); assert.equal(env.observations.stopped, 1);
+    assert.equal(env.api.state.callStarted, false); assert.equal(env.api.state.auth_token, '');
+    assert.equal(env.api.state.isConnectionInProgress, false); assert.equal(env.observations.notices.length, 1);
+    assert.equal(env.observations.sockets.length, 1);
+});
+
+test('preconnection WSS failure closes its peer and timer without replaying its offer', {skip: baseline}, async () => {
+    const env = await setup(), peer = env.peer; const sent = env.socket.sent.length;
+    await env.socket.onerror({}); await flush();
+    assert.equal(peer.closed, true); assert.equal(env.rtc.pc, null);
+    assert.equal(env.observations.timers.every(timer => timer.cleared), true);
+    assert.equal(env.api.state.auth_token, ''); assert.equal(env.observations.cleanup, 1);
+    assert.equal(env.socket.sent.length, sent); assert.equal(env.observations.sockets.length, 1);
+});
+
+test('failed owned WSS preserves a newer cached login token', {skip: baseline}, async () => {
+    const env = await setup({deferOpen: true}); env.api.state.auth_token = 'newer-login-credential';
+    await env.socket.onerror({}); await flush();
+    assert.equal(env.observations.cleanup, 1); assert.equal(env.api.state.callStarted, false);
+    assert.equal(env.api.state.auth_token, 'newer-login-credential');
+});
+
+test('superseded socket failure callbacks cannot close the current socket or clear its token', {skip: baseline}, async () => {
+    const env = await setup(), oldError = env.socket.onerror, oldClose = env.socket.onclose, peer = env.peer;
+    const replacement = {closes: 0, close() {this.closes++;}}; env.rtc.signalingWs = replacement;
+    env.api.state.auth_token = 'newer-socket-credential';
+    await oldError({}); oldClose({code: 1006, reason: ''}); await flush();
+    assert.equal(env.rtc.signalingWs, replacement); assert.equal(replacement.closes, 0);
+    assert.equal(peer.closed, false); assert.equal(env.observations.cleanup, 0);
+    assert.equal(env.api.state.callStarted, true); assert.equal(env.api.state.auth_token, 'newer-socket-credential');
+    assert.equal(env.observations.notices.length, 0);
+});
+
+test('superseded call failure callbacks leave the current call and login state untouched', {skip: baseline}, async () => {
+    const env = await setup(), oldError = env.socket.onerror, oldClose = env.socket.onclose;
+    const replacement = {marker: true}; env.window.testVoiceUI.webrtc = replacement;
+    env.api.state.auth_token = 'current-call-credential'; env.api.state.isConnectionInProgress = true;
+    await oldError({}); oldClose({code: 1006, reason: ''}); await flush();
+    assert.equal(env.window.testVoiceUI.webrtc, replacement); assert.equal(env.observations.cleanup, 0);
+    assert.equal(env.api.state.auth_token, 'current-call-credential');
+    assert.equal(env.api.state.callStarted, true); assert.equal(env.api.state.isConnectionInProgress, true);
+    assert.equal(env.observations.notices.length, 0);
+});
+
+test('established WSS close and error preserve native normal-close behavior', {skip: baseline}, async () => {
+    const env = await setup(); env.peer.iceConnectionState = 'connected';
+    await env.peer.oniceconnectionstatechange(); assert.equal(env.rtc.isConnected, true);
+    await env.socket.onerror({}); env.socket.onclose({code: 1000, reason: 'normal'}); await flush();
+    assert.equal(env.observations.cleanup, 0); assert.equal(env.observations.stopped, 0);
+    assert.equal(env.api.state.callStarted, true); assert.equal(env.api.state.auth_token, 'synthetic-credential');
+    assert.equal(env.observations.notices.length, 0); assert.equal(env.observations.sockets.length, 1);
+});
