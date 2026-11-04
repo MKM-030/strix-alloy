@@ -1173,9 +1173,10 @@ class NativeCall:
         receiver = object()
         input_epoch = 0
         input_onset = None
+        candidate_onset = None
 
         def queue_utterance(utterance, endpoint):
-            nonlocal queued, input_onset
+            nonlocal queued, input_onset, candidate_onset
             if not utterance or self.closed or self.failed or self.input_lost or self.closing:
                 return
             try:
@@ -1196,6 +1197,7 @@ class NativeCall:
                 self.local_notice('BUSY', 'Die letzte Aufnahme konnte nicht angenommen werden. Bitte warten Sie auf den Abschluss der aktuellen Anfrage.', 'BUSY_AUDIO')
             finally:
                 input_onset = None
+                candidate_onset = None
 
         def summary(stage):
             # Numeric counters only: never log audio, transcripts, addresses,
@@ -1222,7 +1224,7 @@ class NativeCall:
                      int((input_stats['tts_energy']/max(1,input_stats['tts_samples']))**.5))
 
         def consume_pcm(pcm, observed_at):
-            nonlocal energy, samples, loud_frames, vad_starts, input_epoch, input_onset, last_loud
+            nonlocal energy, samples, loud_frames, vad_starts, input_epoch, input_onset, candidate_onset, last_loud
             if (self.closed or (self.failed and self.responsive_attachment_factory is None)
                     or self.input_lost or self.closing):
                 return
@@ -1267,7 +1269,15 @@ class NativeCall:
                     if output_active:
                         input_stats['tts_probability_sum'] += probability * count
                         input_stats['tts_probability_samples'] += count
+            # A candidate can begin before the native question finishes, while
+            # VAD confirms it only after >=120ms. Capture before feeding PCM;
+            # feed() can also expire an old run and start a new candidate.
+            candidate_id = gate.candidate_id
+            before_candidate = (self.duplex.speech_onset()
+                                if self.duplex is not None and not gate.active else None)
             began, utterance = gate.feed(received, voiced=voiced)
+            if self.duplex is not None and gate.candidate_id != candidate_id:
+                candidate_onset = before_candidate
             self.vad_active = gate.active
             if gate.active:
                 self._input_receivers.add(receiver)
@@ -1285,7 +1295,7 @@ class NativeCall:
                 if self.duplex is not None:
                     # Noise qualification establishes speech, not a lexical
                     # takeover. Keep output until final ASR reaches acceptance.
-                    input_onset = self.duplex.speech_onset()
+                    input_onset = candidate_onset
                     interrupted = False
                 elif self.responsive_attachment_factory is not None:
                     self._input_epoch += 1
@@ -1301,6 +1311,8 @@ class NativeCall:
                          self.call_id, self.playback.generation, interrupted, playback_bytes,
                          self.turns.qsize(), self.recognized_turns.qsize())
             queue_utterance(utterance, 'pcm_silence_or_limit')
+            if not gate.active and not gate.run:
+                candidate_onset = None
             self._notify_input_changed()
             if not gate.active:
                 last_loud = None
