@@ -12,17 +12,22 @@ const candidate = derive(original);
 const baseline = process.env.VOICE_PARITY_BASELINE === '1';
 const production = fs.readFileSync(path.join(__dirname, '../../Start-voice-session.js'), 'utf8');
 const source = baseline ? original.toString('utf8') : production;
-const cleanup = fs.readFileSync(path.join(__dirname, 'disconnectVoice.original.js'), 'utf8');
-assert.equal(crypto.createHash('sha256').update(cleanup).digest('hex'),
+const originalCleanup = fs.readFileSync(path.join(__dirname, 'disconnectVoice.original.js'), 'utf8');
+assert.equal(crypto.createHash('sha256').update(originalCleanup).digest('hex'),
     '80e18fb2aa6b5eee449ae5af62df5b5d7fe0610376884cf9af84ac1d484cdb29');
+const productionUtils = fs.readFileSync(path.join(__dirname, '../../VoiceTestingUIUtils.js'), 'utf8');
+const cleanupStart = productionUtils.indexOf('    function disconnectVoice(window, webrtc) {');
+const cleanupEnd = productionUtils.indexOf('    function markAnalysisComplete()', cleanupStart);
+assert.ok(cleanupStart >= 0 && cleanupEnd > cleanupStart);
+const cleanup = baseline ? originalCleanup : productionUtils.slice(cleanupStart, cleanupEnd);
 const flush = () => new Promise(resolve => setImmediate(resolve));
-function deferred() {let resolve; const promise = new Promise(r => {resolve = r;}); return {promise, resolve};}
+function deferred() {let resolve, reject; const promise = new Promise((r, j) => {resolve = r; reject = j;}); return {promise, resolve, reject};}
 
 async function setup(options = {}) {
     const observations = {sockets: [], peers: [], contexts: [], notices: [], timers: [], timerStarts: 0,
-        cleanup: 0, stopped: 0, played: 0, resumed: 0, order: [], remoteStreams: [], analysisStreams: []};
-    const track = {readyState: 'live', stop() {observations.stopped++;}};
-    const stream = {getAudioTracks: () => [track], getTracks: () => [track]};
+        cleanup: 0, stopped: 0, played: 0, resumed: 0, order: [], remoteStreams: [], analysisStreams: [], stateWrites: []};
+    const track = {readyState: options.endedAudio ? 'ended' : 'live', stop() {observations.stopped++;}};
+    const stream = {getAudioTracks: () => options.emptyAudio ? [] : [track], getTracks: () => [track]};
     const audio = {srcObject: null, play() {
         observations.played++; observations.order.push('play');
         return options.playFailure ? Promise.reject(new Error('private-media-sentinel')) : Promise.resolve();
@@ -74,7 +79,10 @@ async function setup(options = {}) {
     }
     class Socket {
         static OPEN = 1;
-        constructor(url) {this.url = url; this.readyState = 1; this.sent = []; this.closes = 0; observations.sockets.push(this);}
+        constructor(url) {
+            if (options.socketFailure) throw new Error('private-socket-constructor-sentinel');
+            this.url = url; this.readyState = 1; this.sent = []; this.closes = 0; observations.sockets.push(this);
+        }
         send(raw) {this.sent.push(JSON.parse(raw));}
         close() {this.closes++; this.readyState = 3;}
     }
@@ -88,19 +96,25 @@ async function setup(options = {}) {
     }
     const window = {testVoiceUI: {}, navigator: {permissions: {query: async () => {
         if (options.permissionApiMissing) throw new TypeError('API unavailable');
+        if (options.permissionWait) return options.permissionWait.promise;
         return {state: options.permissionDenied ? 'denied' : 'granted'};
-    }}, mediaDevices: {getUserMedia: async () => stream}},
+    }}, mediaDevices: {getUserMedia: async () => {
+        if (options.mediaFailure) throw Object.assign(new Error('private-input-sentinel'), {name: options.mediaFailure});
+        if (options.mediaWait) return options.mediaWait.promise;
+        return stream;
+    }}},
         document: {getElementById: () => audio}, RTCPeerConnection: Peer, WebSocket: Socket,
         AudioContext: Context, MediaStream: RemoteStream, URLSearchParams,
         RTCSessionDescription: class {constructor(value) {Object.assign(this, value);}},
         RTCIceCandidate: class {constructor(value) {Object.assign(this, value);}}};
-    const api = {state: {auth_token: 'synthetic-credential', instanceName: 'synthetic-instance', repeaterItems: []},
+    const api = {state: {auth_token: 'synthetic-credential', instanceName: 'synthetic-instance', repeaterItems: [], isConnectionInProgress: true, callStarted: false},
         data: {assistant_config_attributes: {output: {orchestratorUrl: 'https://synthetic.example.invalid/scc-native',
             attrs: {language: 'de'}}}}, context: {props: {voiceAssistantId: 'synthetic-service'}},
-        setState(name, value) {this.state[name] = value;},
+        setState(name, value) {observations.stateWrites.push([name, value]); if (!options.snapshotState) this.state[name] = value;},
         emit(name, value) {observations.notices.push({name, value});}};
     const helpers = {translate: async value => {
         if (options.translateFailure) throw new Error('private-translation-sentinel');
+        if (options.translateWait) await options.translateWait.promise;
         return value;
     }, timing: {setTimeout(fn) {const t = {fn, cleared: false}; observations.timers.push(t); return t;},
         clearTimeout(t) {if (t) t.cleared = true;}, clearInterval() {}}};
@@ -110,6 +124,7 @@ async function setup(options = {}) {
         disconnectVoice(win, rtc) {observations.cleanup++; return nativeDisconnect(win, rtc);},
         startCallTimer() {observations.timerStarts++;}, handleDataChannelMessage() {}, updateVoiceAnalysisTabData() {}};
     const handler = vm.runInNewContext(source + '\n;handler;', {console, URLSearchParams, setTimeout});
+    if (options.prepared) options.prepared({observations, window, api, helpers, uiUtils, stream, track});
     await handler({api, helpers, event: {}, imports: {'sn_nowassist_va.VoiceTestingUIUtils': () => uiUtils,
         'sn_uxf.core_libraries': () => ({})}});
     const socket = observations.sockets[0];
@@ -417,4 +432,114 @@ test('established WSS close and error preserve native normal-close behavior', {s
     assert.equal(env.observations.cleanup, 0); assert.equal(env.observations.stopped, 0);
     assert.equal(env.api.state.callStarted, true); assert.equal(env.api.state.auth_token, 'synthetic-credential');
     assert.equal(env.observations.notices.length, 0); assert.equal(env.observations.sockets.length, 1);
+});
+
+for (const [name, options, stopped] of [
+    ['explicit microphone denial', {permissionDenied: true}, 0],
+    ['denied microphone request', {mediaFailure: 'NotAllowedError'}, 0],
+    ['missing microphone', {mediaFailure: 'NotFoundError'}, 0],
+    ['other microphone failure', {mediaFailure: 'NotReadableError'}, 0],
+    ['empty audio stream', {emptyAudio: true}, 1],
+    ['ended audio stream', {endedAudio: true}, 1],
+    ['synchronous signaling constructor failure', {socketFailure: true}, 1]
+]) test(`${name} clears call and progress and releases owned input once`, {skip: baseline}, async () => {
+    const env = await setup(options); await flush();
+    assert.equal(env.api.state.callStarted, false);
+    assert.equal(env.api.state.isConnectionInProgress, false);
+    assert.equal(env.observations.cleanup, 1);
+    assert.equal(env.observations.stopped, stopped);
+    assert.equal(env.rtc.localStream, null);
+    assert.equal(env.observations.sockets.length, 0);
+    assert.equal(env.observations.notices.length, 1);
+    assert.equal(env.api.state.auth_token, 'synthetic-credential');
+    assert.doesNotMatch(JSON.stringify(env.observations.notices), /private-.*sentinel/);
+});
+
+for (const state of ['granted', 'denied']) test(`retired permission ${state} cannot change the replacement call`, {skip: baseline}, async () => {
+    const permissionWait = deferred(); let prepared;
+    const pending = setup({permissionWait, prepared: value => {prepared = value;}});
+    await flush();
+    const replacement = {marker: 'new-call'}; prepared.window.testVoiceUI.webrtc = replacement;
+    prepared.api.state.callStarted = true; prepared.api.state.isConnectionInProgress = true;
+    permissionWait.resolve({state});
+    await pending; await flush();
+    assert.equal(prepared.window.testVoiceUI.webrtc, replacement);
+    assert.equal(prepared.observations.sockets.length, 0);
+    assert.equal(prepared.observations.cleanup, 0);
+    assert.equal(prepared.observations.notices.length, 0);
+    assert.equal(prepared.api.state.callStarted, true);
+    assert.equal(prepared.api.state.isConnectionInProgress, true);
+});
+
+test('late media acquired by a retired start is stopped without opening a socket', {skip: baseline}, async () => {
+    const mediaWait = deferred(); let prepared;
+    const pending = setup({mediaWait, prepared: value => {prepared = value;}}); await flush();
+    const old = prepared.window.testVoiceUI.webrtc;
+    prepared.uiUtils.disconnectVoice(prepared.window, old);
+    const replacement = {marker: 'new-call'}; prepared.window.testVoiceUI.webrtc = replacement;
+    prepared.api.state.callStarted = true; prepared.api.state.isConnectionInProgress = true;
+    mediaWait.resolve(prepared.stream); await pending; await flush();
+    assert.equal(prepared.observations.stopped, 1);
+    assert.equal(old.localStream, null);
+    assert.equal(prepared.observations.sockets.length, 0);
+    assert.equal(prepared.observations.cleanup, 1);
+    assert.equal(prepared.observations.notices.length, 0);
+    assert.equal(prepared.window.testVoiceUI.webrtc, replacement);
+    assert.equal(prepared.api.state.callStarted, true);
+    assert.equal(prepared.api.state.isConnectionInProgress, true);
+});
+
+test('late failure notification from a replaced call is suppressed', {skip: baseline}, async () => {
+    const translateWait = deferred(); const env = await setup({translateWait});
+    await env.socket.onerror({});
+    const replacement = {marker: 'new-call'}; env.window.testVoiceUI.webrtc = replacement;
+    env.api.state.callStarted = true; env.api.state.isConnectionInProgress = true;
+    translateWait.resolve(); await flush();
+    assert.equal(env.observations.notices.length, 0);
+    assert.equal(env.window.testVoiceUI.webrtc, replacement);
+    assert.equal(env.api.state.callStarted, true);
+    assert.equal(env.api.state.isConnectionInProgress, true);
+});
+
+test('Stop while microphone acquisition is pending stops the late stream without restarting', {skip: baseline}, async () => {
+    const mediaWait = deferred(); let prepared;
+    const pending = setup({mediaWait, prepared: value => {prepared = value;}}); await flush();
+    prepared.uiUtils.disconnectVoice(prepared.window, prepared.window.testVoiceUI.webrtc);
+    mediaWait.resolve(prepared.stream); await pending; await flush();
+    assert.equal(prepared.api.state.callStarted, false);
+    assert.equal(prepared.observations.stopped, 1);
+    assert.equal(prepared.observations.sockets.length, 0);
+    assert.equal(prepared.observations.notices.length, 0);
+});
+
+test('Stop while permission lookup is pending prevents later microphone acquisition and signaling', {skip: baseline}, async () => {
+    const permissionWait = deferred(); let prepared;
+    const pending = setup({permissionWait, prepared: value => {prepared = value;}}); await flush();
+    prepared.uiUtils.disconnectVoice(prepared.window, prepared.window.testVoiceUI.webrtc);
+    permissionWait.resolve({state: 'granted'}); await pending; await flush();
+    assert.equal(prepared.api.state.callStarted, false);
+    assert.equal(prepared.window.testVoiceUI.webrtc.localStream, null);
+    assert.equal(prepared.observations.sockets.length, 0);
+    assert.equal(prepared.observations.stopped, 0);
+    assert.equal(prepared.observations.notices.length, 0);
+});
+
+test('a rejected media request for a superseded start cannot report failure for the current call', {skip: baseline}, async () => {
+    const mediaWait = deferred(); let prepared;
+    const pending = setup({mediaWait, prepared: value => {prepared = value;}}); await flush();
+    const replacement = {marker: 'current-call'}; prepared.window.testVoiceUI.webrtc = replacement;
+    mediaWait.reject(Object.assign(new Error('private-late-sentinel'), {name: 'NotAllowedError'}));
+    await pending; await flush();
+    assert.equal(prepared.window.testVoiceUI.webrtc, replacement);
+    assert.equal(prepared.observations.sockets.length, 0);
+    assert.equal(prepared.observations.notices.length, 0);
+    assert.equal(prepared.api.state.callStarted, true);
+});
+
+test('a healthy Start does not depend on synchronous mutation of the captured framework state', {skip: baseline}, async () => {
+    const env = await setup({snapshotState: true});
+    assert.equal(env.api.state.callStarted, false);
+    assert.equal(env.observations.sockets.length, 1);
+    assert.equal(env.observations.peers.length, 1);
+    assert.ok(env.observations.stateWrites.some(([key, value]) => key === 'callStarted' && value === true));
 });
