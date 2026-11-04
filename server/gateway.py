@@ -296,6 +296,8 @@ class Gateway:
         self.controller_model_aliases=dict(model_aliases)
         self.controller_backend=None
         self.controller_health=None
+        # Set internally by the controller for the explicit two-slot profile.
+        self._inference_entry_guard=None
         self.app=web.Application(client_max_size=body_bytes,
             middlewares=[self.sdk_dispatch,self.diagnose_voice_contract,self.authenticate] if voice_contract_diagnostics
             else [self.sdk_dispatch,self.authenticate])
@@ -722,6 +724,12 @@ class Gateway:
             headers['Content-Type']='application/json'
             if 'anthropic-version' in request.headers:
                 headers['anthropic-version']=request.headers['anthropic-version']
+            if self._inference_entry_guard is not None:
+                try:
+                    self._inference_entry_guard()
+                except Exception:
+                    status=503
+                    return web.json_response({'error':{'message':'Request memory admission unavailable'}},status=status)
             async with self.client.post(backend.upstream+request.path,json=body,
                     headers=headers,allow_redirects=False) as upstream:
                 if 300<=upstream.status<400:
