@@ -25,6 +25,33 @@ class ProcessingCallbackTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(value['events'], [])
         self.assertEqual(len(f.requests), 1)
 
+    async def test_cleaned_dynamic_loader_projects_known_generic_without_business_output(self):
+        f = self.fixture
+        await f.post('/api/start', {})
+        await f.callback(body=[{
+            'uiType': 'ActionMsg', 'actionType': 'DynamicLoader',
+            'progressMessages': [{'message': '<b>Checking on remaining steps.</b>'}]}])
+        value = await (await f.ui.get('/api/events?wait=0')).json()
+        self.assertEqual(value['processing']['messages'], ['Die Anfrage wird geprüft.'])
+        self.assertTrue(value['busy'])
+        self.assertEqual(value['events'], [])
+        self.assertEqual(value['backendEvents'], [])
+        self.assertEqual(len(f.requests), 1)
+
+    async def test_same_text_in_authoritative_reply_and_input_controls_is_not_projected(self):
+        f = self.fixture
+        await f.post('/api/start', {})
+        label = 'Checking on remaining steps.'
+        for kind in ('OutputText', 'InputText', 'Boolean'):
+            with self.subTest(kind=kind):
+                control = {'uiType': kind, 'value' if kind == 'OutputText' else 'label': label}
+                await f.callback(body=[control])
+                value = await (await f.ui.get('/api/events?wait=0')).json()
+                self.assertIsNone(value['processing'])
+                self.assertEqual(value['events'][-1]['text'], label)
+                self.assertEqual(value['backendEvents'][-1]['text'], label)
+                self.assertEqual(value['backendEvents'][-1]['uiType'], kind)
+
 
 if __name__ == '__main__':
     unittest.main()

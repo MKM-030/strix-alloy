@@ -344,6 +344,15 @@ class _PendingObservation:
 
 
 @dataclass(frozen=True)
+class _AnsweredInputText:
+    turn_id: str
+    epoch: int
+    backend_owner: object
+    boundary: dict
+    value: tuple
+
+
+@dataclass(frozen=True)
 class _ActiveObservation:
     turn: tuple
     epoch: int
@@ -441,6 +450,7 @@ class NativeDuplex:
         # messages live only in _pending and are not parked as supplements.
         self._supplements = deque()
         self._submission_onsets = {}
+        self._answered_inputtext = None
         self._spoken_history = deque(maxlen=8)
         self._spoken_sequence = 0
         self._input_questions = {}
@@ -765,6 +775,7 @@ class NativeDuplex:
                          'emitted_samples=%d accepted_samples=%d device_playback_known=false',
                          self.call.call_id, state['emitted_samples'], state['accepted_samples'])
         self.epoch += 1
+        self._answered_inputtext = None
         self._outputs.clear()
         self.call.playback.interrupt()
         self._input_questions[self.call.playback.generation] = onset
@@ -1118,6 +1129,21 @@ class NativeDuplex:
             self._local_questions.put_nowait((turn, 'help', self.epoch))
 
     def _queue_business_input(self, turn):
+        dialog = self.call.dialog
+        boundary = getattr(dialog, 'input_boundary', None)
+        owner = getattr(dialog, 'backend_owner', None)
+        self._answered_inputtext = None
+        if (type(boundary) is dict
+                and set(boundary) == {'source', 'businessRequestId', 'controlType', 'label'}
+                and boundary['source'] == 'servicenow_input_control'
+                and boundary['controlType'] == 'InputText'
+                and type(boundary['businessRequestId']) is str
+                and re.fullmatch(r'[0-9a-f]{32}', boundary['businessRequestId'])
+                and boundary['businessRequestId'] == getattr(dialog, 'business_request_id', None)
+                and type(boundary['label']) is str and boundary['label'] and not _polar(boundary['label'])
+                and owner is not None and not self.bootstrap_pending):
+            self._answered_inputtext = _AnsweredInputText(turn[3], self.epoch, owner,
+                                                        boundary, tuple(boundary.items()))
         self._spoken_question = self._interrupted_speech = None
         if self._request:
             self.task_revision += 1
@@ -1730,6 +1756,25 @@ class NativeDuplex:
                 self._local_busy = False
                 self._local_questions.task_done()
 
+    def _dialogue_input_boundary(self, key):
+        boundary = getattr(self.call.dialog, 'input_boundary', None)
+        answered = self._answered_inputtext
+        if answered is None:
+            return boundary
+        if (answered.epoch != self.epoch
+                or answered.backend_owner is not getattr(self.call.dialog, 'backend_owner', None)
+                or boundary is not None and (boundary is not answered.boundary
+                                            or tuple(boundary.items()) != answered.value)):
+            # Once a new publication or mutation is observed, later clearing it
+            # must never resurrect the previous turn's optional response.
+            self._answered_inputtext = None
+            return boundary
+        if key['request_id'] != answered.turn_id or key['output_epoch'] != answered.epoch:
+            return boundary
+        # Private fingerprint-only shape, impossible for a native boundary.
+        # The exact accepted question and its dispatch retirement are equivalent.
+        return ('accepted_inputtext_retirement', answered.turn_id)
+
     def _dialogue_signature(self, snapshot, key):
         def normalize(value):
             if isinstance(value, dict):
@@ -1745,7 +1790,7 @@ class NativeDuplex:
                                             'servicenow_processing_presentation')))
         context = dict(snapshot=exposed, key=key,
             pending_ids=tuple(turn[3] for turn in self._pending),
-            input_boundary=getattr(self.call.dialog, 'input_boundary', None),
+            input_boundary=self._dialogue_input_boundary(key),
             bootstrap_state=self._bootstrap_state, backend_unavailable=self._backend_unavailable,
             conversation_ended=bool(getattr(self.call.dialog, 'conversation_ended', False)))
         encoded = json.dumps(normalize(context), sort_keys=True, ensure_ascii=False, separators=(',', ':'))
@@ -2327,6 +2372,7 @@ class NativeDuplex:
         self._supplements.clear()
         self._input_questions.clear()
         self._submission_onsets.clear()
+        self._answered_inputtext = None
         self._spoken_history.clear()
         self._incoming_turn = None
         current = asyncio.current_task()

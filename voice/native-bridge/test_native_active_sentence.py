@@ -73,13 +73,32 @@ class ActiveSentenceTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_hard_source_change_still_stops_tail(self):
         item = self.item()
+        emitted = []
+        async def synthesize(text):
+            yield PREFIX
+            # The transport drains the prefix while its source still owns it.
+            emitted.append(self.call.playback.read(len(PREFIX)))
+            self.source.alive = False
+            yield TAIL
+        self.call.speech.synthesize = synthesize
+        await self.lane._synthesize(item, self.call.playback.generation)
+        self.assertEqual(emitted, [PREFIX])
+        self.assertEqual(self.call.playback.accepted_samples, len(PREFIX) // 2)
+        self.assertEqual(self.call.playback.emitted_samples, len(PREFIX) // 2)
+        self.assertEqual(bytes(self.call.playback.data), b'')
+
+    async def test_hard_source_change_before_emission_flushes_prefix_and_stops_tail(self):
+        item = self.item()
         async def synthesize(text):
             yield PREFIX
             self.source.alive = False
             yield TAIL
         self.call.speech.synthesize = synthesize
         await self.lane._synthesize(item, self.call.playback.generation)
-        self.assertEqual(bytes(self.call.playback.data), PREFIX)
+        self.assertEqual(self.call.playback.accepted_samples, len(PREFIX) // 2)
+        self.assertEqual(self.call.playback.emitted_samples, 0)
+        self.assertEqual(self.call.playback.discarded_samples, len(PREFIX) // 2)
+        self.assertEqual(bytes(self.call.playback.data), b'')
 
     async def test_stale_scope_before_first_pcm_never_receives_a_lease(self):
         item = self.item()
