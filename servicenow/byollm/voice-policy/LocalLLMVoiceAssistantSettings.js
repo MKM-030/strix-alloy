@@ -1,5 +1,6 @@
 /* Read-only projection of the selected native Voice assistant. Install in sn_voice_aia.
- * No provider, connection, credential, cache or protected source is read or changed.
+ * Optional conversation selection reads only native registration metadata.
+ * Provider code, connections, credentials, caches and protected source stay outside this projection.
  */
 var LocalLLMVoiceAssistantSettings = Class.create();
 LocalLLMVoiceAssistantSettings.prototype = {
@@ -7,6 +8,138 @@ LocalLLMVoiceAssistantSettings.prototype = {
 
     // Primitive JSON interface for administrative/native cross-scope callers.
     getSettingsJSON: function(serviceId) { return JSON.stringify(this.getSettings(serviceId)); },
+
+    getConversationModel: function(serviceId) {
+        try {
+            if (typeof serviceId !== 'string' || !/^[0-9a-f]{32}$/.test(serviceId))
+                throw new Error('Conversation model unavailable');
+            return this._conversationModel();
+        } catch (ignoredSelectionError) {
+            return {version:1, status:'unavailable'};
+        }
+    },
+
+    _conversationModel: function() {
+        var capabilityId = 'aca5634f4312121038520464dbb8f236';
+        var capability = this._selectionOne('sys_one_extend_capability', [['sys_id', capabilityId]], ['active']);
+        var selection = this._selectionOne('sys_one_extend_definition_config',
+            [['capability', capabilityId], ['active', true], ['default', true]],
+            ['capability', 'definition', 'active', 'default']);
+        var definition = this._selectionOne('sys_one_extend_capability_definition',
+            [['sys_id', selection.definition]], ['capability', 'api', 'api_type', 'filter_properties']);
+        if (!this._selectionEnabled(capability.active) || selection.capability !== capabilityId ||
+                !this._selectionEnabled(selection.active) || !this._selectionEnabled(selection.default) ||
+                definition.capability !== capabilityId || definition.api_type !== 'sys_hub_flow')
+            throw new Error('Conversation model unavailable');
+        this._selectionFilter(definition.filter_properties, true);
+        var bindings = this._selectionRows('sys_generative_ai_prompt_config', [['definition', definition.sys_id]],
+            ['definition', 'ai_config', 'is_default', 'filter_type', 'filter_properties'], 33);
+        var defaults = [], i;
+        for (i = 0; i < bindings.length; i++) {
+            if (bindings[i].definition !== definition.sys_id || bindings[i].filter_type !== 'default')
+                throw new Error('Conversation model unavailable');
+            this._selectionFilter(bindings[i].filter_properties, false);
+            if (this._selectionEnabled(bindings[i].is_default)) defaults.push(bindings[i]);
+        }
+        if (defaults.length !== 1) throw new Error('Conversation model unavailable');
+        var binding = defaults[0];
+        var prompt = this._selectionOne('sys_generative_ai_config', [['sys_id', binding.ai_config]],
+            ['definition', 'definition_table', 'active', 'state', 'model']);
+        if (prompt.definition !== definition.sys_id || prompt.definition_table !== 'sys_one_extend_capability_definition' ||
+                !this._selectionEnabled(prompt.active) || prompt.state !== 'published' ||
+                !/^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/.test(prompt.model))
+            throw new Error('Conversation model unavailable');
+        var registrations = this._selectionRows('sys_generative_ai_model_config',
+            [['model', prompt.model], ['active', true], ['lifecycle_state', 'active'], ['usage_mode', 'none']],
+            ['model', 'provider', 'active', 'lifecycle_state', 'usage_mode'], 33);
+        var matches = [];
+        for (i = 0; i < registrations.length; i++) {
+            var candidate = registrations[i];
+            var candidateMapping = this._selectionOne('sys_generative_ai_provider_mapping',
+                [['sys_id', candidate.provider]], ['active', 'provider', 'provider_api', 'provider_implementation',
+                    'provider_implementation_document', 'gen_ai_provider']);
+            if (candidateMapping.provider_implementation === definition.api && this._selectionEnabled(candidateMapping.active))
+                matches.push({model:candidate, mapping:candidateMapping});
+        }
+        if (matches.length !== 1) throw new Error('Conversation model unavailable');
+        var model = matches[0].model, mapping = matches[0].mapping;
+        if (model.model !== prompt.model || !this._selectionEnabled(model.active) || model.lifecycle_state !== 'active' ||
+                model.usage_mode !== 'none' || !this._selectionEnabled(mapping.active) ||
+                mapping.provider !== 'Custom LLM' || mapping.provider_api !== 'custom_api' ||
+                mapping.provider_implementation_document !== definition.api_type)
+            throw new Error('Conversation model unavailable');
+        var provider = this._selectionOne('sys_gen_ai_provider', [['sys_id', mapping.gen_ai_provider]], ['gen_ai_provider']);
+        if (provider.gen_ai_provider !== 'Custom LLM Provider') throw new Error('Conversation model unavailable');
+        // The installed callable implementation has a draft authoring status.
+        // Its existence and mapping establish this join; prompt publication is checked above.
+        var implementation = this._selectionOne('sys_hub_flow', [['sys_id', definition.api]], []);
+        var rows = [capability, selection, definition, binding, prompt, model, mapping, provider, implementation];
+        var revisions = [];
+        for (i = 0; i < rows.length; i++) revisions.push([rows[i].sys_id, rows[i].sys_mod_count]);
+        revisions.push(prompt.model);
+        var digest = String(new GlideDigest().getSHA256Hex(JSON.stringify(revisions))).toLowerCase();
+        if (!/^[0-9a-f]{64}$/.test(digest)) throw new Error('Conversation model unavailable');
+        return {version:1, status:'selected', capability_id:capabilityId,
+            definition_config_id:selection.sys_id, definition_id:definition.sys_id,
+            prompt_binding_id:binding.sys_id, prompt_id:prompt.sys_id, model_config_id:model.sys_id,
+            provider_mapping_id:mapping.sys_id, provider_id:provider.sys_id,
+            implementation_id:implementation.sys_id, model_identifier:prompt.model, binding_sha256:digest};
+    },
+
+    _selectionEnabled: function(value) { return value === '1' || value === 'true'; },
+
+    _selectionFilter: function(text, requireProvider) {
+        var value = JSON.parse(text || '{}');
+        if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Conversation model unavailable');
+        var keys = Object.keys(value);
+        for (var i = 0; i < keys.length; i++) {
+            if (keys[i] === 'provider' && value[keys[i]] === 'Custom LLMcustom_api') continue;
+            if (keys[i] === 'provider_api' && value[keys[i]] === 'custom_api') continue;
+            throw new Error('Conversation model unavailable');
+        }
+        if (requireProvider && value.provider !== 'Custom LLMcustom_api') throw new Error('Conversation model unavailable');
+    },
+
+    _selectionOne: function(table, filters, fields) {
+        var rows = this._selectionRows(table, filters, fields, 2);
+        if (rows.length !== 1) throw new Error('Conversation model unavailable');
+        return rows[0];
+    },
+
+    _selectionRows: function(table, filters, fields, limit) {
+        var record = new GlideRecord(table), rows = [], i, field, element;
+        fields = ['sys_id', 'sys_mod_count'].concat(fields);
+        if (record.isValid() !== true) throw new Error('Conversation model unavailable');
+        for (i = 0; i < fields.length; i++)
+            if (record.isValidField(fields[i]) !== true) throw new Error('Conversation model unavailable');
+        for (i = 0; i < filters.length; i++) record.addQuery(filters[i][0], filters[i][1]);
+        record.setLimit(limit);
+        record.query();
+        while (record.next()) {
+            if (record.canRead() !== true) throw new Error('Conversation model unavailable');
+            // Check all required rights before reading any value. Ordinary queries
+            // retain conflicting rows that a secure query might silently hide.
+            for (i = 0; i < fields.length; i++) {
+                element = record.getElement(fields[i]);
+                if (element === null || typeof element === 'undefined' || element.canRead() !== true)
+                    throw new Error('Conversation model unavailable');
+            }
+            var row = {};
+            for (i = 0; i < fields.length; i++) {
+                field = fields[i];
+                var raw = record.getValue(field);
+                var value = raw === null || typeof raw === 'undefined' ? '' : String(raw);
+                if (value.length > (field === 'filter_properties' ? 4096 : 128))
+                    throw new Error('Conversation model unavailable');
+                row[field] = value;
+            }
+            if (!/^[0-9a-f]{32}$/.test(row.sys_id) || !/^(0|[1-9][0-9]{0,9})$/.test(row.sys_mod_count))
+                throw new Error('Conversation model unavailable');
+            rows.push(row);
+        }
+        if (rows.length >= 33) throw new Error('Conversation model unavailable');
+        return rows;
+    },
 
     getSettings: function(serviceId) {
         if (typeof serviceId !== 'string' || !/^[0-9a-f]{32}$/.test(serviceId))

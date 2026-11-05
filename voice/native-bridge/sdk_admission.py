@@ -197,7 +197,7 @@ async def _bounded_response(response):
 
 
 async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, http_factory=None,
-                            assistant_settings_version=None):
+                            assistant_settings_version=None, conversation_model_version=None):
     """Verify a POST /api/webrtc/sessions request without activating that API.
 
     ``http_factory`` is an offline test seam. Integration uses the default new
@@ -216,10 +216,16 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
     if assistant_settings_version is not None and (
             type(assistant_settings_version) is not int or assistant_settings_version != 1):
         raise AdmissionDenied(403)
+    if conversation_model_version is not None and (
+            type(conversation_model_version) is not int or conversation_model_version != 1
+            or assistant_settings_version != 1):
+        raise AdmissionDenied(403)
     authorization = _validate_request(raw_headers, body, query_string, policy)
     payload = {"serviceId": policy.assistant_id}
     if assistant_settings_version == 1:
         payload["assistantSettingsVersion"] = 1
+    if conversation_model_version == 1:
+        payload["conversationModelVersion"] = 1
     call_settings = None
     factory = aiohttp.ClientSession if http_factory is None else http_factory
     deadline = asyncio.get_running_loop().time() + AUTHORIZATION_TIMEOUT_SECONDS
@@ -244,7 +250,8 @@ async def admit_sdk_session(raw_headers, body, *, query_string="", policy=None, 
                     if assistant_settings_version == 1:
                         from assistant_settings import CallSettings
                         call_settings = CallSettings.from_authorized_response(
-                            data, service_id=policy.assistant_id, agent_id=policy.voice_agent_id)
+                            data, service_id=policy.assistant_id, agent_id=policy.voice_agent_id,
+                            conversation_model_version=conversation_model_version)
                     elif not authorized_agents(data, policy.voice_agent_id):
                         raise AdmissionDenied(403)
             if call_settings is not None and requires_caller_create_preflight(

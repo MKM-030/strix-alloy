@@ -212,6 +212,7 @@ class PresentationTransportTests(unittest.IsolatedAsyncioTestCase):
         s.conversation_binding=ConversationBinding('c'*32,'d'*32,'e'*32)
         s.voice_context={'voice_assistant':CALLER_SERVICE_ID,'global_context_profile':CALLER_PROFILE_ID}
         # This transport fixture represents an already corroborated private grant.
+        s.presentation_provider_user_id='voice-'+'b'*32
         s.presentation_nonce='a9'*32
         s.presentation_deadline=__import__('time').monotonic()+60
         s.presentation_identity=self.bridge.owned_cleanup_identity(s)
@@ -270,6 +271,9 @@ class PresentationTransportTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue((await response.json())['stored']);self.assertEqual(len(self.sent),1)
         value=self.sent[0];self.assertEqual(value['operation'],'presentation_history_store')
         self.assertEqual(value['grantNonce'],'a9'*32)
+        self.assertEqual(value['providerContextUserId'],'voice-'+'b'*32)
+        self.assertEqual(value['userId'],s.user_id)
+        self.assertEqual(value['clientSessionId'],s.sid)
         self.assertEqual(value['callerUserId'],s.caller_user_id);self.assertEqual(value['event'],self.event())
         self.assertNotIn('message',value);self.assertNotIn('caller_updates',value)
         self.assertTrue(s.busy);self.assertEqual(list(s.requests),['original-business'])
@@ -332,6 +336,7 @@ class PublicationBudgetTests(unittest.IsolatedAsyncioTestCase):
         s.started=True;s.user_id='voice-'+s.sid;s.caller_user_id='1'*32
         s.conversation_binding=ConversationBinding('c'*32,'d'*32,'e'*32)
         s.voice_context={'voice_assistant':CALLER_SERVICE_ID,'global_context_profile':CALLER_PROFILE_ID}
+        s.presentation_provider_user_id='voice-'+'b'*32
         s.presentation_nonce='a9'*32;s.presentation_deadline=time.monotonic()+60
         s.presentation_identity=self.bridge.owned_cleanup_identity(s)
         s.busy=True;s.requests.append('original-business');s.pending_action='MESSAGE'
@@ -466,6 +471,7 @@ class PublicationBudgetTests(unittest.IsolatedAsyncioTestCase):
         before=self.business_state()
         async def attest():
             await asyncio.sleep(1.25)
+            s.presentation_provider_user_id='voice-'+'b'*32
             s.presentation_nonce='a9'*32
         task=asyncio.create_task(attest());s.presentation_task=task
         started=time.monotonic();result=await self.publish();elapsed=time.monotonic()-started
@@ -500,7 +506,8 @@ class PublicationBudgetTests(unittest.IsolatedAsyncioTestCase):
     async def test_small_combined_delay_succeeds_with_remaining_transport_budget(self):
         s=self.session;s.presentation_nonce='';self.storage_delay=.01;before=self.business_state()
         async def attest():
-            await asyncio.sleep(.01);s.presentation_nonce='a9'*32
+            await asyncio.sleep(.01);s.presentation_provider_user_id='voice-'+'b'*32
+            s.presentation_nonce='a9'*32
         task=asyncio.create_task(attest());s.presentation_task=task
         result=await self.publish();await task
         self.assertTrue(result['stored']);self.assertFalse(s.presentation_disabled)

@@ -25,6 +25,7 @@ from conversation_repair import (conversational_snapshot,
                                  NATURAL_CONVERSATION_PROMPT, _polar, _pure_kind,
                                  _passive_signal)
 from conversation_claims import unproven_storage_or_check_claim
+from conversation_numbers import has_unbound_numbers
 from native_backend import BackendControlChanged, BackendEvent, BackendState, ControlBinding, ControlGate
 from spoken_output import spoken_text
 from transcript_groups import TranscriptGroups
@@ -275,13 +276,17 @@ def prepare_conversation_dependencies():
 
 
 async def open_conversation(url, call_id, epoch, *, controller_url='', controller_token_file='', call_settings=None):
+    selection = getattr(call_settings, 'conversation_model', None)
+    if getattr(call_settings, 'conversation_model_required', False) and (selection is None or not controller_url):
+        raise RuntimeError('Configured conversation model unavailable')
     from aiohttp import ClientSession, ClientTimeout
     began = time.monotonic()
     conversation_class, socket_class, dialogue_class = prepare_conversation_dependencies()
     dependencies_ms = round((time.monotonic() - began) * 1000)
     began = time.monotonic()
     if controller_url:
-        source = socket_class(controller_url, controller_token_file)
+        model_binding = {'expected_model': selection.model_identifier} if selection is not None else {}
+        source = socket_class(controller_url, controller_token_file, **model_binding)
         adapter = conversation_class(lambda: source,
             deadlines={'handshake_seconds': 3, 'turn_seconds': 20, 'control_seconds': 1})
         dialogue = dialogue_class(adapter)
@@ -1876,8 +1881,7 @@ class NativeDuplex:
         source = ' '.join(fact['text'] for fact in snapshot['public_findings']
                           if fact['source_event'] != 'complete_emitted_assistant_speech')
         source += ' ' + ' '.join(snapshot['raw_inputs']) + ' ' + snapshot.get('question', '')
-        unbound_numbers = any(number not in re.findall(r'\d+', source)
-                              for number in re.findall(r'\d+', text))
+        unbound_numbers = has_unbound_numbers(text, source)
         identifiers = (self.call.call_id, self.call.call_id + '-va', turn[3],
                        getattr(candidate.identity, 'server_session_id', ''),
                        getattr(candidate.identity, 'socket_instance', ''))

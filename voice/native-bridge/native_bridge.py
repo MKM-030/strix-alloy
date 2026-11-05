@@ -2215,11 +2215,14 @@ async def authorize(request, config, http, with_settings=False):
             or not re.fullmatch(r'Bearer [A-Za-z0-9._~+/-]+=*', authorization)):
         return False
     url = config.instance_url + '/api/sn_voice_aia/ai_voice_agent/agents_authorized'
+    conversation_model_version = (1 if with_settings and
+        (getattr(config, 'conversation_http_url', '') or getattr(config, 'conversation_ws_url', '')) else None)
     deadline = asyncio.get_running_loop().time() + AUTHORIZATION_TIMEOUT_SECONDS
     try:
         async with asyncio.timeout_at(deadline):
             operation = http.post(url, json={'serviceId':config.voice_service_id,'clientApp':'admin_test',
-                                       **({'assistantSettingsVersion':1} if with_settings else {})},
+                                       **({'assistantSettingsVersion':1} if with_settings else {}),
+                                       **({'conversationModelVersion':1} if conversation_model_version == 1 else {})},
                                  headers={'Authorization':authorization,'Accept':'application/json',
                                           **({'Accept-Encoding':'identity'} if with_settings else {})},
                                  **({'auto_decompress':False} if with_settings else {}),
@@ -2232,7 +2235,8 @@ async def authorize(request, config, http, with_settings=False):
                     from sdk_admission import _bounded_response
                     data = await _bounded_response(response)
                     settings = CallSettings.from_authorized_response(
-                        data, config.voice_service_id, config.required_agent_id)
+                        data, config.voice_service_id, config.required_agent_id,
+                        conversation_model_version=conversation_model_version)
                 else:
                     data = await response.json()
                     accepted = authorized_agents(data, config.required_agent_id)
@@ -2651,8 +2655,11 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                 raise ValueError('Trusted assistant settings required')
             return make_call(context.call_settings,ice_servers=ice_servers)
         # One immutable startup policy binds admission and all session operations.
+        model_selection = ({'conversation_model_version': 1}
+                           if config.conversation_http_url or config.conversation_ws_url else {})
         register_sdk_routes(app, config, active, lambda: make_call(),
-                            partial(admit_sdk_session,policy=config.sdk_policy,assistant_settings_version=1),
+                            partial(admit_sdk_session,policy=config.sdk_policy,assistant_settings_version=1,
+                                    **model_selection),
                             context_call_factory=make_sdk_call, before_create=before_create,
                             bind_call_authorization=bind_authenticated_caller)
         LOG.info('Native SDK HTTP session routes enabled; shared browser capacity')

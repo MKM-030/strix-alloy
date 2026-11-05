@@ -4,7 +4,7 @@ Native voice identifiers select an exact registered voice for each call. They
 never select a local speech model or replace the host's PCM energy threshold.
 """
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import math
 import re
 import unicodedata
@@ -245,14 +245,53 @@ def _validate_projection(value, service_id):
     return deepcopy(value)
 
 
+@dataclass(frozen=True)
+class ConversationModelSelection:
+    version: int
+    status: str
+    capability_id: str
+    definition_config_id: str
+    definition_id: str
+    prompt_binding_id: str
+    prompt_id: str
+    model_config_id: str
+    provider_mapping_id: str
+    provider_id: str
+    implementation_id: str
+    model_identifier: str
+    binding_sha256: str
+
+    @classmethod
+    def from_descriptor(cls, value):
+        if (type(value) is not dict or set(value) != set(cls.__dataclass_fields__)
+                or type(value.get('version')) is not int or value['version'] != 1
+                or value.get('status') != 'selected'
+                or value.get('capability_id') != 'aca5634f4312121038520464dbb8f236'):
+            return None
+        for name in cls.__dataclass_fields__:
+            if name.endswith('_id') and (type(value[name]) is not str or not _SYS_ID.fullmatch(value[name])):
+                return None
+        if (type(value['model_identifier']) is not str
+                or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,99}', value['model_identifier'])
+                or type(value['binding_sha256']) is not str
+                or not re.fullmatch(r'[0-9a-f]{64}', value['binding_sha256'])):
+            return None
+        return cls(**value)
+
+
 @dataclass
 class CallSettings:
     """A validated projection and one mutable selected language for one call."""
     _projection: dict
     selected_language: str
+    _conversation_model_required: bool = field(default=False, repr=False)
+    _conversation_model: ConversationModelSelection | None = field(default=None, repr=False)
 
     @classmethod
-    def from_authorized_response(cls, data, service_id, agent_id):
+    def from_authorized_response(cls, data, service_id, agent_id, *, conversation_model_version=None):
+        if conversation_model_version is not None and (
+                type(conversation_model_version) is not int or conversation_model_version != 1):
+            _invalid()
         for identifier in (service_id, agent_id):
             if not isinstance(identifier, str) or not _SYS_ID.fullmatch(identifier):
                 _invalid()
@@ -269,7 +308,17 @@ class CallSettings:
                 or agent_id not in agents):
             _invalid()
         projection = _validate_projection(result.get('assistant_settings'), service_id)
-        return cls(projection, projection['language'])
+        required = conversation_model_version == 1
+        selection = ConversationModelSelection.from_descriptor(result.get('conversation_model')) if required else None
+        return cls(projection, projection['language'], required, selection)
+
+    @property
+    def conversation_model_required(self):
+        return self._conversation_model_required
+
+    @property
+    def conversation_model(self):
+        return self._conversation_model
 
     @property
     def service_id(self):

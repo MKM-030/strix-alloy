@@ -46,6 +46,17 @@
             response.setBody({detail:'Assistant settings authorization rejected'});
             return;
         }
+        if (typeof payload.conversationModelVersion !== 'undefined' && payload.conversationModelVersion !== 1) {
+            response.setStatus(403);
+            response.setBody({detail:'Conversation model selection unavailable'});
+            return;
+        }
+        if (typeof payload.providerContextVersion !== 'undefined' &&
+                (payload.providerContextVersion !== 1 || payload.conversationAuthenticationVersion !== 1)) {
+            response.setStatus(403);
+            response.setBody({detail:'Provider context binding unavailable'});
+            return;
+        }
         // Explicit caller binding is private to the authenticated adapter response.
         // It is never part of assistant settings or the legacy agent-array response.
         var callerBinding = null;
@@ -130,6 +141,7 @@
                 }
                 callerBinding.context_profile = settings.context_profile;
             }
+            var providerContextBinding = null;
             var conversationAuthentication = null;
             if (typeof payload.conversationAuthenticationVersion !== 'undefined') {
                 if (payload.conversationAuthenticationVersion !== 1 || payload.callerBindingVersion !== 1 || callerBinding === null) {
@@ -244,6 +256,49 @@
                             String(gs.getUserID() || '') !== currentId || !fresh(conversation.sys_created_on)) return null;
                         // The return value is deliberately not interpreted as an authentication acknowledgement.
                         new VoiceConversationManager().elevateConversationSession(currentId,conversationId);
+                        if (payload.providerContextVersion === 1) {
+                            providerContextBinding = {version:1,status:'unavailable'};
+                            // Optional authority is independently re-observed after elevation.
+                            // Preserve the required refresh even if this read-only projection fails.
+                            try {
+                                var canonicalProfile = null;
+                                function postRefreshGraph() {
+                                    var observedProfile = null;
+                                    for (var j = 0; j < proofs.length; j++) {
+                                        var saved = proofs[j], observed = readOwn(saved.table,saved.id,saved.fields,false);
+                                        if (observed === null) return null;
+                                        if (saved.table === 'sys_cs_channel_user_profile') {
+                                            if (!/^voice-[0-9a-f]{32}$/.test(observed.channel_user_id)) return null;
+                                            observedProfile = observed;
+                                            var stable = JSON.parse(JSON.stringify(observed));
+                                            stable.channel_user_id = profile.channel_user_id;
+                                            if (JSON.stringify(stable) !== saved.values) return null;
+                                        } else if (JSON.stringify(observed) !== saved.values) return null;
+                                    }
+                                    if (observedProfile === null || String(gs.getUserID() || '') !== currentId ||
+                                            String(gs.getUserName() || '') !== callerBinding.user_name || !uniqueNativeInteraction()) return null;
+                                    var aliases = new GlideRecordSecure('sys_cs_channel_user_profile');
+                                    if (aliases.isValid() !== true || aliases.isValidField('channel') !== true ||
+                                            aliases.isValidField('channel_user_id') !== true) return null;
+                                    aliases.addQuery('channel',observedProfile.channel);
+                                    aliases.addQuery('channel_user_id',observedProfile.channel_user_id);
+                                    aliases.setLimit(2); aliases.query();
+                                    var matches = 0;
+                                    while (aliases.next()) {
+                                        var alias = values(aliases,['sys_id','active','user_table','user_document','channel_user_id','channel']);
+                                        if (alias === null || ++matches > 1 || JSON.stringify(alias) !== JSON.stringify(observedProfile)) return null;
+                                    }
+                                    return matches === 1 ? observedProfile : null;
+                                }
+                                canonicalProfile = postRefreshGraph();
+                                var finalProfile = canonicalProfile === null ? null : postRefreshGraph();
+                                if (canonicalProfile !== null && finalProfile !== null && JSON.stringify(finalProfile) === JSON.stringify(canonicalProfile)) {
+                                    providerContextBinding = {version:1,status:'available',service_id:serviceId,context_profile:settings.context_profile,
+                                        conversation_id:conversationId,interaction_id:interactionId,create_message_id:messageId,
+                                        caller_user_id:currentId,provider_user_id:canonicalProfile.channel_user_id};
+                                }
+                            } catch (ignoredProviderContext) {}
+                        }
                         return {version:1,refresh_requested:true,service_id:serviceId,context_profile:settings.context_profile,
                             conversation_id:conversationId,interaction_id:interactionId,create_message_id:messageId};
                     } catch (ignoredConversationAuthenticationError) {
@@ -260,6 +315,14 @@
             var authorizedResponse = {authorized_agents:authorizedAgentIds,assistant_settings:settings};
             if (callerBinding !== null) authorizedResponse.caller_binding = callerBinding;
             if (conversationAuthentication !== null) authorizedResponse.conversation_authentication = conversationAuthentication;
+            if (providerContextBinding !== null) authorizedResponse.provider_context_binding = providerContextBinding;
+            if (payload.conversationModelVersion === 1) {
+                try {
+                    authorizedResponse.conversation_model = new LocalLLMVoiceAssistantSettings().getConversationModel(serviceId);
+                } catch (ignoredConversationModel) {
+                    authorizedResponse.conversation_model = {version:1,status:'unavailable'};
+                }
+            }
             response.setBody(authorizedResponse);
             response.setStatus(200);
         } catch (ignoredSettingsError) {

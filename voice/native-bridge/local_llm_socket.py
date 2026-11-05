@@ -44,10 +44,15 @@ def _token(path):
 
 
 class LocalTextSocket:
-    def __init__(self, url, token_file, *, http=None):
+    def __init__(self, url, token_file, *, http=None, expected_model=None):
         validate_local_conversation(url, token_file)
         if not url:
             raise ValueError('Local conversation endpoint missing')
+        if expected_model is not None and (type(expected_model) is not str
+                or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,99}', expected_model)):
+            raise ValueError('Configured conversation model unavailable')
+        self._expected_model = expected_model
+        self._selection_unavailable = False
         self.url, self.token_file, self.http = url, token_file, http
         self.models_url = _MODELS_BY_CHAT[url]
         self.transient_busy = False
@@ -111,13 +116,15 @@ class LocalTextSocket:
         parts, total = [], 0
         binding = {k:record[k] for k in ('turn_id','generation_id')}
         try:
+            if self._selection_unavailable:
+                raise ValueError('Configured conversation model unavailable')
             if self.http is None:
                 from aiohttp import ClientSession, ClientTimeout
                 self.http = ClientSession(trust_env=False, timeout=ClientTimeout(total=25))
             from aiohttp import ClientTimeout
             headers = {'Authorization': 'Bearer ' + _token(self.token_file)}
-            # Resolve the central selection for each caller operation. A model
-            # switch never causes a retry or a second inference for that input.
+            # Read the controller once per operation and enforce any frozen
+            # ServiceNow selection before inference. A switch never retries input.
             async with self.http.get(self.models_url, headers=headers,
                     allow_redirects=False, timeout=ClientTimeout(total=3)) as response:
                 if response.status == 429:
@@ -131,6 +138,9 @@ class LocalTextSocket:
                 model = models['data'][0].get('id')
                 if type(model) is not str or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,127}', model):
                     raise ValueError('Invalid local controller selection')
+                if self._expected_model is not None and model != self._expected_model:
+                    self._selection_unavailable = True
+                    raise ValueError('Configured conversation model unavailable')
             body = dict(model=model, messages=[
                 dict(role='system', content=self._seed),
                 dict(role='system', content=self._snapshot),

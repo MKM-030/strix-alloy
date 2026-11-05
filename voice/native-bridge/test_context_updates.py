@@ -60,6 +60,14 @@ class ContextLaneTests(unittest.IsolatedAsyncioTestCase):
             'interaction_requester_session_language': 'de', 'interaction_user_language': 'de',
             'requester_session_language': 'de', 'voice_assistant': 'a' * 32,
             'interaction_ai_voice': 'true', 'global_context_profile': 'b' * 32}
+        from voice.caller_binding import ProviderContextBinding
+        self.session.user_id = 'voice-' + self.session.sid
+        self.session.caller_user_id = '1' * 32
+        self.session.voice_context['global_context_profile'] = 'b' * 32
+        self.session.provider_context_binding = ProviderContextBinding(
+            self.bridge.settings.caller_binding_service_id,'b'*32,'c'*32,self.session.conversation_binding.interaction_id,'d'*32,
+            self.session.caller_user_id,'voice-'+'9'*32)
+        self.session.provider_context_identity = self.bridge.owned_cleanup_identity(self.session)
         self.callbacks = TestClient(TestServer(self.bridge.callback_app()))
         await self.callbacks.start_server()
 
@@ -92,7 +100,7 @@ class ContextLaneTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn('action', sent)
         self.assertNotIn('message', sent)
         self.assertEqual(sent['conversationBinding'], self.session.conversation_binding.snapshot())
-        self.assertEqual(sent['userId'], self.session.user_id)
+        self.assertEqual(sent['userId'], self.session.provider_context_binding.provider_user_id)
         self.assertEqual(sent['clientSessionId'], self.session.sid)
         self.assertEqual(sent['caller_updates'], raw)
         self.assertEqual(sent['revision'], 1)

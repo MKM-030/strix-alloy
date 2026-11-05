@@ -214,7 +214,7 @@ SCCVoicePresentationHistoryV1.prototype = {
     },
     _matches: function(input, binding, createRequestId) {
         this._need(binding.conversation_id === input.conversationBinding.conversationId &&
-            binding.provider_user_id === input.userId && binding.caller_user_id === input.callerUserId &&
+            binding.caller_user_id === input.callerUserId &&
             binding.creation_message_id === input.conversationBinding.creationMessageId &&
             binding.interaction_id === input.conversationBinding.interactionId &&
             createRequestId === input.conversationBinding.createRequestId);
@@ -237,7 +237,8 @@ SCCVoicePresentationHistoryV1.prototype = {
         if (diagnostic) diagnostic.stage = 'grant_schema_interval';
         var now = this._now(), binding = grant && grant.binding;
         this._need(this._keys(grant, ['version','binding','create_request_id','app_id','provider_id','channel_id',
-            'service_id','context_profile','nonce_sha256','issued_at_ms','expires_at_ms']) && grant.version === 1 &&
+            'service_id','context_profile','nonce_sha256','issued_at_ms','expires_at_ms','client_session_id','transport_user_id']) && grant.version === 2
+            && this._id(grant.client_session_id) && grant.transport_user_id === 'voice-' + grant.client_session_id &&
             grant.app_id === this.app && grant.provider_id === this.provider && grant.channel_id === this.channel &&
             grant.service_id === this.service && grant.context_profile === this.profile && this._id(grant.create_request_id) &&
             typeof grant.nonce_sha256 === 'string' && /^[0-9a-f]{64}$/.test(grant.nonce_sha256) &&
@@ -296,7 +297,7 @@ SCCVoicePresentationHistoryV1.prototype = {
             this._need(this._integer(expires, now + 1, 9007199254740991));
             // Original CREATE correlation is supplied, not an independently
             // observed current native request/task join.
-            var grant = {version:1,binding:binding,create_request_id:input.conversationBinding.createRequestId,
+            var grant = {version:2,binding:binding,client_session_id:input.clientSessionId,transport_user_id:input.userId,create_request_id:input.conversationBinding.createRequestId,
                 app_id:this.app,provider_id:this.provider,channel_id:this.channel,service_id:this.service,context_profile:this.profile,
                 nonce_sha256:input.nonceSha256,issued_at_ms:now,expires_at_ms:expires};
             var expectedGrant = JSON.parse(JSON.stringify(grant));
@@ -316,7 +317,7 @@ SCCVoicePresentationHistoryV1.prototype = {
             this._includeDiagnostic(binding.conversation_id, 'grant_issued', 0);
             return JSON.stringify({status:'success',state:'presentation_history_grant_attested',requestId:input.requestId,
                 conversationId:binding.conversation_id,nonceSha256:input.nonceSha256,issuedAtMs:now,expiresAtMs:expires,
-                attested:true,scope:'presentation_metadata_only',businessAuthority:false});
+                attested:true,scope:'presentation_metadata_only',businessAuthority:false,providerContextUserId:binding.provider_user_id});
         } catch (ignoredGrantFailure) {
             this._grantRefusalDiagnostic(diagnostic);
             return JSON.stringify({status:'failure',state:'presentation_history_unavailable',attested:false,
@@ -334,7 +335,8 @@ SCCVoicePresentationHistoryV1.prototype = {
         this._need(typeof raw === 'string' && raw.length <= 20000 && this._bytes(raw) <= 24000);
         var entry = JSON.parse(raw);
         this._need(this._keys(entry, ['version','conversation_id','provider_user_id','caller_user_id','account_id','channel_profile_id',
-            'creation_message_id','service_id','context_profile','stored_at_ms','event']) && entry.version === 1 &&
+            'creation_message_id','service_id','context_profile','stored_at_ms','event','client_session_id','transport_user_id']) && entry.version === 2
+            && this._id(entry.client_session_id) && entry.transport_user_id === 'voice-' + entry.client_session_id &&
             entry.conversation_id === binding.conversation_id && entry.provider_user_id === binding.provider_user_id &&
             entry.caller_user_id === binding.caller_user_id && entry.account_id === binding.account_id &&
             entry.channel_profile_id === binding.channel_profile_id && entry.creation_message_id === binding.creation_message_id &&
@@ -344,7 +346,7 @@ SCCVoicePresentationHistoryV1.prototype = {
         return entry;
     },
     _slots: function(binding, now, grant) {
-        var slots = [], owner = null, ids = {}, i, raw, entry;
+        var slots = [], owner = null, transport = null, ids = {}, i, raw, entry;
         for (i = 1; i <= 16; i++) {
             raw = this._get(binding, i);
             if (raw === null || typeof raw === 'undefined' || raw === '') continue;
@@ -354,6 +356,10 @@ SCCVoicePresentationHistoryV1.prototype = {
             this._need(entry.event.sequence === slots.length + 1);
             this._need(owner === null || owner === entry.event.owner_id);
             owner = entry.event.owner_id;
+            var tuple = JSON.stringify([entry.client_session_id,entry.transport_user_id]);
+            this._need(transport === null || transport === tuple);
+            transport = tuple;
+            if (grant) this._need(entry.client_session_id === grant.client_session_id && entry.transport_user_id === grant.transport_user_id);
             this._need(!Object.prototype.hasOwnProperty.call(ids, entry.event.event_id));
             ids[entry.event.event_id] = true;
             slots.push(entry);
@@ -381,20 +387,23 @@ SCCVoicePresentationHistoryV1.prototype = {
             input = JSON.parse(requestText);
             if (input && input.conversationBinding && this._id(input.conversationBinding.conversationId))
                 diagnostic = {conversationId:input.conversationBinding.conversationId,stage:'request'};
-            this._need(this._keys(input, ['operation','requestId','appInboundId','clientSessionId','userId','callerUserId','conversationBinding','event','grantNonce']) &&
+            this._need(this._keys(input, ['operation','requestId','appInboundId','clientSessionId','userId','callerUserId','conversationBinding','event','grantNonce','providerContextUserId']) &&
                 input.operation === 'presentation_history_store' && this._id(input.requestId) && input.appInboundId === this.inbound &&
-                this._id(input.clientSessionId) && input.userId === 'voice-' + input.clientSessionId && this._id(input.callerUserId));
+                this._id(input.clientSessionId) && input.userId === 'voice-' + input.clientSessionId && this._id(input.callerUserId) &&
+                typeof input.providerContextUserId === 'string' && /^voice-[0-9a-f]{32}$/.test(input.providerContextUserId));
             if (diagnostic) diagnostic.stage = 'event';
             var event = this._event(input.event), proof = input.conversationBinding;
             if (diagnostic) diagnostic.stage = 'proof';
             this._proof(proof);
             if (diagnostic) diagnostic.stage = 'nonce';
             this._need(typeof input.grantNonce === 'string' && /^[0-9a-f]{64}$/.test(input.grantNonce));
-            var grant = this._grant(proof.conversationId, input.userId, diagnostic), binding = grant.binding;
+            var grant = this._grant(proof.conversationId, input.providerContextUserId, diagnostic), binding = grant.binding;
             if (diagnostic) diagnostic.stage = 'nonce';
             this._need(this._hash(input.grantNonce) === grant.nonce_sha256);
             if (diagnostic) diagnostic.stage = 'binding';
             this._matches(input, binding, grant.create_request_id);
+            this._need(input.providerContextUserId === binding.provider_user_id &&
+                input.clientSessionId === grant.client_session_id && input.userId === grant.transport_user_id);
             if (diagnostic) diagnostic.stage = 'slots';
             var now = this._now(), slots = this._slots(binding, now, grant), existing = null, i;
             if (diagnostic) diagnostic.stage = 'sequence';
@@ -406,7 +415,8 @@ SCCVoicePresentationHistoryV1.prototype = {
             if (existing !== null) this._need(JSON.stringify(existing.event) === JSON.stringify(event));
             else {
                 this._need(event.sequence === slots.length + 1);
-                var entry = {version:1,conversation_id:binding.conversation_id,provider_user_id:binding.provider_user_id,
+                var entry = {version:2,conversation_id:binding.conversation_id,provider_user_id:binding.provider_user_id,
+                    client_session_id:grant.client_session_id,transport_user_id:grant.transport_user_id,
                     caller_user_id:binding.caller_user_id,account_id:binding.account_id,channel_profile_id:binding.channel_profile_id,
                     creation_message_id:binding.creation_message_id,service_id:this.service,context_profile:this.profile,stored_at_ms:now,event:event};
                 var expectedEntry = JSON.parse(JSON.stringify(entry));

@@ -412,17 +412,44 @@ async def resolve_native_caller(instance_url, service_id, agent_id, profile_id, 
     return validated_binding(data,service_id,agent_id,profile_id)
 
 
+@dataclass(frozen=True, repr=False)
+class ProviderContextBinding:
+    """Private optional metadata authority, separate from business identity."""
+    service_id: str
+    context_profile: str
+    conversation_id: str
+    interaction_id: str
+    create_message_id: str
+    caller_user_id: str
+    provider_user_id: str
+
+
+def validated_provider_context(value, service_id, profile_id, owned, caller):
+    if (type(value) is not dict or set(value) != {'version','status','service_id','context_profile',
+            'conversation_id','interaction_id','create_message_id','caller_user_id','provider_user_id'}
+            or type(value.get('version')) is not int or value['version'] != 1
+            or value.get('status') != 'available' or value.get('service_id') != service_id
+            or value.get('context_profile') != profile_id or value.get('caller_user_id') != caller.user_id
+            or any(value.get(k) != v for k,v in owned.items())
+            or type(value.get('provider_user_id')) is not str
+            or re.fullmatch(r'voice-[0-9a-f]{32}',value['provider_user_id']) is None):
+        return None
+    return ProviderContextBinding(**{k:value[k] for k in ('service_id','context_profile',
+        'conversation_id','interaction_id','create_message_id','caller_user_id','provider_user_id')})
+
+
 async def refresh_native_caller_session(instance_url, service_id, agent_id, profile_id, authorization,
-                                        owned, caller, *, timeout_seconds=10, http_factory=None):
+                                        owned, caller, *, timeout_seconds=10, http_factory=None, provider_context=False):
     """Request the native refresh once; an acknowledgement is not authentication."""
     error = 'Native caller session refresh unavailable'
     if (type(owned) is not dict or set(owned) != {'conversation_id','interaction_id','create_message_id'}
             or any(type(v) is not str or not _ID.fullmatch(v) for v in owned.values())
-            or type(caller) is not CallerBinding):
+            or type(caller) is not CallerBinding or type(provider_context) is not bool):
         raise ValueError(error)
     data = await _native_projection(instance_url,service_id,agent_id,profile_id,authorization,
         {'conversationAuthenticationVersion':1,'conversationId':owned['conversation_id'],
-         'interactionId':owned['interaction_id'],'createMessageId':owned['create_message_id']},
+         'interactionId':owned['interaction_id'],'createMessageId':owned['create_message_id'],
+         **({'providerContextVersion':1} if provider_context else {})},
         timeout_seconds=timeout_seconds,http_factory=http_factory)
     current = validated_binding(data,service_id,agent_id,profile_id)
     acknowledgement = data['result'].get('conversation_authentication')
@@ -434,3 +461,6 @@ async def refresh_native_caller_session(instance_url, service_id, agent_id, prof
             or acknowledgement.get('service_id') != service_id or acknowledgement.get('context_profile') != profile_id
             or any(acknowledgement.get(k) != v for k,v in owned.items())):
         raise ValueError(error)
+    if provider_context:
+        return validated_provider_context(data['result'].get('provider_context_binding'),
+            service_id,profile_id,owned,caller)

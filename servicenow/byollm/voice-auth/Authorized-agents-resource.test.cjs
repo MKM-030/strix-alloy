@@ -55,9 +55,9 @@ function ownershipEnvironment(options,events) {
       getElement(field){if(options.missingProofElement===table+':'+field||(table==='interaction'&&field==='verified'&&options.missingVerifiedElement))return undefined;return {canRead(){checked.add(field);events.push(['proof-field-right',table,index,field]);return options.denyProofField!==table+':'+field&&!(index===1&&options.deniedDuplicateField===field);},canWrite(){events.push(['proof-field-write-right',table,index,field]);return !(table==='interaction'&&field==='verified'&&options.verifiedWriteDenied);}};},
       getValue(field){assert.equal(recordAllowed,true,'ownership record right before values');assert.ok(fields[table].filter(f=>table!=='interaction'||f!=='verified').every(f=>checked.has(f)),'ALL ownership field rights before ANY value');
         assert.notEqual(options.denyProofField,table+':'+field);assert.equal(index===1&&!!options.deniedDuplicateField,false,'no duplicate values when a required field denied');reads.push([table,index,field]);return data[field]??null;},
-      addQuery(field,value){assert.equal(secure,false);assert.equal(table,'interaction');assert.equal(field,'channel_metadata_document');conditions.push([field,value]);},
+      addQuery(field,value){if(table==='interaction'){assert.equal(secure,false);assert.equal(field,'channel_metadata_document');}else{assert.equal(secure,true);assert.equal(table,'sys_cs_channel_user_profile');assert.ok(['channel','channel_user_id'].includes(field));}conditions.push([field,value]);},
       setLimit(value){limit=value;},
-      query(){assert.equal(secure,false);assert.equal(limit,2);assert.deepEqual(conditions,[['channel_metadata_document',CONVERSATION]]);queries.push({table,conditions:clone(conditions),limit});
+      query(){assert.equal(limit,2);if(table==='sys_cs_channel_user_profile'){assert.equal(secure,true);assert.deepEqual(conditions,[['channel','51cdaa4c53a710105893ddeeff7b129c'],['channel_user_id',db[table][USER_PROFILE].channel_user_id]]);queries.push({table,conditions:clone(conditions),limit});result=[clone(db[table][USER_PROFILE])];if(options.duplicateAlias)result.push({...result[0],sys_id:OTHER});index=-1;return;}assert.equal(secure,false);assert.deepEqual(conditions,[['channel_metadata_document',CONVERSATION]]);queries.push({table,conditions:clone(conditions),limit});
         result=Object.values(db.interaction).map(clone);if(options.noInteractionMatch)result=[];
         if(options.duplicateInteraction||options.hiddenInteractionDuplicate||options.deniedDuplicateField)result.push({...clone(db.interaction[INTERACTION]),sys_id:OTHER});
         if(options.wrongInteractionMatch)result[0].sys_id=OTHER;result=result.slice(0,limit);index=-1;},
@@ -66,7 +66,7 @@ function ownershipEnvironment(options,events) {
   }
   let clockCalls=0;
   function DateTime(){clockCalls++;let stamp=options.now===undefined?NOW:options.now;if(options.lateExpiry&&clockCalls>6)stamp=NOW+60000;return {setValue(value){stamp=Date.parse(value.replace(' ','T')+'Z');},getValue(){return Number.isFinite(stamp)?new Date(stamp).toISOString().slice(0,19).replace('T',' '):'INVALID';},getNumericValue(){return stamp;}};}
-  function elevate(user,conversation){calls.push([user,conversation]);if(options.elevationThrows)throw new Error('PRIVATE_NATIVE_FAILURE');return options.elevationReturn;}
+  function elevate(user,conversation){calls.push([user,conversation]);if(options.afterElevation)options.afterElevation(db);if(options.elevationThrows)throw new Error('PRIVATE_NATIVE_FAILURE');return options.elevationReturn;}
   return {record,DateTime,elevate,calls,reads,queries,db};
 }
 
@@ -79,7 +79,7 @@ function run(options = {}, source = SOURCE) {
   const events = [], instances = [], queries = [], valueReads = [];
   const ownership=ownershipEnvironment(options,events);
   const response = {setStatus(value) { this.status = value; },setBody(value) { this.body = value; }};
-  const counters = {settings: 0,agents: 0,nativeService: 0};
+  const counters = {settings: 0,agents: 0,nativeService: 0,model:0};
   let currentIdReads=0;
   function record(secure, table) {
     if(table!=='sys_user')return ownership.record(secure,table);
@@ -137,7 +137,7 @@ function run(options = {}, source = SOURCE) {
     }; },
     VoiceAgentUtils: function () { return {getAuthorizedAgentIds() { counters.agents++; return options.agents === undefined ? [AGENT] : clone(options.agents); }}; },
     sn_auth: {VoiceServiceInfoRequestor: function () { return {getVoiceServiceInfo() { counters.nativeService++; if (options.nativeServiceThrows) throw new Error('PRIVATE_NATIVE_FAILURE'); return JSON.stringify({voice_service_id: options.boundService || SERVICE}); }}; }},
-    LocalLLMVoiceAssistantSettings: function () { return {getSettings(id) { counters.settings++; assert.equal(id,options.requestService||SERVICE); if (options.settingsThrows) throw new Error('PRIVATE_SETTINGS_FAILURE'); return settings; }}; },
+    LocalLLMVoiceAssistantSettings: function () { return {getSettings(id) { counters.settings++; assert.equal(id,options.requestService||SERVICE); if (options.settingsThrows) throw new Error('PRIVATE_SETTINGS_FAILURE'); return settings; },...(options.missingModelMethod?{}:{getConversationModel(id){counters.model++;assert.equal(id,options.requestService||SERVICE);if(options.modelThrows)throw new Error("PRIVATE_MODEL_FAILURE");return options.modelDescriptor||{version:1,status:"unavailable"};}})}; },
     GlideRecordSecure: function (table) { return record(true,table); },
     GlideRecord: function (table) { return record(false,table); },
     GlideDateTime: ownership.DateTime,
@@ -236,7 +236,7 @@ test('no new caller-binding data appears in settings, legacy response, logs, mod
   assert.equal((SOURCE.match(/\.setValue\(/g)||[]).length,1);
   assert.match(SOURCE,/when\.setValue\(created\)/);
   assert.doesNotMatch(SOURCE,/gs\.(?:info|warn|error|setProperty)|GlideImpersonate|GlideUpdateManager|new\s+global\./);
-  assert.equal((SOURCE.match(/setLimit\(2\)/g)||[]).length,2);
+  assert.equal((SOURCE.match(/setLimit\(2\)/g)||[]).length,3);
   assert.match(SOURCE,/element === null \|\| typeof element === 'undefined'/);
 });
 
@@ -310,7 +310,21 @@ for(const options of [{interactionWriteDenied:true},{verifiedWriteDenied:true},{
 test('normal interaction record and verified field write rights are checked without manually setting any value',()=>{const r=authenticate();assert.equal(r.status,200);assert.ok(r.events.some(e=>e[0]==='proof-record-write-right'&&e[1]==='interaction'));assert.ok(r.events.some(e=>e[0]==='proof-field-write-right'&&e[1]==='interaction'&&e[3]==='verified'));assert.equal(r.ownership.reads.some(([table,index,field])=>table==='interaction'&&field==='verified'),false);});
 test('public native refresh is the only side-effect site, never protected/private helper invocation',()=>{assert.equal((SOURCE.match(/new VoiceConversationManager\(\)\.elevateConversationSession\(currentId,conversationId\)/g)||[]).length,1);assert.doesNotMatch(SOURCE,/new VoiceConversationManagerSNC|new sn_cs_adapter|_getToken\(|\.elevateSession\(|decryptToken\(/);});
 test('canonical resource matches the reviewed native script and retains its administrative settings boundary', () => {
-  assert.equal(crypto.createHash('sha256').update(SOURCE).digest('hex'),'b9f11c0d659a34c5c200eeed5d212e7ed05ee204f364c6f3c14fa0fcdb44ea39');
+  assert.equal(crypto.createHash('sha256').update(SOURCE).digest('hex'),'8f3010acf39da3b823b78f8bcdb33c79241916d411d16ee9ad3955045778a48a');
   assert.equal((SOURCE.match(/new LocalLLMVoiceAssistantSettings\(\)\.getSettings\(serviceId\)/g)||[]).length,1);
   assert.doesNotMatch(SOURCE,/getSettingsJSON|LocalLLMVoiceAssistantSettings\.prototype/);
 });
+
+// Model selection is an independent, explicit adapter projection.
+test('no model opt-in preserves legacy shape and never resolves a model',()=>{const r=run();assert.equal(r.counters.model,0);assert.equal('conversation_model'in r.body,false);});
+test('model opt-in returns the exact helper descriptor',()=>{const descriptor={version:1,status:'selected',capability_id:ID,definition_config_id:ID,definition_id:ID,prompt_binding_id:ID,prompt_id:ID,model_config_id:ID,provider_mapping_id:ID,provider_id:ID,implementation_id:ID,model_identifier:'model',binding_sha256:'a'.repeat(64)};const r=run({payload:{serviceId:SERVICE,assistantSettingsVersion:1,conversationModelVersion:1},modelDescriptor:descriptor});assert.equal(r.status,200);assert.deepEqual(r.body.conversation_model,descriptor);assert.equal(r.counters.model,1);});
+for(const options of [{modelThrows:true},{missingModelMethod:true}])test('optional model failure preserves baseline settings '+JSON.stringify(options),()=>{const r=run({...options,payload:{serviceId:SERVICE,assistantSettingsVersion:1,conversationModelVersion:1}});assert.equal(r.status,200);assert.deepEqual(r.body.conversation_model,{version:1,status:'unavailable'});assert.deepEqual(r.body.assistant_settings,r.originalSettings);});
+for(const version of [2,'1',null,false])test('unsupported model version refuses before any resolver '+JSON.stringify(version),()=>{const r=run({payload:{...authPayload(),conversationModelVersion:version},requestService:AUTH_SERVICE,boundService:AUTH_SERVICE,settings:authSettings()});assert.equal(r.status,403);assert.deepEqual(r.body,{detail:'Conversation model selection unavailable'});assert.equal(r.counters.model,0);assert.equal(r.ownership.calls.length,0);});
+
+const CANONICAL_ALIAS='voice-'+'e'.repeat(32);
+const contextPayload=()=>({...authPayload(),providerContextVersion:1});
+test('provider context is a separate exact nine-key post-refresh binding',()=>{const r=authenticate({payload:contextPayload(),afterElevation(db){db.sys_cs_channel_user_profile[USER_PROFILE].channel_user_id=CANONICAL_ALIAS;}});assert.equal(r.status,200);assert.deepEqual(r.body.provider_context_binding,{version:1,status:'available',service_id:AUTH_SERVICE,context_profile:AUTH_PROFILE,conversation_id:CONVERSATION,interaction_id:INTERACTION,create_message_id:MESSAGE,caller_user_id:ID,provider_user_id:CANONICAL_ALIAS});assert.equal(Object.keys(r.body.conversation_authentication).length,7);assert.equal(r.ownership.calls.length,1);assert.ok(r.ownership.queries.some(q=>q.table==='sys_cs_channel_user_profile'));});
+test('legacy refresh has no optional binding or alias query',()=>{const r=authenticate();assert.equal('provider_context_binding'in r.body,false);assert.equal(r.ownership.queries.some(q=>q.table==='sys_cs_channel_user_profile'),false);});
+for(const version of [2,'1',null,false])test('unsupported context version refuses before refresh '+JSON.stringify(version),()=>{const r=authenticate({payload:{...authPayload(),providerContextVersion:version}});assert.equal(r.status,403);assert.equal(r.ownership.calls.length,0);});
+test('provider context requires refresh negotiation',()=>{const p=contextPayload();delete p.conversationAuthenticationVersion;const r=authenticate({payload:p});assert.equal(r.status,403);assert.equal(r.ownership.calls.length,0);});
+for(const options of [{},{duplicateAlias:true},{afterElevation(db){db.sys_cs_session[SESSION].end_time=CREATED;}},{afterElevation(db){db.sys_cs_channel_user_profile[USER_PROFILE].user_document=OTHER;}}])test('optional post-refresh failure preserves required acknowledgement '+JSON.stringify(options),()=>{const r=authenticate({...options,payload:contextPayload(),...(options.duplicateAlias?{proofChanges:{sys_cs_channel_user_profile:{channel_user_id:CANONICAL_ALIAS}}}:{})});assert.equal(r.status,200);assert.deepEqual(r.body.provider_context_binding,{version:1,status:'unavailable'});assert.equal(r.body.conversation_authentication.refresh_requested,true);});

@@ -60,7 +60,7 @@
                 grantUnavailable(401); return;
             }
             var grantResult = JSON.parse(String(new global.SCCVoicePresentationHistoryV1().issueGrantJSON(JSON.stringify(data))));
-            var grantKeys = ['status','state','requestId','conversationId','nonceSha256','issuedAtMs','expiresAtMs','attested','scope','businessAuthority'];
+            var grantKeys = ['status','state','requestId','conversationId','nonceSha256','issuedAtMs','expiresAtMs','attested','scope','businessAuthority','providerContextUserId'];
             var grantInteger = function(value) {
                 return typeof value === 'number' && isFinite(value) && value % 1 === 0 && value >= 1 && value <= 9007199254740991;
             };
@@ -71,6 +71,7 @@
                 !grantInteger(grantResult.issuedAtMs) || !grantInteger(grantResult.expiresAtMs) ||
                 grantResult.expiresAtMs - grantResult.issuedAtMs !== data.maxAgeSeconds * 1000 ||
                 grantResult.status !== 'success' || grantResult.state !== 'presentation_history_grant_attested' ||
+                typeof grantResult.providerContextUserId !== 'string' || !/^voice-[0-9a-f]{32}$/.test(grantResult.providerContextUserId) ||
                 grantResult.attested !== true || grantResult.scope !== 'presentation_metadata_only' || grantResult.businessAuthority !== false) {
                 grantUnavailable(503); return;
             }

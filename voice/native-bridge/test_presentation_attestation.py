@@ -32,7 +32,7 @@ def receipt(value):
         requestId=value['requestId'], conversationId=value['conversationBinding']['conversationId'],
         nonceSha256=value['nonceSha256'], issuedAtMs=12345,
         expiresAtMs=12345+value['maxAgeSeconds']*1000, attested=True,
-        scope='presentation_metadata_only', businessAuthority=False)
+        scope='presentation_metadata_only', businessAuthority=False, providerContextUserId=value['userId'])
 
 
 class LeaseTests(unittest.IsolatedAsyncioTestCase):
@@ -177,7 +177,7 @@ class GrantWireTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.sent),1)
 
     async def test_only_exact_positive_receipt_is_accepted(self):
-        for key,value in [('attested',1),('businessAuthority',0),('scope','business'),
+        for key,value in [('providerContextUserId',None),('providerContextUserId','voice-'+'A'*32),('providerContextUserId','voice-'+'a'*31),('attested',1),('businessAuthority',0),('scope','business'),
                 ('requestId','f'*32),('nonceSha256','f'*64),('expiresAtMs',1),
                 ('issuedAtMs',True),('conversationId','f'*32),('extra','denied')]:
             with self.subTest(key=key):

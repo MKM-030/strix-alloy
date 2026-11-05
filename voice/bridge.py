@@ -21,7 +21,7 @@ import wave
 from aiohttp import ClientSession, ClientTimeout, FormData, web
 
 if __package__:
-    from .caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
+    from .caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential, ProviderContextBinding,
         CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PURPOSE,
         valid_authorization, resolve_native_caller, refresh_native_caller_session,
         create_native_caller_conversation, validated_created,
@@ -31,7 +31,7 @@ if __package__:
     from .presentation_history import (validate_event, valid_receipt, issue_presentation_grant,
         valid_grant_receipt, _grant_diagnostic, _decode_native_integer_receipt, _receipt_diagnostic)
 else:
-    from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
+    from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential, ProviderContextBinding,
         CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PURPOSE,
         valid_authorization, resolve_native_caller, refresh_native_caller_session,
         create_native_caller_conversation, validated_created,
@@ -150,6 +150,9 @@ class Conversation:
     presentation_lease: object | None = field(default=None, repr=False)
     presentation_task: object | None = field(default=None, repr=False)
     presentation_nonce: str = field(default='', repr=False)
+    presentation_provider_user_id: str = field(default='', repr=False)
+    provider_context_binding: ProviderContextBinding | None = field(default=None, repr=False)
+    provider_context_identity: object | None = field(default=None, repr=False)
     presentation_identity: object | None = field(default=None, repr=False)
     presentation_deadline: float = field(default=0, repr=False)
     presentation_timer: object | None = field(default=None, repr=False)
@@ -857,6 +860,7 @@ class Bridge:
                         except Exception:
                             self.retire_presentation(session)
                     if (session.presentation_disabled or not session.presentation_nonce
+                            or not re.fullmatch(r'voice-[0-9a-f]{32}', session.presentation_provider_user_id)
                             or time.monotonic() >= session.presentation_deadline
                             or session.ending or session.ended or session.failed or self.stopping
                             or self.sessions.get(session.sid) is not session
@@ -875,7 +879,8 @@ class Bridge:
                     payload = dict(operation='presentation_history_store', requestId=uuid.uuid4().hex,
                         appInboundId=self.settings.inbound_id, clientSessionId=session.sid,
                         userId=session.user_id, callerUserId=session.caller_user_id, conversationBinding=binding,
-                        event=event, grantNonce=session.presentation_nonce)
+                        event=event, grantNonce=session.presentation_nonce,
+                        providerContextUserId=session.presentation_provider_user_id)
                     # Claim before I/O. Unknown storage is never replayed, including after timeout.
                     session.presentation_owner = event['owner_id']
                     session.presentation_sequence = event['sequence']
@@ -923,6 +928,19 @@ class Bridge:
             self.retire_presentation(session)
             return web.json_response(unavailable)
 
+    def valid_provider_context(self, session, binding):
+        owned = session.conversation_binding
+        return (type(binding) is ProviderContextBinding and owned is not None
+            and session.user_id == 'voice-' + session.sid
+            and binding.service_id == self.settings.caller_binding_service_id
+            and binding.context_profile == session.voice_context.get('global_context_profile')
+            and binding.conversation_id == owned.conversation_id
+            and binding.interaction_id == owned.interaction_id
+            and binding.create_message_id == owned.creation_message_id
+            and binding.caller_user_id == session.caller_user_id
+            and type(binding.provider_user_id) is str
+            and re.fullmatch(r'voice-[0-9a-f]{32}',binding.provider_user_id) is not None)
+
     async def context_update(self, request):
         """Independent control lane; never advances the active MESSAGE request."""
         data = await self.json(request)
@@ -962,12 +980,20 @@ class Bridge:
                 return web.json_response({'state': 'context_action_acknowledged',
                     'revision': revision, 'contextStored': False, 'queuedOnly': True,
                     'ingested': False})
+            if (not self.valid_provider_context(session, session.provider_context_binding)
+                    or session.provider_context_identity != self.owned_cleanup_identity(session)):
+                session.provider_context_binding = None
+                session.provider_context_identity = None
+                session.context_revision, session.context_text = revision, text
+                session.context_receipt = None
+                return web.json_response({'state':'context_action_acknowledged','revision':revision,
+                    'contextStored':False,'queuedOnly':True,'ingested':False})
             # IDs come only from this cookie's authenticated CREATE callback.
             # The owned resource independently verifies provider/user ownership.
             binding = session.conversation_binding.snapshot()
             payload = {'requestId': uuid.uuid4().hex,
                 'appInboundId': self.settings.inbound_id, 'clientSessionId': session.sid,
-                'userId': session.user_id, 'conversationBinding': binding,
+                'userId': session.provider_context_binding.provider_user_id, 'conversationBinding': binding,
                 'revision': revision, 'caller_updates': session.context_eligible_text + delta}
             context_url = self.bot_url.split('/api/', 1)[0] + '/api/global/scc_voice_context/updates'
             business_request_id = session.requests[-1]
@@ -1059,7 +1085,10 @@ class Bridge:
                     or saved['revision'] != revision or not session.requests
                     or saved['businessRequestId'] != session.requests[-1]
                     or session.conversation_binding is None
-                    or saved['conversationBinding'] != session.conversation_binding.snapshot()):
+                    or saved['conversationBinding'] != session.conversation_binding.snapshot()
+                    or not self.valid_provider_context(session, session.provider_context_binding)
+                    or session.provider_context_identity != self.owned_cleanup_identity(session)
+                    or saved['userId'] != session.provider_context_binding.provider_user_id):
                 raise web.HTTPConflict(text='Exact context receipt is not available')
             payload = {key: saved[key] for key in ('requestId', 'appInboundId', 'clientSessionId',
                 'userId', 'conversationBinding', 'revision', 'caller_updates')}
@@ -1279,7 +1308,6 @@ class Bridge:
                 or not ticket.available or session.caller_bootstrap is not ticket):
             self.begin_owned_cleanup(session)
             return identity
-        self.queue_presentation_attestation(session, identity)
         self.consume(session,created)
         self.queue_start_created(session,request['requestId'])
         return identity
@@ -1529,24 +1557,29 @@ class Bridge:
                     session.caller_bootstrap = None
                     session.caller_authorization_task = asyncio.current_task()
                     caller = CallerBinding(session.caller_user_id,session.caller_email)
+                    context_identity = self.owned_cleanup_identity(session)
                     try:
-                        await refresh_native_caller_session(self.settings.instance_url,
+                        context_binding = await refresh_native_caller_session(self.settings.instance_url,
                             self.settings.caller_binding_service_id, self.settings.caller_binding_agent_id,
                             session.voice_context['global_context_profile'], authorization,
                             {'conversation_id':binding.conversation_id,'interaction_id':binding.interaction_id,
                              'create_message_id':binding.creation_message_id},
                             caller,
-                            timeout_seconds=min(10,remaining))
+                            timeout_seconds=min(10,remaining), provider_context=True)
                     finally:
                         authorization = None
                         ticket.clear()
                         session.caller_authorization_task = None
                     if (time.monotonic() >= deadline or self.stopping or session.ending or session.failed or session.ended
                             or self.sessions.get(session.sid) is not session or session.conversation_binding != binding
+                            or self.owned_cleanup_identity(session) != context_identity
                             or CallerBinding(session.caller_user_id,session.caller_email) != caller
                             or session.bootstrap_stage != 'starting' or session.pending_action != 'CREATE_CONVERSATION'
                             or not session.requests or session.requests[-1] != create_request_id):
                         raise ValueError('Caller bootstrap changed')
+                    if self.valid_provider_context(session, context_binding):
+                        session.provider_context_binding = context_binding
+                        session.provider_context_identity = context_identity
                 await self.send(session, '', True, 'START_CREATED_CONVERSATION')
             except asyncio.CancelledError:
                 session.failed = True
@@ -1563,6 +1596,7 @@ class Bridge:
             else:
                 if session.ending or session.failed or session.ended:
                     return
+                self.queue_presentation_attestation(session, self.owned_cleanup_identity(session))
                 session.bootstrap_stage = 'waiting_input'
                 if session.bootstrap_input_ready:
                     session.bootstrap_stage = ''
@@ -1624,6 +1658,7 @@ class Bridge:
                     or not self.presentation_owner_alive(session,identity)
                     or not valid_grant_receipt(receipt,payload)):
                 return
+            session.presentation_provider_user_id=receipt['providerContextUserId']
             session.presentation_nonce=nonce
             session.presentation_identity=identity
             # Conservative elapsed-time bound; never compare native time to host UTC.
@@ -1649,6 +1684,7 @@ class Bridge:
         binding=session.conversation_binding
         _grant_diagnostic('retired',getattr(binding,'conversation_id',''))
         session.presentation_nonce=''
+        session.presentation_provider_user_id=''
         session.presentation_identity=None
         session.presentation_deadline=0
         session.presentation_disabled=True
@@ -1665,6 +1701,9 @@ class Bridge:
 
     @staticmethod
     def retire_caller_bootstrap(session, *, preserve_presentation=False):
+        if not preserve_presentation:
+            session.provider_context_binding = None
+            session.provider_context_identity = None
         if not preserve_presentation and (session.presentation_lease is not None
                 or session.presentation_task is not None or session.presentation_nonce):
             Bridge.retire_presentation(session)

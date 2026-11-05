@@ -25,11 +25,12 @@
         }
         var data = request.body.nextEntry();
         var receipt = JSON.parse(String(new global.SCCVoicePresentationHistoryV1().issueGrantJSON(JSON.stringify(data))));
-        var keys = ['status','state','requestId','conversationId','nonceSha256','issuedAtMs','expiresAtMs','attested','scope','businessAuthority'];
+        var keys = ['status','state','requestId','conversationId','nonceSha256','issuedAtMs','expiresAtMs','attested','scope','businessAuthority','providerContextUserId'];
         if (!receipt || typeof receipt !== 'object' || Array.isArray(receipt) || Object.keys(receipt).sort().join(',') !== keys.sort().join(',') ||
             receipt.requestId !== data.requestId || !data.conversationBinding || receipt.conversationId !== data.conversationBinding.conversationId ||
             receipt.nonceSha256 !== data.nonceSha256 || !nativeInteger(receipt.issuedAtMs) || !nativeInteger(receipt.expiresAtMs) ||
             receipt.expiresAtMs - receipt.issuedAtMs !== data.maxAgeSeconds * 1000 || receipt.status !== 'success' || receipt.state !== 'presentation_history_grant_attested' ||
+            typeof receipt.providerContextUserId !== 'string' || !/^voice-[0-9a-f]{32}$/.test(receipt.providerContextUserId) ||
             receipt.attested !== true || receipt.scope !== 'presentation_metadata_only' || receipt.businessAuthority !== false) {
             unavailable(503); return;
         }

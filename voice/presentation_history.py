@@ -89,7 +89,7 @@ def _decode_native_integer_receipt(raw, kind, conversation_id):
 GRANT_FIELDS = frozenset(('operation', 'requestId', 'appInboundId', 'clientSessionId',
     'userId', 'callerUserId', 'conversationBinding', 'nonceSha256', 'maxAgeSeconds'))
 GRANT_RECEIPT_FIELDS = frozenset(('status', 'state', 'requestId', 'conversationId',
-    'nonceSha256', 'issuedAtMs', 'expiresAtMs', 'attested', 'scope', 'businessAuthority'))
+    'nonceSha256', 'issuedAtMs', 'expiresAtMs', 'attested', 'scope', 'businessAuthority', 'providerContextUserId'))
 
 
 def valid_grant_request(value):
@@ -117,6 +117,8 @@ def valid_grant_receipt(value, request):
         and value['requestId'] == request['requestId']
         and value['conversationId'] == request['conversationBinding']['conversationId']
         and value['nonceSha256'] == request['nonceSha256']
+        and type(value['providerContextUserId']) is str
+        and re.fullmatch(r'voice-[0-9a-f]{32}',value['providerContextUserId']) is not None
         and type(value['issuedAtMs']) is int and 0 < value['issuedAtMs'] <= 9007199254740991
         and type(value['expiresAtMs']) is int and 0 < value['expiresAtMs'] <= 9007199254740991
         and value['expiresAtMs']-value['issuedAtMs'] == request['maxAgeSeconds']*1000
