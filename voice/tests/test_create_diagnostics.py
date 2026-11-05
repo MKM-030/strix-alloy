@@ -212,9 +212,12 @@ class CreateDiagnostics(unittest.IsolatedAsyncioTestCase):
         # expire/end/drain_owned_cleanup are intentionally replaced by the
         # tested typed no-create protocol. Keep the original guards for the
         # unchanged callback, credential, success and unknown ownership paths.
-        names = {'lifecycle','local_guard','start','reset','retire_caller_bootstrap',
+        # Attestation adds tracked shutdown draining, optional credential splitting
+        # and retirement only. Their original CREATE/body/cleanup behavior is
+        # exercised by test_local_caller_create and test_presentation_attestation.
+        names = {'local_guard','start','reset',
                  'begin_owned_cleanup','owned_cleanup_identity',
-                 'owned_cleanup_response','finish_owned_cleanup','callback','send_owned_create'}
+                 'owned_cleanup_response','finish_owned_cleanup','callback'}
         options = {'include_attributes': False}
         # Python 3.13 omits empty fields unless explicitly requested; retain the
         # reviewed Python 3.12 AST representation on either interpreter.

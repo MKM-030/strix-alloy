@@ -15,6 +15,7 @@ import aiohttp
 CALLER_HEADER = 'X-SCC-Voice-Authorization'
 CALLER_INSTANCE_URL = 'https://soprasteriaassvsdemo14.service-now.com'
 CALLER_CREATE_PATH = '/api/sn_voice_aia/local_voice_caller/create'
+PRESENTATION_GRANT_PATH = '/api/global/scc_voice_context/presentation-grants'
 CALLER_SERVICE_ID = '8aa131d793f787105c8132d47aba1095'
 CALLER_AGENT_ID = 'a6337ddf93f787105c8132d47aba1058'
 CALLER_PROFILE_ID = 'c623e20f93374354e7f2b9fa6aba1081'
@@ -148,15 +149,48 @@ class CallerBinding:
     email: str = field(repr=False)
 
 
+class PresentationAttestationLease:
+    """Explicitly split authority for one owner's fixed metadata operation."""
+    __slots__ = ('_value', '_deadline', '_owner', '_timer')
+
+    def __init__(self, authorization, deadline, owner):
+        self._value, self._deadline, self._owner = authorization, deadline, owner
+        self._timer = asyncio.get_running_loop().call_later(
+            max(0, deadline-time.monotonic()), self.clear)
+
+    def __repr__(self):
+        return 'PresentationAttestationLease(redacted)'
+
+    @property
+    def available(self):
+        return bool(self._value) and time.monotonic() < self._deadline
+
+    def take(self, owner, purpose):
+        try:
+            if (owner is not self._owner or purpose != PRESENTATION_GRANT_PATH
+                    or not self.available):
+                raise ValueError('Presentation history unavailable')
+            return self._value, self._deadline-time.monotonic(), self._deadline
+        finally:
+            self.clear()
+
+    def clear(self):
+        self._value, self._owner = '', None
+        if self._timer is not None:
+            self._timer.cancel()
+            self._timer = None
+
+
 class CallerBootstrapCredential:
-    """One own CREATE and one refresh; active erasure even without traffic."""
-    __slots__ = ('_value', '_deadline', '_timer', '_on_expire', '_create_claimed')
+    """One CREATE/refresh; optional explicit split lease, with active erasure."""
+    __slots__ = ('_value', '_deadline', '_timer', '_on_expire', '_create_claimed', '_presentation_delegated')
 
     def __init__(self, authorization, *, seconds, on_expire=None):
         if not valid_authorization(authorization) or type(seconds) not in (int,float) or not 0 < seconds <= 45:
             raise ValueError('Native caller bootstrap unavailable')
         self._value = authorization
         self._create_claimed = False
+        self._presentation_delegated = False
         self._deadline = time.monotonic() + seconds
         self._on_expire = on_expire
         self._timer = asyncio.get_running_loop().call_later(seconds, self._expire)
@@ -182,6 +216,13 @@ class CallerBootstrapCredential:
             raise ValueError('Native caller bootstrap unavailable')
         self._create_claimed = True
         return self._value, self._deadline-time.monotonic(), self._deadline
+
+    def delegate_presentation(self, owner):
+        """Split once before primary clear; never renew the original deadline."""
+        if self._presentation_delegated or not self.available or owner is None:
+            raise ValueError('Presentation history unavailable')
+        self._presentation_delegated = True
+        return PresentationAttestationLease(self._value, self._deadline, owner)
 
     def clear(self):
         self._value = ''

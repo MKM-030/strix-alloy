@@ -49,7 +49,7 @@
     // BEGIN SCC_PRESENTATION_HISTORY_V1
     if (data && data.operation === 'presentation_history_store') {
         // Original token validation has already succeeded. The separate helper
-        // repeats secure CREATE/provider/profile/current-caller binding checks.
+        // verifies the issued finite grant through public provider context only.
         try {
             var historyResult = JSON.parse(String(new global.SCCVoicePresentationHistoryV1().storeJSON(JSON.stringify(data))));
             reply(historyResult && historyResult.status === 'success' && historyResult.stored === true ? 200 : 503, historyResult);

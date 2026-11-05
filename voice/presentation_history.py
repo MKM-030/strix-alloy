@@ -1,7 +1,96 @@
 """Optional host-emission history. No business authority, retries or logging."""
 import asyncio
 import hashlib
+import json
 import re
+
+GRANT_FIELDS = frozenset(('operation', 'requestId', 'appInboundId', 'clientSessionId',
+    'userId', 'callerUserId', 'conversationBinding', 'nonceSha256', 'maxAgeSeconds'))
+GRANT_RECEIPT_FIELDS = frozenset(('status', 'state', 'requestId', 'conversationId',
+    'nonceSha256', 'issuedAtMs', 'expiresAtMs', 'attested', 'scope', 'businessAuthority'))
+
+
+def valid_grant_request(value):
+    def digest(item, size=32):
+        return type(item) is str and re.fullmatch('[0-9a-f]{'+str(size)+'}',item) is not None
+    if type(value) is not dict or set(value) != GRANT_FIELDS:
+        return False
+    binding=value['conversationBinding']
+    return (value['operation'] == 'attest_presentation_history_v1'
+        and value['appInboundId'] == 'scc-local-voice'
+        and all(digest(value[key]) for key in ('requestId','clientSessionId','callerUserId'))
+        and value['userId'] == 'voice-'+value['clientSessionId']
+        and digest(value['nonceSha256'],64)
+        and type(value['maxAgeSeconds']) is int and 60 <= value['maxAgeSeconds'] <= 3600
+        and type(binding) is dict and set(binding) == {'source','conversationId',
+            'creationMessageId','createRequestId','interactionId'}
+        and binding['source'] == 'servicenow_create_conversation'
+        and all(digest(binding[key]) for key in ('conversationId','creationMessageId','createRequestId','interactionId')))
+
+
+def valid_grant_receipt(value, request):
+    """Native interval only: host wall-clock skew is irrelevant to attestation."""
+    return (valid_grant_request(request) and type(value) is dict and set(value) == GRANT_RECEIPT_FIELDS
+        and value['status'] == 'success' and value['state'] == 'presentation_history_grant_attested'
+        and value['requestId'] == request['requestId']
+        and value['conversationId'] == request['conversationBinding']['conversationId']
+        and value['nonceSha256'] == request['nonceSha256']
+        and type(value['issuedAtMs']) is int and 0 < value['issuedAtMs'] <= 9007199254740991
+        and type(value['expiresAtMs']) is int and 0 < value['expiresAtMs'] <= 9007199254740991
+        and value['expiresAtMs']-value['issuedAtMs'] == request['maxAgeSeconds']*1000
+        and value['attested'] is True and value['scope'] == 'presentation_metadata_only'
+        and value['businessAuthority'] is False)
+
+
+async def issue_presentation_grant(instance_url, provider_token, authorization, request,
+                                   *, timeout_seconds=2, http_factory=None):
+    """One fixed TLS metadata POST with bounded input/output and no ambient auth."""
+    import aiohttp
+    # The Native audio process loads only the DTO/outbox via a file import.
+    # Caller bootstrap dependencies belong exclusively to this Bridge transport.
+    if __package__:
+        from .caller_binding import CALLER_INSTANCE_URL, PRESENTATION_GRANT_PATH, valid_authorization, _pairs
+    else:
+        from caller_binding import CALLER_INSTANCE_URL, PRESENTATION_GRANT_PATH, valid_authorization, _pairs
+    error='Presentation history unavailable'
+    headers={}
+    try:
+        if (instance_url != CALLER_INSTANCE_URL or not valid_authorization(authorization)
+                or type(provider_token) is not str or not 0 < len(provider_token) <= 8192
+                or any(ord(c) < 32 or ord(c) == 127 for c in provider_token)
+                or not valid_grant_request(request)
+                or type(timeout_seconds) not in (int,float) or not 0 < timeout_seconds <= 2):
+            raise ValueError(error)
+        headers.update(Authorization=authorization, token=provider_token,
+            Accept='application/json', **{'Content-Type':'application/json','Accept-Encoding':'identity'})
+        factory=aiohttp.ClientSession if http_factory is None else http_factory
+        async with asyncio.timeout(timeout_seconds):
+            async with factory(cookie_jar=aiohttp.DummyCookieJar(), trust_env=False,
+                    auto_decompress=False, skip_auto_headers={'Accept-Encoding'},
+                    timeout=aiohttp.ClientTimeout(total=timeout_seconds)) as http:
+                async with http.post(instance_url+PRESENTATION_GRANT_PATH, json=request,
+                        headers=headers, allow_redirects=False, ssl=True) as response:
+                    if (response.status != 200 or response.headers.get('Content-Encoding')
+                            or not re.match(r'application/json(?:;|$)',response.headers.get('Content-Type',''),re.I)):
+                        raise ValueError(error)
+                    raw=bytearray()
+                    async for chunk in response.content.iter_chunked(4096):
+                        raw.extend(chunk)
+                        if len(raw) > 4096:raise ValueError(error)
+                    data=json.loads(raw.decode('utf-8'), object_pairs_hook=_pairs,
+                        parse_constant=lambda _: (_ for _ in ()).throw(ValueError(error)))
+                    if (type(data) is not dict or set(data) != {'result'}
+                            or not valid_grant_receipt(data['result'],request)):
+                        raise ValueError(error)
+                    result=data['result']
+        return result
+    except asyncio.CancelledError:
+        raise
+    except Exception:
+        raise ValueError(error) from None
+    finally:
+        headers.clear()
+        authorization=provider_token=None
 
 MAX_EVENTS = 16
 FIELDS = frozenset(('version', 'kind', 'local_output_state', 'native_request_binding',

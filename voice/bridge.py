@@ -22,22 +22,24 @@ from aiohttp import ClientSession, ClientTimeout, FormData, web
 
 if __package__:
     from .caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
-        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID,
+        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PATH,
         valid_authorization, resolve_native_caller, refresh_native_caller_session,
         create_native_caller_conversation, validated_created,
         CALLER_CREATE_FAILURE_CONTRACT, CallerCreateFailure, CallerCreateFailureReceipt)
     from .callback_progress import CallbackProgress
     from .context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
-    from .presentation_history import validate_event, valid_receipt
+    from .presentation_history import (validate_event, valid_receipt, issue_presentation_grant,
+        valid_grant_receipt)
 else:
     from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
-        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID,
+        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PATH,
         valid_authorization, resolve_native_caller, refresh_native_caller_session,
         create_native_caller_conversation, validated_created,
         CALLER_CREATE_FAILURE_CONTRACT, CallerCreateFailure, CallerCreateFailureReceipt)
     from callback_progress import CallbackProgress
     from context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
-    from presentation_history import validate_event, valid_receipt
+    from presentation_history import (validate_event, valid_receipt, issue_presentation_grant,
+        valid_grant_receipt)
 
 STATIC = Path(__file__).parent / 'static'
 MAX_WAV = 20 * 1024 * 1024
@@ -145,6 +147,12 @@ class Conversation:
     presentation_owner: str = field(default='', repr=False)
     presentation_sequence: int = 0
     presentation_disabled: bool = False
+    presentation_lease: object | None = field(default=None, repr=False)
+    presentation_task: object | None = field(default=None, repr=False)
+    presentation_nonce: str = field(default='', repr=False)
+    presentation_identity: object | None = field(default=None, repr=False)
+    presentation_deadline: float = field(default=0, repr=False)
+    presentation_timer: object | None = field(default=None, repr=False)
     input_boundary_request_id: str = ''
     input_boundary_kind: str = ''
 
@@ -355,6 +363,7 @@ class Bridge:
         self.http = None
         self.stopping = False
         self.bootstrap_tasks = set()
+        self.presentation_tasks = set()
         self.audio_lock = asyncio.Lock()
 
     async def lifecycle(self, app):
@@ -373,6 +382,8 @@ class Bridge:
             await asyncio.gather(*list(self.owned_tasks), return_exceptions=True)
         if self.bootstrap_tasks:
             await asyncio.gather(*list(self.bootstrap_tasks), return_exceptions=True)
+        if self.presentation_tasks:
+            await asyncio.gather(*list(self.presentation_tasks), return_exceptions=True)
         unresolved = sum(bool(s.caller_create_request_id and not s.ended)
                          for s in self.sessions.values())
         if unresolved:
@@ -409,6 +420,7 @@ class Bridge:
             elif session.busy and now - session.pending_since > self.settings.turn_seconds:
                 session.busy = False
                 session.failed = True
+                self.retire_caller_bootstrap(session)
                 session.emit('Keine abschließende Antwort erhalten. Bitte einen neuen Dialog starten.', 'error')
 
     @web.middleware
@@ -812,55 +824,91 @@ class Bridge:
         """Optional conversation history; never changes active MESSAGE/control state."""
         if self.settings.presentation_history_enabled is not True:
             raise web.HTTPNotFound()
-        data = await self.json(request)
         session = request._voice_session
         unavailable = {'state':'presentation_history_unavailable', 'stored':False}
-        async with session.presentation_lock:
-            if session.presentation_disabled:
-                return web.json_response(unavailable)
-            if (not self.settings.service_now_enabled or self.stopping
-                    or self.sessions.get(session.sid) is not session or not session.started
-                    or session.ending or session.ended or session.failed or session.bootstrap_stage
-                    or session.conversation_binding is None
-                    or self.settings.inbound_id != 'scc-local-voice'
-                    or self.settings.caller_create_api_path != CALLER_CREATE_PATH
-                    or self.settings.caller_binding_service_id != CALLER_SERVICE_ID
-                    or self.settings.caller_binding_agent_id != CALLER_AGENT_ID
-                    or session.voice_context.get('voice_assistant') != CALLER_SERVICE_ID
-                    or session.voice_context.get('global_context_profile') != CALLER_PROFILE_ID
-                    or not re.fullmatch('[0-9a-f]{32}', session.caller_user_id)
-                    or session.user_id != 'voice-' + session.sid):
-                raise web.HTTPConflict(text='Owned presentation history is unavailable')
-            try:
-                event = validate_event(data)
-            except ValueError:
-                raise web.HTTPBadRequest(text='Invalid bounded presentation history')
-            if (event['sequence'] != session.presentation_sequence + 1
-                    or session.presentation_owner and event['owner_id'] != session.presentation_owner):
-                raise web.HTTPBadRequest(text='Presentation owner or sequence mismatch')
-            binding = session.conversation_binding.snapshot()
-            payload = dict(operation='presentation_history_store', requestId=uuid.uuid4().hex,
-                appInboundId=self.settings.inbound_id, clientSessionId=session.sid,
-                userId=session.user_id, callerUserId=session.caller_user_id, conversationBinding=binding, event=event)
-            # Claim before I/O. Unknown storage is never replayed, including after timeout.
-            session.presentation_owner = event['owner_id']
-            session.presentation_sequence = event['sequence']
-            url = self.bot_url.split('/api/', 1)[0] + '/api/global/scc_voice_context/updates'
-            try:
-                async with self.http.post(url, json=payload,
-                        headers={'token':self.sn_token, 'Accept':'application/json'},
-                        allow_redirects=False, timeout=ClientTimeout(total=2)) as response:
-                    ack = json.loads(await read_limited(response.content, 16384))
-                    receipt = ack.get('result', ack) if type(ack) is dict else None
-                    if (response.status != 200 or type(ack) is not dict or ack.get('error')
-                            or ack.get('status', 'success') != 'success'
-                            or not valid_receipt(receipt, event,
-                            binding['conversationId'], payload['requestId'])):
-                        raise ValueError('Presentation storage not corroborated')
-            except Exception:
-                session.presentation_disabled = True
-                return web.json_response(unavailable)
-            return web.json_response(receipt)
+        # One monotonic budget covers body, lock, grant and store waits.
+        publication_deadline = time.monotonic() + 2
+        try:
+            async with asyncio.timeout_at(publication_deadline):
+                data = await self.json(request)
+                async with session.presentation_lock:
+                    if session.presentation_disabled:
+                        return web.json_response(unavailable)
+                    if (not self.settings.service_now_enabled or self.stopping
+                            or self.sessions.get(session.sid) is not session or not session.started
+                            or session.ending or session.ended or session.failed
+                            or session.conversation_binding is None
+                            or self.settings.inbound_id != 'scc-local-voice'
+                            or self.settings.caller_create_api_path != CALLER_CREATE_PATH
+                            or self.settings.caller_binding_service_id != CALLER_SERVICE_ID
+                            or self.settings.caller_binding_agent_id != CALLER_AGENT_ID
+                            or session.voice_context.get('voice_assistant') != CALLER_SERVICE_ID
+                            or session.voice_context.get('global_context_profile') != CALLER_PROFILE_ID
+                            or not re.fullmatch('[0-9a-f]{32}', session.caller_user_id)
+                            or session.user_id != 'voice-' + session.sid):
+                        raise web.HTTPConflict(text='Owned presentation history is unavailable')
+                    # Optional publication may wait for its bounded grant, never startup.
+                    if session.presentation_task is not None and not session.presentation_nonce:
+                        try:
+                            await asyncio.shield(session.presentation_task)
+                        except asyncio.CancelledError:
+                            self.retire_presentation(session)
+                            raise
+                        except Exception:
+                            self.retire_presentation(session)
+                    if (session.presentation_disabled or not session.presentation_nonce
+                            or time.monotonic() >= session.presentation_deadline
+                            or session.ending or session.ended or session.failed or self.stopping
+                            or self.sessions.get(session.sid) is not session
+                            or session.presentation_identity != self.owned_cleanup_identity(session)):
+                        if session.presentation_nonce:
+                            self.retire_presentation(session)
+                        return web.json_response(unavailable)
+                    try:
+                        event = validate_event(data)
+                    except ValueError:
+                        raise web.HTTPBadRequest(text='Invalid bounded presentation history')
+                    if (event['sequence'] != session.presentation_sequence + 1
+                            or session.presentation_owner and event['owner_id'] != session.presentation_owner):
+                        raise web.HTTPBadRequest(text='Presentation owner or sequence mismatch')
+                    binding = session.conversation_binding.snapshot()
+                    payload = dict(operation='presentation_history_store', requestId=uuid.uuid4().hex,
+                        appInboundId=self.settings.inbound_id, clientSessionId=session.sid,
+                        userId=session.user_id, callerUserId=session.caller_user_id, conversationBinding=binding,
+                        event=event, grantNonce=session.presentation_nonce)
+                    # Claim before I/O. Unknown storage is never replayed, including after timeout.
+                    session.presentation_owner = event['owner_id']
+                    session.presentation_sequence = event['sequence']
+                    url = self.bot_url.split('/api/', 1)[0] + '/api/global/scc_voice_context/updates'
+                    try:
+                        remaining = publication_deadline - time.monotonic()
+                        if remaining <= 0:
+                            raise TimeoutError()
+                        async with self.http.post(url, json=payload,
+                                headers={'token':self.sn_token, 'Accept':'application/json'},
+                                allow_redirects=False, timeout=ClientTimeout(total=remaining)) as response:
+                            ack = json.loads(await read_limited(response.content, 16384))
+                            receipt = ack.get('result', ack) if type(ack) is dict else None
+                            if (response.status != 200 or type(ack) is not dict or ack.get('error')
+                                    or ack.get('status', 'success') != 'success'
+                                    or not valid_receipt(receipt, event,
+                                    binding['conversationId'], payload['requestId'])):
+                                raise ValueError('Presentation storage not corroborated')
+                    except asyncio.CancelledError:
+                        self.retire_presentation(session)
+                        raise
+                    except Exception:
+                        self.retire_presentation(session)
+                        return web.json_response(unavailable)
+                    finally:
+                        payload.pop('grantNonce', None)
+                    return web.json_response(receipt)
+        except asyncio.CancelledError:
+            self.retire_presentation(session)
+            raise
+        except TimeoutError:
+            self.retire_presentation(session)
+            return web.json_response(unavailable)
 
     async def context_update(self, request):
         """Independent control lane; never advances the active MESSAGE request."""
@@ -1165,6 +1213,11 @@ class Bridge:
                 or session.conversation_binding is not None or ticket is None):
             raise ValueError('Native caller CREATE unavailable')
         authorization,remaining,deadline = ticket.claim_create()
+        if self.settings.presentation_history_enabled is True:
+            try:
+                session.presentation_lease = ticket.delegate_presentation(session)
+            except Exception:
+                session.presentation_disabled = True
         session.caller_create_request_id = request_id
         request = {'version':1,'requestId':request_id,'clientSessionId':session.sid,
                    'clientMessageId':payload['message']['clientMessageId']}
@@ -1212,6 +1265,7 @@ class Bridge:
                 or not ticket.available or session.caller_bootstrap is not ticket):
             self.begin_owned_cleanup(session)
             return identity
+        self.queue_presentation_attestation(session, identity)
         self.consume(session,created)
         self.queue_start_created(session,request['requestId'])
         return identity
@@ -1503,10 +1557,98 @@ class Bridge:
                     session.sequence += 1
                     session.change.set()
             finally:
-                self.retire_caller_bootstrap(session)
+                self.retire_caller_bootstrap(session, preserve_presentation=
+                    not (session.failed or session.ending or session.ended or self.stopping))
+
+    def presentation_owner_alive(self, session, identity):
+        return (self.settings.presentation_history_enabled is True
+            and not self.stopping and self.sessions.get(session.sid) is session
+            and session.started and not (session.failed or session.ending or session.ended
+                or session.presentation_disabled)
+            and self.owned_cleanup_identity(session) == identity)
+
+    def queue_presentation_attestation(self, session, identity):
+        lease=session.presentation_lease
+        if lease is None or session.presentation_task is not None:
+            return
+        if not self.presentation_owner_alive(session,identity):
+            self.retire_presentation(session)
+            return
+        task=asyncio.create_task(self.run_presentation_attestation(session,identity,lease))
+        session.presentation_task=task
+        self.presentation_tasks.add(task)
+        task.add_done_callback(self.presentation_tasks.discard)
+
+    async def run_presentation_attestation(self, session, identity, lease):
+        authorization=nonce=None
+        accepted=False
+        try:
+            if session.presentation_lease is not lease or not self.presentation_owner_alive(session,identity):
+                return
+            authorization, remaining, original_deadline=lease.take(session,PRESENTATION_GRANT_PATH)
+            started=time.monotonic()
+            deadline=min(original_deadline,started+2)
+            if remaining <= 0 or started >= deadline:
+                return
+            nonce=secrets.token_hex(32)
+            payload=dict(operation='attest_presentation_history_v1',requestId=uuid.uuid4().hex,
+                appInboundId=self.settings.inbound_id,clientSessionId=session.sid,
+                userId=session.user_id,callerUserId=session.caller_user_id,
+                conversationBinding=session.conversation_binding.snapshot(),
+                nonceSha256=hashlib.sha256(nonce.encode('ascii')).hexdigest(),
+                maxAgeSeconds=self.settings.session_seconds)
+            remaining=deadline-time.monotonic()
+            if remaining <= 0 or not self.presentation_owner_alive(session,identity):
+                return
+            async with asyncio.timeout_at(deadline):
+                receipt=await issue_presentation_grant(self.settings.instance_url,self.sn_token,
+                    authorization,payload,timeout_seconds=remaining)
+            if (time.monotonic() >= deadline or session.presentation_lease is not lease
+                    or session.presentation_task is not asyncio.current_task()
+                    or not self.presentation_owner_alive(session,identity)
+                    or not valid_grant_receipt(receipt,payload)):
+                return
+            session.presentation_nonce=nonce
+            session.presentation_identity=identity
+            # Conservative elapsed-time bound; never compare native time to host UTC.
+            session.presentation_deadline=started+payload['maxAgeSeconds']
+            session.presentation_timer=asyncio.get_running_loop().call_later(
+                max(0,session.presentation_deadline-time.monotonic()),self.retire_presentation,session)
+            accepted=True
+        except (Exception, asyncio.CancelledError):
+            pass  # Fixed unavailable state only; optional failure cannot affect CREATE.
+        finally:
+            authorization=nonce=None
+            lease.clear()
+            if session.presentation_lease is lease:
+                session.presentation_lease=None
+            if session.presentation_task is asyncio.current_task():
+                session.presentation_task=None
+            if not accepted:
+                self.retire_presentation(session)
 
     @staticmethod
-    def retire_caller_bootstrap(session):
+    def retire_presentation(session):
+        session.presentation_nonce=''
+        session.presentation_identity=None
+        session.presentation_deadline=0
+        session.presentation_disabled=True
+        if session.presentation_timer is not None:
+            session.presentation_timer.cancel()
+            session.presentation_timer=None
+        if session.presentation_lease is not None:
+            session.presentation_lease.clear()
+            session.presentation_lease=None
+        task=session.presentation_task
+        session.presentation_task=None
+        if task is not None and task is not asyncio.current_task() and not task.done():
+            task.cancel()
+
+    @staticmethod
+    def retire_caller_bootstrap(session, *, preserve_presentation=False):
+        if not preserve_presentation and (session.presentation_lease is not None
+                or session.presentation_task is not None or session.presentation_nonce):
+            Bridge.retire_presentation(session)
         if session.caller_bootstrap is not None:
             session.caller_bootstrap.clear()
             session.caller_bootstrap = None
@@ -1526,6 +1668,7 @@ class Bridge:
         if any(isinstance(control, dict) and str(control.get('maskType', '')).upper() == 'SECURE'
                for control in data.get('body', [])):
             session.failed = True
+            self.retire_caller_bootstrap(session)
             session.busy = False
             session.choices = []
             session.input_label = ''

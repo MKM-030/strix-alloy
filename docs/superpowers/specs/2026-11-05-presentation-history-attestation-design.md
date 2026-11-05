@@ -39,3 +39,10 @@ Reuse isolated branch at49b0e1f. Python task owns voice/bridge.py,voice/caller_b
 Tests must show visible RED then GREEN for the new behavior, realistic native JSON serialization and Guest Secure denial, lease failure/cancellation/expiry/cross-owner cases, exact old CREATE bytes and outcome, native/host clock skew, no startup wait, no secret leakage, closed/drifted consumer omission and all existing original-input/output protections. No packages/downloads/model starts or real business operation for source verification.
 
 Source success is not deployment or conversational success. Later qualification must prove actual attestation, Guest publication, secure read/include and useful conversation behavior in one fresh bounded no-approval call. Reuse existing recordings but never spent harness/auth handles or the existing order. Real devices/external NAT and final hearing remain separate evidence limits.
+## Integration rulings after design review
+
+The authenticated HTTP response is exactly {result: <the exact ten-field receipt>}; raw receipts, extra/error/failure wrappers and nonfinite/duplicate-key JSON are refused. The transport accepts at most4096 response bytes without automatic decompression.
+
+A confirmed immutable C and exact attested grant may publish while business bootstrap_stage is still early. Optional publication may await its already bounded private task inside the existing overall2second publication budget; it must not introduce a startup await, retry or extra authorization use. Terminal/disabled state invalidates late receipt acceptance.
+
+Native include diagnostics are optional and false by default. When explicitly enabled for qualification they emit only bounded actual native gsUserID, valid C, fixed enter/included/omitted stage and count0..3 under one fixed prefix. No text, prompts, ASR, nonce/hash, alias, error/source or reasoning data; logger failure cannot affect any result. This measures actual worker identity/inclusion in the same fresh qualification call.

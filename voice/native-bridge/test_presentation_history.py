@@ -5,8 +5,10 @@ import importlib.util
 import json
 from pathlib import Path
 import sys
+import time
+from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import native_duplex as duplex
@@ -14,7 +16,7 @@ from test_native_duplex import FakeCall
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from aiohttp import CookieJar, web
 from aiohttp.test_utils import TestClient, TestServer
-from voice.bridge import Bridge, Settings, ConversationBinding
+from voice.bridge import Bridge, Settings, Conversation, ConversationBinding
 from voice.caller_binding import CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID
 from native_bridge import Dialog, Config
 
@@ -72,7 +74,8 @@ class PresentationContractTests(unittest.IsolatedAsyncioTestCase):
                 payload=dict(operation='presentation_history_store',requestId='e'*32,
                     appInboundId='scc-local-voice',clientSessionId='f'*32,userId='voice-'+'f'*32,
                     callerUserId='1'*32,conversationBinding=dict(source='servicenow_create_conversation',
-                        conversationId='2'*32,creationMessageId='3'*32,createRequestId='4'*32,interactionId='5'*32),event=event)
+                        conversationId='2'*32,creationMessageId='3'*32,createRequestId='4'*32,interactionId='5'*32),
+                    event=event,grantNonce='a9'*32)
                 self.assertLessEqual(len(json.dumps(text,ensure_ascii=True).encode('utf-8')),12002)
                 self.assertLessEqual(len(json.dumps(payload,ensure_ascii=True).encode('utf-8')),16384)
 
@@ -208,6 +211,10 @@ class PresentationTransportTests(unittest.IsolatedAsyncioTestCase):
         s=self.session;s.started=True;s.user_id='voice-'+s.sid;s.caller_user_id='1'*32;s.caller_email='test@example.invalid'
         s.conversation_binding=ConversationBinding('c'*32,'d'*32,'e'*32)
         s.voice_context={'voice_assistant':CALLER_SERVICE_ID,'global_context_profile':CALLER_PROFILE_ID}
+        # This transport fixture represents an already corroborated private grant.
+        s.presentation_nonce='a9'*32
+        s.presentation_deadline=__import__('time').monotonic()+60
+        s.presentation_identity=self.bridge.owned_cleanup_identity(s)
 
     async def asyncTearDown(self):
         await self.client.close();await self.bot.close()
@@ -222,12 +229,47 @@ class PresentationTransportTests(unittest.IsolatedAsyncioTestCase):
         response=await self.post();self.assertEqual(response.status,404);self.assertEqual(self.sent,[])
         self.assertFalse(Settings().presentation_history_enabled)
 
+    async def test_without_exact_attested_private_nonce_no_guest_publication(self):
+        self.session.presentation_nonce=''
+        response=await self.post()
+        self.assertFalse((await response.json())['stored']);self.assertEqual(self.sent,[])
+        self.assertFalse(self.session.failed)
+
+    async def test_grant_ready_during_business_bootstrap_does_not_disable_history(self):
+        self.session.bootstrap_stage='waiting_input'
+        self.session.pending_action='START_CREATED_CONVERSATION'
+        response=await self.post()
+        self.assertTrue((await response.json())['stored'])
+        self.assertFalse(self.session.presentation_disabled)
+        self.assertEqual(self.session.bootstrap_stage,'waiting_input')
+
+    async def test_only_optional_publication_waits_for_pending_private_grant(self):
+        self.session.presentation_nonce=''
+        release=asyncio.Event()
+        async def attest():
+            await release.wait()
+            self.session.presentation_nonce='a9'*32
+        task=asyncio.create_task(attest());self.session.presentation_task=task
+        publishing=asyncio.create_task(self.post())
+        await asyncio.sleep(.01)
+        self.assertFalse(publishing.done());self.assertEqual(self.sent,[])
+        release.set();response=await publishing;await task
+        self.session.presentation_task=None
+        self.assertTrue((await response.json())['stored']);self.assertEqual(len(self.sent),1)
+
+    async def test_expired_or_drifted_grant_is_erased_without_dispatch(self):
+        self.session.presentation_deadline=0
+        response=await self.post()
+        self.assertFalse((await response.json())['stored'])
+        self.assertFalse(self.session.presentation_nonce);self.assertEqual(self.sent,[])
+
     async def test_separate_history_receipt_preserves_original_backend_state(self):
         s=self.session;s.busy=True;s.requests.append('original-business');s.pending_action='MESSAGE'
         s.pending_since=__import__('time').monotonic()
         response=await self.post();self.assertEqual(response.status,200)
         self.assertTrue((await response.json())['stored']);self.assertEqual(len(self.sent),1)
         value=self.sent[0];self.assertEqual(value['operation'],'presentation_history_store')
+        self.assertEqual(value['grantNonce'],'a9'*32)
         self.assertEqual(value['callerUserId'],s.caller_user_id);self.assertEqual(value['event'],self.event())
         self.assertNotIn('message',value);self.assertNotIn('caller_updates',value)
         self.assertTrue(s.busy);self.assertEqual(list(s.requests),['original-business'])
@@ -277,3 +319,112 @@ class PresentationTransportTests(unittest.IsolatedAsyncioTestCase):
         dialog.config.presentation_history_enabled=True
         self.assertTrue(await dialog.publish_presentation_history(self.event()))
         self.assertEqual(events[0][:2],('POST','/api/presentation-history'))
+
+
+class PublicationBudgetTests(unittest.IsolatedAsyncioTestCase):
+    """In-process fake transport: no HTTP, native service or model calls."""
+    async def asyncSetUp(self):
+        self.bridge=Bridge(Settings(instance_url='https://example.invalid',user_id='owned-provider-user',
+            email='test@example.invalid',presentation_history_enabled=True,
+            caller_binding_service_id=CALLER_SERVICE_ID,caller_binding_agent_id=CALLER_AGENT_ID,
+            caller_create_api_path=CALLER_CREATE_PATH),'provider-secret','audio','callback')
+        s=self.session=Conversation();self.bridge.sessions[s.sid]=s
+        s.started=True;s.user_id='voice-'+s.sid;s.caller_user_id='1'*32
+        s.conversation_binding=ConversationBinding('c'*32,'d'*32,'e'*32)
+        s.voice_context={'voice_assistant':CALLER_SERVICE_ID,'global_context_profile':CALLER_PROFILE_ID}
+        s.presentation_nonce='a9'*32;s.presentation_deadline=time.monotonic()+60
+        s.presentation_identity=self.bridge.owned_cleanup_identity(s)
+        s.busy=True;s.requests.append('original-business');s.pending_action='MESSAGE'
+        s.bootstrap_stage='waiting_input';s.cleanup_state='owned'
+        self.event=PresentationContractTests().event()
+        self.bridge.json=AsyncMock(return_value=self.event)
+        self.calls=[];self.storage_completed=False;self.storage_cancelled=False;self.storage_delay=0
+        owner=self
+        class Response:
+            status=200
+            async def __aenter__(self):return self
+            async def __aexit__(self,*args):pass
+            @property
+            def content(self):return self
+            async def iter_chunked(self,size):
+                try:await asyncio.sleep(owner.storage_delay)
+                except asyncio.CancelledError:
+                    owner.storage_cancelled=True;raise
+                owner.storage_completed=True
+                yield json.dumps({'result':receipt(owner.event,owner.calls[-1]['json']['requestId'])}).encode()
+        def post(url,**kwargs):self.calls.append(kwargs);return Response()
+        self.bridge.http=SimpleNamespace(post=post)
+        self.request=SimpleNamespace(_voice_session=s)
+
+    def business_state(self):
+        s=self.session
+        return (s.busy,tuple(s.requests),s.pending_action,s.bootstrap_stage,s.cleanup_state,
+            s.sequence,s.failed,s.ending,s.ended,s.conversation_binding)
+
+    async def asyncTearDown(self):
+        task=self.session.presentation_task
+        self.bridge.retire_presentation(self.session)
+        if task:await asyncio.gather(task,return_exceptions=True)
+
+    async def publish(self):
+        response=await self.bridge.presentation_history(self.request)
+        return json.loads(response.body)
+
+    async def test_grant_and_store_share_one_two_second_publication_budget(self):
+        s=self.session;s.presentation_nonce='';self.storage_delay=1.25
+        before=self.business_state()
+        async def attest():
+            await asyncio.sleep(1.25)
+            s.presentation_nonce='a9'*32
+        task=asyncio.create_task(attest());s.presentation_task=task
+        started=time.monotonic();result=await self.publish();elapsed=time.monotonic()-started
+        self.assertFalse(result['stored'],'Grant wait plus store must not receive two fresh budgets')
+        self.assertLess(elapsed,2.3)
+        self.assertTrue(s.presentation_disabled);self.assertFalse(s.presentation_nonce)
+        self.assertIsNone(s.presentation_task);self.assertTrue(task.done())
+        self.assertEqual(len(self.calls),1);self.assertFalse(self.storage_completed)
+        self.assertTrue(self.storage_cancelled)
+        self.assertGreater(self.calls[0]['timeout'].total,0)
+        self.assertLess(self.calls[0]['timeout'].total,1)
+        self.assertEqual(self.business_state(),before)
+        self.assertFalse((await self.publish())['stored']);self.assertEqual(len(self.calls),1)
+
+    async def test_lock_wait_is_inside_the_same_publication_budget(self):
+        s=self.session;before=self.business_state()
+        await s.presentation_lock.acquire()
+        async def release():
+            await asyncio.sleep(2.5)
+            s.presentation_lock.release()
+        holder=asyncio.create_task(release())
+        try:
+            started=time.monotonic();result=await self.publish();elapsed=time.monotonic()-started
+            self.assertFalse(result['stored'],'Lock waiting must not extend optional publication lifetime')
+            self.assertLess(elapsed,2.3);self.assertTrue(s.presentation_lock.locked())
+            self.assertTrue(s.presentation_disabled);self.assertFalse(s.presentation_nonce)
+            self.assertEqual(self.calls,[]);self.assertEqual(self.business_state(),before)
+        finally:
+            holder.cancel();await asyncio.gather(holder,return_exceptions=True)
+            if s.presentation_lock.locked():s.presentation_lock.release()
+
+    async def test_small_combined_delay_succeeds_with_remaining_transport_budget(self):
+        s=self.session;s.presentation_nonce='';self.storage_delay=.01;before=self.business_state()
+        async def attest():
+            await asyncio.sleep(.01);s.presentation_nonce='a9'*32
+        task=asyncio.create_task(attest());s.presentation_task=task
+        result=await self.publish();await task
+        self.assertTrue(result['stored']);self.assertFalse(s.presentation_disabled)
+        self.assertEqual(len(self.calls),1);self.assertTrue(self.storage_completed)
+        self.assertGreater(self.calls[0]['timeout'].total,0)
+        self.assertLess(self.calls[0]['timeout'].total,2)
+        self.assertEqual(self.business_state(),before)
+
+    async def test_cancellation_while_waiting_for_lock_retires_only_optional_state(self):
+        s=self.session;before=self.business_state();await s.presentation_lock.acquire()
+        publishing=asyncio.create_task(self.publish())
+        try:
+            await asyncio.sleep(.01);publishing.cancel()
+            with self.assertRaises(asyncio.CancelledError):await publishing
+            self.assertTrue(s.presentation_disabled);self.assertFalse(s.presentation_nonce)
+            self.assertTrue(s.presentation_lock.locked());self.assertEqual(self.calls,[])
+            self.assertEqual(self.business_state(),before)
+        finally:s.presentation_lock.release()
