@@ -347,6 +347,35 @@ class Dialog:
         self._caller_bootstrap = None
         self._caller_bootstrap_bound = False
         self._create_failure_receipt_id = ''
+        self._presentation_ready = asyncio.Event() if getattr(config, 'presentation_history_enabled', False) is True else None
+        self._presentation_retired = False
+        self._presentation_retire_worker = None
+
+    def _presentation_binding_gate(self, retire_worker):
+        # One private generation, captured before startup can reset the Dialog.
+        ready, owner = self._presentation_ready, self.backend_owner
+        self._presentation_retire_worker = retire_worker
+        async def wait_ready():
+            if ready is None:
+                return False
+            await ready.wait()
+            return (ready is self._presentation_ready and owner is self.backend_owner
+                and not self._presentation_retired and not self.conversation_ended
+                and all(type(value) is str and re.fullmatch('[0-9a-f]{32}', value)
+                    for value in self.metadata.values()))
+        return wait_ready
+
+    def _retire_presentation_binding(self):
+        self._presentation_retired = True
+        ready = getattr(self, '_presentation_ready', None)
+        if ready is not None:
+            ready.set()
+        retire, self._presentation_retire_worker = getattr(self, '_presentation_retire_worker', None), None
+        if retire is not None:
+            try:
+                retire()
+            except Exception:
+                pass  # Optional history must never affect owned END/reset.
 
     def bind_caller_authorization(self, authorization):
         if self._caller_bootstrap_bound or self.http is not None:
@@ -371,6 +400,7 @@ class Dialog:
     def observe_state(self, state, *, sampled_at=None):
         """Retain scoped presentation and private CREATE IDs, never thoughts."""
         if state.get('ended') is True and not self.conversation_ended:
+            self._retire_presentation_binding()
             self.conversation_ended = True
             self.current_question = ''
             self.observation_revision += 1
@@ -389,6 +419,8 @@ class Dialog:
                 raise RuntimeError('ServiceNow conversation binding changed')
             # Private corroboration metadata only; never model context or prose.
             self.metadata = metadata
+            if getattr(self, '_presentation_ready', None) is not None and not self._presentation_retired:
+                self._presentation_ready.set()
         self.input_boundary = None
         boundary = state.get('inputBoundary')
         if (state.get('busy') is False and not self.conversation_ended and not state.get('failed')
@@ -782,6 +814,7 @@ class Dialog:
         raise BackendTurnUnavailable('ServiceNow conversation timed out')
 
     async def close(self):
+        self._retire_presentation_binding()
         if self.http and self.csrf:
             # Explicitly end our own cookie session, never another user's session.
             self.must_reset = True
@@ -791,6 +824,7 @@ class Dialog:
                 LOG.warning('Owned conversation reset failed; next call requires reset')
 
     async def reset_owned_session(self):
+        self._retire_presentation_binding()
         info = await self.request('POST', '/api/end', json={})
         absent = (type(info) is dict
             and set(info) == {'ended', 'localTerminal', 'creationOutcome', 'cleanup', 'receiptId'}
@@ -811,6 +845,8 @@ class Dialog:
 
         self.metadata = {key: '' for key in self.metadata}
         self.backend_owner = object()
+        self._presentation_ready = asyncio.Event() if getattr(self.config, 'presentation_history_enabled', False) is True else None
+        self._presentation_retired = False
         self.native_owner_id = uuid.uuid4().hex
         self.business_request_id = ''
         self._retired_business_requests.clear()
@@ -840,6 +876,7 @@ class Dialog:
         LOG.info('Owned conversation cleanup stage=acknowledged attempts=%d',attempt)
 
     async def shutdown(self):
+        self._retire_presentation_binding()
         if self._caller_bootstrap is not None:
             self._caller_bootstrap.clear()
             self._caller_bootstrap = None

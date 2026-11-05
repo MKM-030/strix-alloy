@@ -182,6 +182,23 @@ class GrantWireTests(unittest.IsolatedAsyncioTestCase):
                 with self.assertRaises(asyncio.CancelledError if cancel else ValueError):await task
                 self.assertEqual(len(sent),1);self.assertEqual(sent[0]['headers'],{})
 
+    async def test_transport_diagnostics_classify_only_fixed_metadata(self):
+        for options,stage,status in [({'status':401},'http_status',401),
+                ({'headers':{'Content-Type':'text/plain'}},'encoding',200),
+                ({'error':True},'dispatch',0)]:
+            with self.subTest(stage=stage),self.assertLogs('voice-bridge',level='INFO') as logs:
+                with self.assertRaises(ValueError):await self.invoke(options=options)
+            text=' '.join(logs.output)
+            self.assertIn('stage='+stage,text);self.assertIn('http_status='+str(status),text)
+            self.assertIn('conversation='+('4'*32),text)
+            for hidden in (TOKEN,NONCE,'provider-secret','nonceSha256','Authorization','headers'):
+                self.assertNotIn(hidden,text)
+            self.assertRegex(text,r'elapsed_ms=\d+ budget_ms=\d+ response_bytes=\d+')
+
+    async def test_diagnostic_logger_failure_does_not_change_grant_receipt(self):
+        with patch.object(bridge.LOG,'info',side_effect=RuntimeError('logger unavailable')):
+            self.assertEqual(await self.invoke(),receipt(request()))
+
 
 class GrantBridgeTests(unittest.IsolatedAsyncioTestCase):
     asyncSetUp=owned.OwnedCreateBridgeTests.asyncSetUp

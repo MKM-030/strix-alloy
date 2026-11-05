@@ -371,10 +371,16 @@ class NativeDuplex:
         self.call, self.clock = call, clock
         self._presentation_publisher = presentation_publisher
         self._presentation_outbox = None
+        self._presentation_task = None
+        self._presentation_wait_ready = None
+        self._presentation_binding_stage = None
         if callable(presentation_publisher):
             try:
                 self._presentation_outbox = presentation_history_module().PresentationOutbox(
                     getattr(call.dialog, 'native_owner_id', ''))
+                gate = getattr(call.dialog, '_presentation_binding_gate', None)
+                if callable(gate):
+                    self._presentation_wait_ready = gate(self._retire_presentation_worker)
             except Exception:
                 self._presentation_publisher = None
         self._control_gate = ControlGate()
@@ -526,6 +532,59 @@ class NativeDuplex:
                         self._spoken_history.popleft()
         self._sync_transcript_groups()
 
+    def _retire_presentation_worker(self):
+        if self._presentation_outbox is not None:
+            if not self._presentation_outbox.disabled:
+                self._presentation_diagnostic('retired')
+            self._presentation_outbox.close()
+        task = self._presentation_task
+        if task is not None and task is not asyncio.current_task() and not task.done():
+            task.cancel()
+
+    def _presentation_diagnostic(self, stage):
+        if stage not in {'offer_accepted','offer_rejected','binding_wait','binding_ready',
+                'binding_retired','attempt','stored','unavailable','cancelled','retired'}:
+            return
+        try:
+            call_id = getattr(self.call,'call_id','')
+            call_id = (call_id if type(call_id) is str
+                and re.fullmatch('[A-Za-z0-9_-]{1,64}',call_id) else 'unavailable')
+            conversation = getattr(self.call.dialog,'metadata',{}).get('conversation_id','')
+            conversation = (conversation if type(conversation) is str
+                and re.fullmatch('[0-9a-f]{32}',conversation) else 'unavailable')
+            count = self._presentation_outbox.sequence if self._presentation_outbox is not None else 0
+            LOG.info('Voice presentation history call=%s conversation=%s stage=%s count=%d',
+                call_id,conversation,stage,min(16,max(0,count)))
+        except Exception:
+            pass
+
+    async def _wait_presentation_binding(self):
+        if self._presentation_binding_stage is None:
+            self._presentation_diagnostic('binding_wait')
+            self._presentation_binding_stage='binding_wait'
+        ready = await self._presentation_wait_ready()
+        stage = 'binding_ready' if ready is True else 'binding_retired'
+        if self._presentation_binding_stage != stage:
+            self._presentation_diagnostic(stage)
+            self._presentation_binding_stage=stage
+        return ready
+
+    async def _publish_presentation_history(self, event):
+        # wait_for schedules this coroutine separately; retirement can win that gap.
+        if self._presentation_outbox is None or self._presentation_outbox.disabled:
+            return False
+        self._presentation_diagnostic('attempt')
+        try:
+            result=await self._presentation_publisher(event)
+        except asyncio.CancelledError:
+            self._presentation_diagnostic('cancelled')
+            raise
+        except Exception:
+            self._presentation_diagnostic('unavailable')
+            raise
+        self._presentation_diagnostic('stored' if result is True else 'unavailable')
+        return result
+
     def _record_presentation_history(self, state, item, lease):
         outbox = self._presentation_outbox
         if (outbox is None or outbox.disabled or item is None or item.kind != 'conversation'
@@ -540,12 +599,13 @@ class NativeDuplex:
             except UnicodeError:
                 return
         try:
-            outbox.offer(dict(version=1, kind='local_conversation_history', local_output_state='host_emitted',
+            offered=outbox.offer(dict(version=1, kind='local_conversation_history', local_output_state='host_emitted',
                 native_request_binding='unavailable', owner_id=outbox.owner_id, event_id=uuid.uuid4().hex,
                 sequence=outbox.sequence + 1, caller_turn_id=caller, original_asr_sha256=raw_hash,
                 output_epoch=item.epoch, task_revision=item.task_revision, playback_generation=lease.generation,
                 text=state['text'], text_sha256=hashlib.sha256(state['text'].encode('utf-8')).hexdigest(),
                 accepted_samples=state['accepted_samples'], emitted_samples=state['emitted_samples']))
+            self._presentation_diagnostic('offer_accepted' if offered else 'offer_rejected')
         except (ValueError, UnicodeError):
             return
 
@@ -1426,10 +1486,13 @@ class NativeDuplex:
         if self._context_publisher is not None:
             self._start_worker('context', self._context_loop())
         if self._presentation_outbox is not None:
-            history_task = asyncio.create_task(self._presentation_outbox.run(self._presentation_publisher), name='presentation_history')
+            history_task = asyncio.create_task(self._presentation_outbox.run(self._publish_presentation_history,
+                wait_ready=self._wait_presentation_binding if self._presentation_wait_ready is not None else None),
+                name='presentation_history')
+            self._presentation_task = history_task
             self._workers.add(history_task)
             # This optional lane ends quietly on unavailable storage; it is not
-            # a business/conversation worker failure or additional telemetry.
+            # a business/conversation worker failure.
             history_task.add_done_callback(lambda task: None if task.cancelled() else task.exception())
         incoming = None
         try:
@@ -1551,7 +1614,13 @@ class NativeDuplex:
             'weitere Übermittlung in diesen Dialog; erkläre nur die vorhandene Rückmeldung.' if backend_closed else
             'Die Anfrage ist derzeit nicht verfügbar; eine weitere Bearbeitung ist nicht belegt.'
             if self._backend_unavailable else
-            'Die Anfrage wartet noch auf vollständige Rückmeldung.' if self.busy else
+            'Die Anfrage wartet noch auf vollständige Rückmeldung. Unterscheide in einer Übersicht '
+            'zwischen Angaben des Anrufers und passenden bereits vorliegenden ServiceNow-Rückmeldungen. '
+            'Bisher nicht genannt bedeutet nicht, dass diese Angabe fachlich fehlt: '
+            'ServiceNow kann sie noch ermitteln. Ohne passende bereits vorliegende ServiceNow-Rückmeldung '
+            'behaupte weder, welche Angaben für den Vorgang fehlen, noch, dass nur noch bestimmte '
+            'Punkte erforderlich sind. Frühere eigene Antworten belegen das ebenfalls nicht. '
+            'Beantworte trotzdem die aktuelle Frage sinnvoll und besprich offene Punkte als vorläufig.' if self.busy else
             'Kein selbständiger Geschäftsabschluss; nur die vorhandene Rückmeldung ist belegt.',)
         snapshot['capability_limits'] += (
             'Neuere Rückmeldungen gehen älteren vor; ausdrücklich zurückgezogene Angaben gelten nicht weiter.',)
@@ -2060,8 +2129,7 @@ class NativeDuplex:
         self._transcripts.close()
         self._sync_transcript_groups()
         self._closed = True
-        if self._presentation_outbox is not None:
-            self._presentation_outbox.close()
+        self._retire_presentation_worker()
         self._dialogue_observation_state = None
         self._outputs.clear()
         self._backend_outputs.clear()

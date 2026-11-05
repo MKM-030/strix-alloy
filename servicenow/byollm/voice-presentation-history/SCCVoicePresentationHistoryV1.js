@@ -106,31 +106,38 @@ SCCVoicePresentationHistoryV1.prototype = {
         }
         return rows;
     },
-    _binding: function(conversationId) {
+    _binding: function(conversationId, diagnostic) {
         var actor = String(gs.getUserID() || '');
         // Both issuer and consumer use ordinary rights of the current caller.
         var user = actor;
         this._need(this._id(actor) && this._id(conversationId));
+        if (diagnostic) diagnostic.stage = 'binding_conversation';
         var conversation = this._read('sys_cs_conversation', conversationId,
             ['sys_id','consumer_account','context_profile','current_device','state']);
         this._need(conversation.context_profile === this.profile &&
             ['open','chatInProgress','autoPilotInProgress'].indexOf(conversation.state) !== -1 && conversation.current_device.trim().length > 0);
+        if (diagnostic) diagnostic.stage = 'binding_account';
         var account = this._read('sys_cs_consumer_account', conversation.consumer_account,
             ['sys_id','provider_application','channel_user_profile','consumer']);
         this._need(account.provider_application === this.app);
+        if (diagnostic) diagnostic.stage = 'binding_provider';
         var app = this._read('sys_cs_provider_application', this.app, ['sys_id','inbound_id','provider']);
         this._need(app.inbound_id === this.inbound && app.provider === this.provider);
+        if (diagnostic) diagnostic.stage = 'binding_profile';
         var profile = this._read('sys_cs_channel_user_profile', account.channel_user_profile,
             ['sys_id','active','user_table','user_document','channel_user_id','channel']);
         this._need(profile.active === '1' && profile.user_table === 'sys_user' && profile.user_document === user &&
             profile.channel === this.channel && /^voice-[0-9a-f]{32}$/.test(profile.channel_user_id));
         // Recheck ordinary readable alias uniqueness now, not only at CREATE.
         // An ambiguous/denied row refuses; never broaden to an insecure query.
+        if (diagnostic) diagnostic.stage = 'binding_alias';
         var aliases = this._query('sys_cs_channel_user_profile', [['channel',this.channel],['channel_user_id',profile.channel_user_id]],
             ['sys_id','active','user_table','user_document','channel_user_id','channel'], 1);
         this._need(aliases.length === 1 && JSON.stringify(aliases[0]) === JSON.stringify(profile));
+        if (diagnostic) diagnostic.stage = 'binding_consumer';
         var consumer = this._read('sys_cs_consumer', account.consumer, ['sys_id','user_id','inactive']);
         this._need(consumer.user_id === user && consumer.inactive === '0');
+        if (diagnostic) diagnostic.stage = 'binding_interaction';
         var interactions = this._query('interaction', [['channel_metadata_document',conversationId]],
             ['sys_id','channel_metadata_document','channel_metadata_table','provider_application','opened_for','state','active','type'], 1);
         this._need(interactions.length === 1);
@@ -141,6 +148,7 @@ SCCVoicePresentationHistoryV1.prototype = {
             ['new','work_in_progress'].indexOf(interaction.state) !== -1);
         // Find the one actual CREATE action before any provider-context I/O. Never
         // infer a current native task/request or use a latest business request.
+        if (diagnostic) diagnostic.stage = 'binding_create';
         var actions = this._query('sys_cs_message', [['conversation',conversationId],['direction','outbound'],['message_type','action']],
             ['sys_id','conversation','consumer_account','session','direction','message_type','payload'], 32);
         var create = null, i, action;
@@ -156,6 +164,7 @@ SCCVoicePresentationHistoryV1.prototype = {
             }
         }
         this._need(create !== null);
+        if (diagnostic) diagnostic.stage = 'binding_session';
         var session = this._read('sys_cs_session', create.session,
             ['sys_id','consumer_account','consumer','device_id','device_type','end_time']);
         this._need(session.consumer_account === account.sys_id && session.consumer === consumer.sys_id &&
@@ -165,8 +174,10 @@ SCCVoicePresentationHistoryV1.prototype = {
             account_id:account.sys_id,channel_profile_id:profile.sys_id,creation_message_id:create.sys_id,
             interaction_id:interaction.sys_id,session_id:session.sys_id,device_id:session.device_id,reader_actor_id:actor};
     },
-    _sameBinding: function(binding) {
-        this._need(JSON.stringify(this._binding(binding.conversation_id)) === JSON.stringify(binding));
+    _sameBinding: function(binding, diagnostic) {
+        var current = this._binding(binding.conversation_id, diagnostic);
+        if (diagnostic) diagnostic.stage = 'binding_consistency';
+        this._need(JSON.stringify(current) === JSON.stringify(binding));
     },
     _proof: function(proof) {
         this._need(this._keys(proof, ['source','conversationId','creationMessageId','createRequestId','interactionId']) &&
@@ -214,7 +225,20 @@ SCCVoicePresentationHistoryV1.prototype = {
         // append authority from issuance, never current record/business rights.
         this._need(JSON.stringify(this._grant(grant.binding.conversation_id, grant.binding.provider_user_id)) === JSON.stringify(grant));
     },
+    _grantRefusalDiagnostic: function(diagnostic) {
+        try {
+            if (this.diagnostics !== true || !diagnostic || !this._id(diagnostic.conversationId) ||
+                    ['binding_conversation','binding_account','binding_provider','binding_profile','binding_alias',
+                     'binding_consumer','binding_interaction','binding_create','binding_session','binding_consistency',
+                     'request_binding_match','native_interval','grant_empty_first','grant_empty_second',
+                     'grant_set','grant_readback','grant_consistency'].indexOf(diagnostic.stage) === -1) return;
+            var actor = String(gs.getUserID() || '').slice(0, 64);
+            gs.info('[SCC_VOICE_PRESENTATION_GRANT_REFUSAL_V1] ' + JSON.stringify({gsUserID:actor,
+                conversationId:diagnostic.conversationId,stage:diagnostic.stage}));
+        } catch (ignoredGrantDiagnostic) {}
+    },
     issueGrantJSON: function(requestText) {
+        var diagnostic = null;
         try {
             if (this.enabled !== true) this._fail();
             this._need(typeof requestText === 'string' && requestText.length <= 8000 && this._bytes(requestText) <= 10000);
@@ -228,8 +252,12 @@ SCCVoicePresentationHistoryV1.prototype = {
             var name = String(gs.getUserName() || '');
             this._need(name.length > 0 && name !== 'guest' && String(gs.getUserID() || '') === input.callerUserId);
             this._proof(input.conversationBinding);
-            var binding = this._binding(input.conversationBinding.conversationId);
+            // Enable refusal metadata only after the actual caller and exact C validate.
+            diagnostic = {conversationId:input.conversationBinding.conversationId,stage:'binding_conversation'};
+            var binding = this._binding(input.conversationBinding.conversationId, diagnostic);
+            diagnostic.stage = 'request_binding_match';
             this._matches(input, binding, input.conversationBinding.createRequestId);
+            diagnostic.stage = 'native_interval';
             var now = this._now(), expires = now + input.maxAgeSeconds * 1000;
             this._need(this._integer(expires, now + 1, 9007199254740991));
             // Original CREATE correlation is supplied, not an independently
@@ -238,19 +266,25 @@ SCCVoicePresentationHistoryV1.prototype = {
                 app_id:this.app,provider_id:this.provider,channel_id:this.channel,service_id:this.service,context_profile:this.profile,
                 nonce_sha256:input.nonceSha256,issued_at_ms:now,expires_at_ms:expires};
             var encoded = JSON.stringify(grant);
+            diagnostic.stage = 'grant_empty_first';
             this._need(this._empty(this._grantRaw(binding.conversation_id, binding.provider_user_id)));
-            this._sameBinding(binding);
+            this._sameBinding(binding, diagnostic);
+            diagnostic.stage = 'grant_empty_second';
             this._need(this._empty(this._grantRaw(binding.conversation_id, binding.provider_user_id)));
             // ONE object setter, exact serialized readback; no CAS or retry.
+            diagnostic.stage = 'grant_set';
             sn_cs.VASystemObject.setProviderUserContext(this._grantKey(binding.conversation_id), grant, this.inbound, binding.provider_user_id, null);
+            diagnostic.stage = 'grant_readback';
             this._need(this._grantRaw(binding.conversation_id, binding.provider_user_id) === encoded);
-            this._sameBinding(binding);
+            this._sameBinding(binding, diagnostic);
+            diagnostic.stage = 'grant_consistency';
             this._sameGrant(grant);
             this._includeDiagnostic(binding.conversation_id, 'grant_issued', 0);
             return JSON.stringify({status:'success',state:'presentation_history_grant_attested',requestId:input.requestId,
                 conversationId:binding.conversation_id,nonceSha256:input.nonceSha256,issuedAtMs:now,expiresAtMs:expires,
                 attested:true,scope:'presentation_metadata_only',businessAuthority:false});
         } catch (ignoredGrantFailure) {
+            this._grantRefusalDiagnostic(diagnostic);
             return JSON.stringify({status:'failure',state:'presentation_history_unavailable',attested:false,
                 scope:'presentation_metadata_only',businessAuthority:false});
         }

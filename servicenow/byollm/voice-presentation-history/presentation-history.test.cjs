@@ -108,4 +108,66 @@ test('updates attestation is token-first, exact-caller only, fixed-receipt and i
 
 test('metadata diagnostics prove exact grant issuance and finite Guest slot successes under actual GS actors',()=>{const f=fixture({diagnostics:true});assert.equal(f.issue().attested,true);assert.deepEqual(diagnosticRows(f),[{gsUserID:UID,conversationId:CV,stage:'grant_issued',count:0}]);f.logs.length=0;f.setActor(id(99));f.reset();for(let n=1;n<=16;n++)assert.equal(f.rawStore(payload(event(n))).stored,true);assert.equal(f.calls.length,0);assert.deepEqual(diagnosticRows(f),Array.from({length:16},(_,n)=>({gsUserID:id(99),conversationId:CV,stage:'stored',count:n+1})));for(const forbidden of [payload().grantNonce,sha(payload().grantNonce),alias,event().text,event().text_sha256,event().original_asr_sha256])assert.ok(!f.logs.join('').includes(forbidden));});
 test('grant/store diagnostic logger failures preserve exact positive receipts',()=>{const f=fixture({diagnostics:true,logThrows:true}),baseline=fixture();assert.deepEqual(f.issue(),baseline.issue());assert.deepEqual(diagnosticRows(f).map(row=>row.stage),['grant_issued']);f.setActor(id(99));baseline.setActor(id(99));f.logs.length=0;assert.deepEqual(f.rawStore(),baseline.rawStore());assert.deepEqual(diagnosticRows(f),[{gsUserID:id(99),conversationId:CV,stage:'stored',count:1}]);});
-test('uncertain native grant or slot readback emits no positive diagnostic',()=>{for(const options of [{setThrows:true},{doubleEncode:true},{onSet:({entries,key})=>entries.set(key,'SECRET')}]){const f=fixture({...options,diagnostics:true});assert.equal(f.issue().attested,false);assert.deepEqual(f.logs,[]);}let armed=false;const f=fixture({diagnostics:true,onSet:({entries,key})=>{if(armed)entries.set(key,'SECRET');}});assert.equal(f.issue().attested,true);f.logs.length=0;armed=true;f.setActor(id(99));assert.equal(f.rawStore().stored,false);assert.deepEqual(f.logs,[]);});
+test('uncertain native grant or slot readback emits no positive diagnostic',()=>{for(const options of [{setThrows:true},{doubleEncode:true},{onSet:({entries,key})=>entries.set(key,'SECRET')}]){const f=fixture({...options,diagnostics:true});assert.equal(f.issue().attested,false);assert.deepEqual(f.logs.filter(raw=>raw.startsWith(DIAGNOSTIC_PREFIX)),[]);}let armed=false;const f=fixture({diagnostics:true,onSet:({entries,key})=>{if(armed)entries.set(key,'SECRET');}});assert.equal(f.issue().attested,true);f.logs.length=0;armed=true;f.setActor(id(99));assert.equal(f.rawStore().stored,false);assert.deepEqual(f.logs,[]);});
+
+const REFUSAL_PREFIX='[SCC_VOICE_PRESENTATION_GRANT_REFUSAL_V1] ';
+function refusalRows(f) {
+ return f.logs.filter(raw=>raw.startsWith(REFUSAL_PREFIX)).map(raw=>{
+  const row=JSON.parse(raw.slice(REFUSAL_PREFIX.length));
+  assert.deepEqual(Object.keys(row).sort(),['conversationId','gsUserID','stage']);
+  assert.match(row.conversationId,/^[0-9a-f]{32}$/);
+  assert.ok(typeof row.gsUserID==='string'&&row.gsUserID.length<=64);
+  return row;
+ });
+}
+test('grant refusal diagnostics require enabled diagnostics, actual non-Guest caller and valid full proof',()=>{
+ for(const options of [{enabled:false,diagnostics:true},{diagnostics:false,deniedRow:'sys_cs_conversation'},{diagnostics:true,actor:id(99)},{diagnostics:true,actor:id(98)}]) {
+  const f=fixture(options),p=grantPayload();if(options.actor===id(99))p.callerUserId=options.actor;
+  assert.equal(f.issue(p).attested,false);assert.deepEqual(f.logs,[]);assert.deepEqual(f.counts(),{gets:0,sets:0});
+ }
+ for(const mutate of [p=>{p.conversationBinding.conversationId='SECRET_INVALID_C';},p=>{delete p.conversationBinding.interactionId;},p=>{p.conversationBinding.extra='SECRET';},p=>{p.nonceSha256='SECRET';},p=>{p.extra='SECRET';}]) {
+  const f=fixture({diagnostics:true}),p=grantPayload();mutate(p);
+  assert.equal(f.issue(p).attested,false);assert.deepEqual(f.logs,[]);assert.equal(f.calls.length,0);
+ }
+});
+test('grant refusal diagnostics distinguish profile, alias uniqueness and current request alias mismatch',()=>{
+ const cases=[
+  [{change:['sys_cs_channel_user_profile',{active:'0'}]},'binding_profile'],
+  [{extra:['sys_cs_channel_user_profile',{sys_id:id(88),active:'1',user_table:'sys_user',user_document:UID,channel_user_id:alias,channel:CHANNEL}]},'binding_alias'],
+  [{change:['sys_cs_channel_user_profile',{channel_user_id:'voice-'+id(88)}]},'request_binding_match']
+ ];
+ for(const [options,stage]of cases) {
+  const f=fixture({...options,diagnostics:true}),baseline=fixture(options);
+  assert.deepEqual(f.issue(),baseline.issue());assert.equal(f.calls.length>0,true);
+  assert.deepEqual(refusalRows(f),[{gsUserID:UID,conversationId:CV,stage}]);
+  assert.equal(f.logs.length,1);assert.deepEqual(f.counts(),{gets:0,sets:0});
+  assert.deepEqual(f.calls,baseline.calls);assert.deepEqual(f.reads,baseline.reads);
+ }
+});
+test('grant refusal diagnostics bound provider stages and expose no secret material',()=>{
+ for(const [options,stage]of [[{getThrows:true},'grant_empty_first'],[{setThrows:true},'grant_set'],[{doubleEncode:true},'grant_readback'],[{onSet:({entries,key})=>entries.set(key,'SECRET_EXCEPTION_TEXT')},'grant_readback']]) {
+  const f=fixture({...options,diagnostics:true}),baseline=fixture(options);
+  assert.deepEqual(f.issue(),baseline.issue());
+  assert.deepEqual(refusalRows(f),[{gsUserID:UID,conversationId:CV,stage}]);assert.equal(f.logs.length,1);
+  assert.deepEqual(f.counts(),baseline.counts());assert.deepEqual(f.calls,baseline.calls);assert.deepEqual(f.reads,baseline.reads);
+  for(const secret of ['SECRET',alias,payload().grantNonce,grantPayload().nonceSha256,event().text,event().text_sha256,event().original_asr_sha256,MSG,IX,ACCOUNT,CUP,SID])assert.ok(!f.logs.join('').includes(secret),secret);
+ }
+});
+test('grant refusal diagnostics throwing logger preserves exact refusal receipt and operations',()=>{
+ const options={deniedField:'sys_cs_channel_user_profile.channel_user_id'};
+ const f=fixture({...options,diagnostics:true,logThrows:true}),baseline=fixture(options);
+ assert.deepEqual(f.issue(),baseline.issue());assert.deepEqual(f.calls,baseline.calls);assert.deepEqual(f.reads,baseline.reads);
+ assert.deepEqual(f.counts(),baseline.counts());assert.deepEqual(refusalRows(f),[{gsUserID:UID,conversationId:CV,stage:'binding_profile'}]);
+});
+test('grant refusal diagnostics leave successful issuance and provider counts unchanged',()=>{
+ const f=fixture({diagnostics:true}),baseline=fixture();assert.deepEqual(f.issue(),baseline.issue());
+ assert.deepEqual(f.counts(),{gets:4,sets:1});assert.deepEqual(f.counts(),baseline.counts());assert.deepEqual(f.calls,baseline.calls);assert.deepEqual(f.reads,baseline.reads);
+ assert.deepEqual(refusalRows(f),[]);assert.deepEqual(diagnosticRows(f),[{gsUserID:UID,conversationId:CV,stage:'grant_issued',count:0}]);
+});
+test('grant refusal diagnostics whitelist rejects arbitrary stages and caps actual native identity',()=>{
+ const actor='actual_native_identity_'.repeat(8),f=fixture({diagnostics:true,actor});
+ for(const stage of ['SECRET_STAGE','',null])f.helper._grantRefusalDiagnostic({conversationId:CV,stage});
+ f.helper._grantRefusalDiagnostic({conversationId:'SECRET_INVALID_C',stage:'binding_profile'});assert.deepEqual(f.logs,[]);
+ f.helper._grantRefusalDiagnostic({conversationId:CV,stage:'binding_profile',gsUserID:'SECRET_CLAIMED_ID',extra:'SECRET'});
+ assert.deepEqual(refusalRows(f),[{gsUserID:actor.slice(0,64),conversationId:CV,stage:'binding_profile'}]);
+});

@@ -45,7 +45,8 @@ class VoiceProfileContextTests(unittest.IsolatedAsyncioTestCase):
         self.bridge.consume(session,data)
         task=self.bridge.queue_start_created(session,self.sent[0]['requestId'])
         await task
-        self.bridge.consume(session,{'body':[{'uiType':'InputText'}]})
+        self.bridge.consume(session,{'requestId':self.sent[-1]['requestId'],
+                                     'body':[{'uiType':'InputText'}]})
     async def test_six_proven_fields_reach_native_creation_and_real_user_turn(self):
         self.bridge.settings.defer_start_until_message=False
         self.assertEqual((await self.post('/api/start',{'voice_context':self.context})).status,202)

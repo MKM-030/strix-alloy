@@ -1,8 +1,30 @@
-"""Optional host-emission history. No business authority, retries or logging."""
+"""Optional host-emission history. No business authority or retries."""
 import asyncio
 import hashlib
 import json
+import logging
 import re
+import time
+
+
+def _grant_diagnostic(stage, conversation_id='', *, http_status=0, elapsed_ms=0,
+                      budget_ms=0, response_bytes=0):
+    """Fixed metadata only; diagnostics cannot affect the optional grant."""
+    if stage not in {'delegated','queued','lease_take','dispatch','http_status','encoding',
+            'response_read','response_json','receipt','transport_accepted','accepted',
+            'validation','timeout','cancelled','retired'}:
+        return
+    conversation_id = (conversation_id if type(conversation_id) is str
+        and re.fullmatch('[0-9a-f]{32}',conversation_id) else 'unavailable')
+    def bounded(value, limit):
+        return min(limit,max(0,value)) if type(value) is int else 0
+    try:
+        logging.getLogger('voice-bridge').info('Voice presentation grant conversation=%s stage=%s '
+            'http_status=%d elapsed_ms=%d budget_ms=%d response_bytes=%d',conversation_id,stage,
+            bounded(http_status,599),bounded(elapsed_ms,2147483647),bounded(budget_ms,2000),
+            bounded(response_bytes,4097))
+    except Exception:
+        pass
 
 GRANT_FIELDS = frozenset(('operation', 'requestId', 'appInboundId', 'clientSessionId',
     'userId', 'callerUserId', 'conversationBinding', 'nonceSha256', 'maxAgeSeconds'))
@@ -54,6 +76,8 @@ async def issue_presentation_grant(instance_url, provider_token, authorization, 
         from caller_binding import CALLER_INSTANCE_URL, PRESENTATION_GRANT_PATH, valid_authorization, _pairs
     error='Presentation history unavailable'
     headers={}
+    stage, status, size, budget, conversation = 'validation', 0, 0, 0, ''
+    started=time.monotonic()
     try:
         if (instance_url != CALLER_INSTANCE_URL or not valid_authorization(authorization)
                 or type(provider_token) is not str or not 0 < len(provider_token) <= 8192
@@ -61,36 +85,55 @@ async def issue_presentation_grant(instance_url, provider_token, authorization, 
                 or not valid_grant_request(request)
                 or type(timeout_seconds) not in (int,float) or not 0 < timeout_seconds <= 2):
             raise ValueError(error)
+        conversation=request['conversationBinding']['conversationId']
+        budget=int(timeout_seconds*1000)
         headers.update(Authorization=authorization, token=provider_token,
             Accept='application/json', **{'Content-Type':'application/json','Accept-Encoding':'identity'})
         factory=aiohttp.ClientSession if http_factory is None else http_factory
+        stage='dispatch'
         async with asyncio.timeout(timeout_seconds):
             async with factory(cookie_jar=aiohttp.DummyCookieJar(), trust_env=False,
                     auto_decompress=False, skip_auto_headers={'Accept-Encoding'},
                     timeout=aiohttp.ClientTimeout(total=timeout_seconds)) as http:
                 async with http.post(instance_url+PRESENTATION_GRANT_PATH, json=request,
                         headers=headers, allow_redirects=False, ssl=True) as response:
-                    if (response.status != 200 or response.headers.get('Content-Encoding')
-                            or not re.match(r'application/json(?:;|$)',response.headers.get('Content-Type',''),re.I)):
+                    status=response.status
+                    stage='http_status'
+                    if status != 200:
+                        raise ValueError(error)
+                    stage='encoding'
+                    if (response.headers.get('Content-Encoding') or not re.match(
+                            r'application/json(?:;|$)',response.headers.get('Content-Type',''),re.I)):
                         raise ValueError(error)
                     raw=bytearray()
+                    stage='response_read'
                     async for chunk in response.content.iter_chunked(4096):
                         raw.extend(chunk)
+                        size=min(len(raw),4097)
                         if len(raw) > 4096:raise ValueError(error)
+                    stage='response_json'
                     data=json.loads(raw.decode('utf-8'), object_pairs_hook=_pairs,
                         parse_constant=lambda _: (_ for _ in ()).throw(ValueError(error)))
+                    stage='receipt'
                     if (type(data) is not dict or set(data) != {'result'}
                             or not valid_grant_receipt(data['result'],request)):
                         raise ValueError(error)
                     result=data['result']
+        stage='transport_accepted'
         return result
     except asyncio.CancelledError:
+        stage='cancelled'
         raise
+    except TimeoutError:
+        stage='timeout'
+        raise ValueError(error) from None
     except Exception:
         raise ValueError(error) from None
     finally:
         headers.clear()
         authorization=provider_token=None
+        _grant_diagnostic(stage,conversation,http_status=status,
+            elapsed_ms=int((time.monotonic()-started)*1000),budget_ms=budget,response_bytes=size)
 
 MAX_EVENTS = 16
 FIELDS = frozenset(('version', 'kind', 'local_output_state', 'native_request_binding',
@@ -167,11 +210,17 @@ class PresentationOutbox:
         self.sequence = event['sequence']
         return True
 
-    async def run(self, publisher):
+    async def run(self, publisher, *, wait_ready=None):
         try:
             while not self.disabled:
+                # Binding readiness never consumes an event or its publication budget.
+                if wait_ready is not None and await wait_ready() is not True:
+                    break
                 event = await self._queue.get()
                 try:
+                    # Reset/end can invalidate the captured generation during queue wait.
+                    if self.disabled or wait_ready is not None and await wait_ready() is not True:
+                        break
                     if await asyncio.wait_for(publisher(event), 2) is not True:
                         self.close()
                 except Exception:

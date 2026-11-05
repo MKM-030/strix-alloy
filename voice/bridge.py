@@ -29,7 +29,7 @@ if __package__:
     from .callback_progress import CallbackProgress
     from .context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
     from .presentation_history import (validate_event, valid_receipt, issue_presentation_grant,
-        valid_grant_receipt)
+        valid_grant_receipt, _grant_diagnostic)
 else:
     from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
         CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PURPOSE,
@@ -39,7 +39,7 @@ else:
     from callback_progress import CallbackProgress
     from context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
     from presentation_history import (validate_event, valid_receipt, issue_presentation_grant,
-        valid_grant_receipt)
+        valid_grant_receipt, _grant_diagnostic)
 
 STATIC = Path(__file__).parent / 'static'
 MAX_WAV = 20 * 1024 * 1024
@@ -1216,6 +1216,7 @@ class Bridge:
         if self.settings.presentation_history_enabled is True:
             try:
                 session.presentation_lease = ticket.delegate_presentation(session)
+                _grant_diagnostic('delegated')
             except Exception:
                 session.presentation_disabled = True
         session.caller_create_request_id = request_id
@@ -1578,6 +1579,7 @@ class Bridge:
         session.presentation_task=task
         self.presentation_tasks.add(task)
         task.add_done_callback(self.presentation_tasks.discard)
+        _grant_diagnostic('queued',session.conversation_binding.conversation_id)
 
     async def run_presentation_attestation(self, session, identity, lease):
         authorization=nonce=None
@@ -1586,6 +1588,7 @@ class Bridge:
             if session.presentation_lease is not lease or not self.presentation_owner_alive(session,identity):
                 return
             authorization, remaining, original_deadline=lease.take(session,PRESENTATION_GRANT_PURPOSE)
+            _grant_diagnostic('lease_take',session.conversation_binding.conversation_id)
             started=time.monotonic()
             deadline=min(original_deadline,started+2)
             if remaining <= 0 or started >= deadline:
@@ -1615,6 +1618,7 @@ class Bridge:
             session.presentation_timer=asyncio.get_running_loop().call_later(
                 max(0,session.presentation_deadline-time.monotonic()),self.retire_presentation,session)
             accepted=True
+            _grant_diagnostic('accepted',session.conversation_binding.conversation_id)
         except (Exception, asyncio.CancelledError):
             pass  # Fixed unavailable state only; optional failure cannot affect CREATE.
         finally:
@@ -1629,6 +1633,8 @@ class Bridge:
 
     @staticmethod
     def retire_presentation(session):
+        binding=session.conversation_binding
+        _grant_diagnostic('retired',getattr(binding,'conversation_id',''))
         session.presentation_nonce=''
         session.presentation_identity=None
         session.presentation_deadline=0
