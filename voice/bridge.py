@@ -28,6 +28,7 @@ if __package__:
         CALLER_CREATE_FAILURE_CONTRACT, CallerCreateFailure, CallerCreateFailureReceipt)
     from .callback_progress import CallbackProgress
     from .context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
+    from .presentation_history import validate_event, valid_receipt
 else:
     from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
         CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID,
@@ -36,6 +37,7 @@ else:
         CALLER_CREATE_FAILURE_CONTRACT, CallerCreateFailure, CallerCreateFailureReceipt)
     from callback_progress import CallbackProgress
     from context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
+    from presentation_history import validate_event, valid_receipt
 
 STATIC = Path(__file__).parent / 'static'
 MAX_WAV = 20 * 1024 * 1024
@@ -68,6 +70,7 @@ class Settings:
     caller_binding_service_id: str = ''
     caller_binding_agent_id: str = ''
     caller_create_api_path: str = ''
+    presentation_history_enabled: bool = False
 
 
 @dataclass(frozen=True)
@@ -138,6 +141,10 @@ class Conversation:
     context_ack_revision: int = 0
     context_receipt: dict | None = field(default=None, repr=False)
     context_requests: ContextRequestAliases = field(default_factory=ContextRequestAliases, repr=False)
+    presentation_lock: asyncio.Lock = field(default_factory=asyncio.Lock, repr=False)
+    presentation_owner: str = field(default='', repr=False)
+    presentation_sequence: int = 0
+    presentation_disabled: bool = False
     input_boundary_request_id: str = ''
     input_boundary_kind: str = ''
 
@@ -452,6 +459,7 @@ class Bridge:
         app.router.add_post('/api/message', self.message)
         app.router.add_post('/api/context-update', self.context_update)
         app.router.add_get('/api/context-status', self.context_status)
+        app.router.add_post('/api/presentation-history', self.presentation_history)
         app.router.add_post('/api/transcribe', self.transcribe)
         app.router.add_post('/api/speak', self.speak)
         app.router.add_post('/api/audio-test', self.audio_test)
@@ -799,6 +807,60 @@ class Bridge:
             request_id = await self.send(session, value.strip() if typed else value, typed, history=history,
                 native_input=data.get('nativeInput', NATIVE_INPUT_UNSET))
         return web.json_response({'accepted': True, 'businessRequestId': request_id}, status=202)
+
+    async def presentation_history(self, request):
+        """Optional conversation history; never changes active MESSAGE/control state."""
+        if self.settings.presentation_history_enabled is not True:
+            raise web.HTTPNotFound()
+        data = await self.json(request)
+        session = request._voice_session
+        unavailable = {'state':'presentation_history_unavailable', 'stored':False}
+        async with session.presentation_lock:
+            if session.presentation_disabled:
+                return web.json_response(unavailable)
+            if (not self.settings.service_now_enabled or self.stopping
+                    or self.sessions.get(session.sid) is not session or not session.started
+                    or session.ending or session.ended or session.failed or session.bootstrap_stage
+                    or session.conversation_binding is None
+                    or self.settings.inbound_id != 'scc-local-voice'
+                    or self.settings.caller_create_api_path != CALLER_CREATE_PATH
+                    or self.settings.caller_binding_service_id != CALLER_SERVICE_ID
+                    or self.settings.caller_binding_agent_id != CALLER_AGENT_ID
+                    or session.voice_context.get('voice_assistant') != CALLER_SERVICE_ID
+                    or session.voice_context.get('global_context_profile') != CALLER_PROFILE_ID
+                    or not re.fullmatch('[0-9a-f]{32}', session.caller_user_id)
+                    or session.user_id != 'voice-' + session.sid):
+                raise web.HTTPConflict(text='Owned presentation history is unavailable')
+            try:
+                event = validate_event(data)
+            except ValueError:
+                raise web.HTTPBadRequest(text='Invalid bounded presentation history')
+            if (event['sequence'] != session.presentation_sequence + 1
+                    or session.presentation_owner and event['owner_id'] != session.presentation_owner):
+                raise web.HTTPBadRequest(text='Presentation owner or sequence mismatch')
+            binding = session.conversation_binding.snapshot()
+            payload = dict(operation='presentation_history_store', requestId=uuid.uuid4().hex,
+                appInboundId=self.settings.inbound_id, clientSessionId=session.sid,
+                userId=session.user_id, callerUserId=session.caller_user_id, conversationBinding=binding, event=event)
+            # Claim before I/O. Unknown storage is never replayed, including after timeout.
+            session.presentation_owner = event['owner_id']
+            session.presentation_sequence = event['sequence']
+            url = self.bot_url.split('/api/', 1)[0] + '/api/global/scc_voice_context/updates'
+            try:
+                async with self.http.post(url, json=payload,
+                        headers={'token':self.sn_token, 'Accept':'application/json'},
+                        allow_redirects=False, timeout=ClientTimeout(total=2)) as response:
+                    ack = json.loads(await read_limited(response.content, 16384))
+                    receipt = ack.get('result', ack) if type(ack) is dict else None
+                    if (response.status != 200 or type(ack) is not dict or ack.get('error')
+                            or ack.get('status', 'success') != 'success'
+                            or not valid_receipt(receipt, event,
+                            binding['conversationId'], payload['requestId'])):
+                        raise ValueError('Presentation storage not corroborated')
+            except Exception:
+                session.presentation_disabled = True
+                return web.json_response(unavailable)
+            return web.json_response(receipt)
 
     async def context_update(self, request):
         """Independent control lane; never advances the active MESSAGE request."""

@@ -47,7 +47,7 @@ from responsive_config import ResponsiveConfig, load_responsive_config
 from noise_guard import SpeechNoiseGuard, accepted_transcript
 from pcm_denoise import StreamingPCM16Denoiser
 from native_duplex import (NativeDuplex, BackendTurnUnavailable, prepare_conversation_dependencies,
-                           BackendConversationEnded, validate_conversation_url)
+                           BackendConversationEnded, validate_conversation_url, presentation_history_module)
 from model_health import require_model_ready, validate_model_health
 from local_llm_socket import validate_local_conversation
 
@@ -123,6 +123,7 @@ class Config:
     model_health_url: str = ''
     private_model_health_token: str = field(default='', repr=False)
     live_context_updates_enabled: bool = False
+    presentation_history_enabled: bool = False
     vad_threshold: int = 450
     vad_silence_ms: int = 1200
     max_call_seconds: int = 1800
@@ -150,6 +151,8 @@ class Config:
         validate_asr_config(self.asr_backend, self.asr_url, self.private_asr_token, self.asr_runtime)
         if type(self.live_context_updates_enabled) is not bool:
             raise ValueError('Live context updates require a boolean setting')
+        if type(self.presentation_history_enabled) is not bool:
+            raise ValueError('Presentation history requires a boolean setting')
         if not isinstance(self.private_responsive, ResponsiveConfig):
             raise ValueError('Responsive mode must be a resolved configuration')
         if (self.conversation_ws_url or self.conversation_http_url) and self.private_responsive.enabled:
@@ -606,6 +609,24 @@ class Dialog:
                 'displayName':'Bot', 'type':'text',
                 'timestamp':str(int(time.time() * 1000))}]
 
+    async def publish_presentation_history(self, event):
+        """One optional host-emission receipt, with no native task-join claim."""
+        if getattr(self.config, 'presentation_history_enabled', False) is not True:
+            return False
+        try:
+            contract = presentation_history_module()
+            event = contract.validate_event(event)
+            if not self.http or not self.csrf or self.must_reset:
+                return False
+            conversation_id = self.metadata.get('conversation_id')
+            if type(conversation_id) is not str or not re.fullmatch('[0-9a-f]{32}', conversation_id):
+                return False
+            result = await self.request('POST', '/api/presentation-history', json=event,
+                timeout=ClientTimeout(total=2))
+            return contract.valid_receipt(result, event, conversation_id)
+        except Exception:
+            return False
+
     async def publish_context_update(self, revision, caller_updates):
         """Send supplemental context without replacing the active VA turn.
 
@@ -941,8 +962,10 @@ class NativeCall:
                      if config.live_context_updates_enabled else None)
         reconciler = (getattr(self.dialog, 'context_status', None)
                       if config.live_context_updates_enabled else None)
+        history_publisher = (getattr(self.dialog, 'publish_presentation_history', None)
+                             if getattr(config, 'presentation_history_enabled', False) else None)
         self.duplex = NativeDuplex(self, context_publisher=publisher,
-            context_reconciler=reconciler) if config.conversation_ws_url or config.conversation_http_url else None
+            context_reconciler=reconciler, presentation_publisher=history_publisher) if config.conversation_ws_url or config.conversation_http_url else None
         self.peer.on('datachannel', self.datachannel)
         self.peer.on('track', self.receive_track)
 

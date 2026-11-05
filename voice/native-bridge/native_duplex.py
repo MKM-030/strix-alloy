@@ -17,6 +17,7 @@ from pathlib import Path
 import re
 import sys
 import time
+import uuid
 from urllib.parse import urlsplit
 from types import SimpleNamespace
 
@@ -31,6 +32,19 @@ from servicenow_voice_context import (build_servicenow_voice_context,
                                      append_servicenow_context)
 
 LOG = logging.getLogger('native-voice')
+_PRESENTATION_HISTORY_MODULE = None
+
+
+def presentation_history_module():
+    """Load the shared pure contract only for the explicitly enabled lane."""
+    global _PRESENTATION_HISTORY_MODULE
+    if _PRESENTATION_HISTORY_MODULE is None:
+        path = Path(__file__).resolve().parents[1] / 'presentation_history.py'
+        spec = importlib.util.spec_from_file_location('voice_presentation_history_v1', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _PRESENTATION_HISTORY_MODULE = module
+    return _PRESENTATION_HISTORY_MODULE
 
 
 class BackendTurnUnavailable(RuntimeError):
@@ -353,8 +367,16 @@ class _SpeechLease:
 
 class NativeDuplex:
     def __init__(self, call, *, context_publisher=None, context_reconciler=None,
-                 conversation_factory=open_conversation, clock=time.monotonic):
+                 conversation_factory=open_conversation, clock=time.monotonic, presentation_publisher=None):
         self.call, self.clock = call, clock
+        self._presentation_publisher = presentation_publisher
+        self._presentation_outbox = None
+        if callable(presentation_publisher):
+            try:
+                self._presentation_outbox = presentation_history_module().PresentationOutbox(
+                    getattr(call.dialog, 'native_owner_id', ''))
+            except Exception:
+                self._presentation_publisher = None
         self._control_gate = ControlGate()
         self._backend_receipts = {}
         self._backend_outputs = deque()
@@ -480,6 +502,7 @@ class NativeDuplex:
                         record['state'] = 'fully_host_emitted'
                 state['history_recorded'] = True
                 item, lease = state.get('output'), state.get('lease')
+                self._record_presentation_history(state, item, lease)
                 if (item is not None and item.kind in ('backend', 'backend_control') and lease is not None
                         and self._active_speech_current(item, lease.generation, lease)):
                     try:
@@ -502,6 +525,29 @@ class NativeDuplex:
                     while sum(len(item['text']) for item in self._spoken_history) > 4000:
                         self._spoken_history.popleft()
         self._sync_transcript_groups()
+
+    def _record_presentation_history(self, state, item, lease):
+        outbox = self._presentation_outbox
+        if (outbox is None or outbox.disabled or item is None or item.kind != 'conversation'
+                or lease is None or not self._active_speech_current(item, lease.generation, lease)):
+            return
+        caller = raw_hash = None
+        turn = item.turn
+        if (isinstance(turn, tuple) and len(turn) >= 4 and type(turn[3]) is str
+                and re.fullmatch('[0-9a-f]{32}', turn[3]) and type(turn[1]) is str):
+            try:
+                caller, raw_hash = turn[3], hashlib.sha256(turn[1].encode('utf-8')).hexdigest()
+            except UnicodeError:
+                return
+        try:
+            outbox.offer(dict(version=1, kind='local_conversation_history', local_output_state='host_emitted',
+                native_request_binding='unavailable', owner_id=outbox.owner_id, event_id=uuid.uuid4().hex,
+                sequence=outbox.sequence + 1, caller_turn_id=caller, original_asr_sha256=raw_hash,
+                output_epoch=item.epoch, task_revision=item.task_revision, playback_generation=lease.generation,
+                text=state['text'], text_sha256=hashlib.sha256(state['text'].encode('utf-8')).hexdigest(),
+                accepted_samples=state['accepted_samples'], emitted_samples=state['emitted_samples']))
+        except (ValueError, UnicodeError):
+            return
 
     def _interrupt_transcript(self, state, reason):
         part = getattr(state.get('output'), 'transcript_part', None)
@@ -1379,6 +1425,12 @@ class NativeDuplex:
             self._start_worker(name, coroutine)
         if self._context_publisher is not None:
             self._start_worker('context', self._context_loop())
+        if self._presentation_outbox is not None:
+            history_task = asyncio.create_task(self._presentation_outbox.run(self._presentation_publisher), name='presentation_history')
+            self._workers.add(history_task)
+            # This optional lane ends quietly on unavailable storage; it is not
+            # a business/conversation worker failure or additional telemetry.
+            history_task.add_done_callback(lambda task: None if task.cancelled() else task.exception())
         incoming = None
         try:
             while self._live():
@@ -2008,6 +2060,8 @@ class NativeDuplex:
         self._transcripts.close()
         self._sync_transcript_groups()
         self._closed = True
+        if self._presentation_outbox is not None:
+            self._presentation_outbox.close()
         self._dialogue_observation_state = None
         self._outputs.clear()
         self._backend_outputs.clear()
