@@ -107,6 +107,8 @@ class Conversation:
     cleanup_task: object | None = field(default=None, repr=False)
     cleanup_state: str = ''
     cleanup_request_id: str = field(default='', repr=False)
+    cleanup_message: tuple | None = field(default=None, repr=False)
+    cleanup_message_completed: bool = field(default=False, repr=False)
     sid: str = field(default_factory=lambda: uuid.uuid4().hex)
     csrf: str = field(default_factory=lambda: secrets.token_urlsafe(32))
     created: float = field(default_factory=time.monotonic)
@@ -665,9 +667,37 @@ class Bridge:
         session.ending = True
         self.retire_caller_bootstrap(session)
         if session.cleanup_task is None:
+            identity = self.owned_cleanup_identity(session)
+            create = session.caller_create_task
+            if (session.busy and not session.ended and not session.pending_action
+                    and not session.bootstrap_stage and session.requests
+                    and re.fullmatch(r'[0-9a-f]{32}', session.requests[-1])
+                    and self.sessions.get(session.sid) is session
+                    and create is not None and create.done() and not create.cancelled()
+                    and create.exception() is None and create.result() == identity):
+                # Only the still-outstanding MESSAGE can retain terminal authority
+                # when END replaces its request cursor. Never retain input/output.
+                session.cleanup_message = (session.requests[-1], identity)
             session.cleanup_state = 'draining_create'
             session.cleanup_task = self.track_owned_task(asyncio.create_task(self.drain_owned_cleanup(session)))
         return session.cleanup_task
+
+    def cleanup_message_current(self, session):
+        saved = session.cleanup_message
+        if saved is None:
+            return False
+        current = session.requests[-1] if session.requests else ''
+        if (self.sessions.get(session.sid) is not session
+                or saved[1] != self.owned_cleanup_identity(session)
+                or not (session.cleanup_request_id and current == session.cleanup_request_id
+                        and session.pending_action == 'END_CONVERSATION'
+                        or not session.cleanup_request_id and current == saved[0]
+                        and not session.pending_action)):
+            # An observed ownership change permanently retires this one-use latch.
+            session.cleanup_message = None
+            session.cleanup_message_completed = False
+            return False
+        return True
 
     async def drain_owned_cleanup(self, session):
         # Never wait for the CREATE owner while holding the start handler's lock.
@@ -696,6 +726,8 @@ class Bridge:
                 await self.send(session, '', True, 'END_CONVERSATION')
                 if not session.ended:
                     session.cleanup_state = 'end_enqueued'
+                    if self.cleanup_message_current(session) and session.cleanup_message_completed:
+                        self.finish_owned_cleanup(session)
         except (Exception, asyncio.CancelledError):
             # The remote mutation may have committed. This latch is never replayed.
             session.cleanup_state = 'unresolved'
@@ -784,6 +816,8 @@ class Bridge:
         session.change.set()
 
     def finish_owned_cleanup(self, session):
+        session.cleanup_message = None
+        session.cleanup_message_completed = False
         session.ended = True
         session.busy = False
         session.cleanup_state = 'completed'
@@ -1372,7 +1406,7 @@ class Bridge:
                  matched_request_id, data.get('completed'),
                  [item.get('uiType') for item in data.get('body', []) if isinstance(item, dict)])
         if session and session.ending and session.caller_create_request_id:
-            # Existing native completed flag, exact latched END request only.
+            # Preserve the exact latched END's existing terminal contract.
             # It proves conversation end, never business-worker/order completion.
             if (session.cleanup_request_id and data.get('requestId') == session.cleanup_request_id
                     and current_request_id == session.cleanup_request_id
@@ -1380,6 +1414,16 @@ class Bridge:
                     and data.get('streamActive') is not True
                     and data.get('streamState') not in ('START', 'INPROGRESS')):
                 self.finish_owned_cleanup(session)
+            elif (self.cleanup_message_current(session)
+                    and data.get('requestId') == session.cleanup_message[0]
+                    and data.get('userId') == session.user_id and data.get('completed') is True
+                    and data.get('streamActive') is not True
+                    and data.get('streamState') not in ('START', 'INPROGRESS')):
+                # Bot API completed means conversation terminal, not task success.
+                # END may still own an HTTP response; keep capacity until it drains.
+                session.cleanup_message_completed = True
+                if session.cleanup_state == 'end_enqueued':
+                    self.finish_owned_cleanup(session)
             return web.json_response({'ok': True})
         if (session and matched_request_id
                 and not session.ending and not session.failed
