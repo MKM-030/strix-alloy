@@ -339,6 +339,7 @@ class PublicationBudgetTests(unittest.IsolatedAsyncioTestCase):
         self.event=PresentationContractTests().event()
         self.bridge.json=AsyncMock(return_value=self.event)
         self.calls=[];self.storage_completed=False;self.storage_cancelled=False;self.storage_delay=0
+        self.storage_response=lambda raw:raw
         owner=self
         class Response:
             status=200
@@ -351,7 +352,8 @@ class PublicationBudgetTests(unittest.IsolatedAsyncioTestCase):
                 except asyncio.CancelledError:
                     owner.storage_cancelled=True;raise
                 owner.storage_completed=True
-                yield json.dumps({'result':receipt(owner.event,owner.calls[-1]['json']['requestId'])}).encode()
+                raw=json.dumps({'result':receipt(owner.event,owner.calls[-1]['json']['requestId'])}).encode()
+                yield owner.storage_response(raw)
         def post(url,**kwargs):self.calls.append(kwargs);return Response()
         self.bridge.http=SimpleNamespace(post=post)
         self.request=SimpleNamespace(_voice_session=s)
@@ -369,6 +371,45 @@ class PublicationBudgetTests(unittest.IsolatedAsyncioTestCase):
     async def publish(self):
         response=await self.bridge.presentation_history(self.request)
         return json.loads(response.body)
+
+    async def test_exact_wire_sequence_forms_preserve_business_state_and_strict_dto(self):
+        for token,form in ((b'1.0','decimal'),(b'1e0','exponent')):
+            await self.asyncSetUp()
+            self.storage_response=lambda raw:raw.replace(b'"sequence": 1,',b'"sequence": '+token+b',')
+            before=self.business_state()
+            with self.subTest(token=token),self.assertLogs('voice-bridge',level='INFO') as logged:
+                result=await self.publish()
+            self.assertTrue(result['stored'])
+            self.assertIs(type(result['sequence']),int)
+            self.assertEqual(self.business_state(),before)
+            self.assertEqual(len(self.calls),1)
+            self.assertTrue(any('kind=store' in line and 'stage=decoded' in line
+                                and form+'=1' in line for line in logged.output))
+
+    async def test_bad_wire_sequences_and_json_retire_once_without_business_changes(self):
+        tokens=[b'1.0000000000000000000001',b'1e10000',b'1e-10000',b'0e65',b'0e-65',
+                b'9007199254740992',b'NaN',b'Infinity',b'-Infinity',b'true',b'"PRIVATE_NUMBER"',
+                b'0',b'-1',b'2.0',b'1.'+b'0'*63]
+        changes=[lambda raw,token=token:raw.replace(b'"sequence": 1,',b'"sequence": '+token+b',')
+                 for token in tokens]
+        changes += [lambda raw:raw.replace(b'"sequence": 1,',b'"sequence": 0,"sequence": 1,'),
+                    lambda raw:raw.replace(b'"result":',b'"result":{},"result":'),
+                    lambda raw:raw.replace(b'"sequence": 1,',b'"extra": 1,"sequence": 1,'),
+                    lambda raw:b' '*16385]
+        for change in changes:
+            await self.asyncSetUp()
+            self.storage_response=change
+            before=self.business_state()
+            with self.subTest(change=change),self.assertLogs('voice-bridge',level='INFO') as logged:
+                result=await self.publish()
+            self.assertFalse(result['stored'])
+            self.assertTrue(self.session.presentation_disabled)
+            self.assertFalse(self.session.presentation_nonce)
+            self.assertEqual(self.business_state(),before)
+            self.assertEqual(len(self.calls),1)
+            self.assertFalse((await self.publish())['stored'])
+            self.assertEqual(len(self.calls),1)
+            self.assertNotIn('PRIVATE_NUMBER','\n'.join(logged.output))
 
     async def test_grant_and_store_share_one_two_second_publication_budget(self):
         s=self.session;s.presentation_nonce='';self.storage_delay=1.25

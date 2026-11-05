@@ -91,12 +91,14 @@ class LeaseTests(unittest.IsolatedAsyncioTestCase):
 class GrantWireTests(unittest.IsolatedAsyncioTestCase):
     factory=wire.NativeAuthorityWireTests.factory
 
-    async def invoke(self, value=None, *, options=None, body=None, **kwargs):
+    async def invoke(self, value=None, *, options=None, body=None, raw=None, **kwargs):
         self.sent=[]
         method=getattr(history,'issue_presentation_grant',None)
         self.assertTrue(callable(method), 'Fixed authenticated attestation transport is required')
         value=request() if value is None else value
-        factory=self.factory(raw=json.dumps(body if body is not None else {'result':receipt(value)}).encode(),**(options or {}))
+        if raw is None:
+            raw=json.dumps(body if body is not None else {'result':receipt(value)}).encode()
+        factory=self.factory(raw=raw,**(options or {}))
         def copied(**options):
             http=factory(**options);post=http.post
             def send(url,**options):
@@ -116,6 +118,63 @@ class GrantWireTests(unittest.IsolatedAsyncioTestCase):
         self.assertIs(options['ssl'],True)
         self.assertEqual(type(self.created[0]['cookie_jar']).__name__,'DummyCookieJar')
         self.assertLessEqual(self.created[0]['timeout'].total,2)
+
+    async def test_exact_wire_integer_forms_reach_strict_grant_dto(self):
+        for issued, expires, form in [('1.2345E4','1.812345E6','exponent'),
+                                      ('12345.0','1812345.0','decimal')]:
+            raw=json.dumps({'result':receipt(request())}).replace('"issuedAtMs": 12345,','"issuedAtMs": '+issued+',').replace('"expiresAtMs": 1812345,','"expiresAtMs": '+expires+',').encode()
+            with self.subTest(form=form):
+                with self.assertLogs('voice-bridge',level='INFO') as logged:
+                    result=await self.invoke(raw=raw)
+                self.assertEqual(result,receipt(request()))
+                self.assertIs(type(result['issuedAtMs']),int)
+                self.assertIs(type(result['expiresAtMs']),int)
+                self.assertTrue(history.valid_grant_receipt(result,request()))
+                self.assertEqual(len(self.sent),1)
+                self.assertTrue(any('stage=decoded' in line and form+'=2' in line for line in logged.output))
+                self.assertFalse(any(token in '\n'.join(logged.output) for token in (issued,expires,TOKEN,NONCE)))
+        maximum=9007199254740991
+        value=dict(receipt(request()),issuedAtMs=maximum-1800000,expiresAtMs=maximum)
+        raw=json.dumps({'result':value}).replace(str(maximum),str(maximum)+'.0').encode()
+        self.assertEqual(await self.invoke(raw=raw),value)
+
+    async def test_inexact_or_unbounded_wire_numbers_and_duplicate_keys_are_rejected(self):
+        base=json.dumps({'result':receipt(request())})
+        tokens=['12345.0000000000000001','1e10000','1e-10000','9007199254740992.0',
+                '12345.'+'0'*60,'0e65','0e-65','NaN','Infinity','-Infinity',
+                '"PRIVATE_NUMBER"','true','-1.0','0.0']
+        raws=[base.replace('"issuedAtMs": 12345,','"issuedAtMs": '+token+',').encode() for token in tokens]
+        raws += [base.replace('"issuedAtMs": 12345','"issuedAtMs": 0, "issuedAtMs": 12345').encode(),
+                 base.replace('"result":', '"result":{},"result":').encode(),b' '*4097]
+        for raw in raws:
+            with self.subTest(raw=raw[:45]),self.assertLogs('voice-bridge',level='INFO') as logged:
+                with self.assertRaisesRegex(ValueError,'^Presentation history unavailable$'):
+                    await self.invoke(raw=raw)
+            self.assertEqual(len(self.sent),1)
+            self.assertNotIn('PRIVATE_NUMBER','\n'.join(logged.output))
+
+    async def test_rejected_receipt_classification_is_fixed_and_value_free(self):
+        bad=dict(receipt(request()),issuedAtMs='PRIVATE_NUMBER')
+        with self.assertLogs('voice-bridge',level='INFO') as logged:
+            with self.assertRaises(ValueError):await self.invoke(body={'result':bad})
+        self.assertTrue(any('stage=receipt' in line and 'issued_type=string' in line for line in logged.output))
+        self.assertNotIn('PRIVATE_NUMBER','\n'.join(logged.output))
+
+    async def test_compensated_wire_exponent_limit_and_diagnostic_failure(self):
+        for exponent, accepted in ((64,True),(65,False)):
+            issued=10**(exponent-51)
+            value=dict(receipt(request()),issuedAtMs=issued,expiresAtMs=issued+1800000)
+            token='0.'+'0'*50+'1e'+str(exponent)
+            raw=json.dumps({'result':value}).replace('"issuedAtMs": '+str(issued)+',',
+                '"issuedAtMs": '+token+',').encode()
+            with self.subTest(exponent=exponent):
+                if accepted:self.assertEqual(await self.invoke(raw=raw),value)
+                else:
+                    with self.assertRaises(ValueError):await self.invoke(raw=raw)
+                self.assertEqual(len(self.sent),1)
+        with patch.object(history.logging.getLogger('voice-bridge'),'info',side_effect=RuntimeError('PRIVATE')):
+            self.assertEqual(await self.invoke(),receipt(request()))
+        self.assertEqual(len(self.sent),1)
 
     async def test_only_exact_positive_receipt_is_accepted(self):
         for key,value in [('attested',1),('businessAuthority',0),('scope','business'),

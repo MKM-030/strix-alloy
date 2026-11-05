@@ -29,7 +29,7 @@ if __package__:
     from .callback_progress import CallbackProgress
     from .context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
     from .presentation_history import (validate_event, valid_receipt, issue_presentation_grant,
-        valid_grant_receipt, _grant_diagnostic)
+        valid_grant_receipt, _grant_diagnostic, _decode_native_integer_receipt, _receipt_diagnostic)
 else:
     from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
         CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PURPOSE,
@@ -39,7 +39,7 @@ else:
     from callback_progress import CallbackProgress
     from context_updates import ContextRequestAliases, action_acknowledged, update_payload, validate_update
     from presentation_history import (validate_event, valid_receipt, issue_presentation_grant,
-        valid_grant_receipt, _grant_diagnostic)
+        valid_grant_receipt, _grant_diagnostic, _decode_native_integer_receipt, _receipt_diagnostic)
 
 STATIC = Path(__file__).parent / 'static'
 MAX_WAV = 20 * 1024 * 1024
@@ -880,6 +880,7 @@ class Bridge:
                     session.presentation_owner = event['owner_id']
                     session.presentation_sequence = event['sequence']
                     url = self.bot_url.split('/api/', 1)[0] + '/api/global/scc_voice_context/updates'
+                    receipt_stage, receipt = 'http_status', None
                     try:
                         remaining = publication_deadline - time.monotonic()
                         if remaining <= 0:
@@ -887,17 +888,25 @@ class Bridge:
                         async with self.http.post(url, json=payload,
                                 headers={'token':self.sn_token, 'Accept':'application/json'},
                                 allow_redirects=False, timeout=ClientTimeout(total=remaining)) as response:
-                            ack = json.loads(await read_limited(response.content, 16384))
-                            receipt = ack.get('result', ack) if type(ack) is dict else None
-                            if (response.status != 200 or type(ack) is not dict or ack.get('error')
-                                    or ack.get('status', 'success') != 'success'
-                                    or not valid_receipt(receipt, event,
-                                    binding['conversationId'], payload['requestId'])):
+                            if response.status != 200:
+                                raise ValueError('Presentation storage not corroborated')
+                            receipt_stage = 'response_read'
+                            raw = await read_limited(response.content, 16384)
+                            receipt_stage = 'response_json'
+                            ack = _decode_native_integer_receipt(raw, 'store', binding['conversationId'])
+                            receipt_stage = 'envelope'
+                            if (type(ack) is not dict or ack.get('error')
+                                    or ack.get('status', 'success') != 'success'):
+                                raise ValueError('Presentation storage not corroborated')
+                            receipt = ack.get('result', ack)
+                            receipt_stage = 'receipt'
+                            if not valid_receipt(receipt, event, binding['conversationId'], payload['requestId']):
                                 raise ValueError('Presentation storage not corroborated')
                     except asyncio.CancelledError:
                         self.retire_presentation(session)
                         raise
                     except Exception:
+                        _receipt_diagnostic('store', receipt_stage, binding['conversationId'], receipt)
                         self.retire_presentation(session)
                         return web.json_response(unavailable)
                     finally:

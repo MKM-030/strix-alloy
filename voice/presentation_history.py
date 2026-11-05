@@ -1,5 +1,6 @@
 """Optional host-emission history. No business authority or retries."""
 import asyncio
+from decimal import Decimal
 import hashlib
 import json
 import logging
@@ -11,7 +12,7 @@ def _grant_diagnostic(stage, conversation_id='', *, http_status=0, elapsed_ms=0,
                       budget_ms=0, response_bytes=0):
     """Fixed metadata only; diagnostics cannot affect the optional grant."""
     if stage not in {'delegated','queued','lease_take','dispatch','http_status','encoding',
-            'response_read','response_json','receipt','transport_accepted','accepted',
+            'response_read','response_json','envelope','receipt','transport_accepted','accepted',
             'validation','timeout','cancelled','retired'}:
         return
     conversation_id = (conversation_id if type(conversation_id) is str
@@ -25,6 +26,60 @@ def _grant_diagnostic(stage, conversation_id='', *, http_status=0, elapsed_ms=0,
             bounded(response_bytes,4097))
     except Exception:
         pass
+
+
+def _receipt_diagnostic(kind, stage, conversation_id, receipt=None, forms=None):
+    """Fixed classes/counts only; never receipt values, lexemes or exception text."""
+    if kind not in ('grant', 'store') or stage not in (
+            'http_status', 'response_read', 'response_json', 'decoded', 'envelope', 'receipt'):
+        return
+    try:
+        conversation = conversation_id if type(conversation_id) is str and re.fullmatch(
+            '[0-9a-f]{32}', conversation_id) else 'unavailable'
+        types = []
+        for field in ('issuedAtMs', 'expiresAtMs', 'sequence'):
+            types.append({int:'integer', float:'float', str:'string', bool:'boolean',
+                type(None):'null', dict:'object', list:'array'}.get(type(receipt[field]), 'other')
+                if type(receipt) is dict and field in receipt else 'missing')
+        counts = [min(32, max(0, forms[name])) if type(forms) is dict
+            and type(forms.get(name)) is int else -1 for name in ('plain', 'decimal', 'exponent')]
+        logging.getLogger('voice-bridge').info('Voice presentation receipt kind=%s stage=%s '
+            'conversation=%s issued_type=%s expires_type=%s sequence_type=%s '
+            'plain=%d decimal=%d exponent=%d', kind, stage, conversation, *types, *counts)
+    except Exception:
+        pass
+
+
+def _decode_native_integer_receipt(raw, kind, conversation_id):
+    """Decode only native grant/store responses into exact integer DTO values."""
+    if __package__:
+        from .caller_binding import _pairs
+    else:
+        from caller_binding import _pairs
+    forms = dict(plain=0, decimal=0, exponent=0)
+    def integer(token):
+        if len(token) > 64:
+            raise ValueError('Invalid native receipt number')
+        _, marker, exponent = token.lower().partition('e')
+        if marker and not -64 <= int(exponent) <= 64:
+            raise ValueError('Invalid native receipt number')
+        value = Decimal(token)
+        if (not value.is_finite() or abs(value.as_tuple().exponent) > 64
+                or not -9007199254740991 <= value <= 9007199254740991
+                or value != value.to_integral_value()):
+            raise ValueError('Invalid native receipt number')
+        form = 'exponent' if 'e' in token.lower() else 'decimal' if '.' in token else 'plain'
+        forms[form] = min(32, forms[form] + 1)
+        return int(value)
+    stage, value = 'response_json', None
+    try:
+        value = json.loads(raw, object_pairs_hook=_pairs, parse_int=integer,
+                           parse_float=integer, parse_constant=integer)
+        stage = 'decoded'
+        return value
+    finally:
+        receipt = value.get('result', value) if type(value) is dict else None
+        _receipt_diagnostic(kind, stage, conversation_id, receipt, forms)
 
 GRANT_FIELDS = frozenset(('operation', 'requestId', 'appInboundId', 'clientSessionId',
     'userId', 'callerUserId', 'conversationBinding', 'nonceSha256', 'maxAgeSeconds'))
@@ -71,12 +126,13 @@ async def issue_presentation_grant(instance_url, provider_token, authorization, 
     # The Native audio process loads only the DTO/outbox via a file import.
     # Caller bootstrap dependencies belong exclusively to this Bridge transport.
     if __package__:
-        from .caller_binding import CALLER_INSTANCE_URL, PRESENTATION_GRANT_PATH, valid_authorization, _pairs
+        from .caller_binding import CALLER_INSTANCE_URL, PRESENTATION_GRANT_PATH, valid_authorization
     else:
-        from caller_binding import CALLER_INSTANCE_URL, PRESENTATION_GRANT_PATH, valid_authorization, _pairs
+        from caller_binding import CALLER_INSTANCE_URL, PRESENTATION_GRANT_PATH, valid_authorization
     error='Presentation history unavailable'
     headers={}
     stage, status, size, budget, conversation = 'validation', 0, 0, 0, ''
+    receipt = None
     started=time.monotonic()
     try:
         if (instance_url != CALLER_INSTANCE_URL or not valid_authorization(authorization)
@@ -112,11 +168,13 @@ async def issue_presentation_grant(instance_url, provider_token, authorization, 
                         size=min(len(raw),4097)
                         if len(raw) > 4096:raise ValueError(error)
                     stage='response_json'
-                    data=json.loads(raw.decode('utf-8'), object_pairs_hook=_pairs,
-                        parse_constant=lambda _: (_ for _ in ()).throw(ValueError(error)))
+                    data=_decode_native_integer_receipt(raw.decode('utf-8'), 'grant', conversation)
+                    stage='envelope'
+                    if type(data) is not dict or set(data) != {'result'}:
+                        raise ValueError(error)
+                    receipt=data['result']
                     stage='receipt'
-                    if (type(data) is not dict or set(data) != {'result'}
-                            or not valid_grant_receipt(data['result'],request)):
+                    if not valid_grant_receipt(receipt,request):
                         raise ValueError(error)
                     result=data['result']
         stage='transport_accepted'
@@ -132,6 +190,8 @@ async def issue_presentation_grant(instance_url, provider_token, authorization, 
     finally:
         headers.clear()
         authorization=provider_token=None
+        if stage in ('envelope', 'receipt'):
+            _receipt_diagnostic('grant', stage, conversation, receipt)
         _grant_diagnostic(stage,conversation,http_status=status,
             elapsed_ms=int((time.monotonic()-started)*1000),budget_ms=budget,response_bytes=size)
 
