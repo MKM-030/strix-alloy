@@ -17,6 +17,7 @@ HERE = Path(__file__).resolve().parent
 sys.path[:0] = [str(HERE), str(HERE.parents[1] / 'server')]
 import local_llm_socket
 from local_llm_socket import LocalTextSocket, validate_local_conversation
+from test_local_llm_fixed_routes import wire_context
 from gateway import Backend, Gateway
 
 CHAT = 'http://127.0.0.1:8841/v1/chat/completions'
@@ -147,7 +148,7 @@ class SharedGatewayIntegrationTests(unittest.IsolatedAsyncioTestCase):
         source = LocalTextSocket(CHAT, 'C:/synthetic-only-token', http=http)
         self.sockets.append(source)
         await source.send_json(dict(type='session.start', mode='text', system_prompt='Central assistant rules'))
-        await source.send_json(dict(type='session.update', system_prompt_patch='Current observed context'))
+        await source.send_json(dict(type='session.update', system_prompt_patch=wire_context()))
         await source.send_json(dict(type='input.text', text='Hörst du mich?'))
         return source, http
 
