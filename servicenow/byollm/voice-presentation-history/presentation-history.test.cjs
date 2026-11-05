@@ -171,3 +171,87 @@ test('grant refusal diagnostics whitelist rejects arbitrary stages and caps actu
  f.helper._grantRefusalDiagnostic({conversationId:CV,stage:'binding_profile',gsUserID:'SECRET_CLAIMED_ID',extra:'SECRET'});
  assert.deepEqual(refusalRows(f),[{gsUserID:actor.slice(0,64),conversationId:CV,stage:'binding_profile'}]);
 });
+
+function reverseJSONKeys(value) {
+ if(Array.isArray(value))return value.map(reverseJSONKeys);
+ if(value!==null&&typeof value==='object')return Object.fromEntries(Object.keys(value).reverse().map(key=>[key,reverseJSONKeys(value[key])]));
+ return value;
+}
+function nativeJSONFormat(value,reorder=false) {
+ const formatted=JSON.stringify(reorder?reverseJSONKeys(value):value,null,2);
+ // Observed serialization sensitivity; these whitespace/numeric spellings are synthetic.
+ return formatted.replace(/(: )(\d+)(?=,?\n)/g,'$1$2.0');
+}
+test('native JSON boundary accepts equivalent formatted grant and history without changing receipts or provider calls',()=>{
+ const f=fixture({onSet:({key,entries,value})=>entries.set(key,nativeJSONFormat(value))}),baseline=fixture();
+ assert.deepEqual(f.issue(),baseline.issue());assert.deepEqual(f.counts(),{gets:4,sets:1});
+ assert.deepEqual(f.counts(),baseline.counts());f.reset();baseline.reset();
+ assert.deepEqual(f.rawStore(),baseline.rawStore());assert.deepEqual(f.counts(),baseline.counts());
+ assert.equal(f.counts().sets,1);assert.equal(f.rawStore().stored,true);assert.equal(f.counts().sets,1);
+});
+test('native JSON boundary accepts synthetic reordered nested grant and history keys with exact semantics',()=>{
+ const f=fixture({onSet:({key,entries,value})=>entries.set(key,nativeJSONFormat(value,true))}),baseline=fixture();
+ assert.deepEqual(f.issue(),baseline.issue());assert.deepEqual(f.counts(),baseline.counts());f.reset();baseline.reset();
+ assert.deepEqual(f.rawStore(),baseline.rawStore());assert.deepEqual(f.counts(),baseline.counts());
+ assert.equal(f.rawStore().stored,true);assert.equal(f.counts().sets,1);
+});
+test('native JSON boundary compares repeated parsed grants independently of native key order',()=>{
+ const f=fixture({onGet:({key,entries,gets})=>{if(entries.has(key)&&key.includes('presentation_grant')){
+  const value=JSON.parse(entries.get(key));entries.set(key,JSON.stringify(gets%2?reverseJSONKeys(value):value));
+ }}});
+ assert.equal(f.issue().attested,true);assert.deepEqual(f.counts(),{gets:4,sets:1});
+ f.setActor(id(99));f.reset();assert.equal(f.rawStore().stored,true);assert.equal(f.calls.length,0);
+});
+test('native JSON boundary preserves exact history event idempotency when native event keys reorder',()=>{
+ const f=fixture({onSet:({key,entries,value})=>{if(key.includes('presentation_history'))entries.set(key,nativeJSONFormat(value,true));}});
+ assert.equal(f.issue().attested,true);f.reset();assert.equal(f.rawStore().stored,true);
+ assert.equal(f.rawStore().stored,true);assert.equal(f.counts().sets,1);
+});
+test('native JSON boundary refuses grant mutations and unknown readbacks without retry',()=>{
+ const mutations=[v=>({...v,version:true}),v=>({...v,extra:null}),v=>{delete v.context_profile;return v;},
+  v=>({...v,nonce_sha256:'f'.repeat(64)}),v=>({...v,expires_at_ms:v.expires_at_ms+1000}),
+  v=>({...v,binding:{...v.binding,conversation_id:id(98)}}),v=>({...v,binding:{...v.binding,extra:null}}),
+  v=>({...v,issued_at_ms:String(v.issued_at_ms)})];
+ for(const mutate of mutations){const f=fixture({onSet:({key,entries,value})=>entries.set(key,nativeJSONFormat(mutate(JSON.parse(JSON.stringify(value)))))});
+  assert.equal(f.issue().attested,false);assert.equal(f.counts().sets,1);assert.equal(f.counts().gets,3);}
+ for(const raw of [null,undefined,{},[],true,123,'null','[]','true','123','{',' '.repeat(8001),JSON.stringify(JSON.stringify({version:1}))]){
+  const f=fixture({onSet:({key,entries})=>entries.set(key,raw)});assert.equal(f.issue().attested,false);
+  assert.deepEqual(f.counts(),{gets:3,sets:1});}
+});
+test('native JSON boundary refuses changed history fields even when changed text has a matching digest',()=>{
+ const mutations=[v=>({...v,extra:null}),v=>{delete v.context_profile;return v;},v=>({...v,version:true}),
+  v=>({...v,event:{...v.event,text:'Changed',text_sha256:sha('Changed')}}),
+  v=>({...v,event:{...v.event,text_sha256:'f'.repeat(64)}}),v=>({...v,event:{...v.event,sequence:2}}),
+  v=>({...v,event:{...v.event,caller_turn_id:null,original_asr_sha256:null}}),v=>({...v,stored_at_ms:v.stored_at_ms-1})];
+ for(const mutate of mutations){const f=fixture({onSet:({key,entries,value})=>{if(key.includes('presentation_history'))entries.set(key,nativeJSONFormat(mutate(JSON.parse(JSON.stringify(value)))));}});
+  assert.equal(f.issue().attested,true);f.reset();assert.equal(f.rawStore().stored,false);assert.equal(f.counts().sets,1);}
+});
+test('native JSON boundary closed values preserve null, array order, strict types and depth limits',()=>{
+ const f=fixture(),same=(a,b)=>f.helper._sameJSONValue(a,b,0);
+ assert.equal(same({a:null,b:[1,'x',false]},{b:[1,'x',false],a:null}),true);
+ for(const [a,b]of [[null,{}],[true,1],['1',1],[[1,2],[2,1]],[{a:1},{a:1,b:null}],
+  [{a:undefined},{a:undefined}],[NaN,NaN],[Infinity,Infinity],[()=>{},()=>{}]])assert.equal(same(a,b),false);
+ let deep=1;for(let i=0;i<10;i++)deep={nested:deep};assert.equal(same(deep,deep),false);
+});
+test('native JSON boundary bounds both characters and UTF8 bytes before a single parse',()=>{
+ const f=fixture(),matches=(raw,value,characters=8000,bytes=10000)=>f.helper._readbackMatches(raw,value,characters,bytes);
+ const value={text:'é'.repeat(6000)},raw=JSON.stringify(value);
+ assert.ok(raw.length<8000);assert.ok(Buffer.byteLength(raw)>10000);assert.equal(matches(raw,value),false);
+ assert.equal(matches(' '.repeat(8001)+'{}',{}),false);
+ assert.equal(matches(JSON.stringify(JSON.stringify({a:1})),{a:1}),false);
+ assert.equal(matches('{bad JSON}',{}),false);assert.equal(matches({a:1},{a:1}),false);
+ assert.equal(matches('null',null),true);assert.equal(matches('[1,null,false]',[1,null,false]),true);
+ assert.equal(matches('[null,1,false]',[1,null,false]),false);
+});
+test('native JSON boundary freezes grant expectation before setter can mutate nonce or TTL in place',()=>{
+ for(const mutate of [value=>{value.nonce_sha256='f'.repeat(64);},value=>{value.expires_at_ms+=1000;}]){
+  const f=fixture({onSet:({key,entries,value})=>{mutate(value);entries.set(key,JSON.stringify(value));}});
+  assert.equal(f.issue().attested,false);assert.deepEqual(f.counts(),{gets:3,sets:1});
+ }
+});
+test('native JSON boundary freezes history expectation before setter can mutate text and digest in place',()=>{
+ const f=fixture({onSet:({key,entries,value})=>{if(key.includes('presentation_history')){
+  value.event.text='Changed by setter';value.event.text_sha256=sha(value.event.text);entries.set(key,JSON.stringify(value));
+ }}});
+ assert.equal(f.issue().attested,true);f.reset();assert.equal(f.rawStore().stored,false);assert.equal(f.counts().sets,1);
+});

@@ -24,6 +24,34 @@ SCCVoicePresentationHistoryV1.prototype = {
         return value !== null && typeof value === 'object' && !Array.isArray(value) &&
             Object.keys(value).sort().join(',') === keys.slice(0).sort().join(',');
     },
+    _sameJSONValue: function(left, right, depth) {
+        // Native provider serialization may change whitespace and object order.
+        // Compare closed JSON values only, retaining every key, type and value.
+        if (!this._integer(depth, 0, 8) || typeof left !== typeof right) return false;
+        if (left === null || right === null) return left === right;
+        if (typeof left === 'number') return isFinite(left) && isFinite(right) && left === right;
+        if (typeof left === 'string' || typeof left === 'boolean') return left === right;
+        if (typeof left !== 'object') return false;
+        var arrays = Array.isArray(left), i, names;
+        if (arrays !== Array.isArray(right)) return false;
+        if (arrays) {
+            if (left.length !== right.length || Object.keys(left).length !== left.length || Object.keys(right).length !== right.length) return false;
+            for (i = 0; i < left.length; i++) if (!this._sameJSONValue(left[i], right[i], depth + 1)) return false;
+        } else {
+            if (Object.prototype.toString.call(left) !== '[object Object]' || Object.prototype.toString.call(right) !== '[object Object]') return false;
+            names = Object.keys(left);
+            if (names.length !== Object.keys(right).length) return false;
+            for (i = 0; i < names.length; i++) if (!Object.prototype.hasOwnProperty.call(right, names[i]) ||
+                    !this._sameJSONValue(left[names[i]], right[names[i]], depth + 1)) return false;
+        }
+        return true;
+    },
+    _readbackMatches: function(raw, expected, characters, bytes) {
+        try {
+            if (typeof raw !== 'string' || raw.length > characters || this._bytes(raw) > bytes) return false;
+            return this._sameJSONValue(JSON.parse(raw), expected, 0);
+        } catch (ignoredReadback) { return false; }
+    },
     _hash: function(value) {
         var digest = String(new GlideDigest().getSHA256Hex(value)).toLowerCase();
         this._need(/^[0-9a-f]{64}$/.test(digest));
@@ -223,7 +251,7 @@ SCCVoicePresentationHistoryV1.prototype = {
     _sameGrant: function(grant) {
         // Repeat only the public provider read. Guest receives finite metadata
         // append authority from issuance, never current record/business rights.
-        this._need(JSON.stringify(this._grant(grant.binding.conversation_id, grant.binding.provider_user_id)) === JSON.stringify(grant));
+        this._need(this._sameJSONValue(this._grant(grant.binding.conversation_id, grant.binding.provider_user_id), grant, 0));
     },
     _grantRefusalDiagnostic: function(diagnostic) {
         try {
@@ -265,20 +293,20 @@ SCCVoicePresentationHistoryV1.prototype = {
             var grant = {version:1,binding:binding,create_request_id:input.conversationBinding.createRequestId,
                 app_id:this.app,provider_id:this.provider,channel_id:this.channel,service_id:this.service,context_profile:this.profile,
                 nonce_sha256:input.nonceSha256,issued_at_ms:now,expires_at_ms:expires};
-            var encoded = JSON.stringify(grant);
+            var expectedGrant = JSON.parse(JSON.stringify(grant));
             diagnostic.stage = 'grant_empty_first';
             this._need(this._empty(this._grantRaw(binding.conversation_id, binding.provider_user_id)));
             this._sameBinding(binding, diagnostic);
             diagnostic.stage = 'grant_empty_second';
             this._need(this._empty(this._grantRaw(binding.conversation_id, binding.provider_user_id)));
-            // ONE object setter, exact serialized readback; no CAS or retry.
+            // ONE object setter, strict JSON value readback; no CAS or retry.
             diagnostic.stage = 'grant_set';
             sn_cs.VASystemObject.setProviderUserContext(this._grantKey(binding.conversation_id), grant, this.inbound, binding.provider_user_id, null);
             diagnostic.stage = 'grant_readback';
-            this._need(this._grantRaw(binding.conversation_id, binding.provider_user_id) === encoded);
+            this._need(this._readbackMatches(this._grantRaw(binding.conversation_id, binding.provider_user_id), expectedGrant, 8000, 10000));
             this._sameBinding(binding, diagnostic);
             diagnostic.stage = 'grant_consistency';
-            this._sameGrant(grant);
+            this._sameGrant(expectedGrant);
             this._includeDiagnostic(binding.conversation_id, 'grant_issued', 0);
             return JSON.stringify({status:'success',state:'presentation_history_grant_attested',requestId:input.requestId,
                 conversationId:binding.conversation_id,nonceSha256:input.nonceSha256,issuedAtMs:now,expiresAtMs:expires,
@@ -355,13 +383,13 @@ SCCVoicePresentationHistoryV1.prototype = {
                 var entry = {version:1,conversation_id:binding.conversation_id,provider_user_id:binding.provider_user_id,
                     caller_user_id:binding.caller_user_id,account_id:binding.account_id,channel_profile_id:binding.channel_profile_id,
                     creation_message_id:binding.creation_message_id,service_id:this.service,context_profile:this.profile,stored_at_ms:now,event:event};
-                var encoded = JSON.stringify(entry);
+                var expectedEntry = JSON.parse(JSON.stringify(entry));
                 this._sameGrant(grant);
                 // ONE setter attempt, no retries and no atomic/CAS claim.
                 // The native setter serializes its input; do not encode twice.
                 sn_cs.VASystemObject.setProviderUserContext(this._key(binding, event.sequence), entry, this.inbound, binding.provider_user_id, null);
                 var readback = this._entry(this._get(binding, event.sequence), binding, event.sequence, this._now());
-                this._need(JSON.stringify(readback) === encoded);
+                this._need(this._sameJSONValue(readback, expectedEntry, 0));
                 this._sameGrant(grant);
             }
             this._sameGrant(grant);
