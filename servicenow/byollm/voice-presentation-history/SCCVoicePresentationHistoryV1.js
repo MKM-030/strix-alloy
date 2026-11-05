@@ -241,7 +241,8 @@ SCCVoicePresentationHistoryV1.prototype = {
                 var encoded = JSON.stringify(entry);
                 this._sameBinding(binding);
                 // ONE setter attempt, no retries and no atomic/CAS claim.
-                sn_cs.VASystemObject.setProviderUserContext(this._key(binding, event.sequence), encoded, this.inbound, binding.provider_user_id, null);
+                // The native setter serializes its input; do not encode twice.
+                sn_cs.VASystemObject.setProviderUserContext(this._key(binding, event.sequence), entry, this.inbound, binding.provider_user_id, null);
                 var readback = this._entry(this._get(binding, event.sequence), binding, event.sequence, this._now());
                 this._need(JSON.stringify(readback) === encoded);
                 this._sameBinding(binding);
