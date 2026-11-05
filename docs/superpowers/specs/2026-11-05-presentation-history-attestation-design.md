@@ -1,0 +1,41 @@
+# Authenticated attestation for optional presentation history
+
+## Purpose and actual evidence
+
+Keep the quick local conversation and ServiceNow conversation aware of already host-emitted local speech, without suppressing real backend output. User authorizes autonomous repair, all necessary changes and tests, no questions. ServiceNow remains sole business executor; greeting/language/own voice and current local model/services are preserved.
+
+The original producer's Secure record binding cannot work on a fresh token-only request: it runs as Guest and cannot retrieve the existing owned conversation. A separate actual Guest qualification now passed: one tiny object was set, exactly read back and semantically emptied through the intended provider-context API, with unchanged Guest,3get/2set, zero new protected-table reads. Original REST source is fully restored at revision9 with strict native capture. This proves primitive rights, not grant authorization or worker access.
+
+## Architecture and choices
+
+Use a separate authenticated own Global attestation operation after a validated CREATE and cleanup ownership. Keep the existing CREATE request/reply unchanged. A bounded private Bridge task uses one explicitly delegated bootstrap credential use; startup never awaits this task. Attestation failure disables optional history and never changes or retries CREATE. Existing Guest producer then uses the private per-session nonce plus provider authentication to append only bounded untrusted presentation metadata.
+
+Callback pull was considered. The configured connection uses basic_auth_credentials; the documented RESTMessageV2 Basic profile expects sys_auth_profile_basic. A direct reference substitution is unsupported, and pull adds connection/action/routing and worker qualification. It remains an alternative if the selected path cannot be qualified.
+
+## Fixed contracts
+
+- All current three flags remain false by default: NativeConfig.presentation_history_enabled, BridgeSettings.presentation_history_enabled and SCCVoicePresentationHistoryV1.enabled.
+- Fixed own API: /api/global/scc_voice_context. New authenticated POST resource: /presentation-grants. requires_authentication=1; no new user role or ACL grant. Existing /updates provider-token validation remains first and unchanged.
+- Attestation is guarded by the existing provider token AND actual authenticated GS caller. It uses ordinary Secure ownership reads under that caller; no impersonation, raw-record fallback, password reads, admin production credentials or role changes.
+- A cryptographic256-bit nonce is generated only in private Bridge RAM with secrets.token_hex(32). Only its SHA256 is sent to the issuer. Raw nonce never enters CREATE envelopes, Native audio/ASR, snapshots, voice_context, events, prompts, receipts or logs.
+- Exact attestation body fields: operation,requestId,appInboundId,clientSessionId,userId,callerUserId,conversationBinding,nonceSha256,maxAgeSeconds. operation=attest_presentation_history_v1; requestId/clientSessionId/callerUserId are32hex; userId=voice-<clientSessionId>; appInboundId=scc-local-voice; nonceSha25664hex; maxAgeSeconds integer60..3600 from the validated local session limit.
+- conversationBinding is the existing immutable snapshot with source=servicenow_create_conversation,conversationId,creationMessageId,createRequestId,interactionId. All identifiers32hex. Native graph ownership attests C/I/CM/account/profile/session/caller. createRequestId is separately supplied original correlation, not an independently observed current native request/task join.
+- Exact successful attestation receipt fields: status,state,requestId,conversationId,nonceSha256,issuedAtMs,expiresAtMs,attested,scope,businessAuthority. Values success,presentation_history_grant_attested,matching request/C/hash,native positive integer times,expires-issued=maxAgeSeconds*1000,attested=true,scope=presentation_metadata_only,businessAuthority=false. Compare native times to each other, never to the known-skewed host clock. Failure uses only a fixed unavailable classification, no source/error/secret data.
+- Server class method issueGrantJSON(requestText) returns JSON. It binds the actual authenticated caller, full native graph, fixed SCC provider/profile/service and nonce hash; stores one object via observed provider API and verifies exact JSON readback. Native key scc.voice.presentation_grant.v1.<C> under the exact own provider alias. Nonempty/conflicting/uncertain grant is refused without retry or blind overwrite.
+- Guest storeJSON(requestText) adds exactly grantNonce64hex to the old own history-store body. It validates provider-authenticated route, hash, exact binding, bounds and native-server expiry through that grant. It performs zero new protected-record reads. It does not claim Guest checks current open state or later revocation.
+- Grant authority is an issuance-time snapshot plus finite metadata append until native expiry, at most16 events. Root accepts this limited delegation for untrusted style data only. Event retention remains120seconds, independent of grant lifetime. The existing secure consumer must still verify current caller/open-conversation/profile/CREATE ownership and omit all history on normal denial or drift.
+- Keep the full host-emission DTO, sequence/owner/UTF16/UTF8/sample invariants and no-retry outbox. Preserve original ASR/vendor MESSAGE, all actual backend information/control/Boolean/approval/final outputs and PCM completion authority. No heuristic output suppression, business-memory note or current-task claim.
+
+## Credential and task lifetime
+
+Before the existing credential is taken/cleared, an enabled session may delegate exactly one separately owned purpose-bound attestation sublease with the SAME original <=45second deadline. Creating this sublease is explicit; it cannot be created or resurrected after clear/expiry, transferred across sessions, used for another URL or taken twice. Normal primary credential consumption does not recreate the sublease. Whole-session failure/end/cancel revokes an unused lease; a legitimately handed-off task owns its own cleanup.
+
+Only after validated_created -> observe_conversation_binding -> owned_cleanup_identity -> alive/ticket gate may the private task consume that sublease. It does not reuse caller_authorization_task or delay consume/queue_start_created. The request uses a new DummyCookieJar session, same fixed ServiceNow origin, original caller Bearer plus provider token, verified TLS/no proxy/no redirects/no retry, <=2seconds clipped to the original remaining deadline. Clear all private references on every terminal path. A remote grant after a timed-out response remains unused: optional history requires an exact positive receipt and the local raw nonce is erased on failure/end.
+
+## Source ownership and qualification
+
+Reuse isolated branch at49b0e1f. Python task owns voice/bridge.py,voice/caller_binding.py,voice/presentation_history.py and focused tests; no Native audio code edits. Native task owns servicenow/byollm/voice-presentation-history/SCCVoicePresentationHistoryV1.js, Context-resource.v1.candidate.js, new Presentation-grant-resource.v1.candidate.js and Node tests; existing CallerContext and Halogen request derivatives stay unchanged unless a real interface defect is found and ruled on. No live config or instance write by source authors. Root alone integrates/commits and performs separately reviewed ordinary metadata preview/install/activation.
+
+Tests must show visible RED then GREEN for the new behavior, realistic native JSON serialization and Guest Secure denial, lease failure/cancellation/expiry/cross-owner cases, exact old CREATE bytes and outcome, native/host clock skew, no startup wait, no secret leakage, closed/drifted consumer omission and all existing original-input/output protections. No packages/downloads/model starts or real business operation for source verification.
+
+Source success is not deployment or conversational success. Later qualification must prove actual attestation, Guest publication, secure read/include and useful conversation behavior in one fresh bounded no-approval call. Reuse existing recordings but never spent harness/auth handles or the existing order. Real devices/external NAT and final hearing remain separate evidence limits.
