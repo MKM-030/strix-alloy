@@ -23,6 +23,7 @@ class FakeDialog:
         self.processing = None
         self.observation_revision = 0
         self.backend_owner = object()
+        self.metadata = {'conversation_id': 'c' * 32}
         self.backend_state = self.input_control = None
         self.business_request_id = ''
         self._event_id = 0
@@ -31,9 +32,12 @@ class FakeDialog:
         if reply:
             self.public_replies.append(reply)
 
-    async def turn(self, text, on_reply=None, voice_context=None, *, on_event=None, native_control_binding=UNSET):
+    async def turn(self, text, on_reply=None, voice_context=None, *, on_event=None,
+                   native_control_binding=UNSET, on_accepted=None):
         self.calls.append(text)
         self.business_request_id = f'{len(self.calls):032x}'
+        if on_accepted is not None:
+            on_accepted(self.business_request_id, self.backend_owner)
         await self.started.put(text)
         response = await self.release.get()
         reply = response['reply'] if isinstance(response, dict) else response

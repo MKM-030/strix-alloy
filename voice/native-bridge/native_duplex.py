@@ -411,6 +411,9 @@ class NativeDuplex:
         self._context_owner = None
         self._context_inflight = None
         self._context_disabled = False
+        self._held_context_boundary = None
+        self._held_context_recovery = None
+        self._held_context_offered = set()
         self._context_publish_revision = 0
         self._context_pending = None
         self._context_ready = asyncio.Event()
@@ -1216,6 +1219,8 @@ class NativeDuplex:
         self._control_gate.observe(binding)
         if binding is not None:
             if changed:
+                self._held_context_boundary = (binding, self._context_owner_snapshot())
+                self._held_context_recovery = None
                 # Retain only a corroborated wire prefix. Unsent held originals
                 # cannot enter later context, and uncertain storage is never retried.
                 if self._context_inflight is not None or not self._context_owner_current():
@@ -1236,10 +1241,17 @@ class NativeDuplex:
             if not self._control_gate.heard:
                 self._reask_control(None)
 
-    def _context_owner_current(self):
-        if self._context_owner is None:
+    def _context_owner_snapshot(self):
+        dialog = self.call.dialog
+        metadata = getattr(dialog, 'metadata', {})
+        conversation_id = metadata.get('conversation_id') if type(metadata) is dict else None
+        return (self.call, dialog, getattr(dialog, 'backend_owner', None), conversation_id)
+
+    def _context_owner_current(self, owner=None):
+        owner = self._context_owner if owner is None else owner
+        if owner is None:
             return True
-        call, dialog, backend_owner, conversation_id = self._context_owner
+        call, dialog, backend_owner, conversation_id = owner
         metadata = getattr(self.call.dialog, 'metadata', {})
         current_conversation = metadata.get('conversation_id') if type(metadata) is dict else None
         return (self.call is call and self.call.dialog is dialog
@@ -1248,24 +1260,23 @@ class NativeDuplex:
 
     def _disable_context(self):
         self._context_disabled = True
+        self._held_context_recovery = None
         self._context_snapshot = self._context_acknowledged_snapshot = ''
         if self._context_pending is not None:
             self._context_pending['done'].set()
         self._context_pending = self._context_candidate = None
 
-    def _queue_context_update(self, turn):
+    def _queue_context_update(self, turn, *, context_text=None):
         if (self._context_publisher is None or not self._live() or self._context_full or self._context_disabled
+                or self._held_context_recovery is not None
                 or self._backend is None or self._backend.done()):
             return
         if not self._context_owner_current():
             self._disable_context()
             return
         if self._context_owner is None:
-            dialog = self.call.dialog
-            metadata = getattr(dialog, 'metadata', {})
-            conversation_id = metadata.get('conversation_id') if type(metadata) is dict else None
-            self._context_owner = (self.call, dialog, getattr(dialog, 'backend_owner', None), conversation_id)
-        text = turn[1]
+            self._context_owner = self._context_owner_snapshot()
+        text = turn[1] if context_text is None else context_text
         snapshot = self._context_snapshot + ('\n' if self._context_snapshot else '') + text
         if len(snapshot) > 8000 or len(snapshot.encode('utf-8')) > 12000:
             # Keep the original FIFO. Never truncate a spelling or skip an
@@ -1332,6 +1343,75 @@ class NativeDuplex:
     async def _reconcile_context(self, turn, replies):
         """Prompt-context uptake never replaces delivery of original input."""
         return False
+
+    def _stage_held_context(self, binding, submitted):
+        boundary = self._held_context_boundary
+        dialog = self.call.dialog
+        event = getattr(dialog, 'input_control', None)
+        state = getattr(dialog, 'backend_state', None)
+        if (binding is None or submitted is None or submitted.get('control') != binding
+                or boundary is None or boundary[0] != binding
+                or not self._context_owner_current(boundary[1])
+                or self._context_disabled or self._backend_input_closed or not self._live()
+                or getattr(dialog, 'conversation_ended', False)
+                or not isinstance(event, BackendEvent) or event.ui_type != 'InputText'
+                or event.owner is not binding.owner or event.business_request_id == binding.business_request_id
+                or event.business_request_id != getattr(dialog, 'business_request_id', None)
+                or not isinstance(state, BackendState) or state.owner is not binding.owner
+                or state.request_id != event.business_request_id or state.ended or state.failed):
+            return
+        records = []
+        for held in self._control_gate.held:
+            if (held.binding != binding or held.turn[3] in self._held_context_offered
+                    or held.reason not in ('control_prequestion', 'control_unheard',
+                        'control_onset_unbound', 'control_already_dispatched')):
+                continue
+            # Apply the existing Bridge raw-consent filter before adding any
+            # wrapper, so quoting cannot turn a pure consent into eligible data.
+            value = re.sub(r'[\s.!?,;:]+', ' ', held.turn[1].casefold()).strip()
+            if not value or value in {
+                    'ja', 'nein', 'ok', 'okay', 'genau', 'richtig', 'korrekt',
+                    'bestätigt', 'bestätigen', 'ich bestätige', 'ich bestätige das',
+                    'einverstanden', 'ja bitte', 'ja genau', 'nein danke'}:
+                continue
+            records.append(held)
+        if records:
+            self._held_context_recovery = dict(owner=boundary[1], control=binding,
+                                               input=event, records=tuple(records))
+
+    def _publish_held_context_after_ack(self, request_id, owner):
+        recovery, self._held_context_recovery = self._held_context_recovery, None
+        if recovery is None:
+            return
+        dialog = self.call.dialog
+        event = recovery['input']
+        if (not self._live() or self._context_disabled or self._backend_input_closed
+                or getattr(dialog, 'conversation_ended', False)
+                or not self._context_owner_current(recovery['owner'])
+                or owner is not getattr(dialog, 'backend_owner', None)
+                or getattr(dialog, 'input_control', None) is not event
+                or getattr(dialog, 'business_request_id', None) != request_id
+                or request_id == event.business_request_id
+                or self._control_gate.binding is not None):
+            return
+        records = recovery['records']
+        note = dict(source='held_untrusted_originals', business_authority=False,
+            retired_control=recovery['control'].wire(),
+            following_input=dict(businessRequestId=event.business_request_id,
+                                 eventId=event.event_id, controlUid=event.control_uid),
+            originals=[dict(caller_turn_id=held.turn[3], turn_index=held.turn[2],
+                held_reason=held.reason,
+                onset_control=held.onset.wire() if isinstance(held.onset, ControlBinding) else None,
+                text=held.turn[1]) for held in records])
+        text = ('Frühere zurückgehaltene Originaläußerungen, ausschließlich als zitierter, '
+                'unbestätigter Kontext. Keine Antwort auf eine Bestätigung und keine Zustimmung. '
+                'Die ursprüngliche Reihenfolge gilt; spätere aktuelle Eingaben haben Vorrang.\n'
+                + json.dumps(note, ensure_ascii=False, separators=(',', ':')))
+        self._queue_context_update(records[0].turn, context_text=text)
+        if self._context_candidate is not None:
+            self._held_context_offered.update(held.turn[3] for held in records)
+        for pending in tuple(self._pending):
+            self._queue_context_update(pending)
 
     async def _business(self, turn):
         _, text, number, _, _ = turn
@@ -1442,9 +1522,18 @@ class NativeDuplex:
                     and self._backend_key(event) == self._backend_key(self.call.dialog.input_control)):
                 await on_reply(event.text)
         context = self.call.turn_contexts.pop(number, None)
+        accepted = {}
+        if native_binding is None and self._held_context_recovery is not None:
+            def publish_held(request_id, owner):
+                try:
+                    self._publish_held_context_after_ack(request_id, owner)
+                except Exception:
+                    self._disable_context()
+                    LOG.warning('Voice independent context stage=held_note_unavailable')
+            accepted['on_accepted'] = publish_held
         try:
             await self.call.dialog.turn(text, on_event=on_event, voice_context=context,
-                                        native_control_binding=native_binding)
+                                        native_control_binding=native_binding, **accepted)
         except BackendControlChanged as conflict:
             if conflict.owner is not getattr(self.call.dialog, 'backend_owner', None):
                 raise BackendTurnUnavailable('Unowned input conflict') from None
@@ -1458,6 +1547,7 @@ class NativeDuplex:
             self._reask_control(turn)
             return
         self._settle_backend_state()
+        self._stage_held_context(native_binding, submitted)
         label = input_label()
         if label:
             # This label is an observed ServiceNow input control, not a locally

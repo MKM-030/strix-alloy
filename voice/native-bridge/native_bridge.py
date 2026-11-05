@@ -713,7 +713,8 @@ class Dialog:
             raise RuntimeError('Exact context prompt receipt was not corroborated')
         return result
 
-    async def turn(self, text, on_reply=None, voice_context=None, *, on_event=None, native_control_binding=UNSET):
+    async def turn(self, text, on_reply=None, voice_context=None, *, on_event=None,
+                   native_control_binding=UNSET, on_accepted=None):
         if self.conversation_ended:
             raise BackendConversationEnded('ServiceNow ended this conversation')
         self.input_boundary = None
@@ -752,13 +753,19 @@ class Dialog:
         request_started = time.monotonic()
         self.processing = None
         self.observation_revision += 1
+        accepted_owner = self.backend_owner
         ack = await self.request('POST', '/api/message', json=payload)
         self._remember_message_ack(ack)
-        typed = on_event is not None or native_control_binding is not UNSET
+        typed = on_event is not None or native_control_binding is not UNSET or on_accepted is not None
         if typed:
             request_id = ack.get('businessRequestId') if type(ack) is dict and ack.get('accepted') is True else None
             if type(request_id) is not str or not re.fullmatch(r'[0-9a-f]{32}', request_id):
                 raise BackendTurnUnavailable('Backend did not bind its accepted request')
+        if on_accepted is not None and self.backend_owner is accepted_owner:
+            try:
+                on_accepted(request_id, accepted_owner)
+            except Exception:
+                LOG.warning('Voice dialog stage=optional_accepted_callback_unavailable')
         LOG.info('Voice dialog stage=request_ack elapsed_ms=%d', int((time.monotonic()-request_started)*1000))
         first_reply = True
         seen_events = set()
