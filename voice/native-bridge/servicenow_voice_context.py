@@ -108,6 +108,15 @@ def build_servicenow_voice_context(settings=None, known_state=None):
         'Der Gesprächsverlauf und die aktuelle Frage geben Zusammenhang; freie Fragen sind keine Mitarbeiterangaben.',
         'Originaleingaben gehen unverändert an denselben ServiceNow-Dialog. Bestätigungen und Geschäftsabschluss erfindest du nicht.',
     )
+    if available is True and busy is True and closed is not True:
+        limits += (
+            'Während ServiceNow die Eingabe bearbeitet, betreibst du keine parallele fachliche Datenerhebung. '
+            'ServiceNow klärt fachlich benötigte Angaben. Greife bekannte Angaben als vorläufigen Gesprächsinhalt auf, '
+            'beantworte freie Fragen und kläre bei Bedarf eine echte sprachliche Unklarheit.',
+            'Entscheide nicht über die fachliche Relevanz von Originalangaben oder Identifikatoren und erkläre sie '
+            'nicht für entbehrlich. Stelle keine zusätzliche Pflichtangabe auf. Eine fachliche Datenanforderung '
+            'kannst du nur aus einer aktuellen passenden ServiceNow-Rückfrage wiedergeben.',
+        )
     return VoicePlatformContext(fragment, limits, (), ())
 
 

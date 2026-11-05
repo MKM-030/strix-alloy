@@ -6,11 +6,34 @@ clear German storage/check claims, not arbitrary intent or full semantics.
 import re
 
 
-def unproven_storage_or_check_claim(text):
-    unquoted = re.sub(r'\u201e[^\u201c\u201d]*[\u201c\u201d]|\u201c[^\u201d]*\u201d|'
+def _unquoted(text):
+    return re.sub(r'\u201e[^\u201c\u201d]*[\u201c\u201d]|\u201c[^\u201d]*\u201d|'
                       r'\u00ab[^\u00bb]*\u00bb|"[^"]*"|'
                       r'\u201a[^\u2018]*\u2018|\u2018[^\u2019]*\u2019|'
                       r"(?<!\w)'[^']*'(?!\w)", ' ', text)
+
+
+def unproven_pending_data_claim(text, native_question=''):
+    """Two direct forms only; full owned question equivalence preserves its words."""
+    def normal(value):
+        return re.sub(r'[^\w]+', ' ', value.casefold()).strip()
+    if native_question and normal(text) == normal(native_question):
+        return False
+    for sentence in re.finditer(r'[^.!?;\n]+(?:[.!?;\n]|$)', _unquoted(text)):
+        value = sentence.group().strip()
+        if value.endswith('?'):
+            continue
+        value = normal(value)
+        if (re.fullmatch(r'(?:der|die|das) .+ (?:ist|sind) für den prozess nicht relevant '
+                         r'da wir nur .+ benötigen', value)
+                or re.fullmatch(r'bitte nennen sie mir noch den vollständigen '
+                                r'(?:vor|nach)?namen(?: .+)?', value)):
+            return True
+    return False
+
+
+def unproven_storage_or_check_claim(text):
+    unquoted = _unquoted(text)
     auxiliary = (r'ich\s+(?:habe|hatte)|(?:habe|hatte)\s+ich|'
                  r'wir\s+(?:haben|hatten)|(?:haben|hatten)\s+wir|'
                  r'ist|sind|wird|werden|wurde|wurden|war|waren')
