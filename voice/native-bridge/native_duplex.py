@@ -407,6 +407,10 @@ class NativeDuplex:
         self._context_publisher = context_publisher
         self._context_reconciler = context_reconciler
         self._context_snapshot = ''
+        self._context_acknowledged_snapshot = ''
+        self._context_owner = None
+        self._context_inflight = None
+        self._context_disabled = False
         self._context_publish_revision = 0
         self._context_pending = None
         self._context_ready = asyncio.Event()
@@ -1212,9 +1216,11 @@ class NativeDuplex:
         self._control_gate.observe(binding)
         if binding is not None:
             if changed:
-                # Supplemental cumulative context must not carry held originals
-                # into a later business request after this control retires.
-                self._context_snapshot = ''
+                # Retain only a corroborated wire prefix. Unsent held originals
+                # cannot enter later context, and uncertain storage is never retried.
+                if self._context_inflight is not None or not self._context_owner_current():
+                    self._disable_context()
+                self._context_snapshot = self._context_acknowledged_snapshot
                 self._context_covered.clear()
                 self._context_full = False
                 LOG.info('Voice independent control call=%s stage=observed ui_type=Boolean event=%s request=%s',
@@ -1230,10 +1236,35 @@ class NativeDuplex:
             if not self._control_gate.heard:
                 self._reask_control(None)
 
+    def _context_owner_current(self):
+        if self._context_owner is None:
+            return True
+        call, dialog, backend_owner, conversation_id = self._context_owner
+        metadata = getattr(self.call.dialog, 'metadata', {})
+        current_conversation = metadata.get('conversation_id') if type(metadata) is dict else None
+        return (self.call is call and self.call.dialog is dialog
+                and getattr(dialog, 'backend_owner', None) is backend_owner
+                and current_conversation == conversation_id)
+
+    def _disable_context(self):
+        self._context_disabled = True
+        self._context_snapshot = self._context_acknowledged_snapshot = ''
+        if self._context_pending is not None:
+            self._context_pending['done'].set()
+        self._context_pending = self._context_candidate = None
+
     def _queue_context_update(self, turn):
-        if (self._context_publisher is None or not self._live() or self._context_full
+        if (self._context_publisher is None or not self._live() or self._context_full or self._context_disabled
                 or self._backend is None or self._backend.done()):
             return
+        if not self._context_owner_current():
+            self._disable_context()
+            return
+        if self._context_owner is None:
+            dialog = self.call.dialog
+            metadata = getattr(dialog, 'metadata', {})
+            conversation_id = metadata.get('conversation_id') if type(metadata) is dict else None
+            self._context_owner = (self.call, dialog, getattr(dialog, 'backend_owner', None), conversation_id)
         text = turn[1]
         snapshot = self._context_snapshot + ('\n' if self._context_snapshot else '') + text
         if len(snapshot) > 8000 or len(snapshot.encode('utf-8')) > 12000:
@@ -1265,20 +1296,37 @@ class NativeDuplex:
             if item is None:
                 continue
             request, revision, snapshot = item['request'], item['revision'], item['snapshot']
-            if (not self._live() or request != self._request
+            if not self._context_owner_current():
+                self._disable_context()
+            if (not self._live() or self._context_disabled or request != self._request
                     or self._backend is None or self._backend.done()):
                 item['done'].set()
                 continue
             try:
-                item['ack'] = await self._context_publisher(revision, snapshot)
-                # An ActionMsg acknowledgement proves neither agent uptake
-                # nor a valid input boundary. Original FIFO stays untouched.
+                self._context_inflight = item
+                ack = await self._context_publisher(revision, snapshot)
+                if self._context_disabled or not self._context_owner_current():
+                    self._disable_context()
+                    continue
+                if (type(ack) is not dict or ack.get('state') != 'context_action_acknowledged'
+                        or type(ack.get('revision')) is not int or ack['revision'] != revision
+                        or ack.get('ingested') is not False
+                        or not (ack.get('contextStored') is True and ack.get('promptIncluded') is False
+                                or ack.get('contextStored') is False and ack.get('queuedOnly') is True)):
+                    self._disable_context()
+                    continue
+                item['ack'] = ack
+                self._context_acknowledged_snapshot = snapshot
+                # This receipt proves only an accepted wire prefix. It never
+                # retires an original, confirms prompt uptake or authorizes input.
             except asyncio.CancelledError:
                 raise
             except Exception as error:
                 # Delivery may be uncertain. Do not retry or fail the call.
+                self._disable_context()
                 LOG.warning('Voice independent context stage=uncertain type=%s', type(error).__name__)
             finally:
+                self._context_inflight = None
                 item['done'].set()
 
     async def _reconcile_context(self, turn, replies):
@@ -2180,9 +2228,7 @@ class NativeDuplex:
             if record['state'] in ('pending', 'active'):
                 record['state'] = 'retired_by_call_close'
         self.call.playback.interrupt()
-        self._context_pending = None
-        self._context_snapshot = ''
-        self._context_candidate = None
+        self._disable_context()
         self._context_covered.clear()
         self._supplements.clear()
         self._input_questions.clear()
