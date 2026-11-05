@@ -108,7 +108,7 @@ test('updates attestation is token-first, exact-caller only, fixed-receipt and i
 
 test('metadata diagnostics prove exact grant issuance and finite Guest slot successes under actual GS actors',()=>{const f=fixture({diagnostics:true});assert.equal(f.issue().attested,true);assert.deepEqual(diagnosticRows(f),[{gsUserID:UID,conversationId:CV,stage:'grant_issued',count:0}]);f.logs.length=0;f.setActor(id(99));f.reset();for(let n=1;n<=16;n++)assert.equal(f.rawStore(payload(event(n))).stored,true);assert.equal(f.calls.length,0);assert.deepEqual(diagnosticRows(f),Array.from({length:16},(_,n)=>({gsUserID:id(99),conversationId:CV,stage:'stored',count:n+1})));for(const forbidden of [payload().grantNonce,sha(payload().grantNonce),alias,event().text,event().text_sha256,event().original_asr_sha256])assert.ok(!f.logs.join('').includes(forbidden));});
 test('grant/store diagnostic logger failures preserve exact positive receipts',()=>{const f=fixture({diagnostics:true,logThrows:true}),baseline=fixture();assert.deepEqual(f.issue(),baseline.issue());assert.deepEqual(diagnosticRows(f).map(row=>row.stage),['grant_issued']);f.setActor(id(99));baseline.setActor(id(99));f.logs.length=0;assert.deepEqual(f.rawStore(),baseline.rawStore());assert.deepEqual(diagnosticRows(f),[{gsUserID:id(99),conversationId:CV,stage:'stored',count:1}]);});
-test('uncertain native grant or slot readback emits no positive diagnostic',()=>{for(const options of [{setThrows:true},{doubleEncode:true},{onSet:({entries,key})=>entries.set(key,'SECRET')}]){const f=fixture({...options,diagnostics:true});assert.equal(f.issue().attested,false);assert.deepEqual(f.logs.filter(raw=>raw.startsWith(DIAGNOSTIC_PREFIX)),[]);}let armed=false;const f=fixture({diagnostics:true,onSet:({entries,key})=>{if(armed)entries.set(key,'SECRET');}});assert.equal(f.issue().attested,true);f.logs.length=0;armed=true;f.setActor(id(99));assert.equal(f.rawStore().stored,false);assert.deepEqual(f.logs,[]);});
+test('uncertain native grant or slot readback emits no positive diagnostic',()=>{for(const options of [{setThrows:true},{doubleEncode:true},{onSet:({entries,key})=>entries.set(key,'SECRET')}]){const f=fixture({...options,diagnostics:true});assert.equal(f.issue().attested,false);assert.deepEqual(f.logs.filter(raw=>raw.startsWith(DIAGNOSTIC_PREFIX)),[]);}let armed=false;const f=fixture({diagnostics:true,onSet:({entries,key})=>{if(armed)entries.set(key,'SECRET');}});assert.equal(f.issue().attested,true);f.logs.length=0;armed=true;f.setActor(id(99));assert.equal(f.rawStore().stored,false);assert.deepEqual(f.logs.filter(raw=>raw.startsWith(DIAGNOSTIC_PREFIX)),[]);assert.deepEqual(f.logs,['[SCC_VOICE_PRESENTATION_STORE_REFUSAL_V1] '+JSON.stringify({gsUserID:id(99),conversationId:CV,stage:'readback'})]);});
 
 const REFUSAL_PREFIX='[SCC_VOICE_PRESENTATION_GRANT_REFUSAL_V1] ';
 function refusalRows(f) {
@@ -254,4 +254,77 @@ test('native JSON boundary freezes history expectation before setter can mutate 
   value.event.text='Changed by setter';value.event.text_sha256=sha(value.event.text);entries.set(key,JSON.stringify(value));
  }}});
  assert.equal(f.issue().attested,true);f.reset();assert.equal(f.rawStore().stored,false);assert.equal(f.counts().sets,1);
+});
+
+const STORE_REFUSAL_PREFIX='[SCC_VOICE_PRESENTATION_STORE_REFUSAL_V1] ';
+function storeRefusalRows(f) {
+ return f.logs.filter(raw=>raw.startsWith(STORE_REFUSAL_PREFIX)).map(raw=>{
+  const row=JSON.parse(raw.slice(STORE_REFUSAL_PREFIX.length));
+  assert.deepEqual(Object.keys(row).sort(),['conversationId','gsUserID','stage']);
+  assert.match(row.conversationId,/^[0-9a-f]{32}$/);
+  assert.ok(typeof row.gsUserID==='string'&&row.gsUserID.length<=64);
+  return row;
+ });
+}
+function storeDiagnosticFixture(diagnostics,options={}) {
+ const f=fixture({...options,diagnostics});assert.equal(f.issue().attested,true);
+ f.setActor(id(99));f.reset();f.logs.length=0;return f;
+}
+const storeRefusalCases=[
+ {stage:'request',mutate:p=>{p.extra='SECRET_REQUEST';},gets:0},
+ {stage:'event',mutate:p=>{p.event.emitted_samples--;},gets:0},
+ {stage:'proof',mutate:p=>{p.conversationBinding.source='SECRET_PROOF';},gets:0},
+ {stage:'nonce',name:'nonce format',mutate:p=>{p.grantNonce='SECRET_NONCE';},gets:0},
+ {stage:'grant_get',options:()=>({onGet:({key,entries,gets})=>{if(gets===1&&entries.has(key))throw Error('SECRET_GRANT_GET');}}),gets:1},
+ {stage:'grant_raw',prepare:f=>f.entries.delete(f.grantKey),gets:1},
+ {stage:'grant_json',prepare:f=>f.entries.set(f.grantKey,'SECRET_GRANT_JSON'),gets:1},
+ {stage:'grant_schema_interval',prepare:f=>{const grant=JSON.parse(f.entries.get(f.grantKey));grant.expires_at_ms=NOW;f.entries.set(f.grantKey,JSON.stringify(grant));},gets:1},
+ {stage:'grant_binding_schema',prepare:f=>{const grant=JSON.parse(f.entries.get(f.grantKey));grant.binding.caller_user_id='SECRET_INVALID_ID';f.entries.set(f.grantKey,JSON.stringify(grant));},gets:1},
+ {stage:'nonce',name:'nonce digest',mutate:p=>{p.grantNonce='b'.repeat(64);},gets:1},
+ {stage:'binding',mutate:p=>{p.callerUserId=id(88);},gets:1},
+ {stage:'slots',prepare:f=>f.entries.set(f.key(1),'SECRET_SLOT'),gets:2},
+ {stage:'sequence',mutate:p=>{p.event.sequence=2;},gets:18},
+ {stage:'grant_consistency',options:()=>({onGet:({key,entries,gets})=>{if(gets===19)entries.set(key,'SECRET_GRANT_CONSISTENCY');}}),gets:19},
+ {stage:'set',options:()=>({onSet:({key})=>{if(key.includes('presentation_history'))throw Error('SECRET_SET_EXCEPTION');}}),gets:19,sets:1},
+ {stage:'readback',options:()=>({onSet:({key,entries})=>{if(key.includes('presentation_history'))entries.set(key,'SECRET_READBACK');}}),gets:20,sets:1},
+ {stage:'consistency',options:()=>({onGet:({key,entries,gets})=>{if(gets===21)entries.set(key,'SECRET_FINAL_CONSISTENCY');}}),gets:21,sets:1}
+];
+for(const item of storeRefusalCases)test('store refusal diagnostics classify '+(item.name||item.stage)+' without changing receipt or operations',()=>{
+ const f=storeDiagnosticFixture(true,item.options?item.options():{}),baseline=storeDiagnosticFixture(false,item.options?item.options():{});
+ const p=payload();if(item.mutate)item.mutate(p);if(item.prepare){item.prepare(f);item.prepare(baseline);}
+ const result=f.rawStore(p);assert.equal(result.stored,false);assert.deepEqual(result,baseline.rawStore(p));
+ assert.deepEqual(storeRefusalRows(f),[{gsUserID:id(99),conversationId:CV,stage:item.stage}]);
+ assert.equal(f.logs.length,1);assert.deepEqual(baseline.logs,[]);
+ assert.deepEqual(f.counts(),{gets:item.gets,sets:item.sets||0});assert.deepEqual(f.counts(),baseline.counts());
+ assert.deepEqual(f.calls,baseline.calls);assert.deepEqual(f.reads,baseline.reads);assert.equal(f.calls.length,0);assert.equal(f.reads.length,0);
+ for(const secret of ['SECRET',alias,payload().grantNonce,grantPayload().nonceSha256,event().text,event().text_sha256,event().original_asr_sha256,MSG,IX,ACCOUNT,CUP,SID,OWNER,p.event.event_id])assert.ok(!f.logs.join('').includes(secret),secret);
+});
+test('store refusal diagnostics stay silent for disabled helpers, invalid C and unparseable requests',()=>{
+ const disabled=fixture({enabled:false,diagnostics:true});assert.equal(disabled.rawStore().stored,false);assert.deepEqual(disabled.logs,[]);
+ for(const raw of ['SECRET_BAD_JSON','null',JSON.stringify({...payload(),conversationBinding:{...payload().conversationBinding,conversationId:'SECRET_INVALID_C'}})]){
+  const f=fixture({diagnostics:true});const result=JSON.parse(f.helper.storeJSON(raw));
+  assert.equal(result.stored,false);assert.deepEqual(f.logs,[]);assert.deepEqual(f.counts(),{gets:0,sets:0});assert.equal(f.calls.length,0);
+ }
+});
+test('store refusal logger exceptions preserve the exact refusal and finite provider trace',()=>{
+ const f=storeDiagnosticFixture(true,{logThrows:true}),baseline=storeDiagnosticFixture(false);
+ const p=payload();p.event.emitted_samples--;
+ assert.deepEqual(f.rawStore(p),baseline.rawStore(p));assert.deepEqual(f.counts(),baseline.counts());
+ assert.deepEqual(f.calls,baseline.calls);assert.deepEqual(f.reads,baseline.reads);
+ assert.deepEqual(storeRefusalRows(f),[{gsUserID:id(99),conversationId:CV,stage:'event'}]);
+});
+test('store refusal diagnostic whitelist rejects arbitrary stages and caps actual native identity',()=>{
+ const actor='actual_native_identity_'.repeat(8),f=fixture({diagnostics:true,actor});
+ for(const stage of ['SECRET_STAGE','',null])f.helper._storeRefusalDiagnostic({conversationId:CV,stage});
+ f.helper._storeRefusalDiagnostic({conversationId:'SECRET_INVALID_C',stage:'slots'});assert.deepEqual(f.logs,[]);
+ f.helper._storeRefusalDiagnostic({conversationId:CV,stage:'slots',gsUserID:'SECRET_CLAIMED_ID',extra:'SECRET'});
+ assert.deepEqual(storeRefusalRows(f),[{gsUserID:actor.slice(0,64),conversationId:CV,stage:'slots'}]);
+});
+test('store refusal diagnostics leave successful store and idempotent receipt unchanged',()=>{
+ const f=storeDiagnosticFixture(true),baseline=storeDiagnosticFixture(false);
+ assert.deepEqual(f.rawStore(),baseline.rawStore());assert.deepEqual(f.counts(),{gets:22,sets:1});
+ assert.deepEqual(f.rawStore(),baseline.rawStore());assert.equal(f.counts().sets,1);
+ assert.deepEqual(f.counts(),baseline.counts());assert.deepEqual(f.calls,baseline.calls);assert.deepEqual(f.reads,baseline.reads);
+ assert.deepEqual(storeRefusalRows(f),[]);assert.deepEqual(diagnosticRows(f),[
+  {gsUserID:id(99),conversationId:CV,stage:'stored',count:1},{gsUserID:id(99),conversationId:CV,stage:'stored',count:1}]);
 });

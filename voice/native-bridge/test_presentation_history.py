@@ -339,11 +339,16 @@ class PublicationBudgetTests(unittest.IsolatedAsyncioTestCase):
         self.event=PresentationContractTests().event()
         self.bridge.json=AsyncMock(return_value=self.event)
         self.calls=[];self.storage_completed=False;self.storage_cancelled=False;self.storage_delay=0
+        self.storage_status=200;self.storage_error=None
         self.storage_response=lambda raw:raw
         owner=self
         class Response:
-            status=200
-            async def __aenter__(self):return self
+            @property
+            def status(self):return owner.storage_status
+            async def __aenter__(self):
+                if owner.storage_error is not None:
+                    raise owner.storage_error
+                return self
             async def __aexit__(self,*args):pass
             @property
             def content(self):return self
@@ -371,6 +376,51 @@ class PublicationBudgetTests(unittest.IsolatedAsyncioTestCase):
     async def publish(self):
         response=await self.bridge.presentation_history(self.request)
         return json.loads(response.body)
+
+    async def test_non200_store_reports_actual_status_without_reading_body_or_replaying(self):
+        self.storage_status=503
+        self.storage_response=lambda raw:b'PRIVATE_RESPONSE_BODY'
+        before=self.business_state()
+        with self.assertLogs('voice-bridge',level='INFO') as logged:
+            result=await self.publish()
+        lines='\n'.join(logged.output)
+        self.assertFalse(result['stored'])
+        self.assertIn('kind=store stage=http_status',lines)
+        self.assertIn('http_status=503 transport=response_received',lines)
+        self.assertFalse(self.storage_completed)
+        self.assertNotIn('PRIVATE_RESPONSE_BODY',lines)
+        self.assertNotIn('a9'*32,lines)
+        self.assertEqual(self.business_state(),before)
+        self.assertTrue(self.session.presentation_disabled)
+        self.assertFalse((await self.publish())['stored'])
+        self.assertEqual(len(self.calls),1)
+
+    async def test_pre_response_store_exception_has_distinct_stage_and_no_exception_text(self):
+        self.storage_error=OSError('PRIVATE_TRANSPORT_ERROR')
+        before=self.business_state()
+        with self.assertLogs('voice-bridge',level='INFO') as logged:
+            result=await self.publish()
+        lines='\n'.join(logged.output)
+        self.assertFalse(result['stored'])
+        self.assertIn('kind=store stage=dispatch',lines)
+        self.assertIn('http_status=0 transport=before_response',lines)
+        self.assertNotIn('PRIVATE_TRANSPORT_ERROR',lines)
+        self.assertNotIn('a9'*32,lines)
+        self.assertFalse(self.storage_completed)
+        self.assertEqual(self.business_state(),before)
+        self.assertTrue(self.session.presentation_disabled)
+        self.assertFalse((await self.publish())['stored'])
+        self.assertEqual(len(self.calls),1)
+
+    async def test_store_diagnostic_normalizes_untrusted_status_and_transport_metadata(self):
+        history=load_history()
+        for status,transport in ((True,'PRIVATE_TRANSPORT'),(-1,{}),(600,None),('PRIVATE_STATUS',[])):
+            with self.subTest(status=status),self.assertLogs('voice-bridge',level='INFO') as logged:
+                history._receipt_diagnostic('store','dispatch','c'*32,
+                    http_status=status,transport=transport)
+            lines='\n'.join(logged.output)
+            self.assertIn('http_status=0 transport=unavailable',lines)
+            self.assertNotIn('PRIVATE',lines)
 
     async def test_exact_wire_sequence_forms_preserve_business_state_and_strict_dto(self):
         for token,form in ((b'1.0','decimal'),(b'1e0','exponent')):

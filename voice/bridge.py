@@ -880,7 +880,8 @@ class Bridge:
                     session.presentation_owner = event['owner_id']
                     session.presentation_sequence = event['sequence']
                     url = self.bot_url.split('/api/', 1)[0] + '/api/global/scc_voice_context/updates'
-                    receipt_stage, receipt = 'http_status', None
+                    receipt_stage, receipt = 'dispatch', None
+                    receipt_status, receipt_transport = 0, 'before_response'
                     try:
                         remaining = publication_deadline - time.monotonic()
                         if remaining <= 0:
@@ -888,6 +889,8 @@ class Bridge:
                         async with self.http.post(url, json=payload,
                                 headers={'token':self.sn_token, 'Accept':'application/json'},
                                 allow_redirects=False, timeout=ClientTimeout(total=remaining)) as response:
+                            receipt_stage = 'http_status'
+                            receipt_status, receipt_transport = response.status, 'response_received'
                             if response.status != 200:
                                 raise ValueError('Presentation storage not corroborated')
                             receipt_stage = 'response_read'
@@ -906,7 +909,8 @@ class Bridge:
                         self.retire_presentation(session)
                         raise
                     except Exception:
-                        _receipt_diagnostic('store', receipt_stage, binding['conversationId'], receipt)
+                        _receipt_diagnostic('store', receipt_stage, binding['conversationId'], receipt,
+                            http_status=receipt_status, transport=receipt_transport)
                         self.retire_presentation(session)
                         return web.json_response(unavailable)
                     finally:

@@ -28,10 +28,11 @@ def _grant_diagnostic(stage, conversation_id='', *, http_status=0, elapsed_ms=0,
         pass
 
 
-def _receipt_diagnostic(kind, stage, conversation_id, receipt=None, forms=None):
+def _receipt_diagnostic(kind, stage, conversation_id, receipt=None, forms=None, *,
+                        http_status=0, transport='unavailable'):
     """Fixed classes/counts only; never receipt values, lexemes or exception text."""
     if kind not in ('grant', 'store') or stage not in (
-            'http_status', 'response_read', 'response_json', 'decoded', 'envelope', 'receipt'):
+            'dispatch', 'http_status', 'response_read', 'response_json', 'decoded', 'envelope', 'receipt'):
         return
     try:
         conversation = conversation_id if type(conversation_id) is str and re.fullmatch(
@@ -43,9 +44,13 @@ def _receipt_diagnostic(kind, stage, conversation_id, receipt=None, forms=None):
                 if type(receipt) is dict and field in receipt else 'missing')
         counts = [min(32, max(0, forms[name])) if type(forms) is dict
             and type(forms.get(name)) is int else -1 for name in ('plain', 'decimal', 'exponent')]
+        status = http_status if type(http_status) is int and 100 <= http_status <= 599 else 0
+        transport = transport if type(transport) is str and transport in (
+            'before_response', 'response_received') else 'unavailable'
         logging.getLogger('voice-bridge').info('Voice presentation receipt kind=%s stage=%s '
             'conversation=%s issued_type=%s expires_type=%s sequence_type=%s '
-            'plain=%d decimal=%d exponent=%d', kind, stage, conversation, *types, *counts)
+            'plain=%d decimal=%d exponent=%d http_status=%d transport=%s',
+            kind, stage, conversation, *types, *counts, status, transport)
     except Exception:
         pass
 
