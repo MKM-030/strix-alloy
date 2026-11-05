@@ -46,6 +46,13 @@ class CallbackProgress:
                 if not isinstance(message, str) or not 0 < len(message) <= 1500:
                     continue
                 text = clean_text(message).strip()
+                # Project this known generic UI label before snapshot replacement
+                # and dedupe; it conveys no specific step or execution result.
+                label = ' '.join(text.split()).casefold()
+                if label.endswith(('.', '!', '?')):
+                    label = label[:-1].rstrip()
+                if label == 'checking on remaining steps':
+                    text = 'Die Anfrage wird geprüft.'
                 if text and text not in messages:
                     messages.append(text[:500])
         if not messages:
