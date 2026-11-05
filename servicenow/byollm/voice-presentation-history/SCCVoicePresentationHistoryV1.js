@@ -246,6 +246,7 @@ SCCVoicePresentationHistoryV1.prototype = {
             this._need(this._grantRaw(binding.conversation_id, binding.provider_user_id) === encoded);
             this._sameBinding(binding);
             this._sameGrant(grant);
+            this._includeDiagnostic(binding.conversation_id, 'grant_issued', 0);
             return JSON.stringify({status:'success',state:'presentation_history_grant_attested',requestId:input.requestId,
                 conversationId:binding.conversation_id,nonceSha256:input.nonceSha256,issuedAtMs:now,expiresAtMs:expires,
                 attested:true,scope:'presentation_metadata_only',businessAuthority:false});
@@ -330,6 +331,7 @@ SCCVoicePresentationHistoryV1.prototype = {
                 this._sameGrant(grant);
             }
             this._sameGrant(grant);
+            this._includeDiagnostic(binding.conversation_id, 'stored', event.sequence);
             return JSON.stringify({status:'success',state:'presentation_history_stored',requestId:input.requestId,
                 conversationId:binding.conversation_id,sequence:event.sequence,eventId:event.event_id,textSha256:event.text_sha256,
                 stored:true,hostEmitted:true,heard:false,promptIncluded:false});
@@ -341,8 +343,10 @@ SCCVoicePresentationHistoryV1.prototype = {
     _includeDiagnostic: function(conversationId, stage, count) {
         // Explicitly opt-in metadata only. Logging never changes the result.
         try {
-            if (this.diagnostics !== true || !this._id(conversationId) ||
-                ['enter','included','omitted'].indexOf(stage) === -1 || !this._integer(count, 0, 3)) return;
+            if (this.diagnostics !== true || !this._id(conversationId)) return;
+            if (stage === 'grant_issued') { if (count !== 0) return; }
+            else if (stage === 'stored') { if (!this._integer(count, 1, 16)) return; }
+            else if (['enter','included','omitted'].indexOf(stage) === -1 || !this._integer(count, 0, 3)) return;
             var actor = String(gs.getUserID() || '').slice(0, 64);
             gs.info('[SCC_VOICE_PRESENTATION_HISTORY_V1] ' + JSON.stringify({gsUserID:actor,
                 conversationId:conversationId,stage:stage,count:count}));
