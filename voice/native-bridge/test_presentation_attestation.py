@@ -13,7 +13,8 @@ from voice import bridge, caller_binding as caller, presentation_history as hist
 from voice.tests import test_local_caller_create as owned
 from voice.tests import test_native_caller_authority as wire
 
-PATH = '/api/global/scc_voice_context/presentation-grants'
+PATH = '/api/global/scc_voice_context/updates'
+PURPOSE = (caller.CALLER_INSTANCE_URL+PATH, 'attest_presentation_history_v1')
 TOKEN = wire.TOKEN
 NONCE = 'a9' * 32
 
@@ -48,10 +49,10 @@ class LeaseTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(ticket.available)
         self.assertTrue(lease.available)
         with self.assertRaises(ValueError):self.delegate(ticket,owner)
-        value, remaining, deadline=lease.take(owner,PATH)
+        value, remaining, deadline=lease.take(owner,PURPOSE)
         self.assertEqual(value,TOKEN);self.assertEqual(deadline,primary[2])
         self.assertLessEqual(remaining,primary[1]);self.assertFalse(lease.available)
-        with self.assertRaises(ValueError):lease.take(owner,PATH)
+        with self.assertRaises(ValueError):lease.take(owner,PURPOSE)
         self.assertNotIn(TOKEN,repr(lease));self.assertNotIn(TOKEN,repr(ticket))
 
     async def test_clear_expiry_cross_owner_wrong_purpose_and_duplicate_refused(self):
@@ -63,15 +64,28 @@ class LeaseTests(unittest.IsolatedAsyncioTestCase):
                 if reason=='expiry':await asyncio.sleep(.04)
                 if reason=='duplicate':
                     with self.assertRaises(ValueError):self.delegate(ticket,owner)
-                    lease.take(owner,PATH)
+                    lease.take(owner,PURPOSE)
                 with self.assertRaises(ValueError):
-                    lease.take(object() if reason=='owner' else owner, '/elsewhere' if reason=='purpose' else PATH)
+                    lease.take(object() if reason=='owner' else owner, (caller.CALLER_INSTANCE_URL+'/elsewhere', PURPOSE[1]) if reason=='purpose' else PURPOSE)
                 self.assertFalse(lease.available)
         for take in (False,True):
             ticket=caller.CallerBootstrapCredential(TOKEN,seconds=1)
             if take:ticket.take()
             else:ticket.clear()
             with self.assertRaises(ValueError):self.delegate(ticket,object())
+
+    async def test_purpose_binds_exact_url_and_operation_and_is_destructive_on_mismatch(self):
+        self.assertEqual(caller.PRESENTATION_GRANT_PATH,PATH)
+        self.assertEqual(getattr(caller,'PRESENTATION_GRANT_PURPOSE',None),PURPOSE)
+        for purpose in (PATH, PURPOSE[0], (PURPOSE[0],'presentation_history_store'),
+                (caller.CALLER_INSTANCE_URL+'/api/global/scc_voice_context/presentation-grants',PURPOSE[1]),
+                ('https://other.invalid'+PATH,PURPOSE[1]), (PURPOSE[0]+'#'+PURPOSE[1],PURPOSE[1])):
+            with self.subTest(purpose=purpose):
+                owner=object();ticket=caller.CallerBootstrapCredential(TOKEN,seconds=1)
+                self.addCleanup(ticket.clear);lease=self.delegate(ticket,owner);self.addCleanup(lease.clear)
+                with self.assertRaises(ValueError):lease.take(owner,purpose)
+                self.assertFalse(lease.available)
+                with self.assertRaises(ValueError):lease.take(owner,PURPOSE)
 
 
 class GrantWireTests(unittest.IsolatedAsyncioTestCase):
@@ -94,6 +108,7 @@ class GrantWireTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(await self.invoke(timeout_seconds=.5),receipt(request()))
         self.assertEqual(len(self.sent),1);url,options=self.sent[0]
         self.assertEqual(url,caller.CALLER_INSTANCE_URL+PATH)
+        self.assertNotIn('#',url)
         self.assertEqual(options['json'],request());self.assertNotIn(NONCE,json.dumps(options['json']))
         self.assertEqual(options['headers']['Authorization'],TOKEN)
         self.assertEqual(options['headers']['token'],'provider-secret')
@@ -128,7 +143,8 @@ class GrantWireTests(unittest.IsolatedAsyncioTestCase):
                 await self.invoke(options=options)
             self.assertEqual(len(self.sent),1)
         for change in ({'grantNonce':NONCE},{'maxAgeSeconds':True},{'maxAgeSeconds':59},
-                {'maxAgeSeconds':3601},{'callerUserId':'guest'}):
+                {'maxAgeSeconds':3601},{'callerUserId':'guest'},
+                {'operation':'presentation_history_store'},{'operation':'attest_presentation_history_v1#updates'}):
             with self.subTest(change=change),self.assertRaises(ValueError):await self.invoke(dict(request(),**change))
             self.assertEqual(self.sent,[])
         with self.assertRaises(ValueError):await self.invoke(timeout_seconds=2.01)

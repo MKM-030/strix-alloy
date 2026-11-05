@@ -15,7 +15,9 @@ import aiohttp
 CALLER_HEADER = 'X-SCC-Voice-Authorization'
 CALLER_INSTANCE_URL = 'https://soprasteriaassvsdemo14.service-now.com'
 CALLER_CREATE_PATH = '/api/sn_voice_aia/local_voice_caller/create'
-PRESENTATION_GRANT_PATH = '/api/global/scc_voice_context/presentation-grants'
+PRESENTATION_GRANT_PATH = '/api/global/scc_voice_context/updates'
+PRESENTATION_GRANT_OPERATION = 'attest_presentation_history_v1'
+PRESENTATION_GRANT_PURPOSE = (CALLER_INSTANCE_URL + PRESENTATION_GRANT_PATH, PRESENTATION_GRANT_OPERATION)
 CALLER_SERVICE_ID = '8aa131d793f787105c8132d47aba1095'
 CALLER_AGENT_ID = 'a6337ddf93f787105c8132d47aba1058'
 CALLER_PROFILE_ID = 'c623e20f93374354e7f2b9fa6aba1081'
@@ -167,7 +169,7 @@ class PresentationAttestationLease:
 
     def take(self, owner, purpose):
         try:
-            if (owner is not self._owner or purpose != PRESENTATION_GRANT_PATH
+            if (owner is not self._owner or type(purpose) is not tuple or purpose != PRESENTATION_GRANT_PURPOSE
                     or not self.available):
                 raise ValueError('Presentation history unavailable')
             return self._value, self._deadline-time.monotonic(), self._deadline

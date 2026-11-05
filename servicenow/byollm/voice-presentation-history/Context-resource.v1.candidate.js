@@ -47,6 +47,40 @@
         stage = 'request_validation';
         var data = request.body.nextEntry();
     // BEGIN SCC_PRESENTATION_HISTORY_V1
+    if (data && data.operation === 'attest_presentation_history_v1') {
+        // Existing App token/provider checks succeeded. A Bearer must actually
+        // resolve to the claimed non-Guest GS caller; no identity fallback.
+        var grantUnavailable = function(status) {
+            reply(status, {status:'failure',state:'presentation_history_unavailable',attested:false,
+                scope:'presentation_metadata_only',businessAuthority:false});
+        };
+        try {
+            var grantActor = String(gs.getUserID() || ''), grantName = String(gs.getUserName() || '');
+            if (!sysId(grantActor) || grantName.length < 1 || grantName === 'guest' || grantActor !== data.callerUserId) {
+                grantUnavailable(401); return;
+            }
+            var grantResult = JSON.parse(String(new global.SCCVoicePresentationHistoryV1().issueGrantJSON(JSON.stringify(data))));
+            var grantKeys = ['status','state','requestId','conversationId','nonceSha256','issuedAtMs','expiresAtMs','attested','scope','businessAuthority'];
+            var grantInteger = function(value) {
+                return typeof value === 'number' && isFinite(value) && value % 1 === 0 && value >= 1 && value <= 9007199254740991;
+            };
+            if (!grantResult || typeof grantResult !== 'object' || Array.isArray(grantResult) ||
+                Object.keys(grantResult).sort().join(',') !== grantKeys.sort().join(',') ||
+                grantResult.requestId !== data.requestId || !data.conversationBinding ||
+                grantResult.conversationId !== data.conversationBinding.conversationId || grantResult.nonceSha256 !== data.nonceSha256 ||
+                !grantInteger(grantResult.issuedAtMs) || !grantInteger(grantResult.expiresAtMs) ||
+                grantResult.expiresAtMs - grantResult.issuedAtMs !== data.maxAgeSeconds * 1000 ||
+                grantResult.status !== 'success' || grantResult.state !== 'presentation_history_grant_attested' ||
+                grantResult.attested !== true || grantResult.scope !== 'presentation_metadata_only' || grantResult.businessAuthority !== false) {
+                grantUnavailable(503); return;
+            }
+            // Native REST supplies the exact outer {result: receipt} envelope.
+            reply(200, grantResult);
+        } catch (ignoredOptionalAttestation) {
+            grantUnavailable(503);
+        }
+        return;
+    }
     if (data && data.operation === 'presentation_history_store') {
         // Original token validation has already succeeded. The separate helper
         // verifies the issued finite grant through public provider context only.

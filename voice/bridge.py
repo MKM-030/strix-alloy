@@ -22,7 +22,7 @@ from aiohttp import ClientSession, ClientTimeout, FormData, web
 
 if __package__:
     from .caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
-        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PATH,
+        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PURPOSE,
         valid_authorization, resolve_native_caller, refresh_native_caller_session,
         create_native_caller_conversation, validated_created,
         CALLER_CREATE_FAILURE_CONTRACT, CallerCreateFailure, CallerCreateFailureReceipt)
@@ -32,7 +32,7 @@ if __package__:
         valid_grant_receipt)
 else:
     from caller_binding import (CALLER_HEADER, CallerBinding, CallerBootstrapCredential,
-        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PATH,
+        CALLER_CREATE_PATH, CALLER_SERVICE_ID, CALLER_AGENT_ID, CALLER_PROFILE_ID, PRESENTATION_GRANT_PURPOSE,
         valid_authorization, resolve_native_caller, refresh_native_caller_session,
         create_native_caller_conversation, validated_created,
         CALLER_CREATE_FAILURE_CONTRACT, CallerCreateFailure, CallerCreateFailureReceipt)
@@ -1585,7 +1585,7 @@ class Bridge:
         try:
             if session.presentation_lease is not lease or not self.presentation_owner_alive(session,identity):
                 return
-            authorization, remaining, original_deadline=lease.take(session,PRESENTATION_GRANT_PATH)
+            authorization, remaining, original_deadline=lease.take(session,PRESENTATION_GRANT_PURPOSE)
             started=time.monotonic()
             deadline=min(original_deadline,started+2)
             if remaining <= 0 or started >= deadline:
