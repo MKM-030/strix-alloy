@@ -21,15 +21,18 @@ class ControllerConsumerTests(unittest.IsolatedAsyncioTestCase):
         self.controller_busy = False
         self.controller_draining = False
         self.catalog_id_override = None
+        self.health_extra = {}
         self.seen = []
         self.metadata_auth = []
         async def health(request):
             self.metadata_auth.append(request.headers.get('Authorization'))
             if request.headers.get('Authorization') != 'Bearer ' + UPSTREAM:
                 return web.Response(status=401)
-            return web.json_response(dict(status='ok', backend=self.current['id'],
+            value = dict(status='ok', backend=self.current['id'],
                 checkpoint=self.current['checkpoint'], context=self.current['context'],
-                active_requests=int(self.controller_busy), queued_requests=0, draining=self.controller_draining))
+                active_requests=int(self.controller_busy), queued_requests=0, draining=self.controller_draining)
+            value.update(self.health_extra)
+            return web.json_response(value)
         async def models(request):
             self.metadata_auth.append(request.headers.get('Authorization'))
             if request.headers.get('Authorization') != 'Bearer ' + UPSTREAM:
@@ -105,6 +108,41 @@ class ControllerConsumerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(reply.headers.get('Retry-After'), '3')
         self.assertEqual(await reply.json(), {'error': {'message': 'controller busy'}})
         self.assertEqual(self.gateway.active, 0)
+
+    async def test_legacy_admission_is_unknown_without_affecting_process_health(self):
+        response = await self.client.get('/health', headers=HEADERS)
+        value = await response.json()
+        self.assertEqual(response.status, 200)
+        self.assertEqual(value['status'], 'ok')
+        self.assertIn('request_admission_ready', value)
+        self.assertIsNone(value['request_admission_ready'])
+        self.assertEqual(value['request_admission']['reason'], 'unknown')
+        self.assertEqual(self.seen, [])
+
+    async def test_forged_or_malformed_admission_cannot_claim_ready(self):
+        baseline = dict(version=1, policy='halogen_two_slot_memory', ready=True,
+            reason='ready', required_available_bytes=22 * 2**30,
+            required_commit_headroom_bytes=22 * 2**30, available_bytes=23 * 2**30,
+            commit_headroom_bytes=100 * 2**30, sample_age_ms=0)
+        cases = [dict(baseline, ready=False), dict(baseline, reason='physical_low'),
+                 dict(baseline, available_bytes=True), dict(baseline, available_bytes=21 * 2**30),
+                 dict(baseline, required_available_bytes=18 * 2**30),
+                 dict(baseline, required_available_bytes=float(22 * 2**30)),
+                 dict(baseline, ready=1), dict(baseline, version=True),
+                 dict(baseline, sample_age_ms=float('nan')),
+                 dict(baseline, available_bytes=2**64),
+                 dict(baseline, prompt='sensitive synthetic prompt')]
+        for metadata in cases:
+            with self.subTest(metadata=metadata):
+                self.health_extra = dict(request_admission=metadata, request_admission_ready=True)
+                response = await self.client.get('/health', headers=HEADERS)
+                value = await response.json()
+                self.assertEqual(response.status, 200)
+                self.assertIn('request_admission_ready', value)
+                self.assertIsNone(value['request_admission_ready'])
+                self.assertEqual(value['request_admission']['reason'], 'unknown')
+                self.assertNotIn('sensitive', str(value))
+        self.assertEqual(self.seen, [])
 
     async def test_single_system_dispatch_only_for_current_halogen(self):
         messages = [{'role': 'system', 'content': 'fixture task'}]

@@ -54,6 +54,81 @@ INFERENCE_PARAMETER_NAMES=frozenset({'messages','prompt','input','max_tokens',
     'prompt_cache_policy','continue_final_message','add_generation_prompt',
     'previous_response_id'})
 
+REQUEST_MEMORY_BYTES = 22 * 1024 ** 3
+ADMISSION_MAX_BYTES = 2**53 - 1
+MEMORY_ADMISSION_REASONS = frozenset({'ready', 'physical_low', 'commit_low',
+    'physical_and_commit_low', 'telemetry_unavailable', 'telemetry_invalid',
+    'telemetry_inconsistent', 'sample_stale'})
+
+
+def memory_admission_reason(available_bytes, commit_headroom_bytes):
+    return {
+        (False, False): 'ready',
+        (True, False): 'physical_low',
+        (False, True): 'commit_low',
+        (True, True): 'physical_and_commit_low',
+    }[(available_bytes < REQUEST_MEMORY_BYTES, commit_headroom_bytes < REQUEST_MEMORY_BYTES)]
+
+
+def request_admission_metadata(reason='unknown', available_bytes=None,
+                               commit_headroom_bytes=None, sample_age_ms=None):
+    """Closed numeric metadata shared by the controller and its public gateway."""
+    policy = 'unknown'
+    ready = None
+    required = None
+    if reason in MEMORY_ADMISSION_REASONS:
+        policy = 'halogen_two_slot_memory'
+        ready = reason == 'ready'
+        required = REQUEST_MEMORY_BYTES
+    elif reason == 'not_required':
+        policy = 'not_required'
+    elif reason not in ('unknown', 'process_unavailable'):
+        reason = 'unknown'
+    def bounded_integer(value, maximum):
+        return value if type(value) is int and 0 <= value <= maximum else None
+    return dict(version=1, policy=policy, ready=ready, reason=reason,
+        required_available_bytes=required, required_commit_headroom_bytes=required,
+        available_bytes=bounded_integer(available_bytes, ADMISSION_MAX_BYTES),
+        commit_headroom_bytes=bounded_integer(commit_headroom_bytes, ADMISSION_MAX_BYTES),
+        sample_age_ms=bounded_integer(sample_age_ms, 60000))
+
+
+def project_request_admission(value):
+    """Reject malformed, contradictory or extended metadata without copying it."""
+    unknown = request_admission_metadata()
+    if (type(value) is not dict or set(value) != set(unknown)
+            or type(value.get('version')) is not int or value['version'] != 1
+            or type(value.get('reason')) is not str):
+        return unknown
+    projected = request_admission_metadata(value['reason'], value['available_bytes'],
+        value['commit_headroom_bytes'], value['sample_age_ms'])
+    if value != projected or any(type(value[key]) is not type(projected[key]) for key in projected):
+        return unknown
+    reason = projected['reason']
+    available = projected['available_bytes']
+    commit = projected['commit_headroom_bytes']
+    age = projected['sample_age_ms']
+    if reason in ('ready', 'physical_low', 'commit_low', 'physical_and_commit_low'):
+        if available is None or commit is None or age is None or age >= 1000:
+            return unknown
+        if reason != memory_admission_reason(available, commit):
+            return unknown
+    elif available is not None or commit is not None:
+        return unknown
+    elif reason in ('unknown', 'not_required', 'process_unavailable') and age is not None:
+        return unknown
+    elif reason == 'sample_stale' and age is not None and age < 1000:
+        return unknown
+    elif reason != 'sample_stale' and age is not None and age >= 1000:
+        return unknown
+    return projected
+
+
+class RequestAdmissionError(ValueError):
+    def __init__(self, admission):
+        super().__init__('Request memory admission rejected')
+        self.admission = project_request_admission(admission)
+
 
 def inference_request_metrics(body, context):
     """Numeric sizes only. Never estimate token counts or copy request values."""
@@ -593,6 +668,10 @@ class Gateway:
                     raise ValueError('Controller is not ready')
                 self.controller_health={key:value[key] for key in
                     ('backend','active_requests','queued_requests','draining')}
+                admission = project_request_admission(value.get('request_admission'))
+                if value.get('request_admission_ready') is not admission['ready']:
+                    admission = request_admission_metadata()
+                self.controller_health['request_admission'] = admission
                 if value['draining']:
                     raise ValueError('Controller is draining')
                 async with self.client.get(self.backend.upstream+'/v1/models',
@@ -629,6 +708,16 @@ class Gateway:
             self.last_healthy=time.monotonic()
             return value
 
+    def request_admission(self):
+        if self._inference_entry_guard is None:
+            return request_admission_metadata('not_required')
+        try:
+            return project_request_admission(self._inference_entry_guard())
+        except RequestAdmissionError as exc:
+            return project_request_admission(exc.admission)
+        except Exception:
+            return request_admission_metadata()
+
     async def health(self, request):
         try:
             async with self.probe_lock: await self.probe()
@@ -643,6 +732,11 @@ class Gateway:
             'completed':self.completed,'cancelled':self.cancelled}
         if self.controller_consumer:
             value.update(controller_consumer=True,controller=self.controller_health if ready else None)
+        admission = request_admission_metadata('process_unavailable')
+        if ready:
+            admission = (self.controller_health['request_admission'] if self.controller_consumer
+                         else self.request_admission())
+        value.update(request_admission_ready=admission['ready'], request_admission=admission)
         return web.json_response(value,status=200 if ready else 503)
 
     async def models(self, request):
@@ -725,9 +819,10 @@ class Gateway:
             if 'anthropic-version' in request.headers:
                 headers['anthropic-version']=request.headers['anthropic-version']
             if self._inference_entry_guard is not None:
-                try:
-                    self._inference_entry_guard()
-                except Exception:
+                admission = self.request_admission()
+                if admission['ready'] is not True:
+                    LOG.warning('request_memory_admission backend=%s metadata=%s',
+                        backend.identifier, json.dumps(admission, separators=(',', ':')))
                     status=503
                     return web.json_response({'error':{'message':'Request memory admission unavailable'}},status=status)
             async with self.client.post(backend.upstream+request.path,json=body,

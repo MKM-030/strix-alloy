@@ -18,7 +18,8 @@ import sys
 import threading
 import time
 import uuid
-from gateway import load_config,serve
+from gateway import (ADMISSION_MAX_BYTES, RequestAdmissionError, load_config,
+                     memory_admission_reason, request_admission_metadata, serve)
 from owned_child import JobChild
 
 ROOT=Path(__file__).resolve().parent
@@ -367,19 +368,27 @@ def halogen_request_entry_guard():
     """Fresh Windows admission for each opt-in request, separate from runtime reserve."""
     from host_frames import frame
     began = time.monotonic()
-    snapshot = frame()
+    try:
+        snapshot = frame()
+    except Exception:
+        raise RequestAdmissionError(request_admission_metadata('telemetry_unavailable')) from None
     elapsed = time.monotonic() - began
+    age_ms = int(elapsed * 1000) if math.isfinite(elapsed) and 0 <= elapsed <= 60 else None
     if not math.isfinite(elapsed) or not 0 <= elapsed < 1:
-        raise ValueError('Request-entry memory sample is stale or slow')
+        raise RequestAdmissionError(request_admission_metadata('sample_stale', sample_age_ms=age_ms))
     fields = ('available_bytes', 'committed_bytes', 'commit_limit_bytes', 'commit_headroom_bytes')
     if (type(snapshot) is not dict or any(type(snapshot.get(key)) is not int
-            or snapshot[key] < 0 for key in fields)):
-        raise ValueError('Invalid request-entry physical/commit telemetry')
+            or not 0 <= snapshot[key] <= ADMISSION_MAX_BYTES for key in fields)):
+        raise RequestAdmissionError(request_admission_metadata('telemetry_invalid', sample_age_ms=age_ms))
     if (snapshot['committed_bytes'] > snapshot['commit_limit_bytes']
             or snapshot['commit_headroom_bytes'] != snapshot['commit_limit_bytes'] - snapshot['committed_bytes']):
-        raise ValueError('Inconsistent request-entry commit telemetry')
-    if min(snapshot['available_bytes'], snapshot['commit_headroom_bytes']) < 22 * 1024 ** 3:
-        raise ValueError('Request entry requires 22/22 GiB physical/commit headroom')
+        raise RequestAdmissionError(request_admission_metadata('telemetry_inconsistent', sample_age_ms=age_ms))
+    reason = memory_admission_reason(snapshot['available_bytes'], snapshot['commit_headroom_bytes'])
+    admission = request_admission_metadata(reason, snapshot['available_bytes'],
+        snapshot['commit_headroom_bytes'], age_ms)
+    if reason != 'ready':
+        raise RequestAdmissionError(admission)
+    return admission
 
 
 def install_halogen_request_entry_guard(configuration, gateway, repo):

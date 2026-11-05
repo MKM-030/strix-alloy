@@ -52,6 +52,64 @@ class EntryPolicyTests(unittest.TestCase):
             guard()
         self.assertEqual(samples, ['sample'])
 
+    def test_guard_returns_closed_readiness_metadata(self):
+        with patch.object(host_frames, 'frame', return_value=memory()), \
+                patch.object(controller.time, 'monotonic', side_effect=[100, 100.01]):
+            result = self.guard()()
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result, dict(version=1, policy='halogen_two_slot_memory', ready=True,
+            reason='ready', required_available_bytes=22 * GIB,
+            required_commit_headroom_bytes=22 * GIB, available_bytes=22 * GIB,
+            commit_headroom_bytes=22 * GIB, sample_age_ms=10))
+
+    def test_rejections_carry_fixed_reasons_and_numeric_samples(self):
+        cases = [(memory(21 * GIB), 'physical_low'),
+                 (memory(commit=21 * GIB), 'commit_low'),
+                 (memory(21 * GIB, 21 * GIB), 'physical_and_commit_low')]
+        for sample, reason in cases:
+            with self.subTest(reason=reason), patch.object(host_frames, 'frame', return_value=sample):
+                with self.assertRaises(ValueError) as caught:
+                    self.guard()()
+                metadata = getattr(caught.exception, 'admission', None)
+                self.assertIsInstance(metadata, dict)
+                self.assertEqual(metadata['reason'], reason)
+                self.assertIs(metadata['ready'], False)
+                self.assertEqual(metadata['available_bytes'], sample['available_bytes'])
+                self.assertEqual(metadata['commit_headroom_bytes'], sample['commit_headroom_bytes'])
+
+    def test_failed_or_invalid_samples_never_reuse_observed_bytes(self):
+        cases = [(OSError('sensitive synthetic diagnostic'), 'telemetry_unavailable'),
+                 ({}, 'telemetry_invalid'),
+                 (memory(physical=True), 'telemetry_invalid')]
+        inconsistent = memory()
+        inconsistent['commit_headroom_bytes'] += 1
+        cases.append((inconsistent, 'telemetry_inconsistent'))
+        for sample, reason in cases:
+            with self.subTest(reason=reason), patch.object(host_frames, 'frame') as sampler:
+                if isinstance(sample, Exception):
+                    sampler.side_effect = sample
+                else:
+                    sampler.return_value = sample
+                with self.assertRaises((ValueError, OSError)) as caught:
+                    self.guard()()
+                metadata = getattr(caught.exception, 'admission', None)
+                self.assertIsInstance(metadata, dict)
+                self.assertEqual(metadata['reason'], reason)
+                self.assertIsNone(metadata['available_bytes'])
+                self.assertIsNone(metadata['commit_headroom_bytes'])
+                self.assertNotIn('sensitive', str(caught.exception))
+
+    def test_stale_sample_is_distinct_and_has_no_observed_bytes(self):
+        with patch.object(host_frames, 'frame', return_value=memory()), \
+                patch.object(controller.time, 'monotonic', side_effect=[100, 101]):
+            with self.assertRaises(ValueError) as caught:
+                self.guard()()
+        metadata = getattr(caught.exception, 'admission', None)
+        self.assertIsInstance(metadata, dict)
+        self.assertEqual(metadata['reason'], 'sample_stale')
+        self.assertEqual(metadata['sample_age_ms'], 1000)
+        self.assertIsNone(metadata['available_bytes'])
+
     def test_low_invalid_and_inconsistent_telemetry_is_rejected(self):
         guard = self.guard()
         cases = [memory(22 * GIB - 1), memory(commit=22 * GIB - 1), {}, None, [],
@@ -83,7 +141,7 @@ class EntryPolicyTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     guard()
         with patch.object(host_frames, 'frame', side_effect=OSError('synthetic telemetry failure')):
-            with self.assertRaises(OSError):
+            with self.assertRaises(ValueError):
                 guard()
 
     def test_only_complete_explicit_two_slot_halogen_profile_installs_guard(self):
@@ -192,7 +250,7 @@ class EntryTransportTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(voice.status, 200)
         await voice.read()
         self.assertEqual(self.seen, ['held business', 'short voice'])
-        self.assertEqual(len(self.samples), 2)
+        self.assertGreaterEqual(len(self.samples), 2)
         self.release.set()
         response = await business
         self.assertEqual(response.status, 200)
@@ -202,11 +260,12 @@ class EntryTransportTests(unittest.IsolatedAsyncioTestCase):
         self.gateway.concurrency = 1
         business = self.post(self.public, 'held business')
         self.assertEqual(await asyncio.wait_for(self.started.get(), 2), 'held business')
+        samples_before_queue = len(self.samples)
         voice = self.post(self.direct, 'queued voice')
         async with asyncio.timeout(2):
             while len(self.gateway.waiters) != 1:
                 await asyncio.sleep(.001)
-        self.assertEqual(len(self.samples), 1, 'Queued request sampled before its slot grant')
+        self.assertEqual(len(self.samples), samples_before_queue, 'Queued request sampled before its slot grant')
         self.sample = memory(physical=22 * GIB - 1)
         self.release.set()
         response = await business
@@ -215,24 +274,86 @@ class EntryTransportTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(rejected.status, 503)
         await rejected.read()
         self.assertEqual(self.seen, ['held business'])
-        self.assertEqual(len(self.samples), 2)
+        self.assertEqual(len(self.samples), samples_before_queue + 1)
         self.assertEqual(self.gateway.active, 0)
 
-    async def test_invalid_telemetry_never_posts_and_gets_do_not_sample(self):
+    async def test_invalid_telemetry_never_posts_and_model_catalog_stays_available(self):
         for invalid in ({}, memory(physical=True), memory(commit=0), OSError('unavailable')):
             self.sample = invalid
             response = await self.post(self.direct, 'rejected voice')
             self.assertEqual(response.status, 503)
             await response.read()
         self.assertEqual(self.seen, [])
-        before = len(self.samples)
         for client in (self.direct, self.public):
             for path in ('/health', '/v1/models'):
                 response = await client.get(path, headers=HEADERS)
                 self.assertEqual(response.status, 200)
                 await response.read()
+        before = len(self.samples)
+        response = await self.direct.get('/v1/models', headers=HEADERS)
+        self.assertEqual(response.status, 200)
         self.assertEqual(len(self.samples), before)
         self.assertEqual(self.gateway.active, 0)
+
+    async def test_process_health_stays_ready_while_request_memory_is_low(self):
+        self.sample = memory(physical=int(21.96 * GIB))
+        for client in (self.direct, self.public):
+            response = await client.get('/health', headers=HEADERS)
+            value = await response.json()
+            self.assertEqual(response.status, 200)
+            self.assertEqual(value['status'], 'ok')
+            self.assertIn('request_admission_ready', value)
+            self.assertIs(value['request_admission_ready'], False)
+            self.assertEqual(value['request_admission']['reason'], 'physical_low')
+            self.assertEqual(value['request_admission']['available_bytes'], self.sample['available_bytes'])
+        self.assertEqual(self.seen, [])
+
+    async def test_unguarded_health_reports_not_required_without_sampling(self):
+        self.gateway._inference_entry_guard = None
+        before = len(self.samples)
+        response = await self.direct.get('/health', headers=HEADERS)
+        value = await response.json()
+        self.assertEqual(response.status, 200)
+        self.assertIsNone(value['request_admission_ready'])
+        self.assertEqual(value['request_admission']['policy'], 'not_required')
+        self.assertEqual(len(self.samples), before)
+
+    async def test_post_rechecks_after_health_and_logs_only_closed_metadata(self):
+        response = await self.direct.get('/health', headers=HEADERS)
+        value = await response.json()
+        self.assertIn('request_admission_ready', value)
+        self.assertIs(value['request_admission_ready'], True)
+        self.sample = memory(physical=21 * GIB)
+        with self.assertLogs('alloy.gateway', level='WARNING') as logged:
+            rejected = await self.post(self.direct, 'sensitive synthetic prompt')
+            self.assertEqual(rejected.status, 503)
+            self.assertEqual(await rejected.json(), {'error': {'message': 'Request memory admission unavailable'}})
+        text = '\n'.join(logged.output)
+        self.assertIn('request_memory_admission', text)
+        self.assertIn('physical_low', text)
+        self.assertIn(str(21 * GIB), text)
+        self.assertNotIn('sensitive', text)
+        self.assertNotIn(KEY, text)
+        self.assertEqual(self.seen, [])
+        self.assertEqual(self.gateway.active, 0)
+
+    async def test_unexpected_guard_exception_is_sanitized_in_health_and_logs(self):
+        def broken_guard():
+            raise RuntimeError('sensitive synthetic exception ' + KEY)
+        self.gateway._inference_entry_guard = broken_guard
+        response = await self.direct.get('/health', headers=HEADERS)
+        value = await response.json()
+        self.assertIn('request_admission_ready', value)
+        self.assertIsNone(value['request_admission_ready'])
+        self.assertEqual(value['request_admission']['reason'], 'unknown')
+        self.assertNotIn('sensitive', json.dumps(value))
+        with self.assertLogs('alloy.gateway', level='WARNING') as logged:
+            rejected = await self.post(self.direct, 'sensitive synthetic prompt')
+            await rejected.read()
+        self.assertEqual(rejected.status, 503)
+        self.assertNotIn('sensitive', '\n'.join(logged.output))
+        self.assertNotIn(KEY, '\n'.join(logged.output))
+        self.assertEqual(self.seen, [])
 
 
 if __name__ == '__main__':
