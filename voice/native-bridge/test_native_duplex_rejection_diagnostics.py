@@ -102,10 +102,10 @@ class RejectionDiagnosticTests(unittest.IsolatedAsyncioTestCase):
             await on_sentence(SimpleNamespace(text='Ja, ich höre Sie gut.', identity=identity))
             await asyncio.wait_for(first_pcm.wait(), .5)
             try:
-                await on_sentence(SimpleNamespace(text='Die Bestellung ist nicht bestätigt.', identity=identity))
+                await on_sentence(SimpleNamespace(text='https://example.invalid', identity=identity))
             except ValueError:
                 return SimpleNamespace(text='', failure='output_callback_failed', identity=identity)
-            raise AssertionError('Existing completion-word guard must still reject the synthetic sentence')
+            raise AssertionError('Existing URL guard must still hard-reject the synthetic sentence')
         lane.conversation.respond = respond
         lane.conversation.sentence_streaming = True
         lane.conversation.output_epoch = lane.epoch
@@ -118,11 +118,11 @@ class RejectionDiagnosticTests(unittest.IsolatedAsyncioTestCase):
             self.assertFalse(lane._model_failed)
             self.assertIsNone(lane.conversation)
             logs = '\n'.join(captured.output)
-            self.assertIn('reason=completion_confirmed at=sentence', logs)
+            self.assertIn('reason=external_url at=sentence', logs)
             self.assertIn('reason=candidate_callback_failed at=completion', logs)
             self.assertNotIn('stage=fallback reason=unavailable', logs)
             self.assertFalse(lane.output_pending, 'A later failure must not overlay already started speech')
-            self.assertNotIn('Die Bestellung ist nicht bestätigt.', logs)
+            self.assertNotIn('https://example.invalid', logs)
         finally:
             call.closed = True
             release_audio.set()

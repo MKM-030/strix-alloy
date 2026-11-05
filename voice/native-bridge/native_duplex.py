@@ -339,12 +339,20 @@ class _PendingObservation:
 
 
 @dataclass(frozen=True)
+class _ActiveObservation:
+    turn: tuple
+    epoch: int
+    fingerprint: str
+    backend_owner: object
+
+
+@dataclass(frozen=True)
 class _Output:
     text: str
     turn: object
     epoch: int
     task_revision: int
-    observation_revision: int | _BootstrapObservation | _PendingObservation | None
+    observation_revision: int | _BootstrapObservation | _PendingObservation | _ActiveObservation | None
     kind: str
     request: int | None = None
     identity: object = None
@@ -826,6 +834,16 @@ class NativeDuplex:
         return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
 
     def _observation_current(self, observation):
+        if isinstance(observation, _ActiveObservation):
+            if (observation.epoch != self.epoch
+                    or observation.backend_owner is not getattr(self.call.dialog, 'backend_owner', None)):
+                return False
+            try:
+                key, snapshot, _ = self._dialogue_snapshot(observation.turn, observation.epoch,
+                                                          bind_observation=False)
+                return observation.fingerprint == self._dialogue_signature(snapshot, key)
+            except (TypeError, ValueError):
+                return False
         if isinstance(observation, _PendingObservation):
             if self.bootstrap_pending or not self._pending or observation.epoch != self.epoch:
                 return False
@@ -1577,8 +1595,11 @@ class NativeDuplex:
             if isinstance(value, (tuple, list)):
                 return [normalize(item) for item in value]
             return value
+        # Progress labels/ages are advisory, and our own speech adds no business
+        # authority. Exclude them only from this guard, retaining the full prompt.
         exposed = dict(snapshot, public_findings=tuple(fact for fact in snapshot['public_findings']
-            if fact['source_event'] != 'complete_emitted_assistant_speech'))
+            if fact['source_event'] not in ('complete_emitted_assistant_speech',
+                                            'servicenow_processing_presentation')))
         context = dict(snapshot=exposed, key=key,
             pending_ids=tuple(turn[3] for turn in self._pending),
             input_boundary=getattr(self.call.dialog, 'input_boundary', None),
@@ -1682,6 +1703,9 @@ class NativeDuplex:
                 self._bootstrap_context_fingerprint(question, native_question), question, native_question)
         elif bind_observation and self._pending:
             observation = _PendingObservation(tuple(turn), epoch, self._dialogue_signature(snapshot, key))
+        elif bind_observation:
+            observation = _ActiveObservation(tuple(turn), epoch, self._dialogue_signature(snapshot, key),
+                                             getattr(self.call.dialog, 'backend_owner', None))
         return key, snapshot, observation
 
     def _admit_conversation(self, candidate, turn, epoch, observation, snapshot, *, transcript_group=None):
@@ -1701,11 +1725,16 @@ class NativeDuplex:
         # business evidence or completion authority. These guards hold
         # obvious success/control/identifier leakage, not prove semantics.
         text = candidate.text.strip()
-        forbidden_matches = re.finditer(r'(?i)(?:<|https?://|\b(?:public-reply|processing-label)-|'
+        completion_words = {'bestellt', 'abgeschlossen', 'genehmigt', 'freigegeben', 'erledigt', 'bestätigt'}
+        forbidden_matches = tuple(match for match in re.finditer(r'(?i)(?:<|https?://|\b(?:public-reply|processing-label)-|'
             r'\b[0-9a-f]{16,}\b|\b(?:analysis|reasoning|tool_call|'
             r'bestellt|abgeschlossen|genehmigt|freigegeben|erledigt|bestätigt)\b)', text)
-        forbidden = next((match for match in forbidden_matches
-            if match.group(0).casefold() != 'bestellt' or not _noncompletion_ordering(text, match)), None)
+            if match.group(0).casefold() != 'bestellt' or not _noncompletion_ordering(text, match))
+        forbidden = next(iter(forbidden_matches), None)
+        if skip_unsupported_claim:
+            # A soft completion hold must not conceal a later hard violation.
+            forbidden = next((match for match in forbidden_matches
+                if match.group(0).casefold() not in completion_words), forbidden)
         source = ' '.join(fact['text'] for fact in snapshot['public_findings']
                           if fact['source_event'] != 'complete_emitted_assistant_speech')
         source += ' ' + ' '.join(snapshot['raw_inputs']) + ' ' + snapshot.get('question', '')
@@ -1738,9 +1767,23 @@ class NativeDuplex:
             reason = 'identity_not_current'
         elif unproven_storage_or_check_claim(text):
             reason = 'unproven_storage_or_check_claim'
+        completion_reasons = {'completion_ordered', 'completion_closed', 'completion_approved',
+                              'completion_released', 'completion_done', 'completion_confirmed'}
+        if skip_unsupported_claim and reason in completion_reasons:
+            # Unlike a hard scope/identity failure, an unsupported claim need
+            # not invalidate earlier admitted speech from this same stream.
+            if unbound_numbers:
+                reason = 'unbound_number'
+            elif any(value and value in text for value in identifiers):
+                reason = 'identifier_in_text'
+            elif not self.conversation.is_current(candidate.identity):
+                reason = 'identity_not_current'
+            elif self._control_gate.binding is not None and not self._control_gate.dispatched:
+                reason = 'native_control_active'
         if reason is not None:
             self._log_dialogue_discard(reason, 'sentence')
-            if skip_unsupported_claim and reason == 'unproven_storage_or_check_claim':
+            if skip_unsupported_claim and (reason == 'unproven_storage_or_check_claim'
+                                           or reason in completion_reasons):
                 return 'skipped_claim'
             return 'rejected'
         part = None

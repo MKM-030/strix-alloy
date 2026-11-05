@@ -137,6 +137,8 @@ class NativeTranscriptGroupTests(unittest.IsolatedAsyncioTestCase):
         generating = self.start(self.generate(SentenceModel([first, second], finish=end)))
         self.speaker()
         await self.until(first_pcm.is_set)
+        self.call.dialog.input_boundary = dict(source='servicenow_input_control',
+            businessRequestId='c' * 32, controlType='InputText', label='Welche Lieferadresse gilt?')
         self.call.dialog.observation_revision += 1
         end.set()
         await generating

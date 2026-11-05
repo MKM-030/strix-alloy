@@ -150,8 +150,12 @@ class ClaimReleaseTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_context_drift_after_skipped_claim_aborts_remaining_speech(self):
         self.call.vad_active = True
-        model = SentenceModel(['Wir können die nächsten Angaben klären.', UNSAFE, QUESTION], before=lambda index:
-            setattr(self.call.dialog, 'observation_revision', 1) if index == 2 else None)
+        def before(index):
+            if index == 2:
+                self.call.dialog.input_boundary = dict(source='servicenow_input_control',
+                    businessRequestId='c' * 32, controlType='InputText', label='Welche Lieferadresse gilt?')
+                self.call.dialog.observation_revision = 1
+        model = SentenceModel(['Wir können die nächsten Angaben klären.', UNSAFE, QUESTION], before=before)
         await self.generate(model)
         self.call.vad_active = False
         self.start_speaker()
@@ -172,8 +176,12 @@ class ClaimReleaseTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(model.inputs, [RAW])
 
     async def test_context_drift_on_unsafe_sentence_cannot_hide_a_hard_rejection(self):
-        model = SentenceModel([UNSAFE, QUESTION], before=lambda index:
-            setattr(self.call.dialog, 'observation_revision', 1) if index == 0 else None)
+        def before(index):
+            if index == 0:
+                self.call.dialog.input_boundary = dict(source='servicenow_input_control',
+                    businessRequestId='c' * 32, controlType='InputText', label='Welche Lieferadresse gilt?')
+                self.call.dialog.observation_revision = 1
+        model = SentenceModel([UNSAFE, QUESTION], before=before)
         await self.generate(model)
         self.assertEqual(model.offered, [UNSAFE])
         self.assertEqual(list(self.lane._outputs), [])

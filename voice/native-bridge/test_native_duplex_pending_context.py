@@ -119,10 +119,13 @@ class PendingContextTests(unittest.IsolatedAsyncioTestCase):
         self.lane._queue_dialogue_observation()
         await self.drain_observations()
         self.assertEqual(len(self.model.observations), 2)
-    async def test_unmasked_context_keeps_strict_raw_revision_guard(self):
+    async def test_active_counter_only_change_preserves_but_real_boundary_invalidates(self):
         self.lane._pending.clear()
         _, _, binding = self.lane._dialogue_snapshot(self.q2, self.lane.epoch)
         self.call.dialog.observation_revision += 1
+        self.assertTrue(self.lane._observation_current(binding))
+        self.call.dialog.input_boundary = dict(source='servicenow_input_control',
+            businessRequestId='c' * 32, controlType='InputText', label='Welche Lieferadresse gilt?')
         self.assertFalse(self.lane._observation_current(binding))
 
     async def test_same_pending_count_with_different_input_identity_invalidates_binding(self):

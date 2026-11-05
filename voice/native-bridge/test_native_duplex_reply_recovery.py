@@ -27,10 +27,10 @@ class Conversation:
         self.inputs.append(raw)
         if self.failure == 'output_callback_failed':
             try:
-                await on_sentence(SimpleNamespace(text='Die Bestellung ist nicht bestätigt.', identity=self.identity))
+                await on_sentence(SimpleNamespace(text='https://example.invalid', identity=self.identity))
             except ValueError:
                 return SimpleNamespace(text='', failure=self.failure, identity=self.identity)
-            raise AssertionError('The existing completion claim guard must remain active')
+            raise AssertionError('The existing URL guard must hard-reject the synthetic sentence')
         if self.failure is None:
             await on_sentence(SimpleNamespace(text='Wir können die Angaben gemeinsam klären.', identity=self.identity))
         return SimpleNamespace(text='', failure=self.failure, identity=self.identity)

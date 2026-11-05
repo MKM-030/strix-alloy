@@ -208,7 +208,7 @@ class BootstrapContextTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotEqual(self.model.inputs[0][1]['capability_limits'], self.model.inputs[1][1]['capability_limits'])
         self.assertEqual(self.call.spoken.count(FIRST), 1, 'Only the fresh-context attempt may release its sentence')
 
-    async def test_processing_fact_exposed_after_bootstrap_retains_strict_invalidation(self):
+    async def test_advisory_progress_after_bootstrap_preserves_response(self):
         self.bootstrap_release.set()
         await self.until(lambda: not self.lane.bootstrap_pending)
         self.progress()
@@ -218,7 +218,8 @@ class BootstrapContextTests(unittest.IsolatedAsyncioTestCase):
         self.progress(2)
         await self.finish_model()
         await self.until(lambda: not self.lane.output_pending and not self.call.synthesis_active)
-        self.assertNotIn(FIRST, self.call.spoken)
+        self.assertEqual(self.call.spoken.count(FIRST), 1)
+        self.assertEqual(len(self.model.inputs), 1)
 
     async def test_own_completed_history_between_streamed_sentences_does_not_self_invalidate(self):
         self.model.two_sentences = True
