@@ -24,7 +24,7 @@ from types import SimpleNamespace
 from conversation_repair import (conversational_snapshot,
                                  NATURAL_CONVERSATION_PROMPT, _polar, _pure_kind,
                                  _passive_signal)
-from conversation_claims import unproven_storage_or_check_claim
+from conversation_claims import unproven_pending_data_claim, unproven_storage_or_check_claim
 from conversation_numbers import has_unbound_numbers
 from native_backend import BackendControlChanged, BackendEvent, BackendState, ControlBinding, ControlGate
 from spoken_output import spoken_text
@@ -1900,6 +1900,22 @@ class NativeDuplex:
         return self._release_conversation_sentence(candidate, turn, epoch, observation, snapshot,
             transcript_group=transcript_group) == 'enqueued'
 
+    def _corroborating_inputtext(self, snapshot):
+        dialog = self.call.dialog
+        event = getattr(dialog, 'input_control', None)
+        boundary = getattr(dialog, 'input_boundary', None)
+        question, source, _ = self.question_context()
+        if (isinstance(event, BackendEvent) and event.ui_type == 'InputText'
+                and event.owner is getattr(dialog, 'backend_owner', None)
+                and event.business_request_id == getattr(dialog, 'business_request_id', None)
+                and type(boundary) is dict and boundary.get('source') == 'servicenow_input_control'
+                and boundary.get('controlType') == 'InputText'
+                and boundary.get('businessRequestId') == event.business_request_id
+                and source == 'servicenow_input_control'
+                and boundary.get('label') == event.text == question == snapshot.get('question')):
+            return question
+        return ''
+
     def _release_conversation_sentence(self, candidate, turn, epoch, observation, snapshot, *,
                                        skip_unsupported_claim=False, transcript_group=None):
         """Report actual queue admission separately from a safe streaming skip."""
@@ -1954,9 +1970,12 @@ class NativeDuplex:
             reason = 'identity_not_current'
         elif unproven_storage_or_check_claim(text):
             reason = 'unproven_storage_or_check_claim'
+        elif (self.busy and not self.bootstrap_pending and unproven_pending_data_claim(
+                text, self._corroborating_inputtext(snapshot))):
+            reason = 'unproven_pending_data_claim'
         completion_reasons = {'completion_ordered', 'completion_closed', 'completion_approved',
                               'completion_released', 'completion_done', 'completion_confirmed'}
-        if skip_unsupported_claim and reason in completion_reasons:
+        if skip_unsupported_claim and (reason in completion_reasons or reason == 'unproven_pending_data_claim'):
             # Unlike a hard scope/identity failure, an unsupported claim need
             # not invalidate earlier admitted speech from this same stream.
             if unbound_numbers:
@@ -1969,7 +1988,7 @@ class NativeDuplex:
                 reason = 'native_control_active'
         if reason is not None:
             self._log_dialogue_discard(reason, 'sentence')
-            if skip_unsupported_claim and (reason == 'unproven_storage_or_check_claim'
+            if skip_unsupported_claim and (reason in ('unproven_storage_or_check_claim', 'unproven_pending_data_claim')
                                            or reason in completion_reasons):
                 return 'skipped_claim'
             return 'rejected'
