@@ -32,6 +32,50 @@ def unproven_pending_data_claim(text, native_question=''):
     return False
 
 
+def unproven_current_action_claim(text, current_outputs=()):
+    """Bounded German direct system-action category, not general entailment."""
+    def normal(value):
+        return re.sub(r'[^\w]+', ' ', value.casefold()).strip()
+    if any(normal(text) == normal(output) for output in current_outputs):
+        return False
+    negative = r'\b(?:nichts|kein\w*|nie|niemals|weder)\b'
+    conditional = r'\b(?:wenn|falls|sofern|sobald|würde|könnte|müsste)\b'
+    general = r'\b(?:grundsätzlich|allgemein|üblicherweise|normalerweise|typischerweise|beispielsweise)\b'
+    temporal = r'(?:(?:jetzt|nun|gerade|bereits|derzeit|aktuell)\s+)*'
+    present = r'(?:prüft|speichert|bearbeitet|verarbeitet|validiert|bestellt|genehmigt|bestätigt)\b'
+    future = r'\b(?:prüfen|speichern|bearbeiten|verarbeiten|validieren|bestellen|genehmigen|bestätigen|durchführen|abschließen|freigeben)\b'
+    predicate_not = r'\bnicht(?:\s+mehr)?(?:\s+(?:durch|ab|frei|' + future + r'))?[.!]?\s*$'
+    for sentence in re.finditer(r'[^.!?;\n]+(?:[.!?;\n]|$)', _unquoted(text)):
+        value = sentence.group().strip().casefold()
+        actor = re.match(r'^(?:servicenow|das system)\s+(.+)', value)
+        if actor is None or value.endswith('?'):
+            continue
+        # Conditions qualify their coordinated clause, not earlier actions.
+        # Keep a trailing comma-condition attached to a single future clause.
+        for clause in re.split(r'\s+(?:und|aber)\s+', actor[1]):
+            clause = re.sub(r'^(?:servicenow|das system)\s+', '', clause)
+            predicate = clause.split(',', 1)[0]
+            if (re.search(r'\blaut ihrer aussage\b', predicate)
+                    or re.search(r',\s*(?:sagen|sagten) sie[.!]?\s*$', clause)):
+                continue
+            # A purpose/complement's negation does not negate the main action.
+            # "nicht manuell" qualifies its manner; terminal/predicate negation
+            # such as "nicht", "nicht durch" or "nicht prüfen" denies the action.
+            if (re.search(negative, predicate) or re.search(predicate_not, predicate)
+                    or re.search(conditional, clause)
+                    or re.search(general, predicate) and not re.search(
+                        r'\b(?:jetzt|nun|gerade|bereits|derzeit|aktuell)\b', predicate)):
+                continue
+            clause = re.sub('^' + temporal, '', clause)
+            if (re.match(present, clause)
+                    or re.match(r'führt\b', clause) and re.search(r'\bdurch\b', clause)
+                    or re.match(r'schließt\b', clause) and re.search(r'\bab\b', clause)
+                    or re.match(r'gibt\b', clause) and re.search(r'\bfrei\b', clause)
+                    or re.match(r'wird\b', clause) and re.search(future, clause)):
+                return True
+    return False
+
+
 def unproven_storage_or_check_claim(text):
     unquoted = _unquoted(text)
     auxiliary = (r'ich\s+(?:habe|hatte)|(?:habe|hatte)\s+ich|'

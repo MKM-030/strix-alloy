@@ -15,7 +15,7 @@ import test_sdk_assistant_settings as sdk_fixture
 from test_sdk_admission import FakeHttp, FakeResponse, ASSISTANT, VOICE_AGENT
 from test_native_duplex import FakeCall
 from test_assistant_settings import authorized_settings, SERVICE, AGENT
-from test_local_llm_fixed_routes import HTTP, DIRECT_CHAT, DIRECT_MODELS
+from test_local_llm_fixed_routes import HTTP, DIRECT_CHAT, DIRECT_MODELS, wire_context
 
 
 def descriptor():
@@ -105,7 +105,7 @@ class ConversationSelectionTests(unittest.IsolatedAsyncioTestCase):
         try:
             with patch.object(local_llm_socket, '_token', return_value='synthetic-token'):
                 await source.send_json(dict(type='session.start', mode='text', system_prompt='Rules'))
-                await source.send_json(dict(type='session.update', system_prompt_patch='Context'))
+                await source.send_json(dict(type='session.update', system_prompt_patch=wire_context()))
                 for model in models:
                     http.model = model
                     await source.send_json(dict(type='input.text', text='Echte Frage.'))

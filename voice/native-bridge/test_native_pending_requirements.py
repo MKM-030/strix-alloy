@@ -178,12 +178,12 @@ class PendingRequirementTests(unittest.IsolatedAsyncioTestCase):
             await socket.send_json(dict(type='input.text', text=RAW))
             await socket._task
         messages = http.bodies[0]['messages']
-        self.assertEqual([item['role'] for item in messages], ['system', 'system', 'user'])
+        self.assertEqual([item['role'] for item in messages], ['system', 'system', 'user', 'user'])
         self.assertIn(configured, messages[0]['content'])
-        encoded = json.loads(messages[1]['content'])
+        encoded = json.loads(messages[2]['content'])
         self.assertEqual(encoded['raw_inputs'], [RAW])
-        self.assertTrue(any('keine parallele fachliche Datenerhebung' in rule for rule in encoded['capability_limits']))
-        self.assertTrue(any('Relevanz' in rule for rule in encoded['capability_limits']))
+        self.assertIn('keine parallele fachliche Datenerhebung', messages[1]['content'])
+        self.assertIn('Relevanz', messages[1]['content'])
         await socket.close()
 
     async def test_pending_role_limit_is_state_dependent(self):

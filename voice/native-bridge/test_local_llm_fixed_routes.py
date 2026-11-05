@@ -16,6 +16,12 @@ DIRECT_CHAT = 'http://127.0.0.1:8840/v1/chat/completions'
 DIRECT_MODELS = 'http://127.0.0.1:8840/v1/models'
 
 
+def wire_context():
+    return json.dumps(dict(call_id='fixture-call', task_id='fixture-task', task_revision=1,
+        context_revision=1, observation_revision=1, raw_inputs=[], public_findings=[],
+        capability_limits=['Use the current observations.']))
+
+
 class Content:
     def __init__(self, payload=b'', lines=()):
         self.payload, self.lines = payload, lines
@@ -90,7 +96,7 @@ class FixedRouteTests(unittest.IsolatedAsyncioTestCase):
             with patch.object(local_llm_socket, '_token', return_value='synthetic-only-token'), \
                     patch('aiohttp.ClientSession', side_effect=AssertionError('Real HTTP forbidden')):
                 await source.send_json(dict(type='session.start', mode='text', system_prompt='Central rules'))
-                await source.send_json(dict(type='session.update', system_prompt_patch='Observed context'))
+                await source.send_json(dict(type='session.update', system_prompt_patch=wire_context()))
                 for index in range(turns):
                     http.model = 'selected-first' if index == 0 else 'selected-second'
                     await source.send_json(dict(type='input.text', text='Eine freie Frage.'))
@@ -137,7 +143,7 @@ class FixedRouteTests(unittest.IsolatedAsyncioTestCase):
                         patch('aiohttp.ClientSession', return_value=http) as factory:
                     try:
                         await source.send_json(dict(type='session.start', mode='text', system_prompt='Central rules'))
-                        await source.send_json(dict(type='session.update', system_prompt_patch='Observed context'))
+                        await source.send_json(dict(type='session.update', system_prompt_patch=wire_context()))
                         await source.send_json(dict(type='input.text', text='Eine freie Frage.'))
                         await asyncio.wait_for(source._task, 1)
                         factory.assert_called_once()
