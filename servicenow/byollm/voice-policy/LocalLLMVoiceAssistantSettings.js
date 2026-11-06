@@ -226,6 +226,11 @@ LocalLLMVoiceAssistantSettings.prototype = {
                 behaviorSources[key] = attrs[key] !== undefined && attrs[key] !== null && attrs[key] !== '' ? 'configured' : 'native_default';
             }
         }
+        // Transfer routing remains native-delegated metadata, including an explicitly empty target.
+        if (attrs.transfer_target !== undefined && attrs.transfer_target !== null) {
+            behavior.transfer_target = this._scalar(attrs.transfer_target);
+            behaviorSources.transfer_target = 'configured';
+        }
         if (behavior.retry_prefix !== undefined && defaults.RETRY_PREFIX !== undefined &&
                 behavior.retry_prefix === String(defaults.RETRY_PREFIX)) behaviorSources.retry_prefix = 'native_default';
         var result = {
@@ -245,10 +250,159 @@ LocalLLMVoiceAssistantSettings.prototype = {
             behavior: behavior,
             behavior_sources: behaviorSources
         };
+        this._voiceReferences(serviceId, attrs.tts_config_sys_id, voices);
         if (this._utf8Length(JSON.stringify(result)) > 120000) throw new Error('Assistant settings exceed transport capacity');
         return result;
     },
 
+
+    // Selected-reference metadata; callers still require native service authorization.
+    _referenceValues: function(record, fields) {
+        if (record.canRead() !== true) throw new Error('Selected voice reference unavailable');
+        var out = {}, i, element, value;
+        for (i = 0; i < fields.length; i++) {
+            if (record.isValidField(fields[i]) !== true) throw new Error('Selected voice reference unavailable');
+            element = record.getElement(fields[i]);
+            if (element === null || typeof element === 'undefined' || element.canRead() !== true)
+                throw new Error('Selected voice reference unavailable');
+        }
+        for (i = 0; i < fields.length; i++) {
+            value = record.getValue(fields[i]);
+            out[fields[i]] = value === null || typeof value === 'undefined' ? '' : String(value);
+        }
+        return out;
+    },
+
+    _referenceRecord: function(table, id, fields) {
+        if (typeof id !== 'string' || !/^[0-9a-f]{32}$/.test(id)) throw new Error('Selected voice reference unavailable');
+        var record = new GlideRecordSecure(table);
+        if (record.isValid() !== true || record.get(id) !== true ||
+                String(record.getUniqueValue()) !== id || String(record.getRecordClassName()) !== table)
+            throw new Error('Selected voice reference unavailable');
+        return this._referenceValues(record, fields);
+    },
+
+    _checkedReference: function(value, serviceId, ttsId, voiceId) {
+        var keys = ['version','service_id','tts_config_sys_id','voice_id','attachment_sys_id','sha256',
+            'size_bytes','reference_text','reference_language','provenance'];
+        function exact(object, wanted) {
+            return object && typeof object === 'object' && !Array.isArray(object) &&
+                Object.keys(object).sort().join(',') === wanted.slice().sort().join(',');
+        }
+        if (!exact(value, keys) || value.version !== 1 || value.service_id !== serviceId ||
+                value.tts_config_sys_id !== ttsId || value.voice_id !== voiceId ||
+                typeof value.attachment_sys_id !== 'string' || !/^[0-9a-f]{32}$/.test(value.attachment_sys_id) ||
+                typeof value.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(value.sha256) ||
+                typeof value.size_bytes !== 'number' || !isFinite(value.size_bytes) ||
+                Math.floor(value.size_bytes) !== value.size_bytes || value.size_bytes <= 44 || value.size_bytes > 6 * 1024 * 1024 ||
+                typeof value.reference_text !== 'string' || value.reference_text.length < 5 || value.reference_text.length > 1500 ||
+                !value.reference_text.trim() || /[\x00-\x1f\x7f]/.test(value.reference_text) ||
+                typeof value.reference_language !== 'string' || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(value.reference_language))
+            throw new Error('Selected voice reference unavailable');
+        var provenance = value.provenance;
+        if (!exact(provenance, ['kind','profile_id','consent_scope','confirmed_at_utc']) ||
+                provenance.kind !== 'authorized_own_voice' || provenance.consent_scope !== 'local_synthetic_voice_and_servicenow_demo' ||
+                typeof provenance.profile_id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/.test(provenance.profile_id) ||
+                typeof provenance.confirmed_at_utc !== 'string')
+            throw new Error('Selected voice reference unavailable');
+        var stamp = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-](\d{2}):(\d{2}))$/.exec(provenance.confirmed_at_utc);
+        if (!stamp || Number(stamp[1]) < 100) throw new Error('Selected voice reference unavailable');
+        var date = new Date(Date.UTC(Number(stamp[1]),Number(stamp[2])-1,Number(stamp[3]),Number(stamp[4]),Number(stamp[5]),Number(stamp[6])));
+        if (date.getUTCFullYear() !== Number(stamp[1]) || date.getUTCMonth()+1 !== Number(stamp[2]) ||
+                date.getUTCDate() !== Number(stamp[3]) || date.getUTCHours() !== Number(stamp[4]) ||
+                date.getUTCMinutes() !== Number(stamp[5]) || date.getUTCSeconds() !== Number(stamp[6]) ||
+                (stamp[7] !== 'Z' && (Number(stamp[8]) > 23 || Number(stamp[9]) > 59)))
+            throw new Error('Selected voice reference unavailable');
+        return {version:1,service_id:serviceId,tts_config_sys_id:ttsId,voice_id:voiceId,
+            attachment_sys_id:value.attachment_sys_id,sha256:value.sha256,size_bytes:value.size_bytes,
+            reference_text:value.reference_text,reference_language:value.reference_language,
+            provenance:{kind:provenance.kind,profile_id:provenance.profile_id,consent_scope:provenance.consent_scope,
+                confirmed_at_utc:provenance.confirmed_at_utc}};
+    },
+
+    _referenceAttachment: function(reference) {
+        var metadata = this._referenceRecord('sys_attachment', reference.attachment_sys_id,
+            ['sys_id','table_name','table_sys_id','size_bytes','content_type','file_name','sys_updated_on','sys_mod_count']);
+        if (metadata.table_name !== 'sn_voice_tts_config' || metadata.table_sys_id !== reference.tts_config_sys_id ||
+                !/^[0-9]+$/.test(metadata.size_bytes) || Number(metadata.size_bytes) !== reference.size_bytes ||
+                ['audio/wav','audio/x-wav','audio/vnd.wave'].indexOf(metadata.content_type.toLowerCase()) === -1 ||
+                !/\.wav$/i.test(metadata.file_name)) throw new Error('Selected voice reference unavailable');
+        return metadata;
+    },
+
+    _voiceReferences: function(serviceId, primaryId, voices) {
+        var fields = ['sys_id','active','language','voice_id','parameters','sys_updated_on','sys_mod_count'];
+        var primary = this._referenceRecord('sn_voice_tts_config', String(primaryId || ''), fields);
+        var chosen = {}, records = {}, self = this, count = 0;
+        function tts(id) {
+            if (!Object.prototype.hasOwnProperty.call(records, id)) records[id] = self._referenceRecord('sn_voice_tts_config', id, fields);
+            var value = records[id];
+            if ((value.active !== '1' && value.active !== 'true') || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(value.language))
+                throw new Error('Selected voice reference unavailable');
+            return value;
+        }
+        records[primary.sys_id] = primary;
+        var rows = new GlideRecordSecure('sn_voice_language_config');
+        if (rows.isValid() !== true) throw new Error('Selected voice reference unavailable');
+        rows.addQuery('deployment', serviceId); rows.addQuery('active', true); rows.setLimit(17); rows.query();
+        while (rows.next()) {
+            count++;
+            var lc = this._referenceValues(rows, ['sys_id','deployment','active','tts_config']);
+            if (count > 16 || lc.deployment !== serviceId || (lc.active !== '1' && lc.active !== 'true'))
+                throw new Error('Selected voice reference unavailable');
+            var selected = tts(lc.tts_config), code = selected.language;
+            if (Object.prototype.hasOwnProperty.call(chosen, code)) throw new Error('Selected voice reference unavailable');
+            chosen[code] = selected.sys_id;
+        }
+        if (!count) chosen[primary.language] = primary.sys_id;
+        var codes = Object.keys(voices);
+        if (codes.length > 16) throw new Error('Selected voice reference unavailable');
+        for (var i = 0; i < codes.length; i++) {
+            var language = codes[i], selectedId = chosen[language];
+            if (!selectedId) throw new Error('Selected voice reference unavailable');
+            var record = tts(selectedId);
+            if (record.voice_id !== voices[language].voice_id) throw new Error('Selected voice reference unavailable');
+            voices[language].tts_config_sys_id = selectedId;
+            if (!record.parameters) continue;
+            if (record.parameters.length > 16384) throw new Error('Selected voice reference unavailable');
+            var parameters = JSON.parse(record.parameters), scc = parameters && parameters.scc;
+            if (!scc) continue;
+            if (scc.engine !== 'local_qwen3_tts' && scc.localOnly !== true && typeof scc.reference === 'undefined') continue;
+            if (scc.engine !== 'local_qwen3_tts' || scc.localOnly !== true || !scc.reference)
+                throw new Error('Selected voice reference unavailable');
+            var reference = this._checkedReference(scc.reference, serviceId, selectedId, record.voice_id);
+            if (scc.referenceSha256 !== reference.sha256 || scc.profileId !== reference.provenance.profile_id)
+                throw new Error('Selected voice reference unavailable');
+            this._referenceAttachment(reference);
+            voices[language].reference = reference;
+        }
+    },
+
+    getVoiceReferenceStream: function(serviceId, language, expected) {
+        if (typeof language !== 'string' || !/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(language))
+            throw new Error('Selected voice reference unavailable');
+        var actor = String(gs.getUserID() || '');
+        if (!/^[0-9a-f]{32}$/.test(actor) || String(gs.getUserName()) === 'guest')
+            throw new Error('Selected voice reference unavailable');
+        var settings = this.getSettings(serviceId), selected = settings.tts.voices[language];
+        if (!selected || !selected.reference) throw new Error('Selected voice reference unavailable');
+        var reference = this._checkedReference(expected, serviceId, selected.tts_config_sys_id, selected.voice_id);
+        if (JSON.stringify(reference) !== JSON.stringify(selected.reference)) throw new Error('Selected voice reference unavailable');
+        var before = this._referenceAttachment(reference);
+        var attachments = new GlideSysAttachment();
+        var digest = String(new GlideDigest().getSHA256HexFromInputStream(attachments.getContentStream(reference.attachment_sys_id))).toLowerCase();
+        if (digest !== reference.sha256) throw new Error('Selected voice reference unavailable');
+        // Re-observe authority, selection, descriptor and parent immediately before opening the response stream.
+        var current = this.getSettings(serviceId), currentVoice = current.tts.voices[language];
+        if (String(gs.getUserID() || '') !== actor || String(gs.getUserName()) === 'guest' ||
+                !currentVoice || currentVoice.tts_config_sys_id !== selected.tts_config_sys_id ||
+                currentVoice.voice_id !== selected.voice_id || JSON.stringify(currentVoice.reference) !== JSON.stringify(reference) ||
+                JSON.stringify(this._referenceAttachment(reference)) !== JSON.stringify(before))
+            throw new Error('Selected voice reference unavailable');
+        var stream = attachments.getContentStream(reference.attachment_sys_id);
+        if (stream === null || typeof stream === 'undefined') throw new Error('Selected voice reference unavailable');
+        return stream;
+    },
 
     // Pronunciation data is metadata. The local TTS engine must advertise support
     // before interpreting native phoneme syntax; no engine configuration is changed.

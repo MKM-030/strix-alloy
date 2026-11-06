@@ -56,6 +56,8 @@ Die Stimme **Marcel Käfke (lokal)** ist bereits als nativer `sn_voice_tts_confi
 
 `f35a22ff7e12480c2be2a04180d4bee997aa6e82d809398eb619b58368463f46`
 
+Der native Stimmenkatalog besitzt eine Schreib-ACL ohne Admin-Override. Ausschliesslich die Parameter dieses nachweislich eigenen, ungeschuetzten Datensatzes werden durch die freigegebene administrative Metadatenpflege aktualisiert; die ACL, ihre Rollen und alle Laufzeit-Lesepruefungen bleiben erhalten.
+
 Es wurde keine zweite Aufnahme erzeugt und kein zweiter Stimmdatensatz angelegt. Die Referenz ist PCM16, mono, 24 kHz, 13,696 Sekunden. Aufnahme und dokumentierte Einwilligung stammen vom bereits freigegebenen eigenen Sprachprofil.
 
 Eine weitere eigene Stimme wird in ServiceNow als TTS-Konfiguration angelegt, mit einer freigegebenen WAV-Datei am selben Datensatz verknüpft und für die gewünschte Assistant-Sprache ausgewählt. `parameters.scc.reference` enthält Version, Service-/TTS-/Voice-/Attachment-Identität, SHA-256, Größe, exakten Referenztext, Referenzsprache und Herkunft/Einwilligung. Eine andere Aufnahme erfordert einen neuen passenden Descriptor. Referenzsprache und Ausgabesprache sind getrennt; eine deutsche Referenz aktiviert keine englische Assistant-Sprache von selbst.
