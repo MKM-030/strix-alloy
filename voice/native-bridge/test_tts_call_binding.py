@@ -83,7 +83,7 @@ class TTSCallBindingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(url, Config().tts_url)
         self.assertEqual(options['json'], {
             'model': 'scc-native-qwen3', 'voice': OWN_VOICE,
-            'input': 'Configured greeting', 'response_format': 'pcm'})
+            'input': 'Configured greeting', 'response_format': 'pcm', 'max_new_tokens': 375})
         self.assertFalse(options['allow_redirects'])
         self.assertEqual(call.snapshot(), original)
 

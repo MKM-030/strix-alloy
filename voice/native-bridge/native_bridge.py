@@ -277,8 +277,9 @@ class Speech:
             voice_id = context['voice_id']
         elif self.config.auth_mode == 'servicenow':
             raise RuntimeError('Authorized TTS settings are unavailable')
+        # 375 codec frames at 12.5 Hz fit the existing 30 s native drain window.
         payload = {'model':'scc-native-qwen3', 'voice':voice_id, 'input':text,
-                   'response_format':'pcm'}
+                   'response_format':'pcm', 'max_new_tokens':375}
         async with self.http.post(self.config.tts_url, json=payload, allow_redirects=False,
                                   timeout=ClientTimeout(total=120)) as response:
             if response.status != 200:

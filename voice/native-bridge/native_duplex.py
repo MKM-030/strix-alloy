@@ -6,6 +6,7 @@ consumes those original messages or invents a name-validation workflow.
 """
 import asyncio
 from collections import deque
+from contextlib import aclosing
 from dataclasses import dataclass, replace
 import importlib.util
 import hashlib
@@ -34,6 +35,11 @@ from servicenow_voice_context import (build_servicenow_voice_context,
                                      append_servicenow_context)
 
 LOG = logging.getLogger('native-voice')
+# Infrastructure delivery bounds: 30 s of mono 24 kHz PCM16 matches the
+# native control drain budget. Expiry is incomplete speech, never truncation
+# presented as success; the server must distinguish codec EOS from its cap.
+TTS_PCM_MAX_BYTES = 30 * 24000 * 2
+TTS_SYNTHESIS_SECONDS = 45
 _PRESENTATION_HISTORY_MODULE = None
 
 
@@ -2317,52 +2323,57 @@ class NativeDuplex:
         first = True
         state = self._speech
         lease = None
-        async for chunk in self.call.speech.synthesize(item.text):
-            if not self._active_speech_current(item, generation, lease):
-                self._discard_output(item, 'pcm')
-                break
-            while len(self.call.playback.data) > 48000 and self._active_speech_current(item, generation, lease):
-                await asyncio.sleep(.02)
-            if not self._active_speech_current(item, generation, lease):
-                self._discard_output(item, 'pcm')
-                break
-            if self._active_speech_current(item, generation, lease):
-                proposed = lease or _SpeechLease(item, generation, self.epoch,
-                    self.conversation if item.identity is not None else None, item.identity)
-                if chunk and self.call.playback.put(chunk, generation,
-                        drain_allowed=lambda bound=proposed: self._active_speech_current(item, generation, bound)):
-                    if lease is None:
-                        lease = proposed
-                        if state is not None and state.get('output') is item:
-                            state['lease'] = lease
-                    queued += len(chunk)
-                    if item.kind == 'confirmation_ack' and state is not None and state.get('output') is item:
-                        state['pcm_bytes'] += len(chunk)
-                    if first:
-                        first = False
-                        if item.transcript_part is not None:
-                            self._transcripts.started(*item.transcript_part, self.clock())
-                        if item.turn is not None:
-                            self._turn_speech_started.append(item.turn[3])
-                        LOG.info('Voice independent output call=%s stage=first_pcm kind=%s seconds=%.3f',
-                                 self.call.call_id, item.kind, self.clock() - started)
-                        try:
-                            if item.kind in ('backend', 'backend_control'):
-                                self._transcripts.before_native()
-                                self._sync_transcript_groups()
-                            if item.control_binding is not None:
-                                self.call.transcript(item.turn, 'assistant', item.text,
-                                                     control_type=item.control_binding.control_type)
-                            elif item.transcript_part is not None:
-                                pass  # Only completed, host-emitted response text is published later.
-                            elif item.turn is not None:
-                                self.call.transcript(item.turn, 'assistant', item.text)
-                            else:
-                                self.call.notice('PROCESSING_UPDATE', item.text)
-                        except Exception as error:
-                            # Transport failure must not suppress admitted speech.
-                            LOG.warning('Voice independent output call=%s stage=transcript_failed kind=%s type=%s',
-                                        self.call.call_id, item.kind, type(error).__name__)
+        # One deadline covers HTTP reads and playback backpressure. Closing the
+        # owned iterator also closes its HTTP response on a guard exit/cancel.
+        async with asyncio.timeout(TTS_SYNTHESIS_SECONDS), aclosing(self.call.speech.synthesize(item.text)) as chunks:
+            async for chunk in chunks:
+                if not self._active_speech_current(item, generation, lease):
+                    self._discard_output(item, 'pcm')
+                    break
+                if queued + len(chunk) > TTS_PCM_MAX_BYTES:
+                    raise RuntimeError('TTS PCM duration limit exceeded')
+                while len(self.call.playback.data) > 48000 and self._active_speech_current(item, generation, lease):
+                    await asyncio.sleep(.02)
+                if not self._active_speech_current(item, generation, lease):
+                    self._discard_output(item, 'pcm')
+                    break
+                if self._active_speech_current(item, generation, lease):
+                    proposed = lease or _SpeechLease(item, generation, self.epoch,
+                        self.conversation if item.identity is not None else None, item.identity)
+                    if chunk and self.call.playback.put(chunk, generation,
+                            drain_allowed=lambda bound=proposed: self._active_speech_current(item, generation, bound)):
+                        if lease is None:
+                            lease = proposed
+                            if state is not None and state.get('output') is item:
+                                state['lease'] = lease
+                        queued += len(chunk)
+                        if item.kind == 'confirmation_ack' and state is not None and state.get('output') is item:
+                            state['pcm_bytes'] += len(chunk)
+                        if first:
+                            first = False
+                            if item.transcript_part is not None:
+                                self._transcripts.started(*item.transcript_part, self.clock())
+                            if item.turn is not None:
+                                self._turn_speech_started.append(item.turn[3])
+                            LOG.info('Voice independent output call=%s stage=first_pcm kind=%s seconds=%.3f',
+                                     self.call.call_id, item.kind, self.clock() - started)
+                            try:
+                                if item.kind in ('backend', 'backend_control'):
+                                    self._transcripts.before_native()
+                                    self._sync_transcript_groups()
+                                if item.control_binding is not None:
+                                    self.call.transcript(item.turn, 'assistant', item.text,
+                                                         control_type=item.control_binding.control_type)
+                                elif item.transcript_part is not None:
+                                    pass  # Only completed, host-emitted response text is published later.
+                                elif item.turn is not None:
+                                    self.call.transcript(item.turn, 'assistant', item.text)
+                                else:
+                                    self.call.notice('PROCESSING_UPDATE', item.text)
+                            except Exception as error:
+                                # Transport failure must not suppress admitted speech.
+                                LOG.warning('Voice independent output call=%s stage=transcript_failed kind=%s type=%s',
+                                            self.call.call_id, item.kind, type(error).__name__)
         LOG.info('Voice independent output call=%s stage=tts_finished kind=%s queued_bytes=%d seconds=%.3f current=%s',
                  self.call.call_id, item.kind, queued, self.clock() - started,
                  self._active_speech_current(item, generation, lease))
