@@ -46,6 +46,29 @@
             response.setBody({detail:'Assistant settings authorization rejected'});
             return;
         }
+        // Explicit binary reference opt-in reuses the existing native service/agent/Bearer gate above.
+        if (typeof payload.voiceReferenceVersion !== 'undefined') {
+            var referenceKeys = ['serviceId','assistantSettingsVersion','voiceReferenceVersion','language','reference'];
+            if (payload.voiceReferenceVersion !== 1 ||
+                    Object.keys(payload).sort().join(',') !== referenceKeys.sort().join(',')) {
+                response.setStatus(403);
+                response.setBody({detail:'Selected voice reference unavailable'});
+                return;
+            }
+            var referenceStream;
+            try {
+                referenceStream = new LocalLLMVoiceAssistantSettings().getVoiceReferenceStream(serviceId, payload.language, payload.reference);
+            } catch (ignoredReferenceFailure) {
+                response.setStatus(403);
+                response.setBody({detail:'Selected voice reference unavailable'});
+                return;
+            }
+            response.setStatus(200);
+            response.setContentType('audio/wav');
+            response.setHeader('Cache-Control','no-store');
+            response.getStreamWriter().writeStream(referenceStream);
+            return;
+        }
         if (typeof payload.conversationModelVersion !== 'undefined' && payload.conversationModelVersion !== 1) {
             response.setStatus(403);
             response.setBody({detail:'Conversation model selection unavailable'});
