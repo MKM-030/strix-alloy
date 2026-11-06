@@ -33,6 +33,7 @@ BASE = '/api/webrtc/sessions'
 HANDSHAKE_SECONDS = 30
 BODY_SECONDS = 5
 ADMISSION_SECONDS = 12
+PREPARE_CONTEXT_SECONDS = 35
 OFFER_SECONDS = 20
 CANDIDATE_SECONDS = 5
 DELETE_WAIT_SECONDS = .1  # SDK DELETE read timeout is five seconds.
@@ -269,11 +270,12 @@ class _PendingCreate:
 
 class SDKSessionManager:
     def __init__(self, config, active, make_call, admit, context_call_factory=None, before_create=None,
-                 bind_call_authorization=None):
+                 bind_call_authorization=None, prepare_context=None):
         self.config, self.active, self.make_call, self.admit = config, active, make_call, admit
         self.context_call_factory = context_call_factory
         self.before_create = before_create
         self.bind_call_authorization = bind_call_authorization
+        self.prepare_context = prepare_context
         self.policy = getattr(config,'sdk_policy',None)
         self.sessions = {}
         self.stopping = False
@@ -313,14 +315,8 @@ class SDKSessionManager:
                 self.sessions.pop(session.session_id,None)
 
     async def _managed_call(self,request,context):
-        # Reserve shared capacity before the first remote await. A pending create
-        # owns its cancellation/metadata cleanup even before a NativeCall exists.
         if self.context_call_factory is None:
             raise _Rejected(503)
-        operation = asyncio.current_task()
-        reservation = _PendingCreate(operation)
-        self.active.add(reservation)
-        self.creating.add(operation)
         host_servers = None
         try:
             authorization = next(value for name,value in _raw_headers(request)
@@ -343,6 +339,50 @@ class SDKSessionManager:
         finally:
             if host_servers is not None:
                 clear_session_ice(host_servers)
+
+    def _check_context(self,context):
+        if not (getattr(context,'instance_url',None)==self.policy.instance_url
+                and getattr(context,'assistant_id',None)==self.policy.assistant_id
+                and getattr(context,'voice_agent_id',None)==self.policy.voice_agent_id
+                and getattr(context,'sdk_agent_id',None)==SDK_AGENT_ID
+                and getattr(context,'receive_data',None) is True):
+            raise _Rejected(403)
+        if getattr(getattr(context,'call_settings',None),'unsupported_language_selection',False):
+            raise _Rejected(501)
+
+    async def _allocate_call(self,request,context):
+        # One shared reservation spans optional reference preparation and TURN
+        # bootstrap. Shutdown owns cancellation before a NativeCall exists.
+        operation = asyncio.current_task()
+        reservation = _PendingCreate(operation)
+        self.active.add(reservation)
+        self.creating.add(operation)
+        authorization = None
+        try:
+            if self.prepare_context is not None:
+                authorization = next(value for name,value in _raw_headers(request)
+                                     if name.lower()=='authorization')
+                try:
+                    async with asyncio.timeout(PREPARE_CONTEXT_SECONDS):
+                        context = await self.prepare_context(context,authorization)
+                except TimeoutError:
+                    raise _Rejected(503) from None
+                except Exception as error:
+                    status = getattr(error,'status',503)
+                    raise _Rejected(status if type(status) is int and status in (400,401,403) else 503) from None
+                finally:
+                    authorization = None
+                self._check_context(context)
+            if self.stopping or not self._enabled():
+                raise _Rejected(503)
+            if self.managed_turn is not None:
+                return await self._managed_call(request,context)
+            call = (self.make_call() if self.context_call_factory is None
+                    else self.context_call_factory(context))
+            self.active.add(call)
+            return call,[]
+        finally:
+            authorization = None
             self.active.discard(reservation)
             self.creating.discard(operation)
 
@@ -363,15 +403,7 @@ class SDKSessionManager:
             # AdmissionDenied's bounded public status; never expose arbitrary details.
             status = getattr(error,'status',403)
             raise _Rejected(status if type(status) is int and status in (400,401,403) else 403) from None
-        if not (getattr(context,'instance_url',None)==self.policy.instance_url
-                and getattr(context,'assistant_id',None)==self.policy.assistant_id
-                and getattr(context,'voice_agent_id',None)==self.policy.voice_agent_id
-                and getattr(context,'sdk_agent_id',None)==SDK_AGENT_ID
-                and getattr(context,'receive_data',None) is True):
-            raise _Rejected(403)
-        settings = getattr(context,'call_settings',None)
-        if getattr(settings,'unsupported_language_selection',False):
-            raise _Rejected(501)
+        self._check_context(context)
         if self.before_create is not None:
             try:
                 await self.before_create()
@@ -384,13 +416,7 @@ class SDKSessionManager:
             raise _Rejected(503)
         if self.relay_runtime is not None:
             self.relay_runtime.ensure_running()
-        managed_servers = []
-        if self.managed_turn is not None:
-            call,managed_servers = await self._managed_call(request,context)
-        else:
-            call = (self.make_call() if self.context_call_factory is None
-                    else self.context_call_factory(context))
-            self.active.add(call)
+        call,managed_servers = await self._allocate_call(request,context)
         session = None
         try:
             if self.bind_call_authorization is not None:
@@ -659,7 +685,8 @@ class SDKSessionManager:
 
 
 def register_sdk_routes(app, config, active, make_call, admit_sdk_session, *,
-                        context_call_factory=None, before_create=None, bind_call_authorization=None):
+                        context_call_factory=None, before_create=None, bind_call_authorization=None,
+                        prepare_context=None):
     """Register inactive candidate routes; return an owned shutdown manager.
 
     The caller must disable aiohttp access logging (Bearer may be in rejected
@@ -668,9 +695,12 @@ def register_sdk_routes(app, config, active, make_call, admit_sdk_session, *,
     cookies are issued. Browser and SDK calls share a single active set.
     Optional context_call_factory receives only the rechecked internal admission
     context; the legacy make_call() contract is unchanged when it is omitted.
+    Optional async prepare_context(context, authorization) returns the prepared
+    context after authorization/readiness/capacity checks. It receives the exact
+    validated Bearer header under shared capacity, with a separate 35s budget.
     """
     manager = SDKSessionManager(config,active,make_call,admit_sdk_session,context_call_factory,
-                                before_create,bind_call_authorization)
+                                before_create,bind_call_authorization,prepare_context)
     def route(handler):
         async def guarded(request):
             try:

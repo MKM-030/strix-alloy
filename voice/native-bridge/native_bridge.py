@@ -243,6 +243,10 @@ class Speech:
                 raise RuntimeError('Configured ASR language is unsupported')
             form.add_field('model', QWEN_ASR_BACKEND)
             form.add_field('language', context['language'])
+            terms = json.dumps(context['terms'], ensure_ascii=False, separators=(',', ':'))
+            if len(terms.encode('utf-8')) > 8192:
+                raise RuntimeError('Configured ASR key terms exceed context capacity')
+            form.add_field('key_terms', terms)
             form.add_field('response_format', 'json')
             options['headers'] = {'Authorization':'Bearer ' + self.config.private_asr_token}
         else:
@@ -264,22 +268,56 @@ class Speech:
             self.log_asr_diagnostics(data)
             return accepted_transcript(data)
 
+    async def require_tts_language(self, language):
+        """Read-only paired-adapter capability; never infer support from HTTP200."""
+        parts = urlsplit(self.config.tts_url)
+        url = parts._replace(path=parts.path.rsplit('/', 1)[0] + '/capabilities',
+                             query='', fragment='').geturl()
+        try:
+            async with self.http.get(url, allow_redirects=False,
+                    timeout=ClientTimeout(total=3), auto_decompress=False,
+                    headers={'Accept-Encoding':'identity'}) as response:
+                if response.status != 200:
+                    raise ValueError()
+                raw = bytearray()
+                while True:
+                    chunk = await response.content.read(2049 - len(raw))
+                    raw.extend(chunk)
+                    if len(raw) > 2048:
+                        raise ValueError()
+                    if not chunk:
+                        break
+                value = json.loads(raw.decode('utf-8'))
+                if (type(value) is not dict or type(value.get('version')) is not int
+                        or value['version'] != 1 or value.get('per_request_language') is not True
+                        or type(value.get('languages')) is not list
+                        or not 1 <= len(value['languages']) <= 16
+                        or any(type(item) is not str for item in value['languages'])
+                        or language not in value['languages']):
+                    raise ValueError()
+        except Exception:
+            raise RuntimeError('TTS language capability unavailable') from None
+
     async def synthesize(self, text):
         voice_id = 'scc-demo'
+        language = None
         if self.call_settings is not None:
             # Snapshot this call's exact selection before the HTTP request. The
             # local registry rejects unavailable IDs; never substitute a voice.
             context = self.call_settings.tts_context()
-            # The installed server exposes a startup language, not a request
-            # language field. Refuse unsupported locales instead of ignoring them.
-            if context['language'].split('-', 1)[0].casefold() != 'de':
+            language = {'de':'german', 'en':'english'}.get(context['language'].split('-', 1)[0].casefold())
+            if language is None:
                 raise RuntimeError('Configured TTS language is unsupported')
-            voice_id = context['voice_id']
+            voice_id = context.get('registry_voice_id', context['voice_id'])
+            if language != 'german':
+                await self.require_tts_language(language)
         elif self.config.auth_mode == 'servicenow':
             raise RuntimeError('Authorized TTS settings are unavailable')
         # 375 codec frames at 12.5 Hz fit the existing 30 s native drain window.
         payload = {'model':'scc-native-qwen3', 'voice':voice_id, 'input':text,
                    'response_format':'pcm', 'max_new_tokens':375}
+        if language is not None:
+            payload['language'] = language
         async with self.http.post(self.config.tts_url, json=payload, allow_redirects=False,
                                   timeout=ClientTimeout(total=120)) as response:
             if response.status != 200:
@@ -2333,6 +2371,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
     managed_config = getattr(config, 'private_managed_turn', None)
     managed_turn = (ManagedTurnBootstrap(managed_config)
                     if managed_config is not None and managed_config.enabled else None)
+    configured_references = None
 
     async def stop_wss_creates(app):
         nonlocal stopping
@@ -2349,7 +2388,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         await require_asr_ready(app[HTTP_KEY], config)
     probe_dialog = Dialog(config) if dialog_factory is None and probe_backend else None
     async def lifecycle(app):
-        nonlocal responsive, stopping
+        nonlocal responsive, stopping, configured_references
         if config.conversation_http_url or config.conversation_ws_url:
             began = time.monotonic()
             LOG.info('Voice conversation dependencies stage=begin')
@@ -2368,10 +2407,17 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                     proof.owner_pid, proof.owner_created, profile.model_url, profile.model_name, profile.model_token_file)
                 await slot_owner.initialize(deadline)
         app[HTTP_KEY] = ClientSession(trust_env=False, timeout=ClientTimeout(total=180))
+        from aiohttp import DummyCookieJar
+        from voice_reference_runtime import reference_cache
+        reference_http = ClientSession(cookie_jar=DummyCookieJar(), trust_env=False,
+                                       timeout=ClientTimeout(total=30))
+        if config.auth_mode == 'servicenow' and not config.development_token:
+            configured_references = reference_cache(reference_http, config.instance_url, config.tts_url)
         try:
             await require_asr_ready(app[HTTP_KEY], config)
         except BaseException:
             await app[HTTP_KEY].close()
+            await reference_http.close()
             raise
         if profile is not None and profile.enabled:
             if responsive_factory is not None:
@@ -2441,6 +2487,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         if probe_dialog:
             await probe_dialog.shutdown()
         await app[HTTP_KEY].close()
+        await reference_http.close()
     app.cleanup_ctx.append(lifecycle)
     responsive_cleanup_key = web.AppKey('responsive_cleanup', set)
     app[responsive_cleanup_key] = set()
@@ -2513,6 +2560,23 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             raise web.HTTPUnauthorized(text='Voice authorization rejected')
         if isinstance(admission,CallSettings) and admission.unsupported_language_selection:
             raise web.HTTPNotImplemented(text='Configured language selection input is unsupported by this transport')
+        from voice_reference_runtime import prepare_references
+        from sdk_sessions import _PendingCreate
+        if stopping or active:
+            raise web.HTTPServiceUnavailable(text=availability_notice)
+        operation = asyncio.current_task()
+        reservation = _PendingCreate(operation)
+        active.add(reservation)
+        wss_creating.add(operation)
+        try:
+            async with asyncio.timeout(35):
+                await prepare_references(configured_references, admission if isinstance(admission,CallSettings) else None,
+                                         'Bearer ' + request.query.get('auth_token', ''))
+        except (RuntimeError, TimeoutError):
+            raise web.HTTPServiceUnavailable(text='Configured voice reference unavailable') from None
+        finally:
+            active.discard(reservation)
+            wss_creating.discard(operation)
         try:
             await before_create()
         except RuntimeError:
@@ -2630,8 +2694,9 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         if request.query.get('assistant_settings') == '1':
             result['assistantSettingsSupport'] = {'version':1,'perCallLanguage':True,
                     'nativeCloudVoiceSelection':False,'nativeVadConfidenceAndVolume':False,
-                    'nativeDtmfLanguageMapping':False,'nativeFillerMessageDelay':False,
-                    'assistantDescriptionConsumptionVerified':False}
+                    'nativeDtmfLanguageMapping':False,
+                    'nativeFillerMessageDelay':bool(config.conversation_http_url or config.conversation_ws_url),
+                    'assistantDescriptionConsumptionVerified':bool(config.conversation_http_url or config.conversation_ws_url)}
         if getattr(config, 'native_sdk_enabled', False):
             result['nativeSdkEnabled'] = True
         activity = getattr(config, 'private_speech_activity', None)
@@ -2658,11 +2723,16 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         # One immutable startup policy binds admission and all session operations.
         model_selection = ({'conversation_model_version': 1}
                            if config.conversation_http_url or config.conversation_ws_url else {})
+        async def prepare_sdk_references(context, authorization):
+            from voice_reference_runtime import prepare_references
+            await prepare_references(configured_references, context.call_settings, authorization)
+            return context
         register_sdk_routes(app, config, active, lambda: make_call(),
                             partial(admit_sdk_session,policy=config.sdk_policy,assistant_settings_version=1,
                                     **model_selection),
                             context_call_factory=make_sdk_call, before_create=before_create,
-                            bind_call_authorization=bind_authenticated_caller)
+                            bind_call_authorization=bind_authenticated_caller,
+                            prepare_context=prepare_sdk_references)
         LOG.info('Native SDK HTTP session routes enabled; shared browser capacity')
     return app
 

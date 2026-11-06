@@ -93,6 +93,9 @@ def native_manifest():
                  'python': PYTHON, 'base_python': BASE, 'pyvenv': PYTHON.parents[1] / 'pyvenv.cfg',
                  'native_bridge': ROOT / 'voice/native-bridge/native_bridge.py',
                  'native_core': ROOT / 'voice/native-bridge/core.py',
+                 'assistant_settings': ROOT / 'voice/native-bridge/assistant_settings.py',
+                 'voice_reference_cache': ROOT / 'voice/native-bridge/voice_reference_cache.py',
+                 'voice_reference_runtime': ROOT / 'voice/native-bridge/voice_reference_runtime.py',
                  'start_current_voice': ROOT / 'voice/native-start/start_current_voice.py'}
         dlls = {'crispasr': 'crispasr.dll', 'ggml': 'ggml.dll',
                 'ggml_base': 'ggml-base.dll', 'ggml_cpu': 'ggml-cpu.dll'}

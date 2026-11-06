@@ -35,7 +35,7 @@ _BEHAVIOR_FIELDS = frozenset({
     'require_auth_for_fallback_record_creation', 'fallback_option',
     'create_ticket_fallback_record_producer_sys_id', 'mobile_fallback_record_producer',
     'push_notification_max_polling_retries', 'voice_minutes_account_is_locked',
-    'sip_context_header',
+    'sip_context_header', 'transfer_target',
 })
 _NOTICE_CODES = frozenset(('INPUT_LOST', 'BUSY_AUDIO', 'BUSY_TEXT', 'ASR_EMPTY',
                            'ASR_FAILED', 'TURN_FAILED', 'LANGUAGE_RETRY', 'USER_INACTIVITY'))
@@ -205,9 +205,15 @@ def _validate_projection(value, service_id):
         if code.casefold() not in codes or code.casefold() in voice_codes:
             _invalid()
         voice_codes.add(code.casefold())
-        _object(voice, {'voice_id', 'voice_gender'})
-        for field in voice:
-            _text(voice[field], 256)
+        _object(voice, {'voice_id', 'voice_gender', 'tts_config_sys_id', 'reference'})
+        for field in ('voice_id', 'voice_gender'):
+            if field in voice:
+                _text(voice[field], 256)
+        if 'tts_config_sys_id' in voice and not _SYS_ID.fullmatch(voice['tts_config_sys_id']):
+            _invalid()
+        if 'reference' in voice:
+            from voice_reference_cache import validate_reference
+            validate_reference(voice['reference'], service_id, voice.get('tts_config_sys_id'), voice.get('voice_id'))
     terms = value['key_terms']
     if not isinstance(terms, dict) or len(terms) > 16:
         _invalid()
@@ -286,6 +292,7 @@ class CallSettings:
     selected_language: str
     _conversation_model_required: bool = field(default=False, repr=False)
     _conversation_model: ConversationModelSelection | None = field(default=None, repr=False)
+    _prepared_voices: dict = field(default_factory=dict, repr=False)
 
     @classmethod
     def from_authorized_response(cls, data, service_id, agent_id, *, conversation_model_version=None):
@@ -484,8 +491,22 @@ class CallSettings:
         voice_id = voice.get('voice_id', '')
         if not voice_id or voice_id.strip() != voice_id:
             raise RuntimeError('Configured TTS voice is unavailable')
-        return {'voice_id': voice_id, 'language': self.language,
-                'voice_profile': tts.get('voice_profile', '')}
+        context = {'voice_id': voice_id, 'language': self.language,
+                   'voice_profile': tts.get('voice_profile', '')}
+        if 'reference' in voice:
+            from voice_reference_cache import reference_fingerprint
+            digest = reference_fingerprint(voice['reference'])
+            handle = self._prepared_voices.get(self.language.casefold())
+            if (handle is None or handle.service_id != self.service_id
+                    or handle.tts_config_sys_id != voice['tts_config_sys_id']
+                    or handle.selected_voice_id != voice_id
+                    or handle.reference_sha256 != voice['reference']['sha256']
+                    or handle.descriptor_sha256 != digest
+                    or handle.registry_voice_id != 'snref-' + digest):
+                raise RuntimeError('Configured voice reference is unavailable')
+            context['registry_voice_id'] = handle.registry_voice_id
+            context['reference_sha256'] = handle.reference_sha256
+        return context
 
     @property
     def vad_start_ms(self):
@@ -527,8 +548,7 @@ class CallSettings:
                or key == 'start_secs' and self.vad_start_ms is None
                or key == 'stop_secs' and self.vad_stop_ms is None}
         behavior = {key: value for key, value in self._projection['behavior'].items()
-                    if key == 'filler_message_delay_in_seconds'
-                    or key == 'user_inactivity_threshold_in_seconds' and self._supported_seconds(key) is None}
+                    if key == 'user_inactivity_threshold_in_seconds' and self._supported_seconds(key) is None}
         sources = self._projection.get('behavior_sources', {})
         unlocalized = [key for key in ('retry_prefix', 'goodbye_message')
                        if sources.get(key) == 'native_default']

@@ -208,6 +208,93 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(handed, [])
         self.assertEqual(self.calls, [])
 
+    async def test_reference_preparation_follows_admission_and_reserves_through_turn(self):
+        prepared = SimpleNamespace(**vars(self.context), reference_marker='prepared')
+        entered, release = asyncio.Event(), asyncio.Event()
+        received, bound, stages = [], [], []
+        async def prepare(context, authorization):
+            self.assertIs(context,self.context)
+            self.assertEqual(authorization,'Bearer '+TOKEN)
+            self.assertEqual(stages,['ready'])
+            self.assertEqual(len(self.active),1)
+            self.assertIsInstance(next(iter(self.active)),adapter._PendingCreate)
+            received.append(context)
+            entered.set()
+            await release.wait()
+            return prepared
+        async def ready():
+            stages.append('ready')
+        async def turn(token,instance,assistant):
+            self.assertEqual(token,TOKEN)
+            self.assertEqual(len(self.active),1)
+            self.assertIsInstance(next(iter(self.active)),adapter._PendingCreate)
+            stages.append('turn')
+            return []
+        def factory(context, *, ice_servers):
+            self.assertIs(context,prepared)
+            stages.append('factory')
+            return self.manager.make_call()
+        self.manager.prepare_context=prepare
+        self.manager.before_create=ready
+        self.manager.managed_turn=SimpleNamespace(ice_servers=turn)
+        self.manager.context_call_factory=factory
+        self.manager.bind_call_authorization=lambda call,auth:bound.append((call,auth))
+        self.denied=True
+        self.assertEqual((await self.create()).status,403)
+        self.assertEqual(received,[])
+        self.denied=False
+        first=asyncio.create_task(self.create())
+        await asyncio.wait_for(entered.wait(),1)
+        self.assertEqual((await self.create()).status,503)
+        self.assertEqual(len(received),1)
+        self.assertEqual(self.calls,[])
+        release.set()
+        self.assertEqual((await first).status,200)
+        self.assertEqual(stages,['ready','ready','turn','factory'])
+        self.assertEqual(bound,[(self.calls[0],'Bearer '+TOKEN)])
+        self.assertEqual(self.active,{self.calls[0]})
+        self.assertFalse(self.manager.creating)
+
+    async def test_reference_preparation_timeout_and_source_errors_release_capacity(self):
+        for source_status,expected in [(401,401),(403,403),(500,503),(True,503),(None,503)]:
+            async def prepare(context,authorization):
+                if source_status is None:
+                    await asyncio.Event().wait()
+                error=RuntimeError('private source details '+TOKEN)
+                error.status=source_status
+                raise error
+            self.manager.prepare_context=prepare
+            with self.subTest(source_status=source_status), \
+                    patch.object(adapter,'PREPARE_CONTEXT_SECONDS',.01):
+                response=await asyncio.wait_for(self.create(),1)
+                self.assertEqual(response.status,expected)
+                self.assertNotIn(TOKEN,await response.text())
+                self.assertFalse(self.active)
+                self.assertFalse(self.manager.creating)
+                self.assertEqual(self.calls,[])
+        self.assertEqual(adapter.ADMISSION_SECONDS,12)
+        self.assertEqual(adapter.PREPARE_CONTEXT_SECONDS,35)
+
+    async def test_shutdown_cancels_reference_preparation_and_releases_pending(self):
+        entered, cancelled = asyncio.Event(), asyncio.Event()
+        async def prepare(context,authorization):
+            entered.set()
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.set()
+        self.manager.prepare_context=prepare
+        creating=asyncio.create_task(self.create())
+        await asyncio.wait_for(entered.wait(),1)
+        self.assertEqual(len(self.manager.creating),1)
+        await asyncio.wait_for(self.manager.shutdown(),1)
+        with suppress(Exception,asyncio.CancelledError):
+            await creating
+        self.assertTrue(cancelled.is_set())
+        self.assertFalse(self.manager.creating)
+        self.assertFalse(self.active)
+        self.assertEqual(self.calls,[])
+
     async def test_failed_caller_binding_owns_cleanup_and_exposes_no_credential(self):
         def fail(*args): raise ValueError('private credential: ' + TOKEN)
         self.manager.bind_call_authorization = fail
