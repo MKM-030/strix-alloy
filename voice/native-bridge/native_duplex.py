@@ -467,6 +467,7 @@ class NativeDuplex:
         self._synthesis_task = None
         self._backend = None
         self._bootstrap_state = 'ready'
+        self._bootstrap_ready = asyncio.Event()
         self._bootstrap_onset = None
         self._incoming_turn = None
         self._backend_unavailable = False
@@ -1662,12 +1663,17 @@ class NativeDuplex:
                     seen.add(reply)
                     self._enqueue(reply, kind='backend')
         self._queue_dialogue_observation()
+        self._bootstrap_ready.set()
 
     async def run(self, *, bootstrap_task=None):
         if bootstrap_task is not None and not isinstance(bootstrap_task, asyncio.Future):
             raise ValueError('Startup must be an existing call-owned task')
         opening = bootstrap_task
         self._bootstrap_state = 'pending' if opening is not None else 'ready'
+        if opening is not None:
+            self._bootstrap_ready.clear()
+        else:
+            self._bootstrap_ready.set()
         for name, coroutine in (('speaker', self._speak_loop()), ('dialogue', self._local_loop()),
                                 ('updates', self._update_loop())):
             self._start_worker(name, coroutine)
@@ -2070,14 +2076,12 @@ class NativeDuplex:
             if self._synthesis_task is not None:
                 self._synthesis_task.cancel()
 
-    def _bootstrap_refresh_allowed(self, observation, turn, epoch, source, failure):
+    def _bootstrap_refresh_context_current(self, observation, turn, epoch):
         if (not isinstance(observation, _BootstrapObservation) or self._bootstrap_state != 'ready'
                 or not self._live() or epoch != self.epoch or self._dialogue_turn is not turn
-                or self.conversation is not source or getattr(source, '_closed', False)
-                or getattr(source, 'output_epoch', None) != epoch or self._model_failed
+                or self._model_failed
                 or self._backend_unavailable or self._backend_input_closed
                 or getattr(self.call.dialog, 'conversation_ended', False)
-                or failure not in (None, 'superseded', 'output_callback_failed')
                 or turn[3] in self._turn_speech_started or self._control_gate.binding is not None):
             return False
         boundary = getattr(self.call.dialog, 'input_boundary', None)
@@ -2089,6 +2093,12 @@ class NativeDuplex:
         return not (self._backend_outputs
             or any(item.kind in ('backend', 'backend_control') and self._valid(item) for item in self._outputs)
             or active is not None and active.kind in ('backend', 'backend_control') and self._valid(active))
+
+    def _bootstrap_refresh_allowed(self, observation, turn, epoch, source, failure):
+        return (self._bootstrap_refresh_context_current(observation, turn, epoch)
+                and self.conversation is source and not getattr(source, '_closed', False)
+                and getattr(source, 'output_epoch', None) == epoch
+                and failure in (None, 'superseded', 'output_callback_failed'))
 
     async def _general_help(self, turn, epoch, kind='help'):
         # Readiness can expire an unspoken bootstrap answer. Recompute once from
@@ -2118,13 +2128,15 @@ class NativeDuplex:
             emit_fallback('model_failed')
             return
         transcript_group = None
+        response_task = readiness_task = None
         try:
             if self._invalidations:
                 await asyncio.gather(*tuple(self._invalidations), return_exceptions=True)
             if self.conversation is None:
                 self._dialogue_observation_state = None
-                self.conversation = await self._factory(self.call.config.conversation_ws_url,
-                                                        self.call.call_id, self.epoch)
+                async with asyncio.timeout_at(deadline):
+                    self.conversation = await self._factory(self.call.config.conversation_ws_url,
+                                                            self.call.call_id, self.epoch)
             if epoch != self.epoch:
                 self._log_dialogue_discard('caller_epoch_changed', 'connection')
                 return
@@ -2152,10 +2164,27 @@ class NativeDuplex:
                 admitted += 1
             streaming = getattr(self.conversation, 'sentence_streaming', False)
             async with asyncio.timeout_at(deadline):
-                if streaming:
-                    candidate = await self.conversation.respond(turn[1], snapshot, key, on_sentence=sentence)
-                else:
-                    candidate = await self.conversation.respond(turn[1], snapshot, key)
+                response_task = asyncio.create_task(source.respond(turn[1], snapshot, key,
+                    **({'on_sentence': sentence} if streaming else {})))
+                if refresh_bootstrap and isinstance(observation, _BootstrapObservation):
+                    readiness_task = asyncio.create_task(self._bootstrap_ready.wait())
+                    await asyncio.wait((response_task, readiness_task), return_when=asyncio.FIRST_COMPLETED)
+                    if (readiness_task.done() and not response_task.done()
+                            and self._bootstrap_refresh_allowed(observation, turn, epoch, source, None)):
+                        # Retire stale unspoken output before cancellation can yield.
+                        # Pipecat cancellation aborts its owned protocol session;
+                        # settle and close it before the single fresh factory call.
+                        self._revoke_dialogue_output(turn)
+                        response_task.cancel()
+                        await asyncio.gather(response_task, return_exceptions=True)
+                        refresh = self._bootstrap_refresh_allowed(observation, turn, epoch, source, None)
+                        await source.close()
+                        if self.conversation is source:
+                            self.conversation = None
+                            self._dialogue_observation_state = None
+                            return refresh and self._bootstrap_refresh_context_current(observation, turn, epoch)
+                        return False
+                candidate = await response_task
             if self._control_gate.binding is not None and not self._control_gate.dispatched:
                 self._revoke_dialogue_output(turn)
                 self._reask_control(turn)
@@ -2220,6 +2249,12 @@ class NativeDuplex:
             if epoch == self.epoch:
                 emit_fallback('controller_busy' if busy else 'unavailable')
         finally:
+            owned = tuple(task for task in (response_task, readiness_task) if task is not None)
+            for task in owned:
+                if not task.done():
+                    task.cancel()
+            if owned:
+                await asyncio.gather(*owned, return_exceptions=True)
             if transcript_group is not None:
                 self._transcripts.finish(*transcript_group)
                 self._sync_transcript_groups()
