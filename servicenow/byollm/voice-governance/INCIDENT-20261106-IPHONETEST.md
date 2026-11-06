@@ -4,6 +4,8 @@ Instanz: `soprasteriaassvsdemo14`. Lokaler Anruf `8e53c5c6e65b`, [ServiceNow-Ges
 
 **Aktualisierung 19:05 UTC:** Nach neuer ausdrücklicher Freigabe und frei gewordener Speicherreserve wurde Halogen einmal über den normalen zentralen Controller gestartet. Modell, Gateway, Native-Bridge, ASR und TTS sind tatsächlich bereit. Dieser Wiederanlauf ändert keine ServiceNow-Konfiguration. Die anschließende reale Geräteabnahme bleibt offen.
 
+**Separater Startfehler am späten Abend:** Marcels anschließender Start erreichte wegen fehlender öffentlicher TLS-Erreichbarkeit keine Native-Sitzung. Der Zugang ist nach einer regulären Tailscale-Wiederverbindung wieder extern nachgewiesen; ServiceNow erhielt HTTP200 in 684 ms. Modell, eigene Stimme und alle Voice-Einstellungen blieben erhalten. [Befund, Aktionen und Grenzen](INCIDENT-20261106-VOICE-ENTRY.md).
+
 ## Tatsächlicher Ablauf
 
 Der lokale Anruf lief von 18:02:29 bis 18:03:41 Uhr MEZ. Die Verbindung blieb bis zum Auflegen bestehen. Die Begrüßung erzeugte 380.160 angenommene PCM-Bytes in 7,187 Sekunden; der erste Chunk lag nach 297 Millisekunden vor. Das belegt die Ausgabe des Servers, nicht die hörbare Wiedergabe auf dem iPhone.
