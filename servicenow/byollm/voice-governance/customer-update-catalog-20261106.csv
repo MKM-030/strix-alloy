@@ -343,17 +343,11 @@ Quellstand im Payload: 2026-10-13 18:46:37; Revision 3. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 082e47b893c417905c8132d47aba101b; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: c7fd199e498f6e2fdf43c94532ec68f963589cbe295ac0f8ede10add8d182cbf.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
-08c46f9693d45f185c8132d47aba106f,1c04458e939457185c8132d47aba10af,global,sys_gen_ai_control_setting_data,32ee2ed0fff53210c3fcffffffffff09,true,"Erfasste Fassung von „true“ (sys_gen_ai_control_setting_data, 32ee2ed0fff53210c3fcffffffffff09).
+08c46f9693d45f185c8132d47aba106f,1c04458e939457185c8132d47aba10af,global,sys_gen_ai_control_setting_data,32ee2ed0fff53210c3fcffffffffff09,true,"Zweck: Natives Mosaic-Metadatensignal Is Metadata Updated. ServiceNow-Business-Rules pflegen diesen Datensatz bei Aenderungen an GenAI-Metadaten automatisch. Der erfasste Wert true signalisiert Abgleichbedarf; er belegt keine neue Modellaktivierung oder fachliche Ausfuehrung.
 
-Transportiert ein natives Steuerungs- oder Metadatensignal der KI-Konfiguration; daraus folgt keine pauschale Aktivierung aller Modelle.
+Quellartefakt: sys_gen_ai_control_setting_data / 32ee2ed0fff53210c3fcffffffffff09. Dieser Customer Update kann durch die Plattform automatisch erneut erfasst werden. Die Revisions- und Zeitfelder des jeweils gespeicherten XML sind massgeblich; dieser Kommentar beschreibt den stabilen Zweck.
 
-Erfasste Ausprägung: active=true.
-
-Quellstand im Payload: 2026-11-04 12:04:54; Revision 321. Update Set: „Custom LLM Voice 3.0 - Workflow Invoke Mask Repair - NO DELETE 20261103“ [1c04458e939457185c8132d47aba10af].
-
-Anwendung/Scope: global. CU: 08c46f9693d45f185c8132d47aba106f; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 6a43fa7fb8ce16e2b73ecbfe26e222818c097d738da17ea9a48e5d1de2d4496e.
-
-Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 5 CU-Fassungen."
+Dokumentationspruefung am 6.11.2026: Die normale Dokumentationspflege hat eine native Neuerfassung ausgeloest. Gegenueber dem Ausgangsexport wurden ausschliesslich sys_mod_count (321 auf 325) und sys_updated_on aktualisiert. Active und value=true sowie alle anderen Payload-Felder blieben identisch. Der XML-Payload wurde nicht manuell bearbeitet. Update Set und Quellidentitaet blieben erhalten."
 08da949d93c09b905c8132d47aba105e,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_one_extend_capability_definition,cb80c7e193f747d0e7f2b9fa6aba1058,HTML to Text (Custom LLM Provider),"Erfasste Fassung von „HTML to Text (Custom LLM Provider)“ (sys_one_extend_capability_definition, cb80c7e193f747d0e7f2b9fa6aba1058).
 
 Stellt die konkrete Implementierung einer Capability mit API-, Verbindungs- und Verarbeitungskontext bereit.
@@ -615,6 +609,9 @@ Quellstand im Payload: 2026-11-02 16:21:16; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: global. CU: 0c4cca39931093185c8132d47aba1079; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 8cb692cb538558873c85b9eff99f67c48abaf7e2a0956c6ed9c76c27916eeca5.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+0cc7c50393941394e7f2b9fa6aba1080,2167c98f93541394e7f2b9fa6aba1091,global,sys_script_include,e51cbffa93c81750e7f2b9fa6aba10cc,SCCVoiceCallerContext,"Dokumentation des Artefakts SCCVoiceCallerContext (sys_script_include, e51cbffa93c81750e7f2b9fa6aba10cc). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: SCC-Sprachdialog: aktuelle Nutzerergänzungen nur für das gebundene Gespräch in den Agentenkontext übernehmen und den Einschluss gesondert quittieren. Keine Freigabe- oder Erfolgsbestätigung.
+
+Ergänzende Dokumentation: Verarbeitet den dem Gespräch zugeordneten Aufruferkontext für den SCC-Voice-Pfad."
 0cd21b30934817905c8132d47aba10a2,d8a20774930417905c8132d47aba10f8,32808450431302106c3603295bb8f245,sys_generative_ai_config,c380c7e193f747d0e7f2b9fa6aba102a,AIA ReAct Engine - Swarm Disambiguation (Custom LLM Provider),"Erfasste Fassung von „AIA ReAct Engine - Swarm Disambiguation (Custom LLM Provider)“ (sys_generative_ai_config, c380c7e193f747d0e7f2b9fa6aba102a).
 
 Unterstützt die Klärung mehrdeutiger Aufgaben in einem Mehragentenablauf. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -776,6 +773,9 @@ Quellstand im Payload: 2026-10-18 18:39:12; Revision 1; Version 1. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: 0efbd54d938c97905c8132d47aba10e8; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 991ac3d9d69106218bd7e345a0319d93201550cd241e5222587cca0c279f5416.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+0fb7450393941394e7f2b9fa6aba1020,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,8bb7e01093841b505c8132d47aba1012,Custom LLM - Mirror definition inputs,"Dokumentation des Artefakts Custom LLM - Mirror definition inputs (sys_script, 8bb7e01093841b505c8132d47aba1012). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Spiegelt Änderungen am erfassten Teil des Custom-LLM-Promptgraphen über die zugehörige Abgleichsfunktion. Regel: „Custom LLM - Mirror definition inputs“.
+
+Regel „Custom LLM - Mirror definition inputs“ für Tabelle sys_one_extend_definition_attribute; Ausführungszeitpunkt after. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 0fda10dd93c09b905c8132d47aba10a7,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,c380c7e193f747d0e7f2b9fa6aba10cb,0b80c7e193f747d0e7f2b9fa6aba10ca,"Erfasste Fassung von „0b80c7e193f747d0e7f2b9fa6aba10ca“ (sys_generative_ai_prompt_config, c380c7e193f747d0e7f2b9fa6aba10cb).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist als Standardbindung markiert.
@@ -936,6 +936,9 @@ Quellstand im Payload: 2026-10-12 18:42:24; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 11a19bf8930817905c8132d47aba107a; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: fa0aa97720ede70fe13f825778f9359521a4632efbe0de4c4a02c6f54e384965.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+11b7cdcf93541394e7f2b9fa6aba1061,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,0780c7e193f747d0e7f2b9fa6aba1091,0f80c7e193f747d0e7f2b9fa6aba108f,"Dokumentation des Artefakts Prompt name (Custom LLM Provider) (sys_generative_ai_config, 0780c7e193f747d0e7f2b9fa6aba1091). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Der erfasste Name ist nicht fachlich aussagekräftig; die konkrete Teilaufgabe ist anhand des unveränderten Prompttexts und seiner Definition zu bestimmen.
+
+Prompt-Konfiguration: „Prompt name (Custom LLM Provider)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 11da989d93c09b905c8132d47aba10fc,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,3a80c7e193f747d0e7f2b9fa6aba101a,3280c7e193f747d0e7f2b9fa6aba1015,"Erfasste Fassung von „3280c7e193f747d0e7f2b9fa6aba1015“ (sys_generative_ai_prompt_config, 3a80c7e193f747d0e7f2b9fa6aba101a).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -1145,6 +1148,12 @@ Quellstand im Payload: 2026-10-13 09:44:36; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 156b4bbc938417905c8132d47aba1023; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 2b96d4e7650ae66de70fea627e4923eaad0ec280a017f798b8d6a91280621ca1.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+15b7cdcf93541394e7f2b9fa6aba1080,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,0f80c7e193f747d0e7f2b9fa6aba104d,cf80c7e193f747d0e7f2b9fa6aba104a,"Dokumentation des Artefakts Refine Instructions (Custom LLM Provider V2) (sys_generative_ai_config, 0f80c7e193f747d0e7f2b9fa6aba104d). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Überarbeitet die bereitgestellten Aufgabenanweisungen für den Agenteneinsatz.
+
+Prompt-Konfiguration: „Refine Instructions (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
+15b7cdcf93541394e7f2b9fa6aba10a6,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,368087e193f747d0e7f2b9fa6aba1042,3e8087e193f747d0e7f2b9fa6aba1040,"Dokumentation des Artefakts Prompt name (Custom LLM Provider) (sys_generative_ai_config, 368087e193f747d0e7f2b9fa6aba1042). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Der erfasste Name ist nicht fachlich aussagekräftig; die konkrete Teilaufgabe ist anhand des unveränderten Prompttexts und seiner Definition zu bestimmen.
+
+Prompt-Konfiguration: „Prompt name (Custom LLM Provider)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 160cd18d938c97905c8132d47aba10a3,02995981938c97905c8132d47aba10fb,32808450431302106c3603295bb8f245,sys_generative_ai_config,cf80c7e193f747d0e7f2b9fa6aba102b,AIA ReAct Engine (Custom LLM Provider V2),"Erfasste Fassung von „AIA ReAct Engine (Custom LLM Provider V2)“ (sys_generative_ai_config, cf80c7e193f747d0e7f2b9fa6aba102b).
 
 Unterstützt die schrittweise Agentenausführung und die Auswahl der nächsten Aktion im ReAct-Ablauf. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -1404,6 +1413,9 @@ Quellstand im Payload: 2026-10-13 16:04:30; Revision 4. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 1b51d7b8930817905c8132d47aba103e; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 9c98d3ad28dc9ea1fe845386bf8d91351ff0a62646b1069123776932a88fadc1.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 3 CU-Fassungen."
+1bb7450393941394e7f2b9fa6aba10c2,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,cbb7a01093841b505c8132d47aba10a9,Custom LLM - Mirror definitions,"Dokumentation des Artefakts Custom LLM - Mirror definitions (sys_script, cbb7a01093841b505c8132d47aba10a9). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Spiegelt Änderungen am erfassten Teil des Custom-LLM-Promptgraphen über die zugehörige Abgleichsfunktion. Regel: „Custom LLM - Mirror definitions“.
+
+Regel „Custom LLM - Mirror definitions“ für Tabelle sys_one_extend_capability_definition; Ausführungszeitpunkt after. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 1bb7e01093841b505c8132d47aba10f5,d73568d093441b505c8132d47aba101d,global,sys_script_fix,47b7e01093841b505c8132d47aba10f0,Custom LLM - Synchronize prompts,"Erfasste Fassung von „Custom LLM - Synchronize prompts“ (sys_script_fix, 47b7e01093841b505c8132d47aba10f0).
 
 Stellt einen manuellen Verwaltungs- und Abgleichschritt bereit; seine Erfassung bedeutet keine Ausführung.
@@ -1758,6 +1770,7 @@ Quellstand im Payload: 2026-10-12 18:42:27; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 2280d3f4930817905c8132d47aba106c; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 6405852c4943cd122b3067e89533833c5b8378ba16cc44afd4b52b6448563521.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+231c110393d85b585c8132d47aba102d,b9995583931c1394e7f2b9fa6aba10c0,global,sys_properties,631c110393d85b585c8132d47aba1023,local_llm.voice.reference.8aa131d793f787105c8132d47aba1095.c46f9ae4287e48d5a713fddf262afdfd,"Zweck: Eigene editierbare Global-Referenzmetadaten fuer Service 8aa131d793f787105c8132d47aba1095 und nativ ausgewaehlte TTS-Konfiguration c46f9ae4287e48d5a713fddf262afdfd. Neuer sys_properties-Datensatz; explizit gesetzte Felder: name, type, value, description, is_private=false, ignore_cache=true. sys_scope/sys_package werden durch die normale Global-Initialisierung gesetzt und nur verifiziert. Die native TTS-Konfiguration bleibt exakt unveraendert. Typ string und nichtprivater Metadatentransport; Laufzeit liest per GlideRecordSecure als Originalaufrufer statt gs.getProperty-Cache. ServiceNow bleibt Einstellungsautoritaet und alleiniger fachlicher Ausfuehrer. Native TTS-/Voice-Auswahl, lokale Engine-/Profil-/Hashwerte und vorhandene Caller-/Service-/Agenten-Autorisierung bleiben autoritativ. Keine native TTS-Aenderung, ACL-/Rollen- oder Cross-Scope-Policy-Aenderung. Vorhandene freigegebene WAV 7fa67ad293d01754e7f2b9fa6aba1052 wird wiederverwendet. Metadaten-Update-Sets transportieren ihre Binaerdaten nicht automatisch; Attachment-Transport und Ziel-Hash-/Parent-Readback benoetigen eine separate ausdrueckliche Freigabe."
 23cdcf3893c417905c8132d47aba1079,10824734930417905c8132d47aba1033,7cc4ec81533121106b38ddeeff7b12ee,sys_now_assist_deployment_config_attributes,6723e60f93374354e7f2b9fa6aba10c6,use_agents_in_planner,"Erfasste Fassung von „use_agents_in_planner“ (sys_now_assist_deployment_config_attributes, 6723e60f93374354e7f2b9fa6aba10c6).
 
 Speichert ein einzelnes benanntes Konfigurationsattribut für die zugeordnete Assistant-Konfiguration.
@@ -2009,6 +2022,9 @@ Quellstand im Payload: 2026-10-18 18:39:10; Revision 3; Version 1. Update Set: �
 Anwendung/Scope: 3ab59df253e2b1103c2cddeeff7b1247. CU: 25fb954d938c97905c8132d47aba109f; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 7c64dc0fe1d1af554ba037109f5416221ef573fc0fd17f6f1efd480dea7c571f.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+26b7c10393941394e7f2b9fa6aba1075,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,cf80c7e193f747d0e7f2b9fa6aba106f,c780c7e193f747d0e7f2b9fa6aba106e,"Dokumentation des Artefakts Malformed JSON Fixer v1 (Custom LLM Provider V2) (sys_generative_ai_config, cf80c7e193f747d0e7f2b9fa6aba106f). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Bereitet fehlerhaft formatierten JSON-Inhalt für das erwartete Ausgabeformat auf.
+
+Prompt-Konfiguration: „Malformed JSON Fixer v1 (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 26e058fe9390d3585c8132d47aba1019,1c04458e939457185c8132d47aba10af,global,sys_script_include,e51cbffa93c81750e7f2b9fa6aba10cc,SCCVoiceCallerContext,"Erfasste Fassung von „SCCVoiceCallerContext“ (sys_script_include, e51cbffa93c81750e7f2b9fa6aba10cc).
 
 Verarbeitet den dem Gespräch zugeordneten Aufruferkontext für den SCC-Voice-Pfad.
@@ -2286,6 +2302,9 @@ Quellstand im Payload: 2026-10-16 06:54:08; Revision 2. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 2a67e45c93441b505c8132d47aba10ef; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: fa9438586a426c96a9467e0c5775da6919c4af783a3377244053de4c02b61026.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+2ab7c10393941394e7f2b9fa6aba10ad,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,cf80c7e193f747d0e7f2b9fa6aba1073,c780c7e193f747d0e7f2b9fa6aba1072,"Dokumentation des Artefakts Recommend AI Agents using Usecase (Custom LLM Provider V2) (sys_generative_ai_config, cf80c7e193f747d0e7f2b9fa6aba1073). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Empfiehlt zum bereitgestellten Use Case passende Agenten.
+
+Prompt-Konfiguration: „Recommend AI Agents using Usecase (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 2ae128e993101714e7f2b9fa6aba1049,89e124e993101714e7f2b9fa6aba1097,32808450431302106c3603295bb8f245,sys_generative_ai_config,3e8087e193f747d0e7f2b9fa6aba10ae,Response Refiner - Summary (Custom LLM Provider),"Erfasste Fassung von „Response Refiner - Summary (Custom LLM Provider)“ (sys_generative_ai_config, 3e8087e193f747d0e7f2b9fa6aba10ae).
 
 Fasst den bereitgestellten Inhalt für den nachfolgenden Verarbeitungsschritt zusammen. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -3175,6 +3194,9 @@ Quellstand im Payload: 2026-10-12 13:00:01; Revision 1. Update Set: „SCC Model
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 363a711e93d4db185c8132d47aba10e5; Aktion im Wrapper: DELETE; Payload SHA-256: 98a3770c0063db2652e90e792739921a7ca2418a7c3e00571731307d67a9e24c.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+36b7050393941394e7f2b9fa6aba109e,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,47b7e01093841b505c8132d47aba1062,Custom LLM - Mirror response validators,"Dokumentation des Artefakts Custom LLM - Mirror response validators (sys_script, 47b7e01093841b505c8132d47aba1062). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Spiegelt Änderungen am erfassten Teil des Custom-LLM-Promptgraphen über die zugehörige Abgleichsfunktion. Regel: „Custom LLM - Mirror response validators“.
+
+Regel „Custom LLM - Mirror response validators“ für Tabelle sys_generative_ai_response_validator; Ausführungszeitpunkt after. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 36c3523593189b14e7f2b9fa6aba1088,970fb5f9931c53185c8132d47aba1008,global,sys_gen_ai_control_setting_data,32ee2ed0fff53210c3fcffffffffff09,true,"Erfasste Fassung von „true“ (sys_gen_ai_control_setting_data, 32ee2ed0fff53210c3fcffffffffff09).
 
 Transportiert ein natives Steuerungs- oder Metadatensignal der KI-Konfiguration; daraus folgt keine pauschale Aktivierung aller Modelle.
@@ -3212,6 +3234,7 @@ Quellstand im Payload: 2026-11-06 01:12:17; Revision 1. Update Set: „SCC Voice
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 378227fe9354d7585c8132d47aba10ce; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 62c98765c3c696eae7e9d8cb61bac1a3624dea5ac2a102c66a02c7421a09265b.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+37b7850393941394e7f2b9fa6aba10be,6d67458f93541394e7f2b9fa6aba106d,022bd6e9b720a61081fee3fdde11a9df,sys_script_include,5a1a777dff99f614129628ecf43bf19d,VoiceServiceConfigurationMobile,"Dokumentation des Artefakts VoiceServiceConfigurationMobile (sys_script_include, 5a1a777dff99f614129628ecf43bf19d). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Stellt die erfassten Voice-Service-Konfigurationsdaten für den mobilen Aufrufer bereit."
 37ca549d93c09b905c8132d47aba10aa,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_one_extend_capability_definition,c780c7e193f747d0e7f2b9fa6aba106a,LTM Identify memories (Custom LLM Provider),"Erfasste Fassung von „LTM Identify memories (Custom LLM Provider)“ (sys_one_extend_capability_definition, c780c7e193f747d0e7f2b9fa6aba106a).
 
 Stellt die konkrete Implementierung einer Capability mit API-, Verbindungs- und Verarbeitungskontext bereit.
@@ -3404,6 +3427,7 @@ Quellstand im Payload: 2026-10-27 21:43:32; Revision 6. Update Set: „Local LLM
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 3b9b9cc493dc5f545c8132d47aba1037; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 7f1d85d323bbf0b4094943c5635537406f3ebf944d596d2aa71e402270ac296c.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+3bb7c50393941394e7f2b9fa6aba102f,2167c98f93541394e7f2b9fa6aba1091,global,sys_script_include,c3878c7293189b54e7f2b9fa6aba105d,SCCVoicePresentationHistoryV1,"Dokumentation des Artefakts SCCVoicePresentationHistoryV1 (sys_script_include, c3878c7293189b54e7f2b9fa6aba105d). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Verwaltet den gesprächsbezogenen Präsentationsverlauf, mit dem Voice-Ausgaben und Backend-Kontext nachvollziehbar zugeordnet werden."
 3be1e8e993101714e7f2b9fa6aba1080,89e124e993101714e7f2b9fa6aba1097,32808450431302106c3603295bb8f245,sys_generative_ai_config,8b80c7e193f747d0e7f2b9fa6aba102a,AIA ReAct Engine - Swarm Neutral (Custom LLM Provider),"Erfasste Fassung von „AIA ReAct Engine - Swarm Neutral (Custom LLM Provider)“ (sys_generative_ai_config, 8b80c7e193f747d0e7f2b9fa6aba102a).
 
 Stellt die neutrale Koordinationsvariante des Mehragentenablaufs bereit. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -3490,6 +3514,9 @@ Quellstand im Payload: 2026-10-13 17:08:01; Revision 1. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 3d8fc3f0930817905c8132d47aba10e1; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: a2a044b8301bd702f3f1299d1fc38370735559db77d7d5f212342285da9df0f6.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+3db7010393941394e7f2b9fa6aba10a6,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,768087e193f747d0e7f2b9fa6aba1064,b68087e193f747d0e7f2b9fa6aba1062,"Dokumentation des Artefakts AIA ImpAct Handbook Compiler (Custom LLM Provider) (sys_generative_ai_config, 768087e193f747d0e7f2b9fa6aba1064). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Bereitet die bereitgestellten Handbuchanweisungen für den ImpAct-Ablauf auf.
+
+Prompt-Konfiguration: „AIA ImpAct Handbook Compiler (Custom LLM Provider)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 3e05f342931c1354e7f2b9fa6aba103c,1c04458e939457185c8132d47aba10af,global,std_http_auth,7205f342931c1354e7f2b9fa6aba1034,SCC Local Voice - ServiceNow Request OAuth,"Erfasste Fassung von „SCC Local Voice - ServiceNow Request OAuth“ (std_http_auth, 7205f342931c1354e7f2b9fa6aba1034).
 
 Definiert Metadaten eines HTTP-Authentifizierungsprofils; Zugangsdaten bleiben außerhalb dieses Kommentars.
@@ -3503,6 +3530,9 @@ Quellstand im Payload: 2026-11-03 18:37:35; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: global. CU: 3e05f342931c1354e7f2b9fa6aba103c; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: a4fed5e3bc8e373782079866055ba80542b91a65f343331e70e9a76f0640f156.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+3eb7050393941394e7f2b9fa6aba1059,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,07b7ecdc93441b505c8132d47aba10f8,Custom LLM - Mirror prompt configuration,"Dokumentation des Artefakts Custom LLM - Mirror prompt configuration (sys_script, 07b7ecdc93441b505c8132d47aba10f8). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Spiegelt Änderungen am erfassten Teil des Custom-LLM-Promptgraphen über die zugehörige Abgleichsfunktion. Regel: „Custom LLM - Mirror prompt configuration“.
+
+Regel „Custom LLM - Mirror prompt configuration“ für Tabelle sys_generative_ai_config; Ausführungszeitpunkt after. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 3ee128e993101714e7f2b9fa6aba105e,89e124e993101714e7f2b9fa6aba1097,32808450431302106c3603295bb8f245,sys_generative_ai_config,3e8087e193f747d0e7f2b9fa6aba10fd,Response Refiner (Custom LLM Provider V2),"Erfasste Fassung von „Response Refiner (Custom LLM Provider V2)“ (sys_generative_ai_config, 3e8087e193f747d0e7f2b9fa6aba10fd).
 
 Überarbeitet die bereitgestellte Antwort für den vorgesehenen Ausgabekontext. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -3997,6 +4027,7 @@ Quellstand im Payload: 2026-11-02 21:20:34; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 022bd6e9b720a61081fee3fdde11a9df. CU: 44c0d3b59354d3185c8132d47aba10d1; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: aeb1950fbccb256fdfab7781f388387f960491b71a33be16a4bec12d9b32acc7.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+44c7c50393941394e7f2b9fa6aba1094,2167c98f93541394e7f2b9fa6aba1091,global,sys_ws_definition,9205fa7293c45b145c8132d47aba108a,SCC Voice Context,"Dokumentation des Artefakts SCC Voice Context (sys_ws_definition, 9205fa7293c45b145c8132d47aba108a). Aktualisiert ausschliesslich short_description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: REST-API zum kontrollierten Ergänzen des SCC-Voice-Gesprächskontexts."
 44d21b30934817905c8132d47aba105d,d8a20774930417905c8132d47aba10f8,32808450431302106c3603295bb8f245,sys_generative_ai_config,8f80c7e193f747d0e7f2b9fa6aba102f,AIA ReAct Engine - Swarm (Custom LLM Provider V2),"Erfasste Fassung von „AIA ReAct Engine - Swarm (Custom LLM Provider V2)“ (sys_generative_ai_config, 8f80c7e193f747d0e7f2b9fa6aba102f).
 
 Unterstützt die Koordination zwischen beteiligten Agenten. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -4718,6 +4749,9 @@ Quellstand im Payload: 2026-10-13 09:44:36; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 526bcbbc938417905c8132d47aba1098; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: deb4b04dac791f2c509affffdd8ee0a3467a29787bedcbe73cbede5dc701739f.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+52b7810393941394e7f2b9fa6aba107c,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,c380c7e193f747d0e7f2b9fa6aba1052,cb80c7e193f747d0e7f2b9fa6aba1050,"Dokumentation des Artefakts Discover AIA or Usecase (sys_generative_ai_config, c380c7e193f747d0e7f2b9fa6aba1052). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Ermittelt passende Agenten oder Workflows aus dem bereitgestellten Aufgaben- und Auswahlkontext.
+
+Prompt-Konfiguration: „Discover AIA or Usecase“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 530c958d938c97905c8132d47aba1068,02995981938c97905c8132d47aba10fb,32808450431302106c3603295bb8f245,sys_generative_ai_config,fa8087e193f747d0e7f2b9fa6aba1042,Prompt name (Custom LLM Provider V2),"Erfasste Fassung von „Prompt name (Custom LLM Provider V2)“ (sys_generative_ai_config, fa8087e193f747d0e7f2b9fa6aba1042).
 
 Der erfasste Name ist nicht fachlich aussagekräftig; die konkrete Teilaufgabe ist anhand des unveränderten Prompttexts und seiner Definition zu bestimmen. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -4915,6 +4949,9 @@ Quellstand im Payload: 2026-10-12 18:42:28; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 571e07b893c417905c8132d47aba1001; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 0c2a9185eeef1dff66380266cb3f76a7ac712f9dcd72d0779c4ea3b245e3fec6.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+57b7450393941394e7f2b9fa6aba10a0,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,cbb7a01093841b505c8132d47aba1049,Custom LLM - Mirror prompt bindings,"Dokumentation des Artefakts Custom LLM - Mirror prompt bindings (sys_script, cbb7a01093841b505c8132d47aba1049). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Spiegelt Änderungen am erfassten Teil des Custom-LLM-Promptgraphen über die zugehörige Abgleichsfunktion. Regel: „Custom LLM - Mirror prompt bindings“.
+
+Regel „Custom LLM - Mirror prompt bindings“ für Tabelle sys_generative_ai_prompt_config; Ausführungszeitpunkt after. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 57da50dd93c09b905c8132d47aba105c,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,cf80c7e193f747d0e7f2b9fa6aba1099,0780c7e193f747d0e7f2b9fa6aba1099,"Erfasste Fassung von „0780c7e193f747d0e7f2b9fa6aba1099“ (sys_generative_ai_prompt_config, cf80c7e193f747d0e7f2b9fa6aba1099).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist als Standardbindung markiert.
@@ -5049,6 +5086,9 @@ Quellstand im Payload: 2026-10-18 18:39:09; Revision 1; Version 6. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: 59fb554d938c97905c8132d47aba10dd; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 6d9429a26f85dce260513eef75ebdeaf5e14e988182cc61df5ee23695eb6e239.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+5ab7810393941394e7f2b9fa6aba10c0,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,c780c7e193f747d0e7f2b9fa6aba104c,cf80c7e193f747d0e7f2b9fa6aba104a,"Dokumentation des Artefakts Describe and instruct agent (Custom LLM Provider) (sys_generative_ai_config, c780c7e193f747d0e7f2b9fa6aba104c). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Erstellt die für einen Agenten vorgesehene Beschreibung und Aufgabenanweisung.
+
+Prompt-Konfiguration: „Describe and instruct agent (Custom LLM Provider)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 5bca149d93c09b905c8132d47aba1088,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_one_extend_capability_definition,3e8087e193f747d0e7f2b9fa6aba1040,Agent Tool Description Summarizer (Custom LLM Provider),"Erfasste Fassung von „Agent Tool Description Summarizer (Custom LLM Provider)“ (sys_one_extend_capability_definition, 3e8087e193f747d0e7f2b9fa6aba1040).
 
 Stellt die konkrete Implementierung einer Capability mit API-, Verbindungs- und Verarbeitungskontext bereit.
@@ -5786,6 +5826,9 @@ Quellstand im Payload: 2026-10-12 18:42:24; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 69a19bf8930817905c8132d47aba1095; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: cd4f160c074dd9f1f0a7c9918b03d63f66fa825823220b2c90a1148cd9417173.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+69b7010393941394e7f2b9fa6aba1004,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,4780c7e193f747d0e7f2b9fa6aba104d,cf80c7e193f747d0e7f2b9fa6aba104a,"Dokumentation des Artefakts Refine Instructions (Custom LLM Provider) (sys_generative_ai_config, 4780c7e193f747d0e7f2b9fa6aba104d). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Überarbeitet die bereitgestellten Aufgabenanweisungen für den Agenteneinsatz.
+
+Prompt-Konfiguration: „Refine Instructions (Custom LLM Provider)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 69cfb890934c1b505c8132d47aba10af,d73568d093441b505c8132d47aba101d,global,sys_dictionary,915ae262e2be7768591488e3cc4d4c28,u_custom_llm_prompt_mirror_state,"Erfasste Fassung von „u_custom_llm_prompt_mirror_state“ (sys_dictionary, 915ae262e2be7768591488e3cc4d4c28).
 
 Definiert ein Feldschema mit Datentyp und Referenzbezug für die erfasste Tabelle.
@@ -5836,6 +5879,9 @@ Quellstand im Payload: 2026-11-02 21:15:00; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 022bd6e9b720a61081fee3fdde11a9df. CU: 6a7f4fbd9314d3185c8132d47aba10e9; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 83224c35b4c0c55982e67b03ddb8c30b4cc7effe4cbac3ff2e7d82e4247bff99.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+6ab7c10393941394e7f2b9fa6aba1062,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,cb80c7e193f747d0e7f2b9fa6aba1091,0f80c7e193f747d0e7f2b9fa6aba108f,"Dokumentation des Artefakts Prompt name (Custom LLM Provider V2) (sys_generative_ai_config, cb80c7e193f747d0e7f2b9fa6aba1091). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Der erfasste Name ist nicht fachlich aussagekräftig; die konkrete Teilaufgabe ist anhand des unveränderten Prompttexts und seiner Definition zu bestimmen.
+
+Prompt-Konfiguration: „Prompt name (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 6ada9c9d93c09b905c8132d47aba10d8,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,8f80c7e193f747d0e7f2b9fa6aba104e,4780c7e193f747d0e7f2b9fa6aba104d,"Erfasste Fassung von „4780c7e193f747d0e7f2b9fa6aba104d“ (sys_generative_ai_prompt_config, 8f80c7e193f747d0e7f2b9fa6aba104e).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -5875,6 +5921,9 @@ Quellstand im Payload: 2026-11-06 01:12:16; Revision 2. Update Set: „SCC Voice
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 6b8227fe9354d7585c8132d47aba1084; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 208ae9f35d1b2fa5d66683fc733bd105699318e9cdb6deeee24501762583047b.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+6bb7850393941394e7f2b9fa6aba10ae,6d67458f93541394e7f2b9fa6aba106d,022bd6e9b720a61081fee3fdde11a9df,sys_script_include,3083901993409b905c8132d47aba1033,LocalLLMVoiceRuntimePolicy,"Dokumentation des Artefakts LocalLLMVoiceRuntimePolicy (sys_script_include, 3083901993409b905c8132d47aba1033). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Fresh native Voice instructions and language policy at the owned model request boundary.
+
+Ergänzende Dokumentation: Bündelt die serverseitige Laufzeitpolitik für den lokalen Voice-Pfad."
 6bca549d93c09b905c8132d47aba1024,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_one_extend_capability_definition,8f80c7e193f747d0e7f2b9fa6aba1086,Recommend AIA Tools RAG (Custom LLM Provider),"Erfasste Fassung von „Recommend AIA Tools RAG (Custom LLM Provider)“ (sys_one_extend_capability_definition, 8f80c7e193f747d0e7f2b9fa6aba1086).
 
 Stellt die konkrete Implementierung einer Capability mit API-, Verbindungs- und Verarbeitungskontext bereit.
@@ -6458,6 +6507,9 @@ Quellstand im Payload: 2026-10-12 12:23:19; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 757d0f3793081f545c8132d47aba107d; Aktion im Wrapper: DELETE; Payload SHA-256: 0486fdb0d0497c7f6da8cc4af1aacead73ae4faa6421a2a88a35c8641472d837.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+75b7410393941394e7f2b9fa6aba102a,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,8780c7e193f747d0e7f2b9fa6aba1074,c780c7e193f747d0e7f2b9fa6aba1072,"Dokumentation des Artefakts Recommend AI Agents using Usecase (sys_generative_ai_config, 8780c7e193f747d0e7f2b9fa6aba1074). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Empfiehlt zum bereitgestellten Use Case passende Agenten.
+
+Prompt-Konfiguration: „Recommend AI Agents using Usecase“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 75da1c9d93c09b905c8132d47aba1026,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,4780c7e193f747d0e7f2b9fa6aba105f,c380c7e193f747d0e7f2b9fa6aba105e,"Erfasste Fassung von „c380c7e193f747d0e7f2b9fa6aba105e“ (sys_generative_ai_prompt_config, 4780c7e193f747d0e7f2b9fa6aba105f).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist als Standardbindung markiert.
@@ -7090,6 +7142,9 @@ Quellstand im Payload: 2026-10-08 05:01:24; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: 7dda1c9d93c09b905c8132d47aba102e; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 5247191f6e2f4ead8d2d25fc055b55038acc726644db96aa029976c7e712aa93.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+7fb7c50393941394e7f2b9fa6aba101f,2167c98f93541394e7f2b9fa6aba1091,global,sys_script_include,90b7371f93bf0b54e7f2b9fa6aba107f,SCCVisionRequestTransformer,"Dokumentation des Artefakts SCCVisionRequestTransformer (sys_script_include, 90b7371f93bf0b54e7f2b9fa6aba107f). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Photo to Catalog - validated vision and field mapping
+
+Ergänzende Dokumentation: Bereitet den erfassten Vision-Request für den zugehörigen Custom-LLM-Vertrag auf."
 7fc2d730934817905c8132d47aba10f8,d8a20774930417905c8132d47aba10f8,32808450431302106c3603295bb8f245,sys_generative_ai_config,4780c7e193f747d0e7f2b9fa6aba1029,AIA ReAct Engine - Swarm (Custom LLM Provider),"Erfasste Fassung von „AIA ReAct Engine - Swarm (Custom LLM Provider)“ (sys_generative_ai_config, 4780c7e193f747d0e7f2b9fa6aba1029).
 
 Unterstützt die Koordination zwischen beteiligten Agenten. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -7150,6 +7205,7 @@ Quellstand im Payload: 2026-10-19 08:12:01; Revision 15. Update Set: „Custom L
 Anwendung/Scope: 022bd6e9b720a61081fee3fdde11a9df. CU: 7ff331459344d7905c8132d47aba109e; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 64acf95d7dceadc77359cc3e04c1e0e0b9a645111f0a4d9dc4c128c3f15b04bb.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+802c110393d85b585c8132d47aba10b2,e967c98f93541394e7f2b9fa6aba1091,022bd6e9b720a61081fee3fdde11a9df,sys_ws_operation,66b97ca0ff6a6210129628ecf43bf1cf,Authorized Agents,"Zweck: Erweitert den vorhandenen POST /agents_authorized ausschliesslich um die explizite voiceReferenceVersion=1-Option nach den vorhandenen Autorisierungsgates. Erfolg liefert rohe audio/wav-Daten mit Cache-Control:no-store; normale Agenten-/Settings-JSON-Antworten bleiben erhalten. Geaenderte Quellfelder: operation_script, produces, produces_customized, short_description; bestehende MIME-Typen bleiben erhalten und audio/wav kommt hinzu. ServiceNow bleibt Einstellungsautoritaet und alleiniger fachlicher Ausfuehrer. Bestehende native Service-/Agenten-/Caller-Autorisierung bleibt erhalten; Laufzeitleserechte fuer Datensatz, Feld, Attachment und Parent werden nicht gelockert. Keine ACL-/Rollen- oder Provider-/Modellaenderung. Vorhandene freigegebene WAV-Datei 7fa67ad293d01754e7f2b9fa6aba1052 wird wiederverwendet, kein Upload. Metadaten-Update-Sets transportieren die Attachment-Binaerdaten nicht automatisch; Zielinstanzen benoetigen separat autorisierten Attachment-Transport und passenden Descriptor-/Hash-/Parent-Readback."
 802e47b893c417905c8132d47aba102b,10824734930417905c8132d47aba1033,7cc4ec81533121106b38ddeeff7b12ee,sys_now_assist_deployment_config_attributes,e323e60f93374354e7f2b9fa6aba1075,fallback_option,"Erfasste Fassung von „fallback_option“ (sys_now_assist_deployment_config_attributes, e323e60f93374354e7f2b9fa6aba1075).
 
 Speichert ein einzelnes benanntes Konfigurationsattribut für die zugeordnete Assistant-Konfiguration.
@@ -7211,6 +7267,9 @@ Quellstand im Payload: 2026-10-13 05:48:45; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: global. CU: 81ee0f7c93c417905c8132d47aba100b; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: e65352b262d026a5c419d1a119c6a2f3102bad2afcfa65b40d5bef33268ca54d.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+82b7410393941394e7f2b9fa6aba109b,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,8b80c7e193f747d0e7f2b9fa6aba1056,cb80c7e193f747d0e7f2b9fa6aba1054,"Dokumentation des Artefakts Generate Agentic Workflow (Custom LLM Provider V2) (sys_generative_ai_config, 8b80c7e193f747d0e7f2b9fa6aba1056). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Entwirft die Struktur eines agentischen Workflows aus der bereitgestellten Aufgabenbeschreibung.
+
+Prompt-Konfiguration: „Generate Agentic Workflow (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 82da5c9d93c09b905c8132d47aba10a5,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,7a8087e193f747d0e7f2b9fa6aba105c,7a8087e193f747d0e7f2b9fa6aba105a,"Erfasste Fassung von „7a8087e193f747d0e7f2b9fa6aba105a“ (sys_generative_ai_prompt_config, 7a8087e193f747d0e7f2b9fa6aba105c).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -7239,6 +7298,9 @@ Quellstand im Payload: 2026-10-18 18:39:32; Revision 1; Version 1. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: 830c558d938c97905c8132d47aba10df; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: cbe027a8b4404ff608c0912ef4b64c4dac7c131dc674ecf3b0ef6f5555cf9101.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+83b7050393941394e7f2b9fa6aba10f2,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,8bb7a01093841b505c8132d47aba10b2,Custom LLM - Mirror definition options,"Dokumentation des Artefakts Custom LLM - Mirror definition options (sys_script, 8bb7a01093841b505c8132d47aba10b2). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Spiegelt Änderungen am erfassten Teil des Custom-LLM-Promptgraphen über die zugehörige Abgleichsfunktion. Regel: „Custom LLM - Mirror definition options“.
+
+Regel „Custom LLM - Mirror definition options“ für Tabelle sys_one_extend_definition_config; Ausführungszeitpunkt after. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 84dd037893c417905c8132d47aba103e,10824734930417905c8132d47aba1033,7cc4ec81533121106b38ddeeff7b12ee,sys_now_assist_deployment_config_attributes,92a175d793f787105c8132d47aba10d6,caller_identification_fields,"Erfasste Fassung von „caller_identification_fields“ (sys_now_assist_deployment_config_attributes, 92a175d793f787105c8132d47aba10d6).
 
 Speichert ein einzelnes benanntes Konfigurationsattribut für die zugeordnete Assistant-Konfiguration.
@@ -7326,6 +7388,9 @@ Quellstand im Payload: 2026-10-12 21:46:35; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 868f07f0930817905c8132d47aba103c; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 051c9369da1168d7901e1dea7532af5bde1b8d590b441bf99295a2bf1d0ad016.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+86b7410393941394e7f2b9fa6aba10ba,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,8b80c7e193f747d0e7f2b9fa6aba105a,cb80c7e193f747d0e7f2b9fa6aba1058,"Dokumentation des Artefakts Prompt name (Custom LLM Provider) (sys_generative_ai_config, 8b80c7e193f747d0e7f2b9fa6aba105a). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Der erfasste Name ist nicht fachlich aussagekräftig; die konkrete Teilaufgabe ist anhand des unveränderten Prompttexts und seiner Definition zu bestimmen.
+
+Prompt-Konfiguration: „Prompt name (Custom LLM Provider)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 86dd75859308d7905c8132d47aba10a4,885731c59384d7905c8132d47aba108e,32808450431302106c3603295bb8f245,sys_generative_ai_config,0380c7e193f747d0e7f2b9fa6aba10b7,AIA Unified Planner Disambiguation Now LLM large,"Erfasste Fassung von „AIA Unified Planner Disambiguation Now LLM large“ (sys_generative_ai_config, 0380c7e193f747d0e7f2b9fa6aba10b7).
 
 Erstellt den Aufgabenplan in der durch den Namen bezeichneten Planner-Variante; die Disambiguation-Variante dient der Klärung mehrdeutiger Aufgaben. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -7356,6 +7421,7 @@ Quellstand im Payload: 2026-10-18 21:07:12; Revision 5; Version 1. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: 86ddb5859308d7905c8132d47aba1010; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: cf92f44fe7b1c1a02ac6cbbc71e059bb5ae899a6a78fee61cb9714bc773541ee.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+882c110393d85b585c8132d47aba10a4,e967c98f93541394e7f2b9fa6aba1091,022bd6e9b720a61081fee3fdde11a9df,sys_script_include,6bf331459344d7905c8132d47aba1008,LocalLLMVoiceAssistantSettings,"Zweck: Sprachbezogene native Auswahl mit sicher gelesener, strikt gebundener eigener Referenzmetadaten-Property ergaenzen; inline Referenzen haben Vorrang und werden bei Fehlern nicht durch Property-Werte ersetzt. Geaenderte Quellfelder: script, description; bisherige Beschreibung bleibt exakter Praefix. Der Originalaufrufer benoetigt normale sichere Datensatz-/Feldleserechte auf Property, TTS und Attachment; Descriptor, Consent, Parent, Groesse, Hash und erneute Auswahl-/Aufruferbindung werden geprueft. ServiceNow bleibt Einstellungsautoritaet und alleiniger fachlicher Ausfuehrer. Native TTS-/Voice-Auswahl, lokale Engine-/Profil-/Hashwerte und vorhandene Caller-/Service-/Agenten-Autorisierung bleiben autoritativ. Keine native TTS-Aenderung, ACL-/Rollen- oder Cross-Scope-Policy-Aenderung. Vorhandene freigegebene WAV 7fa67ad293d01754e7f2b9fa6aba1052 wird wiederverwendet. Metadaten-Update-Sets transportieren ihre Binaerdaten nicht automatisch; Attachment-Transport und Ziel-Hash-/Parent-Readback benoetigen eine separate ausdrueckliche Freigabe."
 882e47b893c417905c8132d47aba1053,10824734930417905c8132d47aba1033,7cc4ec81533121106b38ddeeff7b12ee,sys_now_assist_deployment_config_attributes,e6a1b5d793f787105c8132d47aba10c5,enable_language_selection,"Erfasste Fassung von „enable_language_selection“ (sys_now_assist_deployment_config_attributes, e6a1b5d793f787105c8132d47aba10c5).
 
 Speichert ein einzelnes benanntes Konfigurationsattribut für die zugeordnete Assistant-Konfiguration.
@@ -7475,6 +7541,9 @@ Quellstand im Payload: 2026-10-12 21:42:17; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 8a8053f4930817905c8132d47aba10cc; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: a500b4a0d015e3d3c02c2583771fd47f75ca66fa95b66ff7b8fbcf9840804fb6.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+8ab7410393941394e7f2b9fa6aba10d9,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,8f80c7e193f747d0e7f2b9fa6aba104c,cf80c7e193f747d0e7f2b9fa6aba104a,"Dokumentation des Artefakts Describe and instruct agent (Custom LLM Provider V2) (sys_generative_ai_config, 8f80c7e193f747d0e7f2b9fa6aba104c). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Erstellt die für einen Agenten vorgesehene Beschreibung und Aufgabenanweisung.
+
+Prompt-Konfiguration: „Describe and instruct agent (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 8ada5c9d93c09b905c8132d47aba109c,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,7680c7e193f747d0e7f2b9fa6aba100d,be8087e193f747d0e7f2b9fa6aba10fc,"Erfasste Fassung von „be8087e193f747d0e7f2b9fa6aba10fc“ (sys_generative_ai_prompt_config, 7680c7e193f747d0e7f2b9fa6aba100d).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -7488,6 +7557,9 @@ Quellstand im Payload: 2026-10-08 05:00:39; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: 8ada5c9d93c09b905c8132d47aba109c; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: c65320c8e2d5735cdb36952b94d1498d2a25176fbf8eb11012b095968b9351db.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+8bb7450393941394e7f2b9fa6aba1036,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,8bb7e01093841b505c8132d47aba1059,Custom LLM - Mirror request validators,"Dokumentation des Artefakts Custom LLM - Mirror request validators (sys_script, 8bb7e01093841b505c8132d47aba1059). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Spiegelt Änderungen am erfassten Teil des Custom-LLM-Promptgraphen über die zugehörige Abgleichsfunktion. Regel: „Custom LLM - Mirror request validators“.
+
+Regel „Custom LLM - Mirror request validators“ für Tabelle sys_generative_ai_request_validator; Ausführungszeitpunkt after. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 8c0c5d4d938c97905c8132d47aba1078,02995981938c97905c8132d47aba10fb,32808450431302106c3603295bb8f245,sys_generative_ai_config,8f80c7e193f747d0e7f2b9fa6aba10bb,AIA Unified Planner Lite (Custom LLM Provider),"Erfasste Fassung von „AIA Unified Planner Lite (Custom LLM Provider)“ (sys_generative_ai_config, 8f80c7e193f747d0e7f2b9fa6aba10bb).
 
 Erstellt den Aufgabenplan in der durch den Namen bezeichneten Planner-Variante; die Disambiguation-Variante dient der Klärung mehrdeutiger Aufgaben. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -7667,6 +7739,9 @@ Quellstand im Payload: 2026-10-12 18:42:23; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 8e8f07f0930817905c8132d47aba1067; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 5994059ea058506839ff2a91fe14fbd836a4b127065d2689d541f5fca4e9af33.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+8eb7410393941394e7f2b9fa6aba107b,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,8b80c7e193f747d0e7f2b9fa6aba1052,cb80c7e193f747d0e7f2b9fa6aba1050,"Dokumentation des Artefakts Discover AIA or Usecase (Custom LLM Provider V2) (sys_generative_ai_config, 8b80c7e193f747d0e7f2b9fa6aba1052). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Ermittelt passende Agenten oder Workflows aus dem bereitgestellten Aufgaben- und Auswahlkontext.
+
+Prompt-Konfiguration: „Discover AIA or Usecase (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 8eda1c9d93c09b905c8132d47aba10ca,4767509993809b905c8132d47aba1038,3ab59df253e2b1103c2cddeeff7b1247,sys_generative_ai_prompt_config,68f1b0cb9373cf14e7f2b9fa6aba107b,e4f1b0cb9373cf14e7f2b9fa6aba107a,"Erfasste Fassung von „e4f1b0cb9373cf14e7f2b9fa6aba107a“ (sys_generative_ai_prompt_config, 68f1b0cb9373cf14e7f2b9fa6aba107b).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -7704,6 +7779,7 @@ Quellstand im Payload: 2026-10-18 18:39:16; Revision 1; Version 3. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: 8ffbd94d938c97905c8132d47aba101d; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 16b375b420201b45e46bc5cfb0c35d68cd08a7c349680fea360e41955a39dcd9.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+90c7c50393941394e7f2b9fa6aba10df,2167c98f93541394e7f2b9fa6aba1091,global,sys_ws_operation,d605323693c45b145c8132d47aba1076,Append caller context,"Dokumentation des Artefakts Append caller context (sys_ws_operation, d605323693c45b145c8132d47aba1076). Aktualisiert ausschliesslich short_description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Ergänzt autorisierten Aufruferkontext im zugeordneten Voice-Gespräch."
 90d25b30934817905c8132d47aba1017,d8a20774930417905c8132d47aba10f8,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,0380c7e193f747d0e7f2b9fa6aba1031,4780c7e193f747d0e7f2b9fa6aba1029,"Erfasste Fassung von „4780c7e193f747d0e7f2b9fa6aba1029“ (sys_generative_ai_prompt_config, 0380c7e193f747d0e7f2b9fa6aba1031).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -7884,6 +7960,9 @@ Quellstand im Payload: 2026-11-01 13:58:23; Revision 2; Version 1. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: 91f1ece993101714e7f2b9fa6aba1010; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: da7efb6f041a2f5788ee734cd2bad11d8b92c4cdc7d275e53d5a3f011ebe60c6.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+92b7c10393941394e7f2b9fa6aba1005,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,cb80c7e193f747d0e7f2b9fa6aba108d,0f80c7e193f747d0e7f2b9fa6aba108b,"Dokumentation des Artefakts Prompt name (Custom LLM Provider) (sys_generative_ai_config, cb80c7e193f747d0e7f2b9fa6aba108d). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Der erfasste Name ist nicht fachlich aussagekräftig; die konkrete Teilaufgabe ist anhand des unveränderten Prompttexts und seiner Definition zu bestimmen.
+
+Prompt-Konfiguration: „Prompt name (Custom LLM Provider)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 92da5c9d93c09b905c8132d47aba10b6,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,7a80c7e193f747d0e7f2b9fa6aba100b,3e8087e193f747d0e7f2b9fa6aba10ae,"Erfasste Fassung von „3e8087e193f747d0e7f2b9fa6aba10ae“ (sys_generative_ai_prompt_config, 7a80c7e193f747d0e7f2b9fa6aba100b).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -7975,6 +8054,9 @@ Quellstand im Payload: 2026-10-08 05:01:12; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: 92da9c9d93c09b905c8132d47aba101c; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 600ff6b1780961d6693095e6c15d4ace40ea67800dec9996c642a874154bc95d.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+93b7450393941394e7f2b9fa6aba107e,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,bd83d01993409b905c8132d47aba10b8,Guard local LLM Voice execution mapping,"Dokumentation des Artefakts Guard local LLM Voice execution mapping (sys_script, bd83d01993409b905c8132d47aba10b8). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Reagiert als Business Rule auf Änderungen der erfassten Tabelle und führt die zugehörige Synchronisations- oder Prüfaufgabe aus.
+
+Regel „Guard local LLM Voice execution mapping“ für Tabelle sys_now_assist_deployment_config; Ausführungszeitpunkt before. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 93ca149d93c09b905c8132d47aba1031,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_one_extend_capability_definition,0f80c7e193f747d0e7f2b9fa6aba108b,Spoke to Agent (Custom LLM Provider),"Erfasste Fassung von „Spoke to Agent (Custom LLM Provider)“ (sys_one_extend_capability_definition, 0f80c7e193f747d0e7f2b9fa6aba108b).
 
 Stellt die konkrete Implementierung einer Capability mit API-, Verbindungs- und Verarbeitungskontext bereit.
@@ -8191,6 +8273,9 @@ Quellstand im Payload: 2026-10-12 18:42:26; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 968093f4930817905c8132d47aba10e6; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 7e27991f9072c150ae4283e1f1adcf628592e46f95e7ca1caa09675fe72c905a.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+96b7810393941394e7f2b9fa6aba1069,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,be80c7e193f747d0e7f2b9fa6aba1020,3a80c7e193f747d0e7f2b9fa6aba101e,"Dokumentation des Artefakts AIA Processing message generation (sys_generative_ai_config, be80c7e193f747d0e7f2b9fa6aba1020). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Formuliert die vorgesehene Nachricht zum laufenden Verarbeitungsschritt.
+
+Prompt-Konfiguration: „AIA Processing message generation“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 9751d7b8930817905c8132d47aba106d,10824734930417905c8132d47aba1033,7cc4ec81533121106b38ddeeff7b12ee,sn_aia_tool,15ebcb8f93738354e7f2b9fa6aba1072,SCC Laptop Bestellkontext,"Erfasste Fassung von „SCC Laptop Bestellkontext“ (sn_aia_tool, 15ebcb8f93738354e7f2b9fa6aba1072).
 
 Stellt dem Laptop-Onboarding-Ablauf den erfassten Bestellkontext über die definierte Werkzeugschnittstelle bereit.
@@ -8840,6 +8925,9 @@ Quellstand im Payload: 2026-10-12 18:42:23; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: 9e8f07f0930817905c8132d47aba1094; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 17da46417c0f3bccc327206c0046cad474347c1c2b39cb74283de425580bd17b.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+9eb7810393941394e7f2b9fa6aba10ad,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,c380c7e193f747d0e7f2b9fa6aba105a,cb80c7e193f747d0e7f2b9fa6aba1058,"Dokumentation des Artefakts Prompt name (Custom LLM Provider V2) (sys_generative_ai_config, c380c7e193f747d0e7f2b9fa6aba105a). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Der erfasste Name ist nicht fachlich aussagekräftig; die konkrete Teilaufgabe ist anhand des unveränderten Prompttexts und seiner Definition zu bestimmen.
+
+Prompt-Konfiguration: „Prompt name (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 9f58be5a93581f185c8132d47aba10a6,f06f27f1939cd3185c8132d47aba1087,7cc4ec81533121106b38ddeeff7b12ee,sys_now_assist_deployment_config_attributes,e2a1b5d793f787105c8132d47aba1068,voice_profile,"Erfasste Fassung von „voice_profile“ (sys_now_assist_deployment_config_attributes, e2a1b5d793f787105c8132d47aba1068).
 
 Wählt das benannte Voice-Profil für die zugeordnete Konfiguration.
@@ -8935,6 +9023,12 @@ Quellstand im Payload: 2026-10-12 18:42:24; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: a1a19bf8930817905c8132d47aba109d; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: f641a8318d7bc7ebb0e610bf9a212b825a4fd12ca7f89fb82c2bbca09722e615.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+a1b7010393941394e7f2b9fa6aba1049,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,4f80c7e193f747d0e7f2b9fa6aba1084,c780c7e193f747d0e7f2b9fa6aba1076,"Dokumentation des Artefakts Recommend AIA (Custom LLM Provider V2) (sys_generative_ai_config, 4f80c7e193f747d0e7f2b9fa6aba1084). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Empfiehlt passende Agenten für den bereitgestellten Aufgabenkontext.
+
+Prompt-Konfiguration: „Recommend AIA (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
+a1b7010393941394e7f2b9fa6aba1081,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,4f80c7e193f747d0e7f2b9fa6aba1088,8f80c7e193f747d0e7f2b9fa6aba1086,"Dokumentation des Artefakts Recommend AIA Tools (sys_generative_ai_config, 4f80c7e193f747d0e7f2b9fa6aba1088). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Empfiehlt passende Werkzeuge für die bereitgestellte Agentenaufgabe.
+
+Prompt-Konfiguration: „Recommend AIA Tools“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 a1dad89d93c09b905c8132d47aba10a4,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,4380c7e193f747d0e7f2b9fa6aba1071,8780c7e193f747d0e7f2b9fa6aba1070,"Erfasste Fassung von „8780c7e193f747d0e7f2b9fa6aba1070“ (sys_generative_ai_prompt_config, 4380c7e193f747d0e7f2b9fa6aba1071).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -9115,6 +9209,12 @@ Quellstand im Payload: 2026-10-18 18:39:30; Revision 3; Version 1. Update Set: �
 Anwendung/Scope: 3ab59df253e2b1103c2cddeeff7b1247. CU: a60c158d938c97905c8132d47aba102c; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: ec1d0706e74a1a4054bb53bdea987a53c16bb25c5ac1b62910739b0b8bdb8e30.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+a6b7050393941394e7f2b9fa6aba1025,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,fa8087e193f747d0e7f2b9fa6aba1042,3e8087e193f747d0e7f2b9fa6aba1040,"Dokumentation des Artefakts Prompt name (Custom LLM Provider V2) (sys_generative_ai_config, fa8087e193f747d0e7f2b9fa6aba1042). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Der erfasste Name ist nicht fachlich aussagekräftig; die konkrete Teilaufgabe ist anhand des unveränderten Prompttexts und seiner Definition zu bestimmen.
+
+Prompt-Konfiguration: „Prompt name (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
+a6b7c10393941394e7f2b9fa6aba10d4,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,f680c7e193f747d0e7f2b9fa6aba1020,3a80c7e193f747d0e7f2b9fa6aba101e,"Dokumentation des Artefakts AIA Processing message generation (Custom LLM Provider V2) (sys_generative_ai_config, f680c7e193f747d0e7f2b9fa6aba1020). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Formuliert die vorgesehene Nachricht zum laufenden Verarbeitungsschritt.
+
+Prompt-Konfiguration: „AIA Processing message generation (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 a6dadc9d93c09b905c8132d47aba100b,4767509993809b905c8132d47aba1038,3ab59df253e2b1103c2cddeeff7b1247,sys_generative_ai_prompt_config,a0f1b0cb9373cf14e7f2b9fa6aba1077,68f1b0cb9373cf14e7f2b9fa6aba1075,"Erfasste Fassung von „68f1b0cb9373cf14e7f2b9fa6aba1075“ (sys_generative_ai_prompt_config, a0f1b0cb9373cf14e7f2b9fa6aba1077).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -9210,6 +9310,11 @@ Quellstand im Payload: 2026-11-04 07:59:23; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 022bd6e9b720a61081fee3fdde11a9df. CU: a78ca65293941f185c8132d47aba102a; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 9b9cf48e48ff89fa3bcd572badfa5bb65e18131ec8dde8b83aa6eb33f695f3bd.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+a7b7850393941394e7f2b9fa6aba1015,2167c98f93541394e7f2b9fa6aba1091,global,sys_script_fix,47b7e01093841b505c8132d47aba10f0,Custom LLM - Synchronize prompts,"Dokumentation des Artefakts Custom LLM - Synchronize prompts (sys_script_fix, 47b7e01093841b505c8132d47aba10f0). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Dry run by default. Empty capability selection covers all qualified Now LLM Generic capabilities. Adds Custom LLM prompt variants without changing skill selection.
+
+Ergänzende Dokumentation: Stellt einen manuellen Verwaltungs- und Abgleichschritt bereit; seine Erfassung bedeutet keine Ausführung.
+
+Verwaltungsskript „Custom LLM - Synchronize prompts“. Die Dokumentation verändert weder den Skriptinhalt noch führt sie den Abgleich aus."
 a7ca149d93c09b905c8132d47aba10b7,4767509993809b905c8132d47aba1038,3ab59df253e2b1103c2cddeeff7b1247,sys_one_extend_capability_definition,60f1b0cb9373cf14e7f2b9fa6aba1078,Unified Skill Slotfill (Custom LLM Provider),"Erfasste Fassung von „Unified Skill Slotfill (Custom LLM Provider)“ (sys_one_extend_capability_definition, 60f1b0cb9373cf14e7f2b9fa6aba1078).
 
 Stellt die konkrete Implementierung einer Capability mit API-, Verbindungs- und Verarbeitungskontext bereit.
@@ -9331,6 +9436,9 @@ Quellstand im Payload: 2026-10-19 08:01:09; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 022bd6e9b720a61081fee3fdde11a9df. CU: a983d01993409b905c8132d47aba107d; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: bc1f542a1d5ee4e8aa1d831b227565d159268a80fca63890093541f1f5f653de.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+a9b7cdcf93541394e7f2b9fa6aba10f1,6567c98f93541394e7f2b9fa6aba1090,7cc4ec81533121106b38ddeeff7b12ee,sys_generative_ai_config,403bf98193bf0f905c8132d47aba10fc,c17dad09937b0f905c8132d47aba1038,"Dokumentation des Artefakts Incident summarization New Custom LLM (sys_generative_ai_config, 403bf98193bf0f905c8132d47aba10fc). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Fasst die bereitgestellten Incident-Informationen zusammen.
+
+Prompt-Konfiguration: „Incident summarization New Custom LLM“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 a9cfb890934c1b505c8132d47aba10d9,d73568d093441b505c8132d47aba101d,global,sys_dictionary,a880672c33d4239751519bb00196562e,u_custom_llm_prompt_mirror_state,"Erfasste Fassung von „u_custom_llm_prompt_mirror_state“ (sys_dictionary, a880672c33d4239751519bb00196562e).
 
 Definiert ein Feldschema mit Datentyp und Referenzbezug für die erfasste Tabelle.
@@ -9629,6 +9737,9 @@ Quellstand im Payload: 2026-10-18 18:39:07; Revision 2; Version 1. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: b0fb154d938c97905c8132d47aba1082; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 9e7a605fd3aa8d88435fec4dad4033bb07a6e2d1151a621f699d2ad989f6f433.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 4 CU-Fassungen."
+b1b7010393941394e7f2b9fa6aba10df,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,7680c7e193f747d0e7f2b9fa6aba1021,3a80c7e193f747d0e7f2b9fa6aba101e,"Dokumentation des Artefakts AIA Processing message generation (sys_generative_ai_config, 7680c7e193f747d0e7f2b9fa6aba1021). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Formuliert die vorgesehene Nachricht zum laufenden Verarbeitungsschritt.
+
+Prompt-Konfiguration: „AIA Processing message generation“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 b1cf3c90934c1b505c8132d47aba1037,d73568d093441b505c8132d47aba101d,global,sys_security_acl,7f126eec19d4ba4b547b128976985ee9,u_custom_llm_prompt_mirror_state,"Erfasste Fassung von „u_custom_llm_prompt_mirror_state“ (sys_security_acl, 7f126eec19d4ba4b547b128976985ee9).
 
 Definiert eine Zugriffsregel für die erfasste Ressource und Operation.
@@ -9902,6 +10013,9 @@ Quellstand im Payload: 2026-10-13 17:08:01; Revision 1. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: b58fc3f0930817905c8132d47aba10d1; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: aa3e00be60e4f059ff61d2672e79838c5a8103e6bdc89b4d82f44ba13eb5c62a.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+b5b7010393941394e7f2b9fa6aba10fe,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,8780c7e193f747d0e7f2b9fa6aba1070,c780c7e193f747d0e7f2b9fa6aba106e,"Dokumentation des Artefakts Malformed JSON Fixer v1 (Custom LLM Provider) (sys_generative_ai_config, 8780c7e193f747d0e7f2b9fa6aba1070). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Bereitet fehlerhaft formatierten JSON-Inhalt für das erwartete Ausgabeformat auf.
+
+Prompt-Konfiguration: „Malformed JSON Fixer v1 (Custom LLM Provider)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 b5da1c9d93c09b905c8132d47aba1000,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,4780c7e193f747d0e7f2b9fa6aba1053,c380c7e193f747d0e7f2b9fa6aba1052,"Erfasste Fassung von „c380c7e193f747d0e7f2b9fa6aba1052“ (sys_generative_ai_prompt_config, 4780c7e193f747d0e7f2b9fa6aba1053).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist als Standardbindung markiert.
@@ -10085,6 +10199,9 @@ Quellstand im Payload: 2026-10-12 18:42:31; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: b98053f4930817905c8132d47aba10bd; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 05f4f1a7ec54804d4f804db9d61c69bb079bc7c5143786d64f57b8d7f93a8110.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+b9b7410393941394e7f2b9fa6aba105c,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,8780c7e193f747d0e7f2b9fa6aba1088,8f80c7e193f747d0e7f2b9fa6aba1086,"Dokumentation des Artefakts Recommend AIA Tools (Custom LLM Provider V2) (sys_generative_ai_config, 8780c7e193f747d0e7f2b9fa6aba1088). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Empfiehlt passende Werkzeuge für die bereitgestellte Agentenaufgabe.
+
+Prompt-Konfiguration: „Recommend AIA Tools (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 b9cf3c90934c1b505c8132d47aba1065,d73568d093441b505c8132d47aba101d,global,sys_security_acl,1211e3fc4f924ed662c5806d4ba81c55,u_custom_llm_prompt_mirror_state,"Erfasste Fassung von „u_custom_llm_prompt_mirror_state“ (sys_security_acl, 1211e3fc4f924ed662c5806d4ba81c55).
 
 Definiert eine Zugriffsregel für die erfasste Ressource und Operation.
@@ -10098,6 +10215,9 @@ Quellstand im Payload: 2026-10-16 08:40:35; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: global. CU: b9cf3c90934c1b505c8132d47aba1065; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 8112d8ba0765b7e4b1fce109c078969f0f249171795d198b536ddcfda848f065.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+bab7050393941394e7f2b9fa6aba106f,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,43b7e01093841b505c8132d47aba10c2,Custom LLM - Check shared validators,"Dokumentation des Artefakts Custom LLM - Check shared validators (sys_script, 43b7e01093841b505c8132d47aba10c2). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Reagiert als Business Rule auf Änderungen der erfassten Tabelle und führt die zugehörige Synchronisations- oder Prüfaufgabe aus.
+
+Regel „Custom LLM - Check shared validators“ für Tabelle sys_generative_ai_validator; Ausführungszeitpunkt after. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 bb8227fe9354d7585c8132d47aba10dc,f06f27f1939cd3185c8132d47aba1087,7cc4ec81533121106b38ddeeff7b12ee,sn_aia_version,4a04f9d3933b87105c8132d47aba10b2,Version 1,"Erfasste Fassung von „Version 1“ (sn_aia_version, 4a04f9d3933b87105c8132d47aba10b2).
 
 Bewahrt die erfasste Version des referenzierten Agenten- oder Workflow-Artefakts.
@@ -10482,6 +10602,9 @@ Quellstand im Payload: 2026-10-12 18:42:23; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: c28f07f0930817905c8132d47aba1060; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 120c3adbf27d1b8203a3fd975b3f37daf218fff985c9445122d03b7cdab1f37b.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+c2b7810393941394e7f2b9fa6aba101e,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,ba8087e193f747d0e7f2b9fa6aba1099,b28087e193f747d0e7f2b9fa6aba1098,"Dokumentation des Artefakts AIA ImpAct Mode Engine (Custom LLM Provider) (sys_generative_ai_config, ba8087e193f747d0e7f2b9fa6aba1099). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Unterstützt die im erfassten Prompt definierte Agentenausführung im ImpAct-Modus.
+
+Prompt-Konfiguration: „AIA ImpAct Mode Engine (Custom LLM Provider)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 c2da5c9d93c09b905c8132d47aba107f,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,768087e193f747d0e7f2b9fa6aba10ff,3e8087e193f747d0e7f2b9fa6aba10a7,"Erfasste Fassung von „3e8087e193f747d0e7f2b9fa6aba10a7“ (sys_generative_ai_prompt_config, 768087e193f747d0e7f2b9fa6aba10ff).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -10568,6 +10691,7 @@ Quellstand im Payload: 2026-10-27 21:39:50; Revision 19. Update Set: „Local LL
 Anwendung/Scope: global. CU: c4ab9cc493dc5f545c8132d47aba1058; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 944961f5aa0768b9abe4a7f4076148e4834ee01fe7bd64e37ae56bb5f7524724.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 5 CU-Fassungen."
+c4c7c50393941394e7f2b9fa6aba10b3,6d67458f93541394e7f2b9fa6aba106d,022bd6e9b720a61081fee3fdde11a9df,sys_ws_operation,3ffe8f3d9314d3185c8132d47aba10c1,Create local voice conversation,"Dokumentation des Artefakts Create local voice conversation (sys_ws_operation, 3ffe8f3d9314d3185c8132d47aba10c1). Aktualisiert ausschliesslich short_description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Legt das vorgesehene lokale SCC-Voice-Gespräch an."
 c4dad49d93c09b905c8132d47aba1019,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_one_extend_definition_config,0380c7e193f747d0e7f2b9fa6aba106b,0380c7e193f747d0e7f2b9fa6aba106b,"Erfasste Fassung von „0380c7e193f747d0e7f2b9fa6aba106b“ (sys_one_extend_definition_config, 0380c7e193f747d0e7f2b9fa6aba106b).
 
 Verknüpft Capability und Implementierungsdefinition; hält Aktivierung und Standardauswahl dieser Zuordnung fest.
@@ -10622,6 +10746,9 @@ Quellstand im Payload: 2026-10-18 18:39:25; Revision 1; Version 1. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: c50c118d938c97905c8132d47aba10ba; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: a6fc288e31e4c888994d7c3dea065b78dbfff487ec5f5f19562f1a0c8545b53e.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+c5b7cdcf93541394e7f2b9fa6aba1039,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,0780c7e193f747d0e7f2b9fa6aba1089,8f80c7e193f747d0e7f2b9fa6aba1086,"Dokumentation des Artefakts Recommend AIA Tools (sys_generative_ai_config, 0780c7e193f747d0e7f2b9fa6aba1089). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Empfiehlt passende Werkzeuge für die bereitgestellte Agentenaufgabe.
+
+Prompt-Konfiguration: „Recommend AIA Tools“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 c5d1e23b93c8db545c8132d47aba107f,0d6fda3b9388db545c8132d47aba10e4,global,sys_ws_definition,9205fa7293c45b145c8132d47aba108a,SCC Voice Context,"Erfasste Fassung von „SCC Voice Context“ (sys_ws_definition, 9205fa7293c45b145c8132d47aba108a).
 
 Definiert den API-Rahmen, unter dem die zugehörigen REST-Ressourcen bereitgestellt werden.
@@ -10659,6 +10786,9 @@ Quellstand im Payload: 2026-10-12 18:42:25; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: c66b8bbc938417905c8132d47aba10e6; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: c4a48f091fb65f79e31b45562f27fcbd9f795d746cc8c5fb3085e997cd2d9e13.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+c6b7810393941394e7f2b9fa6aba103d,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,be8087e193f747d0e7f2b9fa6aba1063,b68087e193f747d0e7f2b9fa6aba1062,"Dokumentation des Artefakts AIA ImpAct Handbook Compiler (Custom LLM Provider V2) (sys_generative_ai_config, be8087e193f747d0e7f2b9fa6aba1063). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Bereitet die bereitgestellten Handbuchanweisungen für den ImpAct-Ablauf auf.
+
+Prompt-Konfiguration: „AIA ImpAct Handbook Compiler (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 c6cf7c90934c1b505c8132d47aba10bc,d73568d093441b505c8132d47aba101d,global,sys_security_acl_role,1cbf59fc708f2ef63f1ebf9d7ff2327e,u_custom_llm_prompt_mirror_state.admin,"Erfasste Fassung von „u_custom_llm_prompt_mirror_state.admin“ (sys_security_acl_role, 1cbf59fc708f2ef63f1ebf9d7ff2327e).
 
 Bindet eine Rolle an die referenzierte ACL und ergänzt damit deren Berechtigungsprüfung.
@@ -10976,6 +11106,7 @@ Quellstand im Payload: 2026-11-02 16:21:17; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: global. CU: cc4cca39931093185c8132d47aba1080; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 59e04f056bc0db556161b16cd19104379a7c04c668bbb135dd5425fb0ce29c79.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+ccc7c50393941394e7f2b9fa6aba10c2,6d67458f93541394e7f2b9fa6aba106d,022bd6e9b720a61081fee3fdde11a9df,sys_ws_operation,66b97ca0ff6a6210129628ecf43bf1cf,Authorized Agents,"Dokumentation des Artefakts Authorized Agents (sys_ws_operation, 66b97ca0ff6a6210129628ecf43bf1cf). Aktualisiert ausschliesslich short_description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Liefert die für den Aufrufer verfügbaren Agenten."
 ccdd037893c417905c8132d47aba1026,10824734930417905c8132d47aba1033,7cc4ec81533121106b38ddeeff7b12ee,sys_now_assist_deployment_config_attributes,7b232a0f93374354e7f2b9fa6aba1076,discovery_widgets_enabled,"Erfasste Fassung von „discovery_widgets_enabled“ (sys_now_assist_deployment_config_attributes, 7b232a0f93374354e7f2b9fa6aba1076).
 
 Speichert ein einzelnes benanntes Konfigurationsattribut für die zugeordnete Assistant-Konfiguration.
@@ -11196,6 +11327,9 @@ Quellstand im Payload: 2026-10-13 05:28:40; Revision 1. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: d04f8730930817905c8132d47aba109c; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 63cb0870312cb79286fcc359b2e7c3f5743896e00e115e8da84a89cb2e307c14.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+d1b7cdcf93541394e7f2b9fa6aba104e,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,0780c7e193f747d0e7f2b9fa6aba108d,0f80c7e193f747d0e7f2b9fa6aba108b,"Dokumentation des Artefakts Prompt name (Custom LLM Provider V2) (sys_generative_ai_config, 0780c7e193f747d0e7f2b9fa6aba108d). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Der erfasste Name ist nicht fachlich aussagekräftig; die konkrete Teilaufgabe ist anhand des unveränderten Prompttexts und seiner Definition zu bestimmen.
+
+Prompt-Konfiguration: „Prompt name (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 d205323693c45b145c8132d47aba1074,a7e69cd593809b905c8132d47aba1000,global,sys_ws_definition,9205fa7293c45b145c8132d47aba108a,SCC Voice Context,"Erfasste Fassung von „SCC Voice Context“ (sys_ws_definition, 9205fa7293c45b145c8132d47aba108a).
 
 Definiert den API-Rahmen, unter dem die zugehörigen REST-Ressourcen bereitgestellt werden.
@@ -11248,6 +11382,9 @@ Quellstand im Payload: 2026-10-12 18:42:27; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: d26bcbbc938417905c8132d47aba10d0; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 500dd0a88f95cd6cee1cbabdd53d2ca7f32b6e027234fce839460516a7aaedbf.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+d2b7810393941394e7f2b9fa6aba109b,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,c380c7e193f747d0e7f2b9fa6aba1056,cb80c7e193f747d0e7f2b9fa6aba1054,"Dokumentation des Artefakts Generate Agentic Workflow NowLLM (sys_generative_ai_config, c380c7e193f747d0e7f2b9fa6aba1056). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Entwirft die Struktur eines agentischen Workflows aus der bereitgestellten Aufgabenbeschreibung.
+
+Prompt-Konfiguration: „Generate Agentic Workflow NowLLM“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 d2e1a4e993101714e7f2b9fa6aba10fa,89e124e993101714e7f2b9fa6aba1097,32808450431302106c3603295bb8f245,sys_generative_ai_config,368087e193f747d0e7f2b9fa6aba104e,AIA Memory QnA (Custom LLM Provider),"Erfasste Fassung von „AIA Memory QnA (Custom LLM Provider)“ (sys_generative_ai_config, 368087e193f747d0e7f2b9fa6aba104e).
 
 Unterstützt Antworten anhand des bereitgestellten Gedächtniskontexts. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -11395,6 +11532,9 @@ Quellstand im Payload: 2026-10-12 18:42:28; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: d4dd037893c417905c8132d47aba10fc; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: a1081d94a96cdf63b7e3ea45e80931cfa4fb06df87d2271e0a05b90a6f8a06fd.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+d5b7cdcf93541394e7f2b9fa6aba1093,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,3280c7e193f747d0e7f2b9fa6aba1020,3a80c7e193f747d0e7f2b9fa6aba101e,"Dokumentation des Artefakts AIA Processing message generation (sys_generative_ai_config, 3280c7e193f747d0e7f2b9fa6aba1020). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Formuliert die vorgesehene Nachricht zum laufenden Verarbeitungsschritt.
+
+Prompt-Konfiguration: „AIA Processing message generation“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 d5f1ace993101714e7f2b9fa6aba10ee,89e124e993101714e7f2b9fa6aba1097,32808450431302106c3603295bb8f245,sys_generative_ai_config,f28087e193f747d0e7f2b9fa6aba10af,Response Refiner - Abstract Summary (Custom LLM Provider),"Erfasste Fassung von „Response Refiner - Abstract Summary (Custom LLM Provider)“ (sys_generative_ai_config, f28087e193f747d0e7f2b9fa6aba10af).
 
 Erstellt eine abstrahierte Zusammenfassung des bereitgestellten Inhalts. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -11715,6 +11855,9 @@ Quellstand im Payload: 2026-10-16 08:40:37; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: global. CU: dacfbc90934c1b505c8132d47aba10a7; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 0e9177206a4363c8fd9812c77ec2f2b4a9c54954903674bee75d74e78071a4fe.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+dbb7450393941394e7f2b9fa6aba10e4,2167c98f93541394e7f2b9fa6aba1091,global,sys_script,f983d01993409b905c8132d47aba10c5,Sync local LLM Voice execution mapping,"Dokumentation des Artefakts Sync local LLM Voice execution mapping (sys_script, f983d01993409b905c8132d47aba10c5). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Reagiert als Business Rule auf Änderungen der erfassten Tabelle und führt die zugehörige Synchronisations- oder Prüfaufgabe aus.
+
+Regel „Sync local LLM Voice execution mapping“ für Tabelle sys_now_assist_deployment_config; Ausführungszeitpunkt after. Script, Bedingungen, Aktivierung und Reihenfolge steuern die Ausführung."
 dbda10dd93c09b905c8132d47aba10cd,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,c780c7e193f747d0e7f2b9fa6aba104e,0f80c7e193f747d0e7f2b9fa6aba104d,"Erfasste Fassung von „0f80c7e193f747d0e7f2b9fa6aba104d“ (sys_generative_ai_prompt_config, c780c7e193f747d0e7f2b9fa6aba104e).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -12373,6 +12516,7 @@ Quellstand im Payload: 2026-10-08 05:01:16; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: e5dad89d93c09b905c8132d47aba10eb; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 79771a1c79df9baee8fc69855442f92ba05e8e965fc830c4a54a54dd88b8edd9.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+e7b7850393941394e7f2b9fa6aba1053,2167c98f93541394e7f2b9fa6aba1091,global,sys_script_include,2ab7ecdc93441b505c8132d47aba10b1,CustomLLMPromptMirror,"Dokumentation des Artefakts CustomLLMPromptMirror (sys_script_include, 2ab7ecdc93441b505c8132d47aba10b1). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Gleicht die erfassten eigenen Custom-LLM-Promptgraphen mit ihren Herkunftsdefinitionen ab und verwaltet dazu Herkunfts- und Abgleichszustand."
 e7c2d730934817905c8132d47aba10d4,d8a20774930417905c8132d47aba10f8,32808450431302106c3603295bb8f245,sys_generative_ai_config,0380c7e193f747d0e7f2b9fa6aba102f,AIA ReAct Engine (Custom LLM Provider),"Erfasste Fassung von „AIA ReAct Engine (Custom LLM Provider)“ (sys_generative_ai_config, 0380c7e193f747d0e7f2b9fa6aba102f).
 
 Unterstützt die schrittweise Agentenausführung und die Auswahl der nächsten Aktion im ReAct-Ablauf. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -12583,6 +12727,10 @@ Quellstand im Payload: 2026-10-18 18:39:34; Revision 1; Version 1. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: eb0cd58d938c97905c8132d47aba10dc; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 2dd6ea2e41dc9dc66dadfd96d81a79f596e158b4c48c14cc61cab23d393cb533.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+ebb7850393941394e7f2b9fa6aba1033,2167c98f93541394e7f2b9fa6aba1091,global,sys_script_include,121f7b69934c93d05c8132d47aba1077,LocalLLMReActExecutionLedger,"Dokumentation des Artefakts LocalLLMReActExecutionLedger (sys_script_include, 121f7b69934c93d05c8132d47aba1077). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Bei ausdrücklicher Freigabe ergänzt LocalLLMReActExecutionLedger den strukturierten ReAct-Anfragekontext um einen aus vorhandenen Ausführungsschritten abgeleiteten Verlauf. Der Helfer arbeitet auf dem übergebenen Text/JSON, greift nicht auf Geschäftsdatensätze oder Netzwerkdienste zu und führt keine Werkzeuge aus. Fehlende, mehrdeutige, ungültige oder zu große Eingaben bleiben unverändert. Die Modell- und Providerzuordnung ist am freigegebenen Aufruferpfad zu prüfen; die historische Gemma-Bezeichnung ist keine Aussage über die aktuelle Instanzauswahl."
+ebb7850393941394e7f2b9fa6aba1043,2167c98f93541394e7f2b9fa6aba1091,global,sys_script_include,234924cb93485750e7f2b9fa6aba1053,SCCVoiceContextReadPolicy,"Dokumentation des Artefakts SCCVoiceContextReadPolicy (sys_script_include, 234924cb93485750e7f2b9fa6aba1053). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: SCC Voice: begrenzte Leseprüfung für eigene Gespräche, laufende Pläne und markierte Nutzernotizen. Nur serverseitig.
+
+Ergänzende Dokumentation: Prüft den begrenzten serverseitigen Lesezugriff auf zugeordnete Gespräche, Ausführungspläne und markierte Nutzernotizen."
 ec015378930817905c8132d47aba10a5,10824734930417905c8132d47aba1033,7cc4ec81533121106b38ddeeff7b12ee,sys_search_facet,f3232a0f93374354e7f2b9fa6aba10ec,KB Category,"Erfasste Fassung von „KB Category“ (sys_search_facet, f3232a0f93374354e7f2b9fa6aba10ec).
 
 Definiert eine Facette zur Eingrenzung von Suchergebnissen im erfassten Suchkontext.
@@ -12694,6 +12842,12 @@ Quellstand im Payload: 2026-10-27 13:37:25; Revision 301. Update Set: „Local L
 Anwendung/Scope: global. CU: ed3d26b393089790e7f2b9fa6aba10da; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 5f43d3463cfb5040aff73224ddfe92d8f10d6c24ca70c818bc6a3330b0fd0fd7.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 5 CU-Fassungen."
+edb7010393941394e7f2b9fa6aba1093,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,728087e193f747d0e7f2b9fa6aba109a,b28087e193f747d0e7f2b9fa6aba1098,"Dokumentation des Artefakts AIA ImpAct Mode Engine (Custom LLM Provider V2) (sys_generative_ai_config, 728087e193f747d0e7f2b9fa6aba109a). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Unterstützt die im erfassten Prompt definierte Agentenausführung im ImpAct-Modus.
+
+Prompt-Konfiguration: „AIA ImpAct Mode Engine (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
+edb7cdcf93541394e7f2b9fa6aba10d1,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,368087e193f747d0e7f2b9fa6aba1046,3e8087e193f747d0e7f2b9fa6aba1044,"Dokumentation des Artefakts AIA Redundancy Check (Custom LLM Provider V2) (sys_generative_ai_config, 368087e193f747d0e7f2b9fa6aba1046). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Prüft die bereitgestellten Inhalte auf Redundanz für den nächsten Agentenschritt.
+
+Prompt-Konfiguration: „AIA Redundancy Check (Custom LLM Provider V2)“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 eddad89d93c09b905c8132d47aba1021,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,3e8087e193f747d0e7f2b9fa6aba109e,728087e193f747d0e7f2b9fa6aba109e,"Erfasste Fassung von „728087e193f747d0e7f2b9fa6aba109e“ (sys_generative_ai_prompt_config, 3e8087e193f747d0e7f2b9fa6aba109e).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -12759,6 +12913,9 @@ Quellstand im Payload: 2026-10-18 18:39:31; Revision 1; Version 1. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: ee0c158d938c97905c8132d47aba10a8; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 4e01a91358d1fc5c3bbef6ce152d0fa739f3528faa229e457a72adcb2a407a4b.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+eeb7c10393941394e7f2b9fa6aba10c0,6567c98f93541394e7f2b9fa6aba1090,7cc4ec81533121106b38ddeeff7b12ee,sys_generative_ai_config,dbab358593bf0f905c8132d47aba10f6,c17dad09937b0f905c8132d47aba1038,"Dokumentation des Artefakts Incident summarization WIP NowLLM Generic (sys_generative_ai_config, dbab358593bf0f905c8132d47aba10f6). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Fasst die bereitgestellten Incident-Informationen zusammen.
+
+Prompt-Konfiguration: „Incident summarization WIP NowLLM Generic“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 eee1e4e993101714e7f2b9fa6aba10c7,89e124e993101714e7f2b9fa6aba1097,32808450431302106c3603295bb8f245,sys_generative_ai_config,3e8087e193f747d0e7f2b9fa6aba1051,AIA Input Collector (Custom LLM Provider),"Erfasste Fassung von „AIA Input Collector (Custom LLM Provider)“ (sys_generative_ai_config, 3e8087e193f747d0e7f2b9fa6aba1051).
 
 Unterstützt das Sammeln fehlender Eingaben für die Agentenaufgabe. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -13089,6 +13246,9 @@ Quellstand im Payload: 2026-11-05 09:57:07; Revision 23. Update Set: „Custom L
 Anwendung/Scope: global. CU: f2883a2e93105b54e7f2b9fa6aba10d6; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 2518168d85001654127780780a8c2fe44023b47938cdf948d157f20e6ff44648.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 5 CU-Fassungen."
+f2b7050393941394e7f2b9fa6aba1038,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,fa8087e193f747d0e7f2b9fa6aba1046,3e8087e193f747d0e7f2b9fa6aba1044,"Dokumentation des Artefakts AIA Redundancy Check (sys_generative_ai_config, fa8087e193f747d0e7f2b9fa6aba1046). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Prüft die bereitgestellten Inhalte auf Redundanz für den nächsten Agentenschritt.
+
+Prompt-Konfiguration: „AIA Redundancy Check“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 f2fb594d938c97905c8132d47aba10f9,02995981938c97905c8132d47aba10fb,32808450431302106c3603295bb8f245,sys_generative_ai_config,7e8087e193f747d0e7f2b9fa6aba10aa,Response Refiner (Custom LLM Provider),"Erfasste Fassung von „Response Refiner (Custom LLM Provider)“ (sys_generative_ai_config, 7e8087e193f747d0e7f2b9fa6aba10aa).
 
 Überarbeitet die bereitgestellte Antwort für den vorgesehenen Ausgabekontext. Die Ausführung richtet sich nach dem hier erfassten Prompt und seinen Parametern.
@@ -13117,6 +13277,9 @@ Quellstand im Payload: 2026-10-13 09:44:36; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: f31e07b893c417905c8132d47aba10eb; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: aacb67cd186cce25ec85ea3d478a6c4d818021e693e93b3bcd69bbfe13b2bbb2.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens. Für dieselbe Quellidentität enthält das inventarisierte Paket 2 CU-Fassungen."
+f3b7850393941394e7f2b9fa6aba10ce,2167c98f93541394e7f2b9fa6aba1091,global,sys_script_include,6583d01993409b905c8132d47aba10ab,LocalLLMVoicePersonaRouteSync,"Dokumentation des Artefakts LocalLLMVoicePersonaRouteSync (sys_script_include, 6583d01993409b905c8132d47aba10ab). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Administrative native Voice execution route and original persona backup, captured to an instance-private Update Set only.
+
+Ergänzende Dokumentation: Synchronisiert die erfassten Persona- und Routingbezüge für den lokalen Voice-Pfad."
 f3cdcf3893c417905c8132d47aba10d8,10824734930417905c8132d47aba1033,7cc4ec81533121106b38ddeeff7b12ee,sys_now_assist_deployment_config_attributes,73232a0f93374354e7f2b9fa6aba10ac,hide_synthesized_response,"Erfasste Fassung von „hide_synthesized_response“ (sys_now_assist_deployment_config_attributes, 73232a0f93374354e7f2b9fa6aba10ac).
 
 Speichert ein einzelnes benanntes Konfigurationsattribut für die zugeordnete Assistant-Konfiguration.
@@ -13387,6 +13550,9 @@ Quellstand im Payload: 2026-10-18 18:38:59; Revision 1; Version 1. Update Set: �
 Anwendung/Scope: 32808450431302106c3603295bb8f245. CU: f6eb9d0d938c97905c8132d47aba1005; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 7c9b2b0fb9e316386940515b70e7543a8a0688ec313e3acdf7b62ef440feca24.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+f7b7c50393941394e7f2b9fa6aba1003,6d67458f93541394e7f2b9fa6aba106d,022bd6e9b720a61081fee3fdde11a9df,sys_script_include,6bf331459344d7905c8132d47aba1008,LocalLLMVoiceAssistantSettings,"Dokumentation des Artefakts LocalLLMVoiceAssistantSettings (sys_script_include, 6bf331459344d7905c8132d47aba1008). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Read-only per-call native Voice Assistant behavioral settings for the authorized local Voice adapter. No provider, credentials, or cache projection.
+
+Ergänzende Dokumentation: Liefert die erfassten Assistant-Einstellungen an den lokalen Voice-Verbraucher und bildet die Konfigurationsbezüge ab."
 f7da90dd93c09b905c8132d47aba1003,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,fa8087e193f747d0e7f2b9fa6aba1057,b28087e193f747d0e7f2b9fa6aba104f,"Erfasste Fassung von „b28087e193f747d0e7f2b9fa6aba104f“ (sys_generative_ai_prompt_config, fa8087e193f747d0e7f2b9fa6aba1057).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -13480,6 +13646,9 @@ Quellstand im Payload: 2026-10-13 17:08:01; Revision 1. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: f98f07f0930817905c8132d47aba101b; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 49687efaec68c6f058c52e278e0389eaece28336049be120a9c5bd1007cce8b7.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+f9b7410393941394e7f2b9fa6aba1049,a967c98f93541394e7f2b9fa6aba108f,32808450431302106c3603295bb8f245,sys_generative_ai_config,8780c7e193f747d0e7f2b9fa6aba1084,c780c7e193f747d0e7f2b9fa6aba1076,"Dokumentation des Artefakts Recommend AIA (sys_generative_ai_config, 8780c7e193f747d0e7f2b9fa6aba1084). Aktualisiert ausschliesslich documentation. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Zweck: Empfiehlt passende Agenten für den bereitgestellten Aufgabenkontext.
+
+Prompt-Konfiguration: „Recommend AIA“. Ihre aktive Verwendung richtet sich nach den gültigen Capability-/Promptbindungen und dem Veröffentlichungsstand. Der Prompttext und die Modell-/Providerwahl bleiben durch dieses Dokumentationsfeld unverändert."
 f9da1c9d93c09b905c8132d47aba1069,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_generative_ai_prompt_config,4b80c7e193f747d0e7f2b9fa6aba1049,0f80c7e193f747d0e7f2b9fa6aba103b,"Erfasste Fassung von „0f80c7e193f747d0e7f2b9fa6aba103b“ (sys_generative_ai_prompt_config, 4b80c7e193f747d0e7f2b9fa6aba1049).
 
 Ordnet eine Prompt-Konfiguration einer Capability-Definition zu und steuert deren Auswahl. Diese Fassung ist nicht als Standardbindung markiert.
@@ -13704,6 +13873,7 @@ Quellstand im Payload: 2026-10-13 09:44:35; Revision 0. Update Set: „Custom LL
 Anwendung/Scope: 7cc4ec81533121106b38ddeeff7b12ee. CU: ff1e07b893c417905c8132d47aba10cb; Aktion im Wrapper: INSERT_OR_UPDATE; Payload SHA-256: 85ef99f4a4d23408c58f1df5efd878a0e163ee8dc70ed9298c351adab81e5e22.
 
 Beschreibt ausschließlich diese gespeicherte Version; kein Nachweis des aktuell installierten oder auf einer Zielinstanz geprüften Verhaltens."
+ffb7c50393941394e7f2b9fa6aba1070,2167c98f93541394e7f2b9fa6aba1091,global,sys_script_include,c9261ce064e0c19945053fb114c141f3,LocalLLMChatCompletionsAdapter,"Dokumentation des Artefakts LocalLLMChatCompletionsAdapter (sys_script_include, c9261ce064e0c19945053fb114c141f3). Aktualisiert ausschliesslich description. Skripte, Prompttext, Modell-/Providerzuordnung, Aktivierung, Bedingungen und Berechtigungen wurden vor und nach der Aenderung auf unveraenderten Inhalt geprueft. Zweck des Artefakts: Übersetzt den erfassten ServiceNow-Anfragekontext in den lokalen Chat-Completions-Vertrag und verarbeitet dessen Antwort."
 ffca549d93c09b905c8132d47aba10a0,0b67509993809b905c8132d47aba1036,32808450431302106c3603295bb8f245,sys_one_extend_capability_definition,ba8087e193f747d0e7f2b9fa6aba1058,AIA External Agent Response Analyser (Custom LLM Provider),"Erfasste Fassung von „AIA External Agent Response Analyser (Custom LLM Provider)“ (sys_one_extend_capability_definition, ba8087e193f747d0e7f2b9fa6aba1058).
 
 Stellt die konkrete Implementierung einer Capability mit API-, Verbindungs- und Verarbeitungskontext bereit.

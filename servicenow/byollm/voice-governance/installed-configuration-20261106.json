@@ -1,0 +1,144 @@
+{
+  "installed": true,
+  "instance": "soprasteriaassvsdemo14.service-now.com",
+  "voice_service_id": "8aa131d793f787105c8132d47aba1095",
+  "reference_property": {
+    "id": "631c110393d85b585c8132d47aba1023",
+    "name": "local_llm.voice.reference.8aa131d793f787105c8132d47aba1095.c46f9ae4287e48d5a713fddf262afdfd"
+  },
+  "new_update_sets": [
+    {
+      "id": "6d67458f93541394e7f2b9fa6aba106d",
+      "scope": "022bd6e9b720a61081fee3fdde11a9df",
+      "name": "SCC - Konfigurationsdokumentation - 2026-11-06 - 022bd6e9",
+      "kind": "documentation"
+    },
+    {
+      "id": "a967c98f93541394e7f2b9fa6aba108f",
+      "scope": "32808450431302106c3603295bb8f245",
+      "name": "SCC - Konfigurationsdokumentation - 2026-11-06 - 32808450",
+      "kind": "documentation"
+    },
+    {
+      "id": "6567c98f93541394e7f2b9fa6aba1090",
+      "scope": "7cc4ec81533121106b38ddeeff7b12ee",
+      "name": "SCC - Konfigurationsdokumentation - 2026-11-06 - 7cc4ec81",
+      "kind": "documentation"
+    },
+    {
+      "id": "2167c98f93541394e7f2b9fa6aba1091",
+      "scope": "global",
+      "name": "SCC - Konfigurationsdokumentation - 2026-11-06 - Global",
+      "kind": "documentation"
+    },
+    {
+      "id": "e967c98f93541394e7f2b9fa6aba1091",
+      "scope": "022bd6e9b720a61081fee3fdde11a9df",
+      "name": "SCC Voice 3.2 - ServiceNow Voice References - 20261106",
+      "kind": "voice_reference"
+    },
+    {
+      "ok": true,
+      "id": "b9995583931c1394e7f2b9fa6aba10c0",
+      "name": "SCC Voice 3.2 - Local Voice Reference Registry - 20261106",
+      "scope": "global",
+      "kind": "voice_reference_registry"
+    }
+  ],
+  "reference_change_captures": [
+    {
+      "source": "631c110393d85b585c8132d47aba1023",
+      "table": "sys_properties",
+      "id": "231c110393d85b585c8132d47aba102d",
+      "set": "b9995583931c1394e7f2b9fa6aba10c0",
+      "application": "global",
+      "payloadSha256": "331a1794bb01eb03b12889224ced270991f94872101bf06c0318e19f7d9c76dc",
+      "commentsSha256": "9851fa2038514f0f3b52467b5132e2469032bd5d220cd2d0e6b8dbf5fdb473a5"
+    },
+    {
+      "source": "6bf331459344d7905c8132d47aba1008",
+      "table": "sys_script_include",
+      "id": "882c110393d85b585c8132d47aba10a4",
+      "set": "e967c98f93541394e7f2b9fa6aba1091",
+      "application": "022bd6e9b720a61081fee3fdde11a9df",
+      "payloadSha256": "cc583e470645469d653dda529eb8713f9d6a2a7b579fc91512988331dd33011c",
+      "commentsSha256": "c2fe184c7058e1019defc1e29d9ce68c06b3ed9a8aaafa864ed58aca8f95a844"
+    },
+    {
+      "source": "66b97ca0ff6a6210129628ecf43bf1cf",
+      "table": "sys_ws_operation",
+      "id": "802c110393d85b585c8132d47aba10b2",
+      "set": "e967c98f93541394e7f2b9fa6aba1091",
+      "application": "022bd6e9b720a61081fee3fdde11a9df",
+      "payloadSha256": "767a2b917d76b4c15780f511211f43aff83c50a54445c406b9da80707d3418b8",
+      "commentsSha256": "59c4cea75a439e2d5e63988af9286825ebf33ad648695cd9da5de7e56f2baabb"
+    }
+  ],
+  "conversation_capability": {
+    "name": "VA Input Response Generation",
+    "id": "aca5634f4312121038520464dbb8f236",
+    "model_identifier": "halogen-v2"
+  },
+  "configured_voice": {
+    "voice_profile": "Marcel Käfke (lokal)",
+    "voices": {
+      "de": {
+        "voice_id": "81959ffa-c2ef-4db5-bf95-5df2a24c9404",
+        "voice_gender": "masculine",
+        "tts_config_sys_id": "c46f9ae4287e48d5a713fddf262afdfd",
+        "reference": {
+          "version": 1,
+          "service_id": "8aa131d793f787105c8132d47aba1095",
+          "tts_config_sys_id": "c46f9ae4287e48d5a713fddf262afdfd",
+          "voice_id": "81959ffa-c2ef-4db5-bf95-5df2a24c9404",
+          "attachment_sys_id": "7fa67ad293d01754e7f2b9fa6aba1052",
+          "sha256": "f35a22ff7e12480c2be2a04180d4bee997aa6e82d809398eb619b58368463f46",
+          "size_bytes": 657452,
+          "reference_text": "Willkommen zur Smart Country Convention. Mit Sopra Steria und ServiceNow erlebe ich, wie einfach digitale Services werden. Bitte helfen Sie mir, einen neuen Laptop für meinen Mitarbeiter zu bestellen.",
+          "reference_language": "de",
+          "provenance": {
+            "kind": "authorized_own_voice",
+            "profile_id": "20261017T224025Z-290c3e30ad1b",
+            "consent_scope": "local_synthetic_voice_and_servicenow_demo",
+            "confirmed_at_utc": "2026-10-17T22:40:24.947822+00:00"
+          }
+        }
+      }
+    }
+  },
+  "source_hashes": {
+    "LocalLLMVoiceAssistantSettings.js": "0d529f176440806070e5cc6d536dfe7fdd2fd4abef824e81877a4e25c8ca18ef",
+    "Authorized-agents-resource.js": "522cfd5640eb6c2e1eb8b42235b0c85c71d6bba6b57e146695e647a09591163b"
+  },
+  "documentation_audit": {
+    "ok": true,
+    "oldCustomerUpdates": 1015,
+    "newCustomerUpdates": 66,
+    "totalCustomerUpdates": 1081,
+    "sets": 56,
+    "oldPayloadCommentsMembershipFailures": [],
+    "newMissingComments": [],
+    "oldSetHeadersPreserved": true,
+    "nativeAutoCaptureAuditException": {
+      "id": "08c46f9693d45f185c8132d47aba106f",
+      "changedFields": [
+        "sys_mod_count",
+        "sys_updated_on"
+      ],
+      "semanticFieldsUnchanged": true
+    },
+    "nativeTtsRecordUnchanged": true,
+    "referenceSha256": "f35a22ff7e12480c2be2a04180d4bee997aa6e82d809398eb619b58368463f46",
+    "conversationModel": "halogen-v2",
+    "continuedFromCompleteFinalInventory": true,
+    "onlyFreshRead": "exact native metadata signal customer update",
+    "checkedAt": "2026-11-06T10:14:25.695Z"
+  },
+  "limitations": {
+    "physical_device_dialogue_proven": false,
+    "original_caller_bearer_http_roundtrip_proven": false,
+    "test_order_placed": false,
+    "native_tts_catalogue_modified": false,
+    "new_wav_uploaded": false
+  }
+}

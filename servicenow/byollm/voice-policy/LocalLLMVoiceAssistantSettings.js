@@ -330,6 +330,25 @@ LocalLLMVoiceAssistantSettings.prototype = {
         return metadata;
     },
 
+    // Optional owned metadata is additive: native TTS/voice/profile/hash remain authoritative.
+    _referenceProperty: function(serviceId, ttsId) {
+        if (typeof serviceId !== 'string' || !/^[0-9a-f]{32}$/.test(serviceId) ||
+                typeof ttsId !== 'string' || !/^[0-9a-f]{32}$/.test(ttsId))
+            throw new Error('Selected voice reference unavailable');
+        var name = 'local_llm.voice.reference.' + serviceId + '.' + ttsId;
+        var property = new GlideRecordSecure('sys_properties');
+        if (property.isValid() !== true) throw new Error('Selected voice reference unavailable');
+        property.addQuery('name', name); property.setLimit(2); property.query();
+        if (property.next() !== true) throw new Error('Selected voice reference unavailable');
+        var value = this._referenceValues(property, ['sys_id','name','type','value','sys_scope','sys_policy','is_private']);
+        if (!/^[0-9a-f]{32}$/.test(value.sys_id) || value.name !== name || value.type !== 'string' ||
+                value.sys_scope !== 'global' || value.sys_policy !== '' ||
+                (value.is_private !== '0' && value.is_private !== 'false') ||
+                !value.value || value.value.length > 4000 || property.next() === true)
+            throw new Error('Selected voice reference unavailable');
+        return JSON.parse(value.value);
+    },
+
     _voiceReferences: function(serviceId, primaryId, voices) {
         var fields = ['sys_id','active','language','voice_id','parameters','sys_updated_on','sys_mod_count'];
         var primary = this._referenceRecord('sn_voice_tts_config', String(primaryId || ''), fields);
@@ -368,9 +387,12 @@ LocalLLMVoiceAssistantSettings.prototype = {
             var parameters = JSON.parse(record.parameters), scc = parameters && parameters.scc;
             if (!scc) continue;
             if (scc.engine !== 'local_qwen3_tts' && scc.localOnly !== true && typeof scc.reference === 'undefined') continue;
-            if (scc.engine !== 'local_qwen3_tts' || scc.localOnly !== true || !scc.reference)
+            if (scc.engine !== 'local_qwen3_tts' || scc.localOnly !== true)
                 throw new Error('Selected voice reference unavailable');
-            var reference = this._checkedReference(scc.reference, serviceId, selectedId, record.voice_id);
+            // An inline field, including null or malformed content, is never silently replaced.
+            var configuredReference = typeof scc.reference === 'undefined' ?
+                this._referenceProperty(serviceId, selectedId) : scc.reference;
+            var reference = this._checkedReference(configuredReference, serviceId, selectedId, record.voice_id);
             if (scc.referenceSha256 !== reference.sha256 || scc.profileId !== reference.provenance.profile_id)
                 throw new Error('Selected voice reference unavailable');
             this._referenceAttachment(reference);
