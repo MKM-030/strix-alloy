@@ -56,6 +56,42 @@ class Conversation:
         pass
 
 
+class CancellableConversation(Conversation):
+    """A blocked model with explicit owned cancellation and session retirement."""
+    def __init__(self, reply, *, blocked=True):
+        super().__init__()
+        self.reply, self.blocked = reply, blocked
+        self.active = self._closed = False
+        self.cancelled, self.cleanup_release = asyncio.Event(), asyncio.Event()
+        self.cleanup_release.set()
+
+    async def respond(self, raw, snapshot, key, *, on_sentence):
+        if self._closed or self.active:
+            raise AssertionError('A retired or busy model session cannot be reused')
+        self.inputs.append((raw, snapshot, key))
+        self.active = True
+        self.started[0].set()
+        try:
+            if self.first_sentence:
+                await on_sentence(SimpleNamespace(text=self.reply, identity=self.identity))
+            if self.blocked:
+                await self.release[0].wait()
+            if not self.first_sentence:
+                await on_sentence(SimpleNamespace(text=self.reply, identity=self.identity))
+            return SimpleNamespace(text=self.reply, failure=None, identity=self.identity)
+        except asyncio.CancelledError:
+            self.cancelled.set()
+            await self.cleanup_release.wait()
+            raise
+        finally:
+            self.active = False
+
+    async def close(self):
+        if self.active:
+            raise AssertionError('The owned generation must settle before session close')
+        self._closed = True
+
+
 class BootstrapRefreshTests(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.call, self.model = FakeCall(), Conversation()
@@ -76,6 +112,8 @@ class BootstrapRefreshTests(unittest.IsolatedAsyncioTestCase):
 
     async def asyncTearDown(self):
         self.call.closed = True
+        if isinstance(self.model, CancellableConversation):
+            self.model.cleanup_release.set()
         for task in (self.help, self.speaker):
             if task is not None:
                 task.cancel()
@@ -101,6 +139,115 @@ class BootstrapRefreshTests(unittest.IsolatedAsyncioTestCase):
     async def finish(self):
         self.model.release[0].set()
         await asyncio.wait_for(self.help, .5)
+
+    def cancellable_models(self):
+        old = self.model = CancellableConversation(OLD)
+        fresh = CancellableConversation(FRESH, blocked=False)
+        async def factory(*args):
+            if not old.inputs:
+                return old
+            if not old._closed:
+                raise AssertionError('A new session must wait for retirement of its predecessor')
+            return fresh
+        self.lane._factory = factory
+        return old, fresh
+
+    async def test_readiness_cancels_blocked_generation_before_completion_and_reopens_once(self):
+        old, fresh = self.cancellable_models()
+        await self.start()
+        self.ready()
+        try:
+            await self.until(lambda: FRESH in self.call.spoken)
+        except TimeoutError:
+            self.fail('Readiness left the local generation blocked on stale model completion')
+        await asyncio.wait_for(self.help, .5)
+        self.assertTrue(old.cancelled.is_set())
+        self.assertTrue(old._closed)
+        self.assertFalse(old.release[0].is_set(), 'Readiness must not wait for stale completion')
+        self.assertNotIn(OLD, self.call.spoken)
+        self.assertEqual(self.call.spoken.count(FRESH), 1)
+        self.assertEqual([raw for model in (old, fresh) for raw, _, _ in model.inputs], [RAW, RAW])
+        self.assertEqual(old.inputs[0][2]['request_id'], fresh.inputs[0][2]['request_id'])
+        self.assertEqual(tuple(self.lane._pending), (self.first, self.turn))
+        self.assertEqual(self.call.dialog.calls, [])
+
+    async def test_readiness_during_started_pcm_finishes_sentence_without_cancelling_model(self):
+        old, fresh = self.cancellable_models()
+        old.first_sentence = True
+        next_pcm = asyncio.Event()
+        async def speech(text):
+            self.call.spoken.append(text)
+            yield bytes(480)
+            await next_pcm.wait()
+            yield bytes(480)
+        self.call.speech.synthesize = speech
+        await self.start()
+        await self.until(lambda: self.call.playback.accepted_samples == 240)
+        self.ready()
+        next_pcm.set()
+        await self.until(lambda: not self.call.synthesis_active)
+        self.assertEqual(self.call.playback.accepted_samples, 480)
+        self.assertTrue(self.lane._speech['complete'])
+        self.assertFalse(old.cancelled.is_set())
+        self.assertEqual(fresh.inputs, [])
+        await self.finish()
+        self.assertEqual(self.call.spoken, [OLD])
+
+    async def test_caller_change_during_cancel_cleanup_prevents_stale_refresh(self):
+        old, fresh = self.cancellable_models()
+        old.cleanup_release.clear()
+        await self.start()
+        self.ready()
+        try:
+            await asyncio.wait_for(old.cancelled.wait(), .5)
+        except TimeoutError:
+            self.fail('Readiness never cancelled the blocked local generation')
+        self.assertEqual(fresh.inputs, [])
+        self.lane.epoch += 1
+        old.cleanup_release.set()
+        await asyncio.wait_for(self.help, .5)
+        self.assertFalse(old.active)
+        self.assertTrue(old._closed)
+        self.assertEqual(fresh.inputs, [])
+        self.assertEqual(self.call.spoken, [])
+
+    async def test_cancelling_local_owner_drains_blocked_model_and_readiness_wait(self):
+        old, fresh = self.cancellable_models()
+        existing_tasks = asyncio.all_tasks()
+        await self.start()
+        self.help.cancel()
+        await asyncio.gather(self.help, return_exceptions=True)
+        self.assertTrue(old.cancelled.is_set())
+        self.assertFalse(old.active)
+        self.assertFalse([task for task in asyncio.all_tasks()
+                          if task not in existing_tasks and not task.done()])
+        self.ready()
+        await asyncio.sleep(0)
+        self.assertEqual(fresh.inputs, [])
+        self.assertEqual(self.call.spoken, [])
+
+    async def test_refresh_connection_shares_the_original_attempt_deadline(self):
+        old, fresh = self.cancellable_models()
+        async def factory(*args):
+            if not old.inputs:
+                return old
+            await asyncio.Event().wait()
+            return fresh
+        self.lane._factory = factory
+        deadline = asyncio.get_running_loop().time() + .1
+        self.help = asyncio.create_task(self.lane._general_help_attempt(
+            self.turn, self.lane.epoch, 'help', refresh_bootstrap=True, deadline=deadline))
+        await asyncio.wait_for(old.started[0].wait(), .5)
+        self.ready()
+        self.assertTrue(await asyncio.wait_for(self.help, .5))
+        self.help = asyncio.create_task(self.lane._general_help_attempt(
+            self.turn, self.lane.epoch, 'help', refresh_bootstrap=False, deadline=deadline))
+        try:
+            await asyncio.wait_for(asyncio.shield(self.help), .5)
+        except TimeoutError:
+            self.fail('The replacement connection escaped the original response deadline')
+        self.assertEqual(fresh.inputs, [])
+        self.assertTrue(self.lane._model_failed)
 
     async def test_ready_recomputes_once_from_fresh_snapshot_without_replaying_business_or_retiming_input(self):
         await self.start()

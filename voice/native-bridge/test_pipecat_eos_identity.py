@@ -88,6 +88,65 @@ class FakeHTTP:
 
 
 class EOSIdentityTests(unittest.IsolatedAsyncioTestCase):
+    async def test_native_owner_cancellation_finishes_when_transport_close_suppresses_cancellation(self):
+        from native_duplex import NativeDuplex
+        from test_native_duplex import FakeCall
+
+        entered, release_close = asyncio.Event(), asyncio.Event()
+        class HeldContent(FakeContent):
+            async def lines_with_delivery(self):
+                entered.set()
+                await asyncio.Event().wait()
+                yield b''
+        class HeldHTTP(FakeHTTP):
+            def post(self, url, **kwargs):
+                response = super().post(url, **kwargs)
+                response.content = HeldContent()
+                return response
+
+        http = HeldHTTP()
+        source = LocalTextSocket(CONTROLLER_CHAT_URL, 'C:/synthetic-token', http=http)
+        adapter = OmniConversation(lambda: source)
+        dialogue = PipecatDialogue(adapter)
+        close = source.close
+        async def stuck_close():
+            try:
+                await release_close.wait()
+            except asyncio.CancelledError:
+                await release_close.wait()
+            await close()
+        source.close = stuck_close
+        call = FakeCall()
+        async def factory(*args):
+            await dialogue.start(call.call_id, 1, 'Offline rules')
+            return dialogue
+        lane = NativeDuplex(call, conversation_factory=factory)
+        lane._bootstrap_state = 'pending'
+        turn = (0, 'Hörst du mich?', 1, 'a' * 32, 10)
+        lane._pending.append(turn)
+        lane._raw.append(turn[1])
+        help_task = None
+        with patch.object(local_llm_socket, '_token', return_value='synthetic-only-token'), \
+                patch('aiohttp.ClientSession', side_effect=AssertionError('Real HTTP forbidden')):
+            try:
+                help_task = asyncio.create_task(lane._general_help(turn, 1))
+                await asyncio.wait_for(entered.wait(), 3)
+                help_task.cancel()
+                done, _ = await asyncio.wait((help_task,), timeout=1)
+                self.assertIn(help_task, done, 'Native cleanup waited indefinitely for a stuck close')
+                self.assertTrue(help_task.cancelled())
+                self.assertFalse(release_close.is_set())
+                self.assertEqual(adapter._state, 'unavailable')
+                self.assertEqual(call.spoken, [])
+                self.assertEqual(call.dialog.calls, [])
+            finally:
+                release_close.set()
+                if help_task is not None:
+                    help_task.cancel()
+                    await asyncio.gather(help_task, return_exceptions=True)
+                await lane.close()
+                await close()
+
     @asynccontextmanager
     async def source_dialogue(self, *, turns=1):
         http = FakeHTTP()
