@@ -102,11 +102,22 @@ def build_servicenow_voice_context(settings=None, known_state=None):
         status = 'Der aktuelle Verarbeitungsstand ist unbekannt.'
     pending = _count(state, 'pending_count')
     retained = (f'{pending} Originaleingaben warten noch auf Übermittlung.' if pending is not None else '')
+    # Caller facts retain their conversational meaning in every lifecycle phase.
+    # Preserving an identifier is not identity verification or business authority.
     limits = (
         f'Konfigurierte Anrufsprache: {_language(settings)}. Antworte passend zur tatsächlichen Äußerung.',
         status + (' ' + retained if retained else ''),
         'Der Gesprächsverlauf und die aktuelle Frage geben Zusammenhang; freie Fragen sind keine Mitarbeiterangaben.',
         'Originaleingaben gehen unverändert an denselben ServiceNow-Dialog. Bestätigungen und Geschäftsabschluss erfindest du nicht.',
+        'Greife ausdrücklich genannte Angaben und Identifikatoren im Zusammenhang auf, auch über Satzgrenzen hinweg. '
+        'Eine Rollenbezeichnung mit einer zugehörigen Kennung ist nicht bloß eine Rollenbezeichnung. '
+        'Behaupte nicht, dass genannte Angaben fehlen, und ersetze eine angegebene Kennung nicht durch eine '
+        'Forderung nach einer anderen Darstellungsform. Behandle sie als unbestätigte Nutzerangaben: '
+        'Sie belegen keine Übernahme, Speicherung, Prüfung oder Ausführung.',
+        'Stelle keine zusätzliche Pflichtangabe auf. Fachlich benötigte Angaben klärt ServiceNow; '
+        'eine solche Anforderung gibst du nur aus einer aktuellen passenden ServiceNow-Rückfrage wieder. '
+        'Beantworte die aktuelle Frage natürlich, greife die Angaben vorläufig auf und kläre bei Bedarf '
+        'eine echte sprachliche Unklarheit, ohne eine fachliche Zuordnung oder Vollständigkeit zu behaupten.',
     )
     if available is True and busy is True and closed is not True:
         limits += (
