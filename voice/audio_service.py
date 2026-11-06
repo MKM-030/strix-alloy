@@ -1,6 +1,7 @@
 """Local, single-request Qwen audio workers. Start one process per virtualenv."""
 import argparse
 import io
+import json
 import logging
 import os
 from pathlib import Path
@@ -149,7 +150,8 @@ def create_app(mode, token, backend):
     if mode == "asr":
         @app.post("/v1/audio/transcriptions")
         def transcriptions(file: UploadFile = File(...), model: str = Form(...),
-                           language: str = Form("de"), response_format: str = Form("json")):
+                           language: str = Form("de"), response_format: str = Form("json"),
+                           key_terms: str = Form("[]")):
             check_model(model)
             if response_format != "json":
                 raise HTTPException(400, "Only JSON transcription responses are supported")
@@ -157,10 +159,24 @@ def create_app(mode, token, backend):
                          "english": "English", "auto": None}
             if language.lower() not in languages:
                 raise HTTPException(400, "Language must be de, en, or auto")
+            try:
+                if len(key_terms.encode('utf-8')) > 8192:
+                    raise ValueError()
+                from native_qwen_asr import validate_key_terms
+                value = json.loads(key_terms)
+                if type(value) is not list:
+                    raise ValueError()
+                terms = validate_key_terms(value)
+            except (ValueError, TypeError, UnicodeError):
+                raise HTTPException(400, 'Invalid ASR key terms') from None
+            native = getattr(backend, 'runtime', None) == 'crispasr'
+            if terms and not native:
+                raise HTTPException(501, 'ASR key terms require the qualified native runtime')
             samples, rate = decode_audio(file.file.read(MAX_FILE + 1))
             ensure_memory_reserve()
             try:
-                text = backend.transcribe(samples, rate, languages[language.lower()])
+                options = {'key_terms':terms} if native else {}
+                text = backend.transcribe(samples, rate, languages[language.lower()], **options)
             except Exception:
                 raise inference_error() from None
             return {"text": text}

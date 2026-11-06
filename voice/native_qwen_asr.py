@@ -4,10 +4,25 @@ The starter must qualify and pin the DLL, dependencies and converted model
 before selecting this executor. This module never selects or downloads models.
 """
 import ctypes
+import json
 import math
 import os
 from pathlib import Path
 import threading
+
+
+def validate_key_terms(value):
+    """Bound native prompt context without allowing model control tokens."""
+    if value is None:
+        return []
+    if (type(value) is not list or len(value) > 256
+            or any(type(term) is not str or not 1 <= len(term) <= 128
+                   or not term.strip() or any(ord(char) < 32 for char in term)
+                   or '<|' in term or '|>' in term for term in value)):
+        raise ValueError('Invalid ASR key terms')
+    if len(json.dumps(value, ensure_ascii=False, separators=(',', ':')).encode('utf-8')) > 8192:
+        raise ValueError('ASR key terms exceed context capacity')
+    return list(value)
 
 
 class OpenParamsV2(ctypes.Structure):
@@ -74,6 +89,7 @@ class NativeQwenASR:
             "open_with_params": ([ctypes.c_char_p, ctypes.c_char_p, ctypes.POINTER(OpenParamsV2)], pointer),
             "backend": ([pointer], ctypes.c_char_p),
             "set_max_new_tokens": ([pointer, ctypes.c_int], ctypes.c_int),
+            "set_hotwords": ([pointer, ctypes.c_char_p, ctypes.c_float], ctypes.c_int),
             "transcribe_lang": ([pointer, ctypes.POINTER(ctypes.c_float), ctypes.c_int, ctypes.c_char_p], pointer),
             "result_n_segments": ([pointer], ctypes.c_int),
             "result_segment_text": ([pointer, ctypes.c_int], ctypes.c_char_p),
@@ -84,8 +100,9 @@ class NativeQwenASR:
             function = getattr(self._dll, "crispasr_session_" + name)
             function.argtypes, function.restype = arguments, result
 
-    def transcribe(self, audio, sample_rate, language):
+    def transcribe(self, audio, sample_rate, language, *, key_terms=None):
         import numpy as np
+        terms = validate_key_terms(key_terms)
         languages = {"German": b"de", "English": b"en", None: b"auto",
                      "de": b"de", "en": b"en", "auto": b"auto"}
         if language not in languages:
@@ -104,26 +121,38 @@ class NativeQwenASR:
         with self._lock:
             if not self._session:
                 raise RuntimeError("Native ASR executor is closed")
-            result = self._dll.crispasr_session_transcribe_lang(
-                self._session, samples.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
-                samples.size, languages[language])
-            if not result:
-                raise RuntimeError("Native Qwen ASR transcription failed")
             try:
-                count = self._dll.crispasr_session_result_n_segments(result)
-                if not 0 <= count <= 4096:
-                    raise RuntimeError("Native ASR returned an invalid segment count")
-                text = []
-                for index in range(count):
-                    segment = self._dll.crispasr_session_result_segment_text(result, index)
-                    if segment is None:
-                        raise RuntimeError("Native ASR returned an invalid text segment")
-                    # c_char_p copies each borrowed C string before result_free.
-                    text.append(segment.decode("utf-8", errors="strict"))
-                # Batch chunks are independent trimmed spans, not token deltas.
-                return " ".join(part.strip() for part in text if part.strip())
+                # This ABI copies the context. Qwen treats boost as metadata;
+                # its separate system hint preserves forced-language prefill.
+                hint = ', '.join(terms).encode('utf-8') if terms else None
+                if self._dll.crispasr_session_set_hotwords(self._session, hint, 1.5) != 0:
+                    raise RuntimeError('Native ASR rejected key terms')
+                result = self._dll.crispasr_session_transcribe_lang(
+                    self._session, samples.ctypes.data_as(ctypes.POINTER(ctypes.c_float)),
+                    samples.size, languages[language])
+                if not result:
+                    raise RuntimeError("Native Qwen ASR transcription failed")
+                try:
+                    count = self._dll.crispasr_session_result_n_segments(result)
+                    if not 0 <= count <= 4096:
+                        raise RuntimeError("Native ASR returned an invalid segment count")
+                    text = []
+                    for index in range(count):
+                        segment = self._dll.crispasr_session_result_segment_text(result, index)
+                        if segment is None:
+                            raise RuntimeError("Native ASR returned an invalid text segment")
+                        text.append(segment.decode("utf-8", errors="strict"))
+                    return " ".join(part.strip() for part in text if part.strip())
+                finally:
+                    self._dll.crispasr_session_result_free(result)
             finally:
-                self._dll.crispasr_session_result_free(result)
+                try:
+                    if self._dll.crispasr_session_set_hotwords(self._session, None, 1.5) != 0:
+                        raise RuntimeError('Native ASR could not clear key terms')
+                except BaseException:
+                    # Never reuse a session whose caller context may remain.
+                    self.close()
+                    raise
 
     def close(self):
         with self._lock:
