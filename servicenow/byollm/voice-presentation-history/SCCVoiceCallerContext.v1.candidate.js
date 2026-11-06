@@ -55,7 +55,7 @@ SCCVoiceCallerContext.prototype = {
             if (typeof code !== 'string' || !/^context_read_(?:unavailable|(?:sys_cs_conversation_(?:row|sys_id)|interaction_(?:row|sys_id|channel_metadata_document|channel_metadata_table|provider_application|opened_for)|sn_aia_execution_plan_(?:row|sys_id|conversation|state)|sn_aia_message_(?:row|sys_id|execution_plan|role|message|user_message))_(?:denied|no_element))$/.test(code)) return;
             var principal = String(gs.getUserID());
             if (!/^[0-9a-f]{32}$/.test(principal)) return;
-            gs.warn('[SCC_VOICE_CONTEXT_ACCESS] ' + JSON.stringify({stage: code, runtimeUserId: principal, effectiveAdmin: gs.hasRole('admin') === true}));
+            gs.warn('[SCC_VOICE_CONTEXT_ACCESS] ' + JSON.stringify({stage: code, runtimeUserId: principal, effectiveAdmin: gs.hasRole('admin') === true, readerRole: gs.hasRole('scc_voice_context_reader') === true}));
         } catch (ignoredAccessDiagnostic) {}
     },
     _readable: function(row, fields, table) {
@@ -119,6 +119,60 @@ SCCVoiceCallerContext.prototype = {
                 promptIncluded: false, code: error && error.sccCode ? error.sccCode : 'context_read_unavailable'});
         }
     },
+    _referenceFilterIgnored: function(table, id, conversationId) {
+        // Only these three fixed reference predicates are probed. No config
+        // value is read; a same-owned-ID impossible match detects dropped terms.
+        var fields = {interaction:'provider_application', sys_cs_conversation:'context_profile', sn_aia_execution_plan:'usecase'};
+        if (!Object.prototype.hasOwnProperty.call(fields, table) || !this._id(id) ||
+                (table !== 'sys_cs_conversation' && !this._id(conversationId))) return true;
+        var control = new GlideRecordSecure(table);
+        control.addQuery('sys_id', id);
+        control.addQuery(fields[table], '00000000000000000000000000000000');
+        if (table === 'interaction') {
+            control.addQuery('opened_for', String(gs.getUserID()));
+            control.addQuery('channel_metadata_table', 'sys_cs_conversation');
+            control.addQuery('channel_metadata_document', conversationId);
+        } else if (table === 'sn_aia_execution_plan') {
+            control.addQuery('conversation', conversationId);
+            control.addQuery('state', 'in_progress');
+        }
+        control.setLimit(1); control.query();
+        return control.next();
+    },
+    _contextBinding: function(conversationId, runtimeUserId) {
+        var conversation = new GlideRecordSecure('sys_cs_conversation');
+        conversation.addQuery('sys_id', conversationId);
+        conversation.addQuery('context_profile', 'c623e20f93374354e7f2b9fa6aba1081');
+        conversation.setLimit(2); conversation.query();
+        if (!conversation.next()) this._fail('context_binding_unavailable');
+        this._readable(conversation, ['sys_id', 'state'], 'sys_cs_conversation');
+        if (String(conversation.getUniqueValue()) !== conversationId ||
+                ['open', 'chatInProgress', 'autoPilotInProgress'].indexOf(String(conversation.getValue('state'))) === -1 ||
+                conversation.next() || this._referenceFilterIgnored('sys_cs_conversation', conversationId)) this._fail('context_binding_unavailable');
+        var interaction = new GlideRecordSecure('interaction');
+        interaction.addQuery('opened_for', runtimeUserId);
+        interaction.addQuery('provider_application', '200af60f93fb4354e7f2b9fa6aba107d');
+        interaction.addQuery('channel_metadata_table', 'sys_cs_conversation');
+        interaction.addQuery('channel_metadata_document', conversationId);
+        interaction.setLimit(2); interaction.query();
+        if (!interaction.next()) this._fail('context_binding_unavailable');
+        this._readable(interaction, ['sys_id', 'channel_metadata_document', 'channel_metadata_table', 'opened_for'], 'interaction');
+        var interactionId = String(interaction.getUniqueValue());
+        if (!this._id(interactionId) || String(interaction.getValue('channel_metadata_document')) !== conversationId ||
+                String(interaction.getValue('channel_metadata_table')) !== 'sys_cs_conversation' ||
+                String(interaction.getValue('opened_for')) !== runtimeUserId || interaction.next() ||
+                this._referenceFilterIgnored('interaction', interactionId, conversationId)) this._fail('context_binding_unavailable');
+        var plan = new GlideRecordSecure('sn_aia_execution_plan');
+        plan.addQuery('conversation', conversationId); plan.addQuery('state', 'in_progress');
+        plan.addQuery('usecase', '2f3c8a39931093185c8132d47aba1014'); plan.setLimit(2); plan.query();
+        if (!plan.next()) this._fail('context_active_plan_unavailable');
+        this._readable(plan, ['sys_id', 'conversation', 'state'], 'sn_aia_execution_plan');
+        var planId = String(plan.getUniqueValue());
+        if (!this._id(planId) || String(plan.getValue('conversation')) !== conversationId ||
+                String(plan.getValue('state')) !== 'in_progress' || plan.next() ||
+                this._referenceFilterIgnored('sn_aia_execution_plan', planId, conversationId)) this._fail('context_active_plan_unavailable');
+        return {conversationId:conversationId, interactionId:interactionId, planId:planId, runtimeUserId:runtimeUserId};
+    },
     _include: function(input) {
         var own = Object.prototype.hasOwnProperty, data = input && input.request_data, meta = data && data._meta;
         if (!data || typeof data !== 'object' || Array.isArray(data) || !own.call(data, '_meta') ||
@@ -127,20 +181,7 @@ SCCVoiceCallerContext.prototype = {
         var conversationId = meta.conversationId, prompt = input.prompt;
         var runtimeUserId = String(gs.getUserID());
         if (!this._id(runtimeUserId)) this._fail('context_binding_unavailable');
-        var conversation = new GlideRecordSecure('sys_cs_conversation');
-        if (!conversation.get(conversationId)) this._fail('context_binding_unavailable');
-        this._readable(conversation, ['sys_id'], 'sys_cs_conversation');
-        var interaction = new GlideRecordSecure('interaction');
-        interaction.addQuery('channel_metadata_document', conversationId); interaction.setLimit(2); interaction.query();
-        if (!interaction.next()) this._fail('context_binding_unavailable');
-        this._readable(interaction, ['sys_id', 'channel_metadata_document', 'channel_metadata_table', 'provider_application', 'opened_for'], 'interaction');
-        if (String(interaction.getValue('channel_metadata_document')) !== conversationId || String(interaction.getValue('provider_application')) !== '200af60f93fb4354e7f2b9fa6aba107d' || String(interaction.getValue('channel_metadata_table')) !== 'sys_cs_conversation' || String(interaction.getValue('opened_for')) !== runtimeUserId || interaction.next()) this._fail('context_binding_unavailable');
-        var plan = new GlideRecordSecure('sn_aia_execution_plan');
-        plan.addQuery('conversation', conversationId); plan.addQuery('state', 'in_progress'); plan.setLimit(2); plan.query();
-        if (!plan.next()) this._fail('context_active_plan_unavailable');
-        this._readable(plan, ['sys_id', 'conversation', 'state'], 'sn_aia_execution_plan');
-        var planId = String(plan.getUniqueValue());
-        if (!this._id(planId) || String(plan.getValue('conversation')) !== conversationId || String(plan.getValue('state')) !== 'in_progress' || plan.next()) this._fail('context_active_plan_unavailable');
+        var binding = this._contextBinding(conversationId, runtimeUserId), planId = binding.planId;
         var role = sn_aia.AIAgentConstants.ROLES.USER;
         if (typeof role !== 'string' || !/^[a-z_]{1,32}$/.test(role)) this._fail('context_role_unavailable');
         var rows = [], messages = new GlideRecordSecure('sn_aia_message');
@@ -167,6 +208,9 @@ SCCVoiceCallerContext.prototype = {
             returnedPrompt = prompt.substring(0, close) + addition + prompt.substring(close);
             if (returnedPrompt.length > 262144 || returnedPrompt.substr(close + 1, visibleNote.length) !== visibleNote) this._fail('context_prompt_overflow');
         }
+        // Recheck only the exact live joins before any technical receipt.
+        if (String(gs.getUserID()) !== runtimeUserId ||
+                JSON.stringify(this._contextBinding(conversationId, runtimeUserId)) !== JSON.stringify(binding)) this._fail('context_binding_unavailable');
         // Build and verify the returned prompt before producing any inclusion receipt.
         var result = {prompt: returnedPrompt, promptIncluded: true, revision: note.revision,
             contextRequestId: note.contextRequestId, executionPlanId: planId, receiptStored: false};
