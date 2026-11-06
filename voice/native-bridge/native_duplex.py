@@ -852,6 +852,9 @@ class NativeDuplex:
             question = exposed_question
             spoken_question = native_question
         dialog = self.call.dialog
+        # Raw history also contains passive listening signals. Substantive caller
+        # input advances context_revision; a passive-only append must not retire
+        # this answer when no replacement was scheduled.
         context = dict(public_replies=tuple(getattr(dialog, 'public_replies', ())),
             current_question=getattr(dialog, 'current_question', ''), exposed_question=question,
             native_question=spoken_question,
@@ -859,7 +862,7 @@ class NativeDuplex:
             conversation_ended=bool(getattr(dialog, 'conversation_ended', False)),
             bootstrap_state=self._bootstrap_state, backend_unavailable=self._backend_unavailable,
             epoch=self.epoch, task_revision=self.task_revision, context_revision=self.context_revision,
-            raw_inputs=tuple(self._raw), pending_count=len(self._pending),
+            pending_count=len(self._pending),
             supplement_count=len(self._supplements), context_snapshot=self._context_snapshot)
         encoded = json.dumps(context, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
         return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
@@ -1796,11 +1799,14 @@ class NativeDuplex:
             if isinstance(value, (tuple, list)):
                 return [normalize(item) for item in value]
             return value
-        # Progress labels/ages are advisory, and our own speech adds no business
-        # authority. Exclude them only from this guard, retaining the full prompt.
+        # Passive acknowledgments/hesitations stay in raw prompt history without
+        # replacing the active answer. _accept advances context_revision for every
+        # substantive input; keep that guard instead of raw-history-only changes.
+        # Progress labels/ages and our own speech likewise add no business authority.
         exposed = dict(snapshot, public_findings=tuple(fact for fact in snapshot['public_findings']
             if fact['source_event'] not in ('complete_emitted_assistant_speech',
                                             'servicenow_processing_presentation')))
+        exposed.pop('raw_inputs', None)
         context = dict(snapshot=exposed, key=key,
             pending_ids=tuple(turn[3] for turn in self._pending),
             input_boundary=self._dialogue_input_boundary(key),
