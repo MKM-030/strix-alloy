@@ -2,6 +2,8 @@
 
 Instanz: `soprasteriaassvsdemo14`. Lokaler Anruf `8e53c5c6e65b`, [ServiceNow-Gespräch `36ab3e479394db585c8132d47aba1083`](https://soprasteriaassvsdemo14.service-now.com/sys_cs_conversation.do?sys_id=36ab3e479394db585c8132d47aba1083).
 
+**Aktualisierung 19:05 UTC:** Nach neuer ausdrücklicher Freigabe und frei gewordener Speicherreserve wurde Halogen einmal über den normalen zentralen Controller gestartet. Modell, Gateway, Native-Bridge, ASR und TTS sind tatsächlich bereit. Dieser Wiederanlauf ändert keine ServiceNow-Konfiguration. Die anschließende reale Geräteabnahme bleibt offen.
+
 ## Tatsächlicher Ablauf
 
 Der lokale Anruf lief von 18:02:29 bis 18:03:41 Uhr MEZ. Die Verbindung blieb bis zum Auflegen bestehen. Die Begrüßung erzeugte 380.160 angenommene PCM-Bytes in 7,187 Sekunden; der erste Chunk lag nach 297 Millisekunden vor. Das belegt die Ausgabe des Servers, nicht die hörbare Wiedergabe auf dem iPhone.
@@ -53,12 +55,18 @@ Erst nach dem Anruf, um 17:13:18 UTC, startete `Grounded2Steam-Win64-Shipping`. 
 
 Ein frisch gebundener Wiederherstellungsversuch wurde **vor** Sperrdatei-Archivierung und Modellstart mit `memory_admission_not_met` angehalten: `launch_attempts=0`, `archive=false`. Profil, Modellwahl und Reserve bleiben unverändert. Das Spiel wurde nicht beendet. Der Versuch ist verbraucht und darf nicht wiederholt werden.
 
+Nach Marcels neuer Freigabe war das Spiel nicht mehr aktiv. Eine neue, gesondert gebundene Prüfung bestätigte die beendete alte Laufzeit, ausreichend stabilen Speicher und die unveränderten Sprachdienste. Nur die exakt zugehörige alte Sperrdatei wurde archiviert; der ursprüngliche Speicherfehler samt Belegen blieb erhalten. Der anschließende **einmalige** normale Modellstart war erfolgreich: Controller **20840**, Backend-Steuerung **21368**, Launcher **6572**; neue Läufe `e7ca3a97d1964de780dba4e4c69b4274` und `21c02a5cf0884efd9d1f6879dce85b2f`.
+
+Die unveränderte Auswahl nutzt v2, 32K Kontext, zwei Slots, KV65536 und Prefill2048; die 18-GiB-Reserve bleibt aktiv. Der Start verwendet die regulären Argumente einschließlich `-u -B`, damit auch der bestehende Voice-Starter denselben laufenden Controller erkennt und wiederverwendet. Die authentifizierten Statusprüfungen sowie der tatsächliche reguläre Controller-Verbraucher bestätigen Betriebsbereitschaft und Anfragenzulassung. Um **19:05:43 UTC** waren rund **26,1 GiB** physischer Speicher frei; Native hatte null Sitzungen. Die neun erhaltenen Sprach-/Gateway-Prozessidentitäten blieben unverändert.
+
 ## Prüfung und offene Abnahme
 
-Die lokalen Änderungen erhielten gezielte Offline-Regressionen mit reproduziertem Vorher-Fehler und unabhängiger Quellenprüfung. Es wurden keine zusätzlichen geskripteten Sprachgespräche, Mikrofonaufnahmen, Modell-Downloads oder Testbestellungen ausgeführt. Der gesonderte Startversuch erreichte keinen Modellstart und damit auch keine normalen eingebauten Startprüfungen.
+Die lokalen Änderungen erhielten gezielte Offline-Regressionen mit reproduziertem Vorher-Fehler und unabhängiger Quellenprüfung. Es wurden keine zusätzlichen geskripteten Sprachgespräche, Mikrofonaufnahmen, Modell-Downloads oder Testbestellungen ausgeführt. Der erste gesonderte Startversuch erreichte keinen Modellstart. Der spätere erfolgreiche normale Start behielt seine eingebauten Prüfungen bei; zusätzliche Inferenzprüfungen wurden nicht hinzugefügt.
 
-Offen bleiben die Wiederherstellung bei ausreichend freiem Speicher, die genaue Ursache des sicher abgebrochenen Konfigurations-Lookups und ein neues tatsächliches Gerätegespräch. Weder hörbare Wiedergabe noch vollständiger Geschäftsablauf oder Gleichheit auf iPhone/Android/Desktop werden aus Offline- und Metadatenprüfungen abgeleitet.
+Offen bleiben die genaue Ursache des sicher abgebrochenen Konfigurations-Lookups und ein neues tatsächliches Gerätegespräch. Zwei begrenzte ServiceNow-Nachlesungen fanden zwischen 18:05 und 18:57:57 UTC weder ein neues Gespräch noch einen neuen Guard-Diagnoseeintrag. Die vollständigen ursprünglichen Transformationsparameter sind nicht gespeichert; deshalb wurde kein künstlicher Ersatzaufruf erzeugt. Die installierte Diagnose erfasst den tatsächlichen Fehlerkontext beim nächsten realen Aufruf. Weder hörbare Wiedergabe noch vollständiger Geschäftsablauf oder Gleichheit auf iPhone/Android/Desktop werden aus Offline- und Metadatenprüfungen abgeleitet.
 
 Die Episodic-Zuordnung ist installiert. Ein tatsächlich erfolgreicher Auswertungsaufruf mit dem neuen Modell bleibt zusammen mit dem nächsten echten Dialog zu prüfen, sobald das Modell wieder bereit ist. Veröffentlichte Quellen, fremde Modellhistorie und Berechtigungen wurden nicht überschrieben.
 
 Evidenz: `server/.local/voice-repair-20261102/fresh-call-servicenow-observation-20261106-v1`. Die umfassende Dokumentation und der bestehende Katalog vom Vormittag bleiben unter [CHANGELOG-20261106.md](CHANGELOG-20261106.md) erhalten.
+
+Evidenz des tatsächlichen Wiederanlaufs: `server/.local/voice-repair-20261102/task95-voice-resume-20261106-v1/result.json` und `FINAL-READINESS-AND-CONSUMER.json`. Alte und neue Ausführungshelfer sind verbraucht und dürfen nicht wiederholt werden; weitere Modellwechsel oder automatische Wiederanläufe wurden nicht eingerichtet.
