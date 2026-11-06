@@ -1,5 +1,7 @@
 # Änderungsprotokoll · 6. November 2026
 
+Nachtrag zum späteren echten iPhone-Versuch: [Fehlerbefund, installierte Korrekturen und aktuelle Abnahmegrenzen](INCIDENT-20261106-IPHONETEST.md). Die nachfolgende Inventarzahl beschreibt den abgeschlossenen Dokumentationsstand vom Vormittag.
+
 Instanz: `soprasteriaassvsdemo14`. ServiceNow-Installation, native Stream-Prüfung, unabhängiger WAV-Hash und tatsächliche Python-DTO-Prüfung sind erfolgreich. Der finale und der unabhängige Audit bestätigen **1.081 kommentierte Customer Updates in 56 Sets**: 1.015 ursprüngliche und 66 neue Captures. Der [zeilenweise Katalog](customer-update-catalog-20261106.csv) enthält die einzelnen Artefakte, historischen Fassungen, Aktionen und Set-Zuordnungen.
 
 ## Geänderte ServiceNow-Datensätze
