@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "full_api_sha256": "0fc902343a816feb7a933f67c773e98025d8d09b55711545d874d6cddc07ea08",
+  "engine_sha256": "c69d064b528e21e5b722ab4a0618b67c29a9d84dd09ba3aa70c6a928b5741aca",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:273714ccb64dabb7fac0418ee1b6dd83eb57d2fd44cf286eb68a7c694a27c203",
+  "method_source_sha256": "9bab6293c33fb14cce35dad3d847ed7b0a48d4af51e312f36784f9a568d00238",
+  "fixture_sha256": "e0373b6ab3719b3526ca1b6497786bf6310cf5ed9270c566f7c9cec184361e48",
+  "producer_layouts": {
+    "enabled": {
+      "format": "C %d %lld %lld %lld %ld %ld %ld %ld %lld %.1f %.1f %.1f %.1f %ld %ld %.1f %ld %d %lld %ld %ld %ld %lld %d %d %d %lld %lld %ld %ld %ld %ld %ld %ld %.1f %lld %ld %ld %d %.1f %ld %ld %d %d %d %d %ld %ld %ld %ld %ld %s %ld %ld %ld %ld",
+      "tokenCountIncludingC": 57,
+      "formatSha256": "0789e5944a7884ec9b17860f97d6a22ea58527f459a019d9d2076baf125d469c",
+      "restoreMillisecondsIndex": 35,
+      "restoredBytesIndex": 36,
+      "waitingForRoomIndex": 39,
+      "busyRegionsIndex": 45,
+      "positionsIndex": 44
+    },
+    "cacheDisabledLiteral": {
+      "format": "C 0 0 0 0 0 0 0 0 0 0.0 0.0 0.0 0.0 0 0 0.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.0 0 0 0 %d %.1f %ld %ld %d %d %d %d %ld %ld %ld",
+      "tokenCountIncludingC": 51,
+      "formatSha256": "5158dedc669f2a1fc6e87f8cc68085acbf0a01aaea616057c83b2c20fa9176d2",
+      "extraFixedZeroIndex": 35,
+      "restoreMillisecondsIndex": 36,
+      "restoredBytesIndex": 37,
+      "waitingForRoomIndex": 40,
+      "busyRegionsIndex": 46,
+      "positionsIndex": 45
+    },
+    "apiExpected": "Enabled layout; optional suffix fields depend on response length",
+    "cause": "Pinned binary contains an extra literal zero at index35 only in its all-zero cache metadata CSTAT response; this shifts the following float and every live pool suffix by one versus pinned API. Actual CacheOff manifest and exact failure match this malformed producer branch."
+  }
+}
