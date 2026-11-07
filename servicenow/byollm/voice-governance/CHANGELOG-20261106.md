@@ -1,6 +1,6 @@
 # Änderungsprotokoll · 6. November 2026
 
-Nachtrag zum nachgereichten Transkript vom 7. November: [Spracherkennungsfehler, belegte Antwortfreigabe und Startkorrekturen](INCIDENT-20261107-TRANSCRIPT-ASR.md). Ein neues Global-Set enthält genau einen individuell dokumentierten Vokabular-Capture. Die lokale Quellkorrektur und der noch ausstehende Aktivierungsstand sind getrennt ausgewiesen.
+Nachtrag zum nachgereichten Transkript vom 7. November: [Spracherkennungsfehler, belegte Antwortfreigabe und Startkorrekturen](INCIDENT-20261107-TRANSCRIPT-ASR.md). Ein neues Global-Set enthält genau einen individuell dokumentierten Vokabular-Capture. Die tatsächlich aktivierte lokale Reparatur, die erhaltene eigene Stimme und die noch offene Geräteabnahme sind getrennt ausgewiesen.
 
 Nachtrag zum späteren echten iPhone-Versuch: [Fehlerbefund, installierte Korrekturen und aktuelle Abnahmegrenzen](INCIDENT-20261106-IPHONETEST.md). Die nachfolgende Inventarzahl beschreibt den abgeschlossenen Dokumentationsstand vom Vormittag.
 
