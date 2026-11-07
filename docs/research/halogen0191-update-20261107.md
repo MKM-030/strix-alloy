@@ -415,9 +415,14 @@ replacement server ready with API/engine 0.19.1, the exact selected profile,
 one 32768-position slot/pool and paired 2048 prefill limits. It remains open
 at port 8840. Available physical memory was approximately 25.29 GiB.
 The read-only GPU admission snapshot at 21:29:10 UTC found no active GPU
-engine counters but did find RiotClientServices and RiotClientCrashHandler;
-the existing comparison gate rejects those processes. They were preserved.
-No new benchmark cohort started.
+engine counters and recorded RiotClientServices and RiotClientCrashHandler.
+An initial interpretation incorrectly treated those services as a blocker.
+Inspection of the effective call chain established that it records those
+services but rejects actual games and nonzero GPU counters. Two fresh GPU
+frames and authenticated idle/reserve checks passed at 21:33 UTC. The
+registered cost comparison then started through the existing lifecycle;
+Riot processes were preserved. No measured improvement is claimed until
+the complete comparison terminates and normal serving is restored.
 
 The source refresh completed at 21:25:20 UTC. Official Halogen remains
 0.19.1; tracked AMD, Ryzen AI, XRT, WHIRL and libosmos fields were unchanged.
