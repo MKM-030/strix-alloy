@@ -271,6 +271,15 @@ def conversation_stage(check_only):
     native = read_json(NATIVE_CONFIG)
     if native.get('conversation_transport') != 'controller-text':
         raise RuntimeError('Bitte den freigegebenen Controller-Sprachtransport auswaehlen.')
+    if native.get('conversation_http_url') == 'http://127.0.0.1:8840/v1/chat/completions':
+        profile = (selected_controller or {}).get('profile', {})
+        concurrency = profile.get('concurrency', 1)
+        engine = profile.get('engine', {})
+        slots = engine.get('slots', 1)
+        if (type(concurrency) is not int or concurrency < 2
+                or engine.get('kind') == 'halogen' and (type(slots) is not int or slots < 2)):
+            raise RuntimeError('Direkter Sprachzugriff auf Controller 8840 benoetigt parallele Modellkapazitaet. '
+                'Bitte die Sprach-Gespraechsadresse auf http://127.0.0.1:8841/v1/chat/completions setzen.')
 
 
 
