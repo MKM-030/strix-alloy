@@ -125,6 +125,15 @@ class ContextSnapshotBoundaryTests(unittest.IsolatedAsyncioTestCase):
         self.session.requests.append('a' * 32)
         self.session.conversation_binding = ConversationBinding('c' * 32, 'd' * 32, 'e' * 32)
         self.session.voice_context = {'voice_assistant': 'f' * 32}
+        from voice.caller_binding import ProviderContextBinding
+        self.session.user_id = 'voice-' + self.session.sid
+        self.session.caller_user_id = '1' * 32
+        self.session.voice_context['global_context_profile'] = 'b' * 32
+        self.session.provider_context_binding = ProviderContextBinding(
+            self.bridge.settings.caller_binding_service_id, 'b' * 32, 'c' * 32,
+            self.session.conversation_binding.interaction_id, 'd' * 32,
+            self.session.caller_user_id, 'voice-' + '9' * 32)
+        self.session.provider_context_identity = self.bridge.owned_cleanup_identity(self.session)
         self.upstream = []
         self.statuses = []
         owner = self
