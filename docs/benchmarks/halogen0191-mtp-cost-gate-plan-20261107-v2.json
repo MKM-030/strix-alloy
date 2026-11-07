@@ -1,0 +1,333 @@
+{
+  "schema": "halogen0191.mtp-cost-gate-plan.v1",
+  "experiment": "mtp_gate_cost",
+  "draft_prepared_utc": "2026-11-07T21:42:26.267384+00:00",
+  "prospective": true,
+  "hardware_executed": false,
+  "comparison_executed": false,
+  "full_goal_achieved": false,
+  "scope": "Prospective frozen whole-engine native confidence/cost/confidence MTP-rule comparison",
+  "engine_version": "0.19.1",
+  "engine_sha256": "9dcf048b93111aba93032aa2ba0bea07496bc14c0cd4316a21dc39d2db749d46",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:7ab5c3dfd77acb2387603f1807069cac3494e678f413c0670745ba2df74c0f0e",
+  "normal_profile": {
+    "path": "server/.local/halogen-update-20261107/primary0191/serving0191-text32k-one-slot-2048.json",
+    "bytes": 1859,
+    "sha256": "69b91ddae6daa21b7c4d7666077847e4913fd9b59aedd149201c9d0ccd994b84"
+  },
+  "cases": [
+    {
+      "name": "natural8192",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "route": "/v1/completions",
+      "request": {
+        "path": "server/.local/halogen-update-20261107/primary0191/natural8192-prep/request-natural8192.json",
+        "bytes": 34927,
+        "sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d"
+      },
+      "request_fields_without_prompt": {
+        "cache_prompt": false,
+        "drafter": "mtp",
+        "max_tokens": 128,
+        "model": "halogen-v2",
+        "prompt_cache_policy": "no_store",
+        "seed": 1,
+        "stream": false,
+        "temperature": 0
+      },
+      "workload": "Existing contiguous nonrepeated natural novel prefix"
+    },
+    {
+      "name": "natural16384",
+      "actual_input_tokens": 16384,
+      "actual_output_tokens": 128,
+      "route": "/v1/completions",
+      "request": {
+        "path": "server/.local/halogen-update-20261025/primary01816/measurement-20261026T1903Z/plain-packet/request-natural16k.json",
+        "bytes": 72848,
+        "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+      },
+      "request_fields_without_prompt": {
+        "cache_prompt": false,
+        "drafter": "mtp",
+        "max_tokens": 128,
+        "model": "halogen-v2",
+        "prompt_cache_policy": "no_store",
+        "seed": 1,
+        "stream": false,
+        "temperature": 0
+      },
+      "workload": "Existing contiguous nonrepeated natural novel prefix"
+    }
+  ],
+  "arms": [
+    "before",
+    "candidate",
+    "after"
+  ],
+  "controls": {
+    "HALOGEN_MTP_GATE_RULE": [
+      "gate",
+      "cost",
+      "gate"
+    ],
+    "HALOGEN_MTP_GATE_P": "0.90",
+    "HALOGEN_PLD": "3,3",
+    "HALOGEN_DRAFT_VOCAB_Q8": [
+      0,
+      0,
+      0
+    ],
+    "HALOGEN_SERVE_TRACE": [
+      1,
+      1,
+      1
+    ],
+    "HALOGEN_PHASE_RAW": [
+      1,
+      1,
+      1
+    ],
+    "HALOGEN_DECODE_PREFETCH": 0
+  },
+  "native_environment_by_arm": {
+    "before": {
+      "HALOGEN_MTP_GATE_RULE": "gate",
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "HALOGEN_DRAFT_VOCAB_Q8": "0",
+      "HALOGEN_SERVE_TRACE": "1",
+      "HALOGEN_DECODE_PREFETCH": "0",
+      "HALOGEN_PLD": "3,3",
+      "HGN0191_RAW_ENABLE": "1"
+    },
+    "candidate": {
+      "HALOGEN_MTP_GATE_RULE": "cost",
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "HALOGEN_DRAFT_VOCAB_Q8": "0",
+      "HALOGEN_SERVE_TRACE": "1",
+      "HALOGEN_DECODE_PREFETCH": "0",
+      "HALOGEN_PLD": "3,3",
+      "HGN0191_RAW_ENABLE": "1"
+    },
+    "after": {
+      "HALOGEN_MTP_GATE_RULE": "gate",
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "HALOGEN_DRAFT_VOCAB_Q8": "0",
+      "HALOGEN_SERVE_TRACE": "1",
+      "HALOGEN_DECODE_PREFETCH": "0",
+      "HALOGEN_PLD": "3,3",
+      "HGN0191_RAW_ENABLE": "1"
+    }
+  },
+  "fixed_profile": {
+    "checkpoint": "v2",
+    "slots": 1,
+    "context": 32768,
+    "kv_pool_positions": 32768,
+    "concurrency": 1,
+    "prefill_chunk": 2048,
+    "max_prefill_tokens": 2048,
+    "prompt_cache": "Off",
+    "thinking": false,
+    "reasoning_effort": "low",
+    "max_thinking_tokens": 2048,
+    "disable_vision": true
+  },
+  "warmup_excluded_per_case_arm": 1,
+  "measured_per_case_arm": 3,
+  "total_cohort_generation_requests": 24,
+  "startup_requests": {
+    "managed_serial_correctness_requests_per_successful_launch": 2,
+    "excluded_from_cohort_counts_and_timing_means": true,
+    "any_upstream_startup_warmup_excluded": true,
+    "total_actual_startup_generation_count_claimed": false
+  },
+  "gates_GiB": {
+    "start_physical": 30,
+    "start_commit": 131,
+    "request_physical": 22,
+    "request_commit": 22,
+    "runtime_physical": 18,
+    "runtime_commit": 18,
+    "pre_stop_physical": 22,
+    "pre_stop_commit": 22
+  },
+  "executed_source_pins": {
+    "root_campaign.py": {
+      "sha256": "f6ffa51f7fd9c310a3abe75fee151a209189aa22bcef6a467876ff2ef11e84a1",
+      "bytes": 40006
+    },
+    "collect_epoch.py": {
+      "sha256": "098f8b88d10e2b1dece7f602765da568ac2b9fec06591c4792c3e1da183f6896",
+      "bytes": 27508
+    },
+    "qpc_audit.py": {
+      "sha256": "cddbca2a95c0a20511e68838e4f6ad3b2ca222e0546f0bdca5aa890b08415b18",
+      "bytes": 8154
+    },
+    "transition.json": {
+      "sha256": "a2de768efb642b5a375cdf60d81de4d5a4395a215f46662160f2327370d1f880",
+      "bytes": 22179
+    },
+    "root-dso-pin.json": {
+      "sha256": "5364ea9f20aaab052916488a26b139b222acea223f7048a929fb3c9f6a292187",
+      "bytes": 1610
+    },
+    "mtp_cost_trace.py": {
+      "sha256": "b88df08b942b14b00a3a51b6f3876b1263948991d4494664913949997237ea1e",
+      "bytes": 3285
+    }
+  },
+  "exporter_source_pin": {
+    "sha256": "c152db5943ebe4b6a8b6422d29c1d1856b3cf7c253529cf967938b0d1ba5552c",
+    "bytes": 60141
+  },
+  "combined_private_bundle": {
+    "transition": {
+      "path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/integration/root-bound/transition.json",
+      "bytes": 22179,
+      "sha256": "a2de768efb642b5a375cdf60d81de4d5a4395a215f46662160f2327370d1f880"
+    },
+    "active": false,
+    "installed": false,
+    "candidate_files": 53,
+    "rollback_files": 50,
+    "source_members": 49,
+    "rollback_remove": {
+      "scripts/api_observation.py": "28c36951fa2c1fa7a346858b6514437250eeeabda3259e71445647c6ce3479bf",
+      "scripts/phase_raw_binding.py": "efbf68788cd4210e138b3904de719be21e0cf631e6b48240a9ca7f99736ebdcd",
+      ".local/libhgn0191_raw_side.so": "f21a89054208be3c70701b8383de2f84d323159ecd7bb9fcfd889218379ceee1"
+    },
+    "input_transitions": {
+      "q8": "ecae649e6e437f71ddfd53a891aea4344629f361c712f5e67773df561a93c32b",
+      "cost": "aff4edf09486f6521fcc3f696321d3ebd877f7dc768db7cea683c6c17ffad827"
+    },
+    "native_binary_and_provider_unchanged": true
+  },
+  "source_paths": {
+    "root_campaign.py": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/root_campaign.py",
+    "collect_epoch.py": "server/.local/halogen-update-20261107/primary0191/raw-phase-prep/collector/collect_epoch.py",
+    "qpc_audit.py": "server/.local/halogen-update-20261107/primary0191/raw-phase-prep/collector/qpc_audit.py",
+    "transition.json": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/integration/root-bound/transition.json",
+    "root-dso-pin.json": "server/.local/halogen-update-20261107/primary0191/raw-phase-prep/observer/root-dso-pin.json",
+    "mtp_cost_trace.py": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/mtp_cost_trace.py"
+  },
+  "native_mechanism_evidence": {
+    "assessment.json": {
+      "path": "server/.local/halogen-update-20261107/primary0191/continuation-1904/mtp-source/assessment.json",
+      "bytes": 5026,
+      "sha256": "34dd550ddcca423239c38aa19fd37d55c64ec25bbfb300de1bec625ee56571d7"
+    },
+    "native-cost-proof.json": {
+      "path": "server/.local/halogen-update-20261107/primary0191/continuation-1904/mtp-source/native-cost-proof.json",
+      "bytes": 31735,
+      "sha256": "dcb8efb23b881375dc915e9e23451ea5303224a8763d1a7ed83c60c46fe0b8b3"
+    }
+  },
+  "registration": {
+    "schema": "halogen0191.mtp-gate-cost-registration.v1",
+    "fields": [
+      "schema",
+      "commit",
+      "plan_path",
+      "plan_sha256"
+    ],
+    "plan_path": "docs/benchmarks/halogen0191-mtp-cost-gate-plan-20261107-v2.json",
+    "committed_blob_and_working_bytes_must_match": true,
+    "exact_six_source_role_pins_required": true,
+    "separate_exporter_source_pin_required": true,
+    "source_only_preparation_requires_registration": false,
+    "run_requires_registration": true
+  },
+  "qualification": {
+    "all_two_cases_all_three_arms_required": true,
+    "all_24_cohort_responses_required": true,
+    "one_warmup_and_three_measurements_per_case_arm": true,
+    "warmups_excluded_from_timing_means": true,
+    "actual_input_tokens_match_frozen_case": true,
+    "actual_output_tokens_and_output_cap_both_128": true,
+    "exact_output_bytes_and_counts_across_all_arms_required": true,
+    "finish_behavior_and_output_cap_semantics_matched": true,
+    "no_cache_reuse": true,
+    "engine_scoped_eight_unique_native_request_ids": true,
+    "ids_not_required_to_be_unique_across_engine_restarts": true,
+    "positive_neural_head_rounds_and_drafted_tokens_required": true,
+    "lookup_rounds_drafted_accepted_must_all_equal_zero": true,
+    "grammar_rounds_drafted_accepted_must_all_equal_zero": true,
+    "full_vocabulary_fallback_eligible": true,
+    "positive_bank_tokens_not_required": true,
+    "one_matching_native_startup_banner_per_engine": true,
+    "trace_proofs_recomputed_from_saved_log": true,
+    "saved_manifest_rules_and_controls_revalidated": true,
+    "saved_request_and_RAW_speculation_counters_reconciled": true,
+    "precision_evidence": "Fixed Q4 manifest declaration plus pinned native loader path; no direct per-dispatch dtype observation",
+    "direct_dispatch_dtype_observed": false,
+    "per_decision_cost_threshold_observed": false,
+    "native_output_ID_sequence_identity_claimed": false,
+    "API_phase_clock_qualified": false,
+    "RAW_includes_observer_overhead": true,
+    "whole_HTTP_QPC_reported": true,
+    "pooled_neural_head_acceptance_reported_separately": true,
+    "NPU_speedup_claimed": false,
+    "all_failed_and_partial_attempts_retained": true,
+    "partial_or_failed_cohort_leaves_whole_comparison_unqualified": true,
+    "exporter_recomputes_saved_evidence_independently": true
+  },
+  "trace_contract": {
+    "helper": "mtp_cost_trace.py",
+    "function": "qualify_trace(text, samples, expected_rule)",
+    "saved_files": [
+      "native-cost-log.txt",
+      "service-manifest.json",
+      "mtp-cost-trace.json"
+    ],
+    "result_field": "mtp_cost_trace",
+    "startup_suffix_by_rule": {
+      "gate": ", confidence gate)",
+      "cost": ", cost rule)"
+    },
+    "legacy_accepted": "Named numeric diagnostic only; no corresponding API field, not used in token acceptance or counter equality"
+  },
+  "lifecycle": {
+    "normal_profile_sha256": "69b91ddae6daa21b7c4d7666077847e4913fd9b59aedd149201c9d0ccd994b84",
+    "canonical_normal_guard_before_runtime": true,
+    "canonical_normal_guard_before_output_creation": true,
+    "source_pins_written_before_first_stop": true,
+    "actual_handle_process_idle_game_and_GPU_load_checks_required": true,
+    "one_large_engine": true,
+    "continue_live_handles_after_observation_timeout": true,
+    "normal_server_restored_through_existing_lifecycle": true,
+    "normal_endpoint": "http://127.0.0.1:8840/v1",
+    "leave_ready_and_open": true,
+    "refresh_existing_Voice_controller_selection_only": true
+  },
+  "selection_rule": "Report separate RAW prefill/decode bounds, full HTTP Windows QPC and pooled head acceptance. Require a complete matched comparison and useful-output throughput gains beyond observed run and bookend variability, with exact output preservation. Acceptance alone is not a speedup. Keep the selected normal serving profile pending broader performance review.",
+  "planned_output": "server/.local/halogen-update-20261107/primary0191/mtp_gate_cost-raw-comparison-counter-semantics-v2",
+  "attempt": "counter-semantics-v2",
+  "counter_semantics_revision": {
+    "version": 2,
+    "prior_attempt_qualified": false,
+    "rationale": "Native aggregate accepted45 differs from accepted head tokens69 in all four real samples; preserve aggregate diagnostically and compare only corresponding API fields",
+    "prior_attempt": "mtp_gate_cost-raw-comparison"
+  },
+  "registered_plan_prepared_utc": "2026-11-07T21:46:30.980577+00:00",
+  "CPU_verification": {
+    "coordinator": 19,
+    "trace": 8,
+    "actual_counter_replay": 4,
+    "exporter_cost": 20,
+    "exporter_legacy_and_profile": 55,
+    "historical_numeric_leaves_reproduced": 1059,
+    "final_cost_only_renderer_change_historical_md_files_unchanged": 5
+  },
+  "prior_attempt": {
+    "handle": "server/.local/halogen-update-20261107/primary0191/mtp_gate_cost-raw-comparison/handle.json",
+    "terminal": true,
+    "completed": false,
+    "restored": true,
+    "cohort_requests": 4,
+    "failure": "Trace helper equated native aggregate accepted with accepted-token fields; aggregate has no API counterpart.",
+    "included_in_V2_comparison_means": false
+  }
+}
