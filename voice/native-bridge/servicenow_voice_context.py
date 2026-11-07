@@ -90,7 +90,11 @@ def build_servicenow_voice_context(settings=None, known_state=None):
         fragment += '\nGeschäftliche Ausführung und erforderliche Freigaben bleiben ausschließlich bei ServiceNow.'
     available, busy = (_boolean(state, key) for key in ('business_available', 'business_busy'))
     closed = _boolean(state, 'backend_closed')
-    if closed is True:
+    bootstrap = state.get('bootstrap_state')
+    if bootstrap == 'failed':
+        status = ('Der Start des vorhandenen ServiceNow-Dialogs ist fehlgeschlagen. '
+                  'Ein erneuter Verbindungsaufbau ist nicht belegt. Deine Antwort löst keinen neuen Start aus.')
+    elif closed is True:
         status = 'Der native Dialog ist beendet; keine weitere Übermittlung behaupten.'
     elif available is False:
         status = 'Die native Verbindung ist noch nicht bereit; keine laufende Verarbeitung behaupten.'

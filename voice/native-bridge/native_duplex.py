@@ -1854,6 +1854,7 @@ class NativeDuplex:
             'Die ServiceNow-Verbindung wird vorbereitet. Noch keine fachliche Eingabe wurde übermittelt; '
             'besprich das Anliegen, ohne eine laufende Bearbeitung oder Kontextübernahme zu behaupten.'
             if self.bootstrap_pending else
+            self._status() if self._bootstrap_state == 'failed' else
             'ServiceNow hat diesen Dialog beendet. Behaupte keine laufende Bearbeitung und keine '
             'weitere Übermittlung in diesen Dialog; erkläre nur die vorhandene Rückmeldung.' if backend_closed else
             'Die Anfrage ist derzeit nicht verfügbar; eine weitere Bearbeitung ist nicht belegt.'
@@ -1902,6 +1903,7 @@ class NativeDuplex:
         snapshot = append_servicenow_context(snapshot, build_servicenow_voice_context(
             self.call.call_settings, dict(business_available=not self._backend_unavailable and not self.bootstrap_pending,
                 business_busy=self.busy and not self.bootstrap_pending, backend_closed=backend_closed,
+                bootstrap_state=self._bootstrap_state,
                 context_updates_enabled=self._context_publisher is not None and not self.bootstrap_pending,
                 pending_count=len(self._pending), supplement_count=len(self._supplements),
                 question_source=question_source)))
@@ -2013,8 +2015,8 @@ class NativeDuplex:
             reason = 'identity_not_current'
         elif unproven_storage_or_check_claim(text):
             reason = 'unproven_storage_or_check_claim'
-        elif (self.busy and not self.bootstrap_pending and unproven_pending_data_claim(
-                text, self._corroborating_inputtext(snapshot))):
+        elif ((self.busy and not self.bootstrap_pending or self._bootstrap_state == 'failed')
+                and unproven_pending_data_claim(text, self._corroborating_inputtext(snapshot))):
             reason = 'unproven_pending_data_claim'
         elif unproven_current_action_claim(text, self._current_action_outputs()):
             reason = 'unproven_current_action_claim'
