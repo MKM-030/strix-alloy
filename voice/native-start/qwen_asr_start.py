@@ -26,7 +26,7 @@ BACKEND = 'qwen3-asr-0.6b'
 URL = 'http://127.0.0.1:8851/v1/audio/transcriptions'
 NATIVE_MANIFEST = Path(r'C:\Projects\strix-alloy-clean\server\.local\voice-deployment\native-asr-artifacts.local.json')
 # Root fills this only after final qualified GGUF bytes and manifest review.
-NATIVE_MANIFEST_SHA256 = '6ee50f96a36828445f4808aa734833963f8cd45ea64a6d4ac46bc7212dba7e85'
+NATIVE_MANIFEST_SHA256 = 'ed0b8eb19c656412151a949a5b6d8c203cae142d022278daecba72e8ce25a52b'
 PINS = {
     SCRIPT: '211db87c455eacfb891d109d040a3beb95feca79a6b16d78b8b1e65e971a993e',
     PYTHON: '0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14',
