@@ -107,18 +107,21 @@ class StartupPreparationTests(unittest.IsolatedAsyncioTestCase):
             conversation_http_url='http://127.0.0.1:8840/v1/chat/completions',
             conversation_token_file='C:/fixture/token.txt')
         events = await self.start(config)
-        self.assertEqual(events, ['dependencies', 'http_session', 'asr_readiness', 'http_closed'])
+        self.assertEqual(events, ['dependencies', 'http_session', 'http_session',
+                                  'asr_readiness', 'http_closed', 'http_closed'])
 
     async def test_websocket_dependencies_are_also_prepared_before_startup_ready(self):
         config = bridge.Config(instance_name='fixture', voice_service_id='assistant',
             conversation_ws_url='ws://127.0.0.1:9999')
         events = await self.start(config)
-        self.assertEqual(events, ['dependencies', 'http_session', 'asr_readiness', 'http_closed'])
+        self.assertEqual(events, ['dependencies', 'http_session', 'http_session',
+                                  'asr_readiness', 'http_closed', 'http_closed'])
 
     async def test_legacy_startup_does_not_require_optional_conversation_dependencies(self):
         config = bridge.Config(instance_name='fixture', voice_service_id='assistant')
         events = await self.start(config)
-        self.assertEqual(events, ['http_session', 'asr_readiness', 'http_closed'])
+        self.assertEqual(events, ['http_session', 'http_session', 'asr_readiness',
+                                  'http_closed', 'http_closed'])
 
     async def test_selected_dependency_failure_prevents_startup_and_resource_creation(self):
         config = bridge.Config(instance_name='fixture', voice_service_id='assistant',

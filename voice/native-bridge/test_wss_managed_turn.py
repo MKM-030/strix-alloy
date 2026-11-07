@@ -92,6 +92,8 @@ class WssManaged(unittest.IsolatedAsyncioTestCase):
         self.metadata = HTTP()
         self.auth = Http(Response(payload=authorized_settings()))
         self.auth.close = AsyncMock()
+        self.reference_http = Http(Response(payload=authorized_settings()))
+        self.reference_http.close = AsyncMock()
         self.config = bridge.Config(instance_name='voice-auth', voice_service_id=SERVICE,
             required_agent_id=AGENT, auth_mode='servicenow', native_sdk_enabled=True,
             sdk_public_origin='https://voice-relay.example.test', private_managed_turn=managed_config(),
@@ -117,7 +119,8 @@ class WssManaged(unittest.IsolatedAsyncioTestCase):
                      patch.object(bridge, 'NativeCall', RecordingCall),
                      patch.object(bridge.web, 'WebSocketResponse', websocket),
                      patch.object(bridge, 'ManagedTurnBootstrap', lambda config: managed_turn.ManagedTurnBootstrap(config, session_factory=self.metadata.factory), create=True),
-                     patch.object(bridge, 'ClientSession', lambda **_: self.auth),
+                     patch.object(bridge, 'ClientSession',
+                                  lambda **options: self.reference_http if 'cookie_jar' in options else self.auth),
                      patch.object(bridge, 'require_model_ready', AsyncMock()),
                      patch.object(bridge, 'require_asr_ready', AsyncMock()),
                      patch.object(sdk_sessions, 'register_sdk_routes', register)]:
@@ -275,6 +278,7 @@ class WssManaged(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(sum(value[0] == 'DELETE' for value in self.metadata.calls), 1)
         self.assertTrue(self.metadata.closed)
         self.auth.close.assert_awaited_once()
+        self.reference_http.close.assert_awaited_once()
         with self.assertRaises(web.HTTPServiceUnavailable):
             await self.connect(self.request())
 

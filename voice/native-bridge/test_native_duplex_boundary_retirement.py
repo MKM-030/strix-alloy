@@ -165,7 +165,8 @@ class RetirementOwnershipTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.lane._observation_current(self.binding))
 
     async def test_raw_correction_invalidates(self):
-        self.lane._observe_raw('Korrektur, nach Berlin.')
+        await self.lane._accept((self.call.playback.generation, 'Korrektur, nach Berlin.',
+                                 99, 'f' * 32, 0))
         self.assertFalse(self.lane._observation_current(self.binding))
 
     async def test_epoch_change_invalidates(self):

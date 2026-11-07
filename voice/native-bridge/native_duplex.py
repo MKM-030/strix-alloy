@@ -758,6 +758,20 @@ class NativeDuplex:
             return None
         return state
 
+    def _retire_confirmation_ack(self):
+        state = self._buffered_confirmation_ack()
+        if state is None:
+            state = self._speech
+            if (self._active_kind != 'confirmation_ack' or self._active_output is None
+                    or state is None or state.get('output') is not self._active_output
+                    or state.get('generation') != self.call.playback.generation
+                    or not self._valid(self._active_output)):
+                return
+        state['interrupted'] = True
+        self.call.playback.interrupt()
+        if self._synthesis_task is not None:
+            self._synthesis_task.cancel()
+
     def begin_greeting(self, text):
         return self._begin_speech(SimpleNamespace(text=text, kind='greeting', question_binding=None))
 
@@ -1526,17 +1540,16 @@ class NativeDuplex:
                 # Only an admitted audible replacement owns playback. Stale
                 # or suppressed callbacks must leave current local speech intact.
                 if admitted:
-                    buffered_ack = self._buffered_confirmation_ack()
-                    if self._active_kind in ('conversation', 'confirmation_ack') or buffered_ack is not None:
+                    if self._active_kind == 'conversation':
                         lease = self._speech.get('lease') if self._speech is not None else None
-                        if (self._active_kind == 'conversation' and lease is not None
+                        if (lease is not None
                                 and self._active_speech_current(lease.output, lease.generation, lease)):
                             return
-                        if buffered_ack is not None:
-                            buffered_ack['interrupted'] = True
                         self.call.playback.interrupt()
                         if self._synthesis_task is not None:
                             self._synthesis_task.cancel()
+                    else:
+                        self._retire_confirmation_ack()
 
         async def on_reply(reply):
             replies.append(reply)
@@ -1557,7 +1570,10 @@ class NativeDuplex:
             self._sync_native_control()
             self._settle_backend_state()
             if event.ui_type == 'OutputText':
-                self._admit_backend_event(event, turn)
+                admitted = self._admit_backend_event(event, turn)
+                if (admitted and revision == self.task_revision and not self._pending
+                        and self._backend_receipts[self._backend_key(event)]['state'] == 'pending'):
+                    self._retire_confirmation_ack()
                 self._queue_dialogue_observation()
             elif (event.ui_type != 'Boolean'
                     and isinstance(getattr(self.call.dialog, 'input_control', None), BackendEvent)

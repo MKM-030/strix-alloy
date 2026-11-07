@@ -79,7 +79,7 @@ class StaticHelpTests(unittest.IsolatedAsyncioTestCase):
         progress(call.dialog)
         self.assertTrue(lane._valid(explanation))
 
-    async def test_generated_and_status_outputs_keep_observation_guards(self):
+    async def test_generated_help_survives_progress_and_status_keeps_observation_guard(self):
         for kind in ('help', 'status'):
             with self.subTest(kind=kind):
                 call = self.call()
@@ -95,9 +95,11 @@ class StaticHelpTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(item.kind, 'conversation' if kind == 'help' else 'status')
                 self.assertTrue(lane._valid(item))
                 progress(call.dialog)
+                self.assertEqual(lane._valid(item), kind == 'help')
+                call.dialog.conversation_ended = True
                 self.assertFalse(lane._valid(item))
 
-    async def test_active_static_help_still_stops_for_input_task_and_call_changes(self):
+    async def test_active_static_help_preserves_admitted_scope_until_hard_input_or_call_change(self):
         for change in ('input', 'task', 'closed', 'failed', 'generation'):
             with self.subTest(change=change):
                 call = self.call()
@@ -123,8 +125,8 @@ class StaticHelpTests(unittest.IsolatedAsyncioTestCase):
                 call.speech = SimpleNamespace(synthesize=synthesize)
                 with self.assertLogs('native-voice', level='INFO') as captured:
                     await lane._synthesize(item, generation)
-                self.assertNotEqual(bytes(call.playback.data), b''.join(CHUNKS))
-                self.assertTrue(any('tts_finished kind=local' in line and 'current=False' in line
+                self.assertEqual(bytes(call.playback.data) == b''.join(CHUNKS), change == 'task')
+                self.assertTrue(any('tts_finished kind=local' in line and f'current={change == "task"}' in line
                                     for line in captured.output))
 
     async def test_pending_bootstrap_help_keeps_all_pcm_without_a_business_turn(self):

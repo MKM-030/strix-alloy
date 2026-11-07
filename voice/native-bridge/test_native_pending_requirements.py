@@ -131,7 +131,8 @@ class PendingRequirementTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_raw_correction_still_hard_rejects(self):
         binding = self.lane._dialogue_snapshot(self.turn, self.lane.epoch)[2]
-        self.lane._observe_raw('Korrektur, nach Berlin.')
+        await self.lane._accept((self.call.playback.generation, 'Korrektur, nach Berlin.',
+                                 99, 'f' * 32, 0))
         self.assertEqual(self.release(REQUIREMENT, binding=binding), 'rejected')
 
     async def test_identity_change_still_hard_rejects(self):

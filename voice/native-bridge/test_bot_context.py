@@ -63,7 +63,8 @@ class BotContextTests(unittest.IsolatedAsyncioTestCase):
                 'displayName':'Bot', 'type':'text', 'timestamp':'1791890700000'}
         self.assertEqual((await self.post('/api/message', {'text':'Hallo', 'history':[item]})).status, 202)
         self.assertEqual(self.requests[0]['history'], [item])
-        self.bridge.consume(self.session, {'body':[{'uiType':'InputText'}]})
+        self.bridge.consume(self.session, {'requestId': self.session.requests[-1],
+                                           'body':[{'uiType':'InputText'}]})
         self.assertEqual((await self.post('/api/message', {'text':'Laptop', 'history':[item]})).status, 400)
         self.assertEqual(len(self.requests), 1)
         self.assertEqual((await self.post('/api/message', {'text':'Laptop'})).status, 202)

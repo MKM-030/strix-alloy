@@ -242,7 +242,7 @@ class AssistantSettingsTests(unittest.TestCase):
         value['behavior_sources']['goodbye_message'] = 'configured'
         self.assertEqual(self.settings(data).configured_goodbye, 'Auf Wiedersehen.')
 
-    def test_unlocalized_defaults_and_filler_delay_remain_explicit_metadata(self):
+    def test_unlocalized_defaults_remain_metadata_and_filler_delay_is_supported(self):
         data = authorized_settings()
         value = data['result']['assistant_settings']
         value['behavior'] = {'retry_prefix': 'Please try again.', 'goodbye_message': 'Goodbye.',
@@ -253,11 +253,13 @@ class AssistantSettingsTests(unittest.TestCase):
         settings = self.settings(data)
         metadata = settings.unsupported_metadata
         self.assertEqual(metadata['unlocalized_native_defaults'], ['retry_prefix', 'goodbye_message'])
-        self.assertEqual(metadata['behavior']['filler_message_delay_in_seconds'], '15')
+        self.assertEqual(settings.filler_delay_seconds, 15)
+        self.assertNotIn('filler_message_delay_in_seconds', metadata['behavior'])
         metadata['unlocalized_native_defaults'].clear()
         metadata['behavior']['filler_message_delay_in_seconds'] = 'mutated'
         self.assertEqual(settings.unsupported_metadata['unlocalized_native_defaults'], ['retry_prefix', 'goodbye_message'])
-        self.assertEqual(settings.unsupported_metadata['behavior']['filler_message_delay_in_seconds'], '15')
+        self.assertNotIn('filler_message_delay_in_seconds', settings.unsupported_metadata['behavior'])
+        self.assertEqual(settings.filler_delay_seconds, 15)
         value['behavior_sources']['goodbye_message'] = 'configured'
         self.assertEqual(self.settings(data).unsupported_metadata['unlocalized_native_defaults'], ['retry_prefix'])
 

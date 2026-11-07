@@ -266,9 +266,12 @@ class SynchronousStartTests(unittest.IsolatedAsyncioTestCase):
         await self.assert_rejected(None)
 
     async def test_timeout_preserves_owned_end_and_never_retries(self):
-        # Shorten only the local transport deadline; all HTTP remains real.
-        with patch('voice.bridge.ClientTimeout', side_effect=lambda **kw: ClientTimeout(total=.05)):
-            opening, startup = await self.start(gated=True)
+        self.start_ack_gate.clear()
+        opening, creation = await self.begin_create()
+        # Start the short deadline after CREATE has its ordinary transport budget.
+        with patch('voice.bridge.ClientTimeout', side_effect=lambda **kw: ClientTimeout(total=.5)):
+            await self.create_confirmed(opening, creation)
+            await asyncio.wait_for(self.start_received.wait(), 2)
             with self.assertRaises(RuntimeError):
                 await asyncio.wait_for(opening, 2)
         self.assertTrue(self.session.failed)
