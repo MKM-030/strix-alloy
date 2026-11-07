@@ -283,3 +283,15 @@ Six additional idle launch windows were closed only after exact creation-time
 identity, controller-exit and child-ownership checks. The original launcher
 and current serving launcher were preserved. The baseline 50 source members
 were checked and all three private observation additions were absent.
+
+## Subsequent mechanism investigation
+
+The later CPU audit established that every observed copied-log lookup chain
+already reached the native seven-token ceiling. Its K4 chain-length premise
+is closed. The libosmos routing change overlaps an existing parallel Halogen
+planner, and the official NPU helper still lacks the Flash consumer needed
+for a measured speed contribution. A separate existing Q8 draft-vocabulary
+control has an inactive, tested source bundle and a prospectively frozen
+natural-text comparison. Hardware admission remains pending.
+[Mechanism evidence](halogen0191-mtp-next-mechanisms-20261107.md),
+[Q8 study plan](../benchmarks/halogen0191-draft-vocab-q8-plan-20261107.md).

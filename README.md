@@ -90,6 +90,11 @@ workload-specific scope and both earlier failures.
 [earlier GPU-gated attempt](docs/benchmarks/halogen0191-pld34log-reference-raw-20261107.md),
 [original task-format failure](docs/benchmarks/halogen0191-pld34log-raw-20261107.md).
 
+The subsequent source audit closes another K4 chain-length trial on that log
+case and prepares an existing Q8 draft-vocabulary control for a separate frozen
+comparison. The selected server retains its current profile while resource
+admission is pending. [Mechanism audit and preparation](docs/research/halogen0191-mtp-next-mechanisms-20261107.md).
+
 Earlier two-slot/2048 API observations used the synthetic 8K fixture and natural
 16K fixture. Their prefill/decode means were **1191.85 / 46.62 tok/s** and
 **1125.72 / 48.98 tok/s**, with native head acceptance **56.78% / 65.42%**.

@@ -1,0 +1,174 @@
+{
+  "schema": "halogen0191.draft-vocab-q8-plan.v1",
+  "registered_utc": "2026-11-07T18:29:21.399514+00:00",
+  "scope": "Prospective frozen whole-engine Q4/Q8/Q4 configuration comparison",
+  "hardware_executed": false,
+  "comparison_executed": false,
+  "full_goal_achieved": false,
+  "engine_sha256": "9dcf048b93111aba93032aa2ba0bea07496bc14c0cd4316a21dc39d2db749d46",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:7ab5c3dfd77acb2387603f1807069cac3494e678f413c0670745ba2df74c0f0e",
+  "normal_profile": {
+    "path": "server\\.local\\halogen-update-20261107\\primary0191\\serving0191-text32k-one-slot-2048.json",
+    "bytes": 1859,
+    "sha256": "69b91ddae6daa21b7c4d7666077847e4913fd9b59aedd149201c9d0ccd994b84"
+  },
+  "cases": [
+    {
+      "name": "natural8192",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "route": "/v1/completions",
+      "request": {
+        "path": "server\\.local\\halogen-update-20261107\\primary0191\\natural8192-prep\\request-natural8192.json",
+        "bytes": 34927,
+        "sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d"
+      },
+      "request_fields_without_prompt": {
+        "cache_prompt": false,
+        "drafter": "mtp",
+        "max_tokens": 128,
+        "model": "halogen-v2",
+        "prompt_cache_policy": "no_store",
+        "seed": 1,
+        "stream": false,
+        "temperature": 0
+      }
+    },
+    {
+      "name": "natural16384",
+      "actual_input_tokens": 16384,
+      "actual_output_tokens": 128,
+      "route": "/v1/completions",
+      "request": {
+        "path": "server\\.local\\halogen-update-20261025\\primary01816\\measurement-20261026T1903Z\\plain-packet\\request-natural16k.json",
+        "bytes": 72848,
+        "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+      },
+      "request_fields_without_prompt": {
+        "cache_prompt": false,
+        "drafter": "mtp",
+        "max_tokens": 128,
+        "model": "halogen-v2",
+        "prompt_cache_policy": "no_store",
+        "seed": 1,
+        "stream": false,
+        "temperature": 0
+      }
+    }
+  ],
+  "arms": [
+    "before",
+    "candidate",
+    "after"
+  ],
+  "controls": {
+    "HALOGEN_DRAFT_VOCAB_Q8": [
+      0,
+      1,
+      0
+    ],
+    "HALOGEN_SERVE_TRACE": [
+      1,
+      1,
+      1
+    ],
+    "HALOGEN_PHASE_RAW": [
+      1,
+      1,
+      1
+    ],
+    "HALOGEN_PLD": "3,3",
+    "HALOGEN_MTP_GATE_P": "0.90",
+    "HALOGEN_DECODE_PREFETCH": 0
+  },
+  "fixed_profile": {
+    "slots": 1,
+    "context": 32768,
+    "kv_pool_positions": 32768,
+    "concurrency": 1,
+    "prefill_chunk": 2048,
+    "max_prefill_tokens": 2048,
+    "prompt_cache": "Off",
+    "thinking": false
+  },
+  "warmup_excluded_per_case_arm": 1,
+  "measured_per_case_arm": 3,
+  "total_generation_requests": 24,
+  "gates_GiB": {
+    "start_physical": 30,
+    "start_commit": 131,
+    "request_physical": 22,
+    "request_commit": 22,
+    "runtime_physical": 18,
+    "runtime_commit": 18,
+    "pre_stop_physical": 22,
+    "pre_stop_commit": 22
+  },
+  "sources": {
+    "root_v6": {
+      "path": "server\\.local\\halogen-update-20261107\\primary0191\\raw-phase-prep\\root_campaign.py",
+      "bytes": 32642,
+      "sha256": "ece8bcf39b35369bf28fb1d04137c510d4e0643d11dfba3625f5b589fa1300f3"
+    },
+    "collector_v3": {
+      "path": "server\\.local\\halogen-update-20261107\\primary0191\\raw-phase-prep\\collector\\collect_epoch.py",
+      "bytes": 27508,
+      "sha256": "098f8b88d10e2b1dece7f602765da568ac2b9fec06591c4792c3e1da183f6896"
+    },
+    "qpc_audit": {
+      "path": "server\\.local\\halogen-update-20261107\\primary0191\\raw-phase-prep\\collector\\qpc_audit.py",
+      "bytes": 8154,
+      "sha256": "cddbca2a95c0a20511e68838e4f6ad3b2ca222e0546f0bdca5aa890b08415b18"
+    },
+    "trace_helper": {
+      "path": "server\\.local\\halogen-update-20261107\\primary0191\\raw-phase-prep\\vocab_trace.py",
+      "bytes": 2388,
+      "sha256": "e4913dc3275d661aee578dea3a165534419794b648442db4eb948db6ca5da4ae"
+    },
+    "exporter_v8": {
+      "path": "server\\.local\\halogen-update-20261107\\primary0191\\raw-phase-prep\\export_comparison.py",
+      "bytes": 47926,
+      "sha256": "ff0e660a61b61d7bd5d1774f3c84328ecbf46014195af44b5af90a8fa2e10c06"
+    },
+    "transition": {
+      "path": "server\\.local\\halogen-update-20261107\\primary0191\\next-mechanisms-1722\\q8-candidate\\transition.json",
+      "bytes": 23154,
+      "sha256": "ecae649e6e437f71ddfd53a891aea4344629f361c712f5e67773df561a93c32b"
+    },
+    "preparation_receipt": {
+      "path": "server\\.local\\halogen-update-20261107\\primary0191\\next-mechanisms-1722\\q8-candidate\\preparation-receipt.json",
+      "bytes": 2930,
+      "sha256": "da7d3f09a12c9df22c874af6480fb99f03171460bf0b4a9a16249e3bc8f3ff74"
+    },
+    "native_trace_proof": {
+      "path": "server\\.local\\halogen-update-20261107\\primary0191\\next-mechanisms-1722\\official-npu\\q8-verbose-proof\\qualification.json",
+      "bytes": 4986,
+      "sha256": "f9284394d417652fd1397a802264cef5dc33a72c7469453e49063af4a38d8b40"
+    },
+    "draft_vocab_asset": {
+      "path": "server\\.local\\halogen-update-20261107\\primary0191\\next-mechanisms-1722\\official-npu\\extracted\\opt\\halogen\\draft-vocab.lists",
+      "bytes": 795612,
+      "sha256": "cc322dc326c0ac39df81342211cbca196d83fc8dc3cc3a03d78120b5d1bf8c99"
+    }
+  },
+  "qualification": {
+    "all_two_cases_all_three_arms_required": true,
+    "exact_output_bytes_and_counts_required": true,
+    "no_cache_reuse": true,
+    "matched_native_request_ids": true,
+    "positive_head_rounds": true,
+    "positive_selected_bank_tokens": true,
+    "lookup_rounds_drafted_accepted_must_all_equal_zero": true,
+    "trace_proofs_recomputed_from_saved_log": true,
+    "direct_dispatch_dtype_observed": false,
+    "precision_evidence": "Manifest plus pinned native loader and consumer branch",
+    "native_output_ID_sequence_identity_claimed": false,
+    "API_phase_clock_qualified": false,
+    "RAW_includes_observer_overhead": true,
+    "whole_HTTP_QPC_reported": true,
+    "NPU_speedup_claimed": false,
+    "all_failed_and_partial_attempts_retained": true,
+    "normal_server_restored_through_existing_lifecycle": true
+  },
+  "selection_rule": "Report separate RAW prefill/decode, full HTTP and pooled head acceptance. A throughput improvement requires a complete matched comparison beyond observed run/bookend variability. Keep the selected normal profile until broader performance and output-preservation review passes."
+}
