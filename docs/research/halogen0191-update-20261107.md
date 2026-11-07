@@ -331,3 +331,62 @@ The earlier qualified benchmark quantities retain their original workloads
 and clocks. The broader acceleration goal, including a beneficial NPU
 contribution and a complete matched manufacturer-protocol comparison,
 remains open.
+
+## Subsequent optimization work
+
+The pinned 0.18.22 and 0.19.1 engines contain 2,034 common named GPU
+functions. CPU ELF inspection found 2,030 byte-identical functions, four
+changed recurrent-row functions and six added QSU4 functions. Host dispatch,
+current tensor state and execution times remain outside that byte comparison.
+The retained natural 16K request is identical across the two versions, while
+its prefill chunk and arena changed from 8192 to 2048. The older 8K fixture
+also contains different text. These differences prevent a causal version
+regression claim. Evidence is retained in
+`primary0191/continuation-1904/prefill-source/assessment.json`.
+
+A separate native MTP cost rule supplies a new low-memory test hypothesis.
+It weighs calibrated joint-prefix survival against marginal drafting and
+verification costs. The ordinary target verifier remains in its path.
+The default retains the confidence gate, and the managed interface currently
+lacks the internal `HALOGEN_MTP_GATE_RULE=cost` opt-in. This mechanism differs
+from the earlier constant-threshold studies. Its throughput effect remains
+unmeasured. Static reproduction passed 35 instruction assertions across 30
+bounded captures. Evidence is retained in
+`primary0191/continuation-1904/mtp-source/assessment.json`.
+
+The inactive cost-rule bundle now contains 50 candidate files, 50 exact
+rollback files and three changed package files. Ten focused CPU tests and
+the cloned backend suite passed, with 19 backend passes and eight Windows
+POSIX/GCC skips. Tests exercise ordinary controller validation and command
+forwarding, real service options and manifest construction, canonical rule
+values and persisted-environment consistency. The installed package, selected
+profile and all 117 protected Q8 preparation files remain exact. The
+gate/cost/gate profile projections are staged and unmeasured. Runtime
+coordination and whole-engine qualification remain pending. Evidence is
+retained in `primary0191/continuation-1904/cost-gate-candidate/receipt.json`.
+
+Root prioritizes a fixed-Q4 cost-rule comparison when request headroom
+returns, while preserving the independently frozen Q8 study. The cost rule
+adds no model or KV reservation. The Q8 loader's shared 198,759-row pool
+requires about 242.63 MiB more logical row storage at Q8. Those buffer-size
+calculations establish neither the Windows physical-memory delta nor peak
+allocation. The existing memory floors retain their values. This ordering
+is a test-priority decision and supplies no measured speedup. Evidence is
+retained in `primary0191/continuation-1904/q8-logical-storage.json`.
+
+The existing manufacturer benchmark client and analyzer now have a private
+0.19.1 source/profile adapter. Twelve CPU tests and independent review
+verified all 60 historical request bodies and their order, cache-policy
+compatibility and separate native-ledger, response-native and complete-HTTP
+QPC summaries. The existing HTTP client and analyzer retain their exact
+bytes. This preparation generated zero model requests. The current serving
+profile remains selected. Evidence is retained in
+`primary0191/continuation-1904/vendor-parity/receipt.json`.
+
+The scheduled source refresh completed at **19:18:52 UTC**. Official driver,
+Ryzen AI, XRT, WHIRL and libosmos release fields matched the earlier refresh.
+The fresh **18:57 UTC** Halogen identity check was reused. Reddit direct
+listings returned HTTP 403, and the web fallback retained incomplete current
+coverage. The next broad refresh is due at or after **21:18:52 UTC**. Its
+receipt is retained in
+`primary0191/continuation-1904/source-refresh-1917/receipt.json`.
