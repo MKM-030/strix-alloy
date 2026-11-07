@@ -1,5 +1,7 @@
 # Änderungsprotokoll · 6. November 2026
 
+Nachtrag zum nachgereichten Transkript vom 7. November: [Spracherkennungsfehler, belegte Antwortfreigabe und Startkorrekturen](INCIDENT-20261107-TRANSCRIPT-ASR.md). Ein neues Global-Set enthält genau einen individuell dokumentierten Vokabular-Capture. Die lokale Quellkorrektur und der noch ausstehende Aktivierungsstand sind getrennt ausgewiesen.
+
 Nachtrag zum späteren echten iPhone-Versuch: [Fehlerbefund, installierte Korrekturen und aktuelle Abnahmegrenzen](INCIDENT-20261106-IPHONETEST.md). Die nachfolgende Inventarzahl beschreibt den abgeschlossenen Dokumentationsstand vom Vormittag.
 
 Nachtrag zum anschließenden stillen Voice-Start: [Öffentlichen Tunnelzugang geprüft und wieder erreicht](INCIDENT-20261106-VOICE-ENTRY.md). ServiceNow bestätigt den öffentlichen Native-Endpunkt wieder mit HTTP200 in 684 ms. Dieser Transportvorfall änderte keine ServiceNow-Konfiguration und erzeugte keine zusätzlichen fachlichen Customer Updates; die Geräteabnahme bleibt offen.
