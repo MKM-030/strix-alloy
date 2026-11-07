@@ -241,7 +241,8 @@ class EOSIdentityTests(unittest.IsolatedAsyncioTestCase):
             await dialogue.close()
             self.assertFalse(dialogue.is_source_current(identity))
 
-    async def exercise(self, *, delay_final=False, reject_second=False, terminal=True):
+    async def exercise(self, *, delay_final=False, reject_first=False, reject_second=False,
+                       terminal=True):
         http = FakeHTTP(terminal=terminal)
         source = LocalTextSocket(CONTROLLER_CHAT_URL, 'C:/synthetic-token', http=http)
         adapter = OmniConversation(lambda: source, deadlines=dict(
@@ -261,13 +262,14 @@ class EOSIdentityTests(unittest.IsolatedAsyncioTestCase):
 
         async def sentence(candidate):
             observations.append(dict(
+                text=candidate.text,
                 terminal=adapter._socket.terminal_at is not None,
                 done=adapter._socket.done_at is not None,
                 stream_current=adapter.is_stream_current(candidate.identity),
                 completed_current=adapter.is_current(candidate.identity),
                 source_current=dialogue.is_source_current(candidate.identity),
                 pipecat_current=dialogue.is_current(candidate.identity)))
-            if reject_second and len(observations) == 2:
+            if (reject_first and len(observations) == 1) or (reject_second and len(observations) == 2):
                 raise ValueError('Synthetic release rejection')
 
         frame_patch = patch.object(pipecat_dialogue._CandidateSink, 'process_frame', delayed_sink)
@@ -318,6 +320,13 @@ class EOSIdentityTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_forced_postterminal_final_frame_delay_keeps_identity_current(self):
         await self.assert_success(delay_final=True)
+
+    async def test_first_callback_rejection_suppresses_remaining_sentences(self):
+        result = await self.exercise(reject_first=True)
+        self.assertEqual([item['text'] for item in result['observations']], [FIRST])
+        self.assertTrue(result['observations'][0]['pipecat_current'])
+        self.assertEqual(result['failure'], 'output_callback_failed')
+        self.assertFalse(result['cancelled'])
 
     async def test_second_callback_rejection_reports_failure_without_closing_adapter(self):
         result = await self.exercise(reject_second=True)
