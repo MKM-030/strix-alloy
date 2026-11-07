@@ -26,7 +26,7 @@ from conversation_repair import (conversational_snapshot,
                                  NATURAL_CONVERSATION_PROMPT, _polar, _pure_kind,
                                  _passive_signal)
 from conversation_claims import (unproven_current_action_claim, unproven_pending_data_claim,
-                                 unproven_storage_or_check_claim)
+                                 unproven_storage_or_check_claim, unproven_technical_destination_claim)
 from conversation_numbers import has_unbound_numbers
 from native_backend import BackendControlChanged, BackendEvent, BackendState, ControlBinding, ControlGate
 from spoken_output import spoken_text
@@ -1075,7 +1075,8 @@ class NativeDuplex:
                 or active is not None and active.fallback_snapshot == snapshot and self._valid(active)):
             return
         LOG.info('Voice independent help call=%s stage=fallback reason=%s', self.call.call_id, reason)
-        self._enqueue('Ich kann gerade keine verlässliche Antwort geben.', turn, kind='local',
+        self._enqueue(self._status() if self._bootstrap_state == 'failed' else
+                      'Ich kann gerade keine verlässliche Antwort geben.', turn, kind='local',
                       fallback_snapshot=snapshot)
 
     def _repeat_last_reply(self):
@@ -2013,6 +2014,10 @@ class NativeDuplex:
             reason = 'identifier_in_text'
         elif not self.conversation.is_current(candidate.identity):
             reason = 'identity_not_current'
+        elif unproven_technical_destination_claim(text, self._current_action_outputs()):
+            # Reject the entire optional reply: a later intake request cannot
+            # salvage an invented technical destination validation.
+            reason = 'unproven_technical_destination_claim'
         elif unproven_storage_or_check_claim(text):
             reason = 'unproven_storage_or_check_claim'
         elif ((self.busy and not self.bootstrap_pending or self._bootstrap_state == 'failed')

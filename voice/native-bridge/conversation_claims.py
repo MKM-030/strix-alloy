@@ -108,3 +108,38 @@ def unproven_storage_or_check_claim(text):
                     continue
             return True
     return False
+
+
+def unproven_technical_destination_claim(text, current_outputs=()):
+    """Hold direct destination-validity assertions without owned native evidence.
+
+    This is a narrow German wording class, not name validation or intent
+    recognition. Exact current OutputText equivalence is the sole exception.
+    """
+    def normal(value):
+        return re.sub(r'[^\w]+', ' ', value.casefold()).strip()
+    if any(normal(text) == normal(output) for output in current_outputs):
+        return False
+    destination = r'(?:gegenstelle|zielname|verbindungsziel|verbindungsadresse|verbindungspartner)'
+    invalid = r'(?:kein(?:e[rmns]?)?\s+gültig\w*|(?:nicht\s+gültig|ungültig))'
+    # Remove quoted speech, but do not let a quoted target hide the surrounding
+    # independent assertion ("dies ist kein gültiger Zielname").
+    # Keep a quoted sentence boundary so a report cannot qualify a later
+    # independent assertion after that quotation.
+    masked = _unquoted(re.sub(r'([.!?])([“”»\"’‘])', r'\2\1', text))
+    for sentence in re.finditer(r'[^.!?;\n]+(?:[.!?;\n]|$)', masked):
+        value = sentence.group().strip().casefold()
+        if value.endswith('?'):
+            continue
+        for clause in re.split(r'\s+(?:und|aber|sondern)\s+', value):
+            if (re.search(r'\b(?:wenn|falls|sofern|sobald|würde|wäre|könnte|möglicherweise|vielleicht)\b', clause)
+                    or re.search(r'\b(?:allgemein|grundsätzlich|üblicherweise|normalerweise|typischerweise|beispielsweise)\b', clause)
+                    or re.search(r'\b(?:laut|sagte[n]?|sagen|meinte[n]?|behauptet|berichtete)\b', clause)):
+                continue
+            # Complement causes and target-validity predicates cover the
+            # observed class, regardless of the target's actual spelling.
+            if (re.search(r'\b(?:ist|sind)\s+' + invalid + r'\s+' + destination + r'\b', clause)
+                    or re.search(r'\b' + invalid + r'\s+' + destination + r'\s+(?:ist|sind)\b', clause)
+                    or re.search(r'\b' + destination + r'\b[^,]*\b(?:ist|sind)\s+(?:nicht\s+gültig|ungültig)\b', clause)):
+                return True
+    return False
