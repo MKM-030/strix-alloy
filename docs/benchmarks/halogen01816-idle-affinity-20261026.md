@@ -1,5 +1,7 @@
 # Independent saved affinity A/B/A audit
 
+**Frozen workload classification, 7 November 2026.** The 8192-token case uses synthetic prose; the 16384-token case uses a contiguous novel excerpt. [Workload identities and new natural 8K preparation](halogen-8k-workload-classification-20261107.md).
+
 All 36 request ordinals passed independent raw request/response, token, output, native scoped-counter and QPC checks. Nine warmups are excluded; 27 requests are measured. The same server identities and original affinity masks are restored.
 
 The candidate is **not promoted**. At 8K it is 1.06% slower than the restored bookend. The 16K and separate PP1 requests are shorter against both bookends in this cohort, but the result does not establish an overall inference improvement. The complete prefill/decode/acceptance optimization goal remains unachieved.

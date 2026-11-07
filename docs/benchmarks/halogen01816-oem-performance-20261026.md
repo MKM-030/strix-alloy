@@ -1,5 +1,7 @@
 # Halogen 0.18.16: OEM Performance restoration, 26 October 2026
 
+**Frozen workload classification, 7 November 2026.** The 8192-token case uses synthetic prose; the 16384-token case uses a contiguous novel excerpt. [Workload identities and new natural 8K preparation](halogen-8k-workload-classification-20261107.md).
+
 The independently captured 8,192-input / 128-output MTP cohort averages **1858.90 prefill tok/s, 54.37 decode tok/s, and 66.04% acceptance** (210/318). One warmup is excluded; all three measured requests complete and match the plain Performance run's output and scoped speculation counts.
 
 The actual local firmware interface reported **Quiet (2)** while Windows selected its performance power plan. The local BIOS 3.10 AML and signed OEM event mapping establish Quiet2 / Performance1. Root used the normal elevated OEM WMI method with fresh readback, never a driver, voltage, direct EC or BIOS modification. Performance1 is active after restoration.

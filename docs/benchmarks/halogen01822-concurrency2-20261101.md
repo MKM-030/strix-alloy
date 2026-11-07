@@ -1,5 +1,7 @@
 # Halogen 0.18.22 distinct 8K + 16K concurrency comparison
 
+**Frozen workload classification, 7 November 2026.** The 8192-token case uses synthetic prose; the 16384-token case uses a contiguous novel excerpt. [Workload identities and new natural 8K preparation](halogen-8k-workload-classification-20261107.md).
+
 One shared engine, two different frozen requests. The metric below counts completed output tokens over the whole pair QPC makespan, including prefill, queue and transport. It is not Prefill or Decode phase tok/s.
 
 The normal server was restored to port 8840 with its original profile and exact source seal: 14 transition paths, eight original files restored, six added files removed, and 44 normal backend source members verified.

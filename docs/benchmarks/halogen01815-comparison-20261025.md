@@ -1,5 +1,7 @@
 # Halogen 0.18.15: historische Einordnung und native Lookup-Platzierung
 
+**Frozen workload classification, 7 November 2026.** The 8192-token case uses synthetic prose; the 16384-token case uses a contiguous novel excerpt. [Workload identities and new natural 8K preparation](halogen-8k-workload-classification-20261107.md).
+
 Halogen 0.18.15 wurde mit dem vorhandenen HGN-v2-Checkpoint aktualisiert und mit
 echten Modellanfragen geprüft. Der zusätzlich implementierte native Lookup-Pfad
 bewahrt im abgeschlossenen A/B-Vergleich alle Ausgaben und Draft-Zähler. Seine

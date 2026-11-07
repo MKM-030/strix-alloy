@@ -9,7 +9,7 @@ with explicit availability, reproducible measurements and no silent fallback.
 | Backend | Status | Entry point |
 |---|---|---|
 | **Halogen WSL2 0.19.1** | Current v2 text serving with 32K capacity, two slots and a 2K prefill arena | [Update and measurements](docs/research/halogen0191-update-20261107.md) |
-| **Halogen WSL2 0.18.22** | Retained independently captured natural 8K/16K phase measurements | [Earlier measurements](docs/benchmarks/halogen01822-raw-8k16k-20261101.md) |
+| **Halogen WSL2 0.18.22** | Retained independently captured frozen 8K/16K phase measurements | [Earlier measurements](docs/benchmarks/halogen01822-raw-8k16k-20261101.md) |
 | **Halogen WSL2 0.18.16** | Retained independently captured 8K/16K phase measurements | [Earlier phase measurements](docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md) |
 | **Hipfire native Windows** | Source port with completed 16K MTP cohort; 1,240.2 prefill / 26.53 decode tok/s, 63.64% acceptance | [Build, run and measurement limits](backends/hipfire-windows/README.md) |
 | **Halogen WSL2 0.16.2** | Pinned v2 upgrade and sampled filled-context comparison measured with an 18 GiB reserve | [Install and run](backends/halogen-wsl2-0.16.2/README.md) |
@@ -47,6 +47,10 @@ Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
 
+The frozen 8192-token fixture contains synthetic prose. The 16384-token fixture
+contains a contiguous novel excerpt. Their request identities are documented
+in the [workload classification](docs/benchmarks/halogen-8k-workload-classification-20261107.md).
+
 The 7 November 0.19.1 two-slot/2048 cohort reports API prefill/decode means
 of **1191.85 / 46.62 tok/s** at 8192 input tokens and **1125.72 / 48.98 tok/s**
 at 16384. Native head acceptance is **56.78% / 65.42%**. Each case excludes one
@@ -55,7 +59,7 @@ whole-request clocks, the unavailable OEM mode readback, and the larger-arena
 candidate that stopped at request admission after its warmup.
 [Current 0.19.1 observations](docs/benchmarks/halogen0191-natural-8k16k-20261107.md).
 
-[Halogen 0.18.22, independently captured natural 8K/16K inputs](docs/benchmarks/halogen01822-raw-8k16k-20261101.md)
+[Halogen 0.18.22, independently captured frozen 8K/16K inputs](docs/benchmarks/halogen01822-raw-8k16k-20261101.md)
 records **1917.24 / 55.17 tok/s** prefill/decode at 8192 actual input tokens
 and **1913.00 / 46.86 tok/s** at 16384, with native head acceptance
 **66.04% / 52.68%**. Each row excludes a warmup and averages three runs.
@@ -78,7 +82,7 @@ window, so those reported token rates are provisional; no new RAW best result
 or engine-version speedup is claimed. The server is left online. The historical
 `MeasuredText32K` preset still selects 0.18.16.
 
-[Halogen 0.18.16, natural 8K/16K inputs](docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md)
+[Halogen 0.18.16, frozen 8K/16K inputs](docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md)
 records **2033.12 / 56.93 tok/s** prefill/decode at 8192 actual input tokens
 and **2002.08 / 49.63 tok/s** at 16384. Native head acceptance was **66.04%**
 and **52.68%**. These are directly observed RAW phase rates; the 8K native API

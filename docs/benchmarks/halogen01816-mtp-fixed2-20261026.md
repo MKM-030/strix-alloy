@@ -1,5 +1,7 @@
 # Halogen 0.18.16: retain adaptive MTP
 
+**Frozen workload classification, 7 November 2026.** The 8192-token case uses synthetic prose; the 16384-token case uses a contiguous novel excerpt. [Workload identities and new natural 8K preparation](halogen-8k-workload-classification-20261107.md).
+
 Fixed depth 2 with gate 0 did not improve either frozen workload. Retain adaptive gate 0.90. All 24 requests completed with exact request, output, input/output-token and finish-reason parity. Six warmups are excluded, leaving 18 measurements; genuine draft and acceptance differences remain recorded by policy.
 
 | Whole HTTP mean, seconds | Adaptive before | Fixed2 | Adaptive after | Fixed2 longer vs controls |

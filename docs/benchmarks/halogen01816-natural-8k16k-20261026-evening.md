@@ -1,8 +1,10 @@
 # Halogen 0.18.16: neue 8K-/16K-Messung vom 26. Oktober 2026
 
+**Frozen workload classification, 7 November 2026.** The 8192-token case uses synthetic prose; the 16384-token case uses a contiguous novel excerpt. [Workload identities and new natural 8K preparation](halogen-8k-workload-classification-20261107.md).
+
 Qwen3.8 Flash Next, unverändertes v2-Modell, 32.768 Kontextkapazität.
 Je ein ausgeschlossener Warmup und drei vollständige Messläufe mit 128
-Ausgabetokens. Eingefrorene natürliche Texte, Temperatur 0, Seed 1,
+Ausgabetokens. Eingefrorene synthetische 8K-Prosa und ein 16K-Romanausschnitt, Temperatur 0, Seed 1,
 Thinking Off, Cache Off/no_store, MTP mit Gate 0,90, PLD 3,3,
 Prefill-Chunk und Arbeitsbereich jeweils 8.192. NPU-Helfer deaktiviert.
 

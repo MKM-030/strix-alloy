@@ -1,4 +1,6 @@
-# Halogen 0.19.1 natural 8K/16K API observations
+# Halogen 0.19.1 frozen 8K/16K API observations
+
+**Frozen workload classification, 7 November 2026.** The 8192-token case uses synthetic prose; the 16384-token case uses a contiguous novel excerpt. [Workload identities and new natural 8K preparation](halogen-8k-workload-classification-20261107.md).
 
 On 7 November 2026, the selected **0.19.1** v2 text profile completed the frozen
 8K and 16K requests with one excluded warmup and three measured repetitions per
