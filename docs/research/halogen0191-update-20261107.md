@@ -390,3 +390,38 @@ listings returned HTTP 403, and the web fallback retained incomplete current
 coverage. The next broad refresh is due at or after **21:18:52 UTC**. Its
 receipt is retained in
 `primary0191/continuation-1904/source-refresh-1917/receipt.json`.
+
+## Cost-rule comparison preparation and runtime recovery (21:29 UTC)
+
+The finite cost-rule coordinator and saved-evidence exporter are now prepared.
+The prospective [protocol](../benchmarks/halogen0191-mtp-cost-gate-plan-20261107.md)
+and its [source pins](../benchmarks/halogen0191-mtp-cost-gate-plan-20261107.json)
+freeze the two natural input workloads, gate/cost/gate order and fixed Q4
+controls. The combined inactive package contains 53 candidate files and 50
+rollback files. CPU verification passed 26 coordinator/trace tests and 74
+exporter/historical tests. The final exporter reproduced 1,059 numeric leaves
+across five earlier campaigns while preserving all ten published files.
+A realistic restored-runtime fixture exposed a missing `match: true` version
+field in the first exporter draft; the corrected source rejects missing or
+false match markers. These are source/evidence checks, with zero cost-study
+model requests and no measured performance gain.
+
+The previously running server stopped at 21:00 UTC after physical memory
+fell to 17.970 GiB, below the unchanged 18 GiB runtime floor. Its retained
+outcome reports completed cleanup and memory recovery; the failed guard
+left an ownership lock. An already-running normal recovery was observed
+rather than duplicated. Authenticated reads at 21:28:37 UTC verified the
+replacement server ready with API/engine 0.19.1, the exact selected profile,
+one 32768-position slot/pool and paired 2048 prefill limits. It remains open
+at port 8840. Available physical memory was approximately 25.29 GiB.
+The read-only GPU admission snapshot at 21:29:10 UTC found no active GPU
+engine counters but did find RiotClientServices and RiotClientCrashHandler;
+the existing comparison gate rejects those processes. They were preserved.
+No new benchmark cohort started.
+
+The source refresh completed at 21:25:20 UTC. Official Halogen remains
+0.19.1; tracked AMD, Ryzen AI, XRT, WHIRL and libosmos fields were unchanged.
+Reddit direct listings remained inaccessible (HTTP 403), so newest-post
+coverage remains unverified. The next broad check is due at 23:25:20 UTC.
+The broader acceleration goal remains unachieved. Private receipts are
+retained in `primary0191/cost-gate-cohort-prep/`.
