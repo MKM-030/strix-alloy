@@ -510,3 +510,37 @@ they are not a fresh-clone hardware launcher. Full prompts, responses, credentia
 models and generated runtime state remain outside this archive. Three existing
 0.19.1 profile/forwarding tests also pass. No new throughput measurements are
 claimed by these CPU checks.
+
+
+## Follow-up performance decision (22:02 UTC)
+
+A saved-response comparison confirms substantive output drift in the paired
+4096 candidate. Request bytes, 8192 input tokens, 128 output tokens, Cache Off
+and the MTP policy match the 2048 control. The responses share 246 UTF-8 bytes,
+then diverge in their generated wording. Head counters also change from
+69/109 accepted/drafted over 57 rounds to 65/112 over 62 rounds. Only paired
+prefill chunk/arena fields differ between the profiles. A different numerical
+path is consistent with these observations; no intermediate logits or hidden
+states were saved to distinguish shape selection, accumulation or dispatch.
+The evidence does not establish an MTP verifier defect.
+
+The distinct proposed 2048/8192/2048 study retains a plausible larger-GEMM and
+fewer-submission mechanism. The existing exact-output requirement should be
+checked on each candidate excluded warmup before scheduling measured rows;
+any mismatch terminates that candidate and restores normal serving. No
+source evidence guarantees that a larger chunk will preserve output. Increasing
+only the arena with an unchanged 2048 chunk lacks a demonstrated performance
+mechanism and is not proposed as an extra cohort. This is a future protocol
+recommendation, not an amendment to the frozen cost V2 plan. Private evidence:
+`primary0191/cost-gate-cohort-prep-v2/prefill-output-preservation-assessment.json`.
+
+An independent follow-up found no newly omitted supported low-memory control
+in the inspected image and wrappers. `HIP_FORCE_DEV_KERNARG=1`, pinned trunk,
+ALGOS1, BUCKET1 and the shipped tuning-plan path are already active defaults.
+No new premise justifies repeating the closed broad-kernel/trained-plan trials.
+The cost rule, Q8 draft-vocabulary comparison, larger paired prefill study and
+manufacturer-protocol replay remain prospective hardware work. None has a
+new measured gain. At this checkpoint physical reserve remains below the
+unchanged 22 GiB entry requirement; normal serving stays online. Further
+hardware work requires changed available resources, not another lifecycle
+permission or another repetition of the rejected entry attempt.
