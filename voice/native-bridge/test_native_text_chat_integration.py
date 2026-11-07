@@ -73,6 +73,15 @@ class TextChatIntegrationTests(unittest.IsolatedAsyncioTestCase):
         await asyncio.wait_for(self.dialogs[0].closed.wait(), 2)
         self.assertIsNone(self.dialogs[0].authorization)
 
+    async def test_invalid_upgrade_releases_capacity_for_next_valid_connection(self):
+        client = await self.client()
+        response = await client.get('/text/chat/agent_operator?auth_token=fixture')
+        self.assertEqual(response.status, 400)
+        self.assertEqual(self.dialogs, [])
+        ws = await client.ws_connect('/text/chat/agent_operator?auth_token=fixture')
+        self.assertEqual((await ws.receive_json(timeout=2))['type'], 'connected')
+        await ws.close()
+
     async def test_denied_auth_allocates_no_dialog(self):
         client = await self.client(authorized=False)
         response = await client.get('/text/chat/agent_operator?auth_token=fixture')

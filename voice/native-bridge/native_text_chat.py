@@ -124,8 +124,9 @@ class NativeTextChat:
             await self.before_create()
             if self.stopping or self.is_stopping() or session.closed:
                 raise web.HTTPServiceUnavailable(text=ERROR)
-            session.ws = self.websocket_factory(heartbeat=20, max_msg_size=MAX_TEXT * 6)
-            await session.ws.prepare(request)
+            socket = self.websocket_factory(heartbeat=20, max_msg_size=MAX_TEXT * 6)
+            await socket.prepare(request)
+            session.ws = socket
             session.settings = settings
             session.dialog = self.dialog_factory(self.config, settings)
             session.dialog._call_owned = True
