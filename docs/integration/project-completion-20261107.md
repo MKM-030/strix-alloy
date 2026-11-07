@@ -4,25 +4,33 @@ Halogen 0.19.1 was installed and qualified with the normal v2 text profile on
 `http://127.0.0.1:8840/v1`. The dated runtime receipts recorded matching API and
 engine versions, authenticated discovery of `halogen-v2` and the persistent
 Voice selection of the verified profile. The normal Voice startup check
-completed successfully. The **13:04 UTC** readiness record is a historical
-snapshot. After the later campaigns, the **7 November 15:31:03 UTC** functional
-check recorded the normal two-slot, pool-65536, concurrency-two, paired-2048
-profile ready with controller/backend PIDs **25272/28248**. Model discovery
+completed successfully. The **13:04 UTC** and **15:31 UTC** readiness records
+are historical snapshots. The **7 November 17:09:37 UTC** functional
+check recorded the selected one-slot, pool-32768, concurrency-one, paired-2048
+profile ready with controller/backend PIDs **28972/24440**. Model discovery
 returned HTTP 401 without authentication and HTTP 200 with authentication.
 Authenticated chat returned HTTP 200 and `READY`. The same runtime identities
 were ready and idle before and after that functional availability request.
 The private proof is
-`server/.local/halogen-update-20261107/primary0191/final-functional-check/proof.json`.
+`server/.local/halogen-update-20261107/primary0191/completion-closure/final-functional/proof.json`.
 [Update record](../research/halogen0191-update-20261107.md).
+
+The later two-slot restoration reported `physical_low` at request admission
+with about 21.57 GiB available against its 22 GiB floor. The supported one-slot
+selection retains 32K context capacity and serializes requests. Its persistent
+Voice selection was refreshed through the existing controller-consumer contract.
 
 The qualification flags in the package's `release.json` retain static
 prequalification artifact metadata. The separate dated runtime and provider
 receipts supply the observed qualification evidence.
 
-The **15:13 UTC** bounded source check retained **0.19.1** as the latest official
-tag and image with the same immutable identities. Direct Reddit access returned
+The bounded source refresh completed at **17:17:34 UTC** retained **0.19.1**
+as the latest official tag and image with the same immutable identities.
+AMD GPU, Ryzen AI, XRT and WHIRL release fields were unchanged. The refresh
+identified libosmos 0.5.4 and retained its separate upstream 16K expert-table
+placement result for further compatibility work. Direct Reddit access returned
 HTTP 403 and cached web listings left current subreddit freshness unverified.
-The next refresh is due at or after **17:13:05 UTC**.
+The next refresh is due at or after **19:17:35 UTC**.
 [Official package](https://github.com/peonist-ai/halogen-flash-server/pkgs/container/halogen-flash-server),
 [official tag](https://github.com/peonist-ai/halogen-flash-server/tree/v0.19.1).
 
@@ -57,6 +65,7 @@ The primary checkout is the remaining Git worktree.
 | PowerShell 5.1 launcher suites | 18 passed |
 | Focused version forwarding and capacity checks | 25 passed, also covered by the server suite |
 | New backend capacity checks | 15 passed |
+| Final campaign, collector, QPC and exporter checks | 115 passed |
 | Migration checks | 4 passed |
 | Normal Voice startup check | Exit 0 |
 | Frozen model requests | Eight complete requests, one excluded warmup and three measurements per input |
@@ -66,8 +75,8 @@ test target and supplied through `PYTHONPATH`. The private test logs, final
 summary and startup-check receipt are retained under
 `server/.local/halogen-update-20261107/voice-completion/`.
 
-The normal serving profile selects two 32768-position slots, pool 65536,
-concurrency two and paired 2048 prefill settings. Its earlier complete 8K/16K
+The earlier serving profile selected two 32768-position slots, pool 65536,
+concurrency two and paired 2048 prefill settings. Its complete 8K/16K
 observations used synthetic prose and a contiguous novel excerpt respectively,
 and retain actual input lengths, API phase values, acceptance counts and
 Windows QPC whole-request times. A separate larger-arena candidate stopped at
@@ -95,13 +104,39 @@ the 22 GiB request-entry gate. The campaign ended and restored the normal
 two-slot/2048 profile.
 [Prefill RAW report](../benchmarks/halogen0191-prefill4096-raw-20261107.md).
 
+A copied-log performance study completed one before cohort with one excluded
+warmup and three measurements. Each used 3539 input and 1259 generated tokens.
+RAW midpoint means were **1161.93 prefill / 105.33 decode tok/s**, with native
+head acceptance **69/84 (82.14%)** and lookup acceptance **3228/3234 (99.81%)**.
+The frozen reference preserves a recorded serial response with one missing
+canonical final LF. The PLD `3,4` candidate failed the unchanged startup
+admission before generation, leaving the three-arm comparison incomplete.
+[Single-condition result](../benchmarks/halogen0191-pld34log-reference-retry1-raw-20261107.md),
+[GPU-gated earlier attempt](../benchmarks/halogen0191-pld34log-reference-raw-20261107.md),
+[original failed task oracle](../benchmarks/halogen0191-pld34log-raw-20261107.md).
+
 ## Remaining optimization scope
 
-Independent qualification of the API phase clocks, a completed matched PLD
-comparison, qualified 4096-prefill gain, a matched engine-only comparison and a
-beneficial NPU contribution remain required for the broader project acceleration
-goal. The OEM mode
-readback requires an elevated process. The source refresh identified further
-kernel and speculative-verification mechanisms in WHIRL and libosmos for
-separate qualification. [WHIRL release](https://github.com/tsaipifong/whirl-llm/releases/tag/v0.2.5.1),
-[libosmos](https://github.com/mrsirg97-rgb/libosmos).
+The current qualified natural-text RAW prefill measurements span
+**1124.36–1185.56 tok/s**. The retained 0.18.22 cohorts recorded
+**1917.24/1913.00 tok/s** at 8K/16K. The cause of this shortfall remains
+unresolved across the separate profiles and request records. The 4096 candidate
+has no qualified gain. [Current PLD cohorts](../benchmarks/halogen0191-pld34-raw-20261107.md),
+[current prefill cohorts](../benchmarks/halogen0191-prefill4096-raw-20261107.md),
+[retained 0.18.22 cohorts](../benchmarks/halogen01822-raw-8k16k-20261101.md).
+
+Retained NPU screens include an M8192 producer that changed **88,572,989 of
+104,857,600 native BF16 words**, and a ready64 whole-embedding consumer
+substitution measured **21.8% slower**. Those candidates remain closed. A
+separate historical Halogen 0.15.1 helper-coexistence test reduced MTP decode
+from **43.13 to 39.93 tok/s**. These observations retain their original
+component and coexistence scopes. [NPU producer assessment](../research/npu-independent-roi-20261010.md),
+[retained consumer result](../research/halogen0185-npu-table-disposition-20261015.md),
+[historical coexistence and component results](../benchmarks/halogen-npu-practical-result-20261005.md).
+
+The installed update, source consolidation and validation establish the delivery
+record. Broader prefill/decode acceleration and a beneficial end-to-end NPU
+contribution remain unqualified. Any qualified copied-log gain retains that
+workload and profile scope. API phase-clock qualification and a matched
+engine-only comparison remain open. OEM mode readback requires an elevated
+process.

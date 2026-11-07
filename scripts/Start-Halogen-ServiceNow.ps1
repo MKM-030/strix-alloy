@@ -8,8 +8,9 @@ ownership, admission, reserve and cleanup rules. No credentials are printed.
 Current4K pairs a 4096-token prefill chunk with a 4096-token arena.
 Current8K explicitly pairs 8192 with 8192. The default CurrentText32K profile
 selects installed Halogen 0.19.1.
-Use explicit two-slot capacity for the current Voice setup. PrefillTokens can
-select a larger paired chunk and arena when request memory admission allows it.
+Select two-slot capacity explicitly when memory admission permits concurrent
+requests. PrefillTokens can select a larger paired chunk and arena when
+request memory admission allows it.
 Measured32K is an opt-in preset for the tested 0.18.15 stock configuration:
 32K context/pool, 8K chunk/arena, adaptive gate 0.90, Flexible cache,
 prefetch off, Vision On and Thinking Off/low. It requires the existing stable

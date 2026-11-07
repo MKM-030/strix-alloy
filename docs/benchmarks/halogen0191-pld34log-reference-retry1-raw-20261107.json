@@ -1,0 +1,556 @@
+{
+  "schema": "halogen0191.pld34log_reference-raw-comparison.public.v1",
+  "experiment": "pld34log_reference",
+  "version": "0.19.1",
+  "campaign_completed": false,
+  "terminal": true,
+  "restored": true,
+  "immutable_source": {
+    "version": "0.19.1",
+    "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:7ab5c3dfd77acb2387603f1807069cac3494e678f413c0670745ba2df74c0f0e",
+    "upstream_public_commit": "47ceb439fd97ef4b62cc18042fda505113546567",
+    "image_engine_revision": "85b2b0c37d5d",
+    "artifact_sha256": {
+      "engine_sha256": "9dcf048b93111aba93032aa2ba0bea07496bc14c0cd4316a21dc39d2db749d46",
+      "entrypoint_sha256": "7c2edf12c4ab29966a1600ecb27bfe55b3af9cdf54607bde482ef9a103833565",
+      "adapted_entrypoint_sha256": "1108f7c3ac488945b81bfcce790f97b6485adc0cc5b79bf61bdc3446aebcb9fb",
+      "upstream_api_sha256": "de7e6ff8f2136d5c16109e2a7b19c7117a3855e4c36cf1433ef2b4fc16237be3",
+      "bridge_sha256": "29c6a0fe6b60016ed7f1cb972895c8094bc75483f0a559e0fa0dac5bdb57d63b",
+      "v2_bridge_sha256": "817aa24c9a096aef258dba024ca2da9f9e8eb2c3a547ae8f7b5e72781bdd8370",
+      "private_sha256": "3bff115aa0b9f3211ab908efa33a5f4451c3810938c09c4d522d11ff39b06bac",
+      "probe_sha256": "66158d5e6319e17f5df3658f0b613cea63f0aba2d6614059618869454d298a3f"
+    },
+    "public_reference_file": "halogen0191-natural-8k16k-20261107.json",
+    "public_reference_sha256": "50dd53a9b083b536837f743034fb9face3e968cd6ff293bc92d988f86f9639c6"
+  },
+  "executed_source_pins": {
+    "root_campaign.py": {
+      "sha256": "24d6db8fda1e6c57bc52127bc073d0128db0b8d2a0a617ef05509dbc368bc19a",
+      "bytes": 29947,
+      "implementation_version": 5,
+      "selected_source_file": "root_campaign.py"
+    },
+    "collect_epoch.py": {
+      "sha256": "098f8b88d10e2b1dece7f602765da568ac2b9fec06591c4792c3e1da183f6896",
+      "bytes": 27508,
+      "implementation_version": 3
+    },
+    "qpc_audit.py": {
+      "sha256": "cddbca2a95c0a20511e68838e4f6ad3b2ca222e0546f0bdca5aa890b08415b18",
+      "bytes": 8154
+    },
+    "transition.json": {
+      "sha256": "9716172db462f965d4d18decb5b107a616a56115815e08e517b26a235a31e2ca",
+      "bytes": 21092
+    },
+    "root-dso-pin.json": {
+      "sha256": "5364ea9f20aaab052916488a26b139b222acea223f7048a929fb3c9f6a292187",
+      "bytes": 1610
+    }
+  },
+  "response_accounting_implementation_version": 3,
+  "private_observation_pins": {
+    "observer_sha256": "f21a89054208be3c70701b8383de2f84d323159ecd7bb9fcfd889218379ceee1",
+    "observer_bytes": 21432,
+    "binding_sha256": "3ac9f93302c9c0e92ea1b102d1d334caf42c204e2b495fceff5960f0450059ef",
+    "provider_sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+    "private_api_adapter_sha256": "28c36951fa2c1fa7a346858b6514437250eeeabda3259e71445647c6ce3479bf",
+    "private_auth_wrapper_sha256": "85d7cdebfefb0ad41dad10bd368841969174abd4b21add1c9850776c0a4e51cd",
+    "common_api_native_identity_observation": true
+  },
+  "methodology": {
+    "requests_per_complete_cohort": 4,
+    "excluded_warmups_per_cohort": 1,
+    "measured_repetitions_per_cohort": 3,
+    "requests_sent_serially": true,
+    "raw_clock": "Direct CLOCK_MONOTONIC_RAW syscalls bracket one original steady-clock call.",
+    "native_clock": "Untouched native steady-clock values from the exact verified provider.",
+    "http_clock": "Windows QPC before posting through complete response.read, before persistence.",
+    "raw_aggregation": "Arithmetic mean of three per-request midpoint, lower and upper rates.",
+    "raw_numerators": "Processed prompt tokens and actual native/API generated output total.",
+    "native_decode_begin_count": 1,
+    "generated_delta_retained_separately": true,
+    "adjustment": "None. Observer overhead is retained with no scaling or subtraction.",
+    "api_phase_clock_qualified": false,
+    "full_responses_kept_private": true,
+    "headline_requires_three_complete_matching_arms": true
+  },
+  "profiles": {
+    "before": {
+      "sha256": "ff791f605a45b7e448ad0c8ebb0c6f4274954f97728a93f62fe1bf3ee20579e7",
+      "concurrency": 1,
+      "context": 32768,
+      "slots": 1,
+      "kv_pool_positions": 32768,
+      "prefill_chunk": 2048,
+      "max_prefill_tokens": 2048,
+      "prompt_cache": "Off",
+      "disable_vision": true,
+      "pld": "3,3",
+      "mtp_gate": "0.90",
+      "raw_observer_enabled": true
+    },
+    "candidate": {
+      "sha256": "d21bd9775f3d2fbd664bac290cd06091deac6a1a4c00cf11116238ee2fe4cdfc",
+      "concurrency": 1,
+      "context": 32768,
+      "slots": 1,
+      "kv_pool_positions": 32768,
+      "prefill_chunk": 2048,
+      "max_prefill_tokens": 2048,
+      "prompt_cache": "Off",
+      "disable_vision": true,
+      "pld": "3,4",
+      "mtp_gate": "0.90",
+      "raw_observer_enabled": true
+    }
+  },
+  "arms": {
+    "before": {
+      "real-log-json-quote": {
+        "status": "complete",
+        "complete_cohort": true,
+        "phase_measurement_qualified": true,
+        "included_in_comparison": false,
+        "epoch_nonce": "0191000000000001",
+        "request_sha256": "01cc7e91b876efb6a40b531e15716be3a0c8d15f72aef3f994b5f67d15ff26d9",
+        "profile_sha256": "ff791f605a45b7e448ad0c8ebb0c6f4274954f97728a93f62fe1bf3ee20579e7",
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "native_request_id": 5,
+            "native_slot": 0,
+            "actual_input_tokens": 3539,
+            "actual_output_tokens": 1259,
+            "processed_prompt_tokens": 3539,
+            "output_cap": 8192,
+            "generated_begin": 1,
+            "generated_delta": 1258,
+            "decode_numerator": 1259,
+            "finish_reason": "stop",
+            "output_sha256": "0465ec6c46f28e1379673e13ce0fe67d55bf2fac36ee66d76a42b77141d53e50",
+            "response_sha256": "28351c51bc8737343bb0c16866842ea65c670fc0afcf9f32c9e123817fe0d603",
+            "journal_sha256": "7f8a2f13f32925c1d9bb60082aa4c5a5b85ff0bf1f606f8527843c2c1167782b",
+            "http_qpc_seconds": 14.8987162,
+            "scoped": {
+              "head": {
+                "rounds": 5,
+                "drafted": 28,
+                "accepted": 23
+              },
+              "lookup": {
+                "rounds": 154,
+                "drafted": 1078,
+                "accepted": 1076
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 3539,
+              "predicted_n": 1259,
+              "prompt_ms": 2930.2,
+              "predicted_ms": 11936.0,
+              "prompt_per_second": 1207.767,
+              "predicted_per_second": 105.479,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 2930197057,
+            "prefill_raw_lower_ns": 2930195947,
+            "prefill_raw_upper_ns": 2930198407,
+            "prefill_native_tps": 1207.768600936111,
+            "prefill_raw_tps_lower": 1207.7680444933776,
+            "prefill_raw_tps_upper": 1207.769058456076,
+            "prefill_raw_tps_mid": 1207.768551474514,
+            "decode_native_ns": 11935980041,
+            "decode_raw_lower_ns": 11935978583,
+            "decode_raw_upper_ns": 11935981273,
+            "decode_native_tps": 105.47939889940706,
+            "decode_raw_tps_lower": 105.47938801210617,
+            "decode_raw_tps_upper": 105.47941178389428,
+            "decode_raw_tps_mid": 105.47939989799889
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "native_request_id": 6,
+            "native_slot": 0,
+            "actual_input_tokens": 3539,
+            "actual_output_tokens": 1259,
+            "processed_prompt_tokens": 3539,
+            "output_cap": 8192,
+            "generated_begin": 1,
+            "generated_delta": 1258,
+            "decode_numerator": 1259,
+            "finish_reason": "stop",
+            "output_sha256": "0465ec6c46f28e1379673e13ce0fe67d55bf2fac36ee66d76a42b77141d53e50",
+            "response_sha256": "b5f6ecfa8ec3088345ebc366a9858ae70e7683f1b39c3cd5387028063e6197b1",
+            "journal_sha256": "2fe50cf0eafd6c5e2f6d97055a1ebd03bb2abbc1ddf84affda6fbdd06d550d7b",
+            "http_qpc_seconds": 15.2167429,
+            "scoped": {
+              "head": {
+                "rounds": 5,
+                "drafted": 28,
+                "accepted": 23
+              },
+              "lookup": {
+                "rounds": 154,
+                "drafted": 1078,
+                "accepted": 1076
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 3539,
+              "predicted_n": 1259,
+              "prompt_ms": 3049.8,
+              "predicted_ms": 12144.7,
+              "prompt_per_second": 1160.404,
+              "predicted_per_second": 103.667,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 3049766114,
+            "prefill_raw_lower_ns": 3049764524,
+            "prefill_raw_upper_ns": 3049766934,
+            "prefill_native_tps": 1160.4168541824122,
+            "prefill_raw_tps_lower": 1160.4165421776456,
+            "prefill_raw_tps_upper": 1160.4174591677427,
+            "prefill_raw_tps_mid": 1160.417000672513,
+            "decode_native_ns": 12144725363,
+            "decode_raw_lower_ns": 12144722444,
+            "decode_raw_upper_ns": 12144726994,
+            "decode_native_tps": 103.66640351009146,
+            "decode_raw_tps_lower": 103.66638958800789,
+            "decode_raw_tps_upper": 103.66642842644778,
+            "decode_raw_tps_mid": 103.6664090072242
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "native_request_id": 7,
+            "native_slot": 0,
+            "actual_input_tokens": 3539,
+            "actual_output_tokens": 1259,
+            "processed_prompt_tokens": 3539,
+            "output_cap": 8192,
+            "generated_begin": 1,
+            "generated_delta": 1258,
+            "decode_numerator": 1259,
+            "finish_reason": "stop",
+            "output_sha256": "0465ec6c46f28e1379673e13ce0fe67d55bf2fac36ee66d76a42b77141d53e50",
+            "response_sha256": "8616fb0174b0dd161eee05adea1e05f18049658be939f965a6941df9aad901c1",
+            "journal_sha256": "c39e4738a07fc85a31ec3a2cc3bca9587bbd6ab39ed8d0aa52684ec701cd49e8",
+            "http_qpc_seconds": 14.9391225,
+            "scoped": {
+              "head": {
+                "rounds": 5,
+                "drafted": 28,
+                "accepted": 23
+              },
+              "lookup": {
+                "rounds": 154,
+                "drafted": 1078,
+                "accepted": 1076
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 3539,
+              "predicted_n": 1259,
+              "prompt_ms": 3106.2,
+              "predicted_ms": 11812.5,
+              "prompt_per_second": 1139.334,
+              "predicted_per_second": 106.582,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 3106201853,
+            "prefill_raw_lower_ns": 3106200323,
+            "prefill_raw_upper_ns": 3106202583,
+            "prefill_native_tps": 1139.3335550881857,
+            "prefill_raw_tps_lower": 1139.3332873292509,
+            "prefill_raw_tps_upper": 1139.3341162819781,
+            "prefill_raw_tps_mid": 1139.3337018054638,
+            "decode_native_ns": 11812481484,
+            "decode_raw_lower_ns": 11812479655,
+            "decode_raw_upper_ns": 11812482805,
+            "decode_native_tps": 106.58217764872816,
+            "decode_raw_tps_lower": 106.58216572955257,
+            "decode_raw_tps_upper": 106.58219415151238,
+            "decode_raw_tps_mid": 106.58217994053058
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "native_request_id": 8,
+            "native_slot": 0,
+            "actual_input_tokens": 3539,
+            "actual_output_tokens": 1259,
+            "processed_prompt_tokens": 3539,
+            "output_cap": 8192,
+            "generated_begin": 1,
+            "generated_delta": 1258,
+            "decode_numerator": 1259,
+            "finish_reason": "stop",
+            "output_sha256": "0465ec6c46f28e1379673e13ce0fe67d55bf2fac36ee66d76a42b77141d53e50",
+            "response_sha256": "1b805a5e63c2c6cb4f4fe8f93822461744854a8d9ee10aa9916321c3017361d1",
+            "journal_sha256": "9bdaab8a5ffc26c1a86cd89317244b89f74871011d74c6c6ace01b3658b6c558",
+            "http_qpc_seconds": 14.9137626,
+            "scoped": {
+              "head": {
+                "rounds": 5,
+                "drafted": 28,
+                "accepted": 23
+              },
+              "lookup": {
+                "rounds": 154,
+                "drafted": 1078,
+                "accepted": 1076
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 3539,
+              "predicted_n": 1259,
+              "prompt_ms": 2983.9,
+              "predicted_ms": 11905.3,
+              "prompt_per_second": 1186.032,
+              "predicted_per_second": 105.751,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 2983869427,
+            "prefill_raw_lower_ns": 2983867766,
+            "prefill_raw_upper_ns": 2983870626,
+            "prefill_native_tps": 1186.043855665002,
+            "prefill_raw_tps_lower": 1186.043379080471,
+            "prefill_raw_tps_upper": 1186.044515888242,
+            "prefill_raw_tps_mid": 1186.0439474840841,
+            "decode_native_ns": 11905287692,
+            "decode_raw_lower_ns": 11905284793,
+            "decode_raw_upper_ns": 11905288793,
+            "decode_native_tps": 105.75132937325073,
+            "decode_raw_tps_lower": 105.75131959337763,
+            "decode_raw_tps_upper": 105.7513551242604,
+            "decode_raw_tps_mid": 105.75133735881603
+          }
+        ],
+        "summary": {
+          "excluded_warmups": 1,
+          "measured_repetitions": 3,
+          "mean_raw_tps": {
+            "prefill": {
+              "lower": 1161.9310695291224,
+              "mid": 1161.9315499873537,
+              "upper": 1161.9320304459875
+            },
+            "decode": {
+              "lower": 105.33329163697937,
+              "mid": 105.33330876885694,
+              "upper": 105.33332590074019
+            }
+          },
+          "native_clock_observations": {
+            "prefill_mean_tps": 1161.9314216451999,
+            "decode_mean_tps": 105.33330351069011
+          },
+          "api_reported_observations": {
+            "prefill_mean_tps": 1161.9233333333334,
+            "decode_mean_tps": 105.33333333333333
+          },
+          "actual_input_tokens": [
+            3539,
+            3539,
+            3539
+          ],
+          "actual_output_tokens": [
+            1259,
+            1259,
+            1259
+          ],
+          "output_caps": [
+            8192,
+            8192,
+            8192
+          ],
+          "mean_http_qpc_seconds": 15.023209333333334,
+          "pooled_scoped_counters": {
+            "head": {
+              "rounds": 15,
+              "drafted": 84,
+              "accepted": 69,
+              "acceptance_fraction": 0.8214285714285714
+            },
+            "lookup": {
+              "rounds": 462,
+              "drafted": 3234,
+              "accepted": 3228,
+              "acceptance_fraction": 0.9981447124304267
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false
+        },
+        "evidence": {
+          "collector_handle_sha256": "f83af1714a1034a7d1927ef4e71474ecccb519ce39755a485f0d06f0ee5cb602",
+          "raw_report_sha256": "a487b9d84d3c2352d755da01d7c7a9650e49fae83373a377cdfa98808a29f5ce",
+          "qpc_audit_sha256": "6700d633fdc86f25d3bc0852639aecc004abad3efbc66910172a1c104d510352",
+          "request_sha256": "01cc7e91b876efb6a40b531e15716be3a0c8d15f72aef3f994b5f67d15ff26d9",
+          "binding_sha256": "3ac9f93302c9c0e92ea1b102d1d334caf42c204e2b495fceff5960f0450059ef"
+        },
+        "reference_kind": "APIvisible_recorded_serial",
+        "reference_matched": true,
+        "canonical_task_passed": false
+      }
+    },
+    "candidate": {
+      "real-log-json-quote": {
+        "status": "not_started",
+        "complete_cohort": false,
+        "phase_measurement_qualified": false,
+        "included_in_comparison": false,
+        "summary": null,
+        "collector_reported_completed_requests": 0,
+        "saved_samples": 0,
+        "saved_responses": 0,
+        "saved_journals": 0,
+        "fully_flushed_journals": 0,
+        "excluded_warmup_only": false,
+        "unsupported": false,
+        "restart_required": false,
+        "error_type": null,
+        "evidence": {
+          "handle_sha256": null,
+          "sample_sha256": [],
+          "response_sha256": [],
+          "journal_sha256": [],
+          "journal_bytes": [],
+          "serial_oracle_sha256": {}
+        }
+      }
+    },
+    "after": {
+      "real-log-json-quote": {
+        "status": "not_started",
+        "complete_cohort": false,
+        "phase_measurement_qualified": false,
+        "included_in_comparison": false,
+        "summary": null,
+        "collector_reported_completed_requests": 0,
+        "saved_samples": 0,
+        "saved_responses": 0,
+        "saved_journals": 0,
+        "fully_flushed_journals": 0,
+        "excluded_warmup_only": false,
+        "unsupported": false,
+        "restart_required": false,
+        "error_type": null,
+        "evidence": {
+          "handle_sha256": null,
+          "sample_sha256": [],
+          "response_sha256": [],
+          "journal_sha256": [],
+          "journal_bytes": [],
+          "serial_oracle_sha256": {}
+        }
+      }
+    }
+  },
+  "comparison_qualification": {
+    "real-log-json-quote": {
+      "qualified": false,
+      "all_three_arms_complete": false,
+      "same_request_sha256": false,
+      "same_output_sha256": false,
+      "same_actual_input_tokens": false,
+      "same_actual_output_tokens": false,
+      "lookup_mechanism_exercised": false
+    }
+  },
+  "qualified_cases": [],
+  "single_condition_qualified_cohorts": [
+    {
+      "arm": "before",
+      "case": "real-log-json-quote"
+    }
+  ],
+  "first_preoverlay_attempt": null,
+  "final_runtime": {
+    "restored": true,
+    "readiness_available": true,
+    "profile_sha256": "0d92158fe58e5ae278eba173aa4d40a0f4978cbc6d8e0bb5e5ca45c44c713cca",
+    "context": 32768,
+    "slots": 2,
+    "kv_pool_positions": 65536
+  },
+  "evidence": {
+    "campaign_handle_sha256": "46184f9af4d23a64de87f7dd7b3bdb8b4dc5ddf3f9e714f9b567dd48321aaa46",
+    "executed_source_manifest_sha256": "95e41485939ddf781bc9f50e513d17580dba297519afe7be28ea2b6f5f19450d"
+  },
+  "exporter_sha256": "51cf71a01dc6e90bb2e20befd5f51130f38e8b7205ff4e43dcdf98787454bc1a",
+  "reference_kind": "APIvisible_recorded_serial",
+  "performance_only": true,
+  "original_canonical_task_passed": false,
+  "original_canonical_failure": "Exactly one final LF missing",
+  "native_token_sequence_identity_claimed": false,
+  "reference_provenance": {
+    "manifest_sha256": "c920c79bd7950d9daa462fba9864daf55306c1129656af281e612a40f3f1347c",
+    "request_sha256": "01cc7e91b876efb6a40b531e15716be3a0c8d15f72aef3f994b5f67d15ff26d9",
+    "serial_request_sha256": "c4d9d4ce2af9ce4a5cdf0b888318db5c85f62ae3939c18562162bf8c21739519",
+    "recorded_serial_response_sha256": "95ac26c92cf30db7e8e2ba7d5e80b5a727987905738093503f1b4b9221acfc0b",
+    "original_failed_campaign_sha256": "a74cee566eb0559f214b301750df7d54595db848e93b2fc29481b62999c50779",
+    "reference_output_sha256": "0465ec6c46f28e1379673e13ce0fe67d55bf2fac36ee66d76a42b77141d53e50",
+    "reference_output_bytes": 4933,
+    "canonical_expected_sha256": "c4cbbcd81d735ad71e43bf99d87a8e5f8080646bc90db8e55e5a45dc2e1a58ee",
+    "canonical_expected_bytes": 4934,
+    "required_prompt_tokens": 3539,
+    "required_output_tokens": 1259,
+    "output_cap": 8192
+  },
+  "public_plan": {
+    "markdown": {
+      "file": "halogen0191-log-serial-reference-plan-20261107.md",
+      "sha256": "2178ba3f2b810c742dffd44af3c0300f63f922817a76a226e5e48d3a9994c260"
+    },
+    "json": {
+      "file": "halogen0191-log-serial-reference-plan-20261107.json",
+      "sha256": "b6fdfb35aa2dc80cc4fa8a49de94c37f308f31cd072881459cb6b5592e7a3b9f"
+    },
+    "premeasurement_anchor_commit": "076babf"
+  },
+  "original_failed_pilot_report": {
+    "markdown": {
+      "file": "halogen0191-pld34log-raw-20261107.md",
+      "available": true,
+      "sha256": "c344de3fabbf5aa92e598b042cc44266b35030503ca8cd16bf64db098d3cb014"
+    },
+    "json": {
+      "file": "halogen0191-pld34log-raw-20261107.json",
+      "available": true,
+      "sha256": "8ec77673740ed4a751ea2c4c1494926c2467f4a68266ff5ffeb8b38c3dc368df"
+    }
+  }
+}

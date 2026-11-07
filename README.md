@@ -8,7 +8,7 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 | Backend | Status | Entry point |
 |---|---|---|
-| **Halogen WSL2 0.19.1** | Current v2 text serving with 32K capacity, two slots and a 2K prefill arena | [Update and measurements](docs/research/halogen0191-update-20261107.md) |
+| **Halogen WSL2 0.19.1** | Current v2 text serving with one 32K slot and a 2K prefill arena | [Update and measurements](docs/research/halogen0191-update-20261107.md) |
 | **Halogen WSL2 0.18.22** | Retained independently captured frozen 8K/16K phase measurements | [Earlier measurements](docs/benchmarks/halogen01822-raw-8k16k-20261101.md) |
 | **Halogen WSL2 0.18.16** | Retained independently captured 8K/16K phase measurements | [Earlier phase measurements](docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md) |
 | **Hipfire native Windows** | Source port with completed 16K MTP cohort; 1,240.2 prefill / 26.53 decode tok/s, 63.64% acceptance | [Build, run and measurement limits](backends/hipfire-windows/README.md) |
@@ -24,10 +24,10 @@ For BYOLLM in ServiceNow, use the [canonical documentation](docs/servicenow-byol
 For the current installed Halogen text configuration, use Windows PowerShell 5.1:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 2 -KvPoolPositions 65536 -Concurrency 2 -PrefillTokens 2048 -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 1 -KvPoolPositions 32768 -Concurrency 1 -PrefillTokens 2048 -ConsoleTrace
 ```
 
-This command selects 0.19.1, v2, two 32768-position slots, a 65536-position
+This command selects 0.19.1, v2, one 32768-position slot, a 32768-position
 KV pool, paired 2048 prefill settings, adaptive MTP gate 0.90, PLD `3,3`,
 Cache Off, Thinking Off and Vision Off. It keeps the existing ServiceNow token and endpoint on port 8840.
 Stop an existing managed session through its normal controls before changing
@@ -69,12 +69,26 @@ remain open. API phase clocks remain unqualified.
 [PLD RAW report](docs/benchmarks/halogen0191-pld34-raw-20261107.md),
 [prefill RAW report](docs/benchmarks/halogen0191-prefill4096-raw-20261107.md).
 
-The **7 November 15:31 UTC** functional check recorded the normal two-slot,
-pool-65536, paired-2048 profile ready with controller/backend PIDs
-**25272/28248**. Model discovery returned HTTP 401 without authentication and
+The **7 November 17:09:37 UTC** functional check recorded the selected one-slot,
+pool-32768, paired-2048 profile ready with controller/backend PIDs
+**28972/24440**. Model discovery returned HTTP 401 without authentication and
 HTTP 200 with authentication. Authenticated chat returned HTTP 200 and `READY`.
-That request served as a functional availability check.
+The selection serializes requests while retaining 32K context capacity. The
+earlier two-slot gateway had rejected new requests below its 22 GiB memory
+admission floor.
 [Dated restoration record](docs/research/halogen0191-update-20261107.md#final-functional-check).
+
+A separate copied-log performance study completed one excluded warmup and
+three measurements with 3539 input and 1259 generated tokens. RAW midpoint
+means were **1161.93 prefill / 105.33 decode tok/s**, with head acceptance
+**69/84 (82.14%)** and lookup acceptance **3228/3234 (99.81%)**. The reference
+preserves a recorded serial response that omitted the canonical final LF.
+The PLD `3,4` candidate failed startup admission before generation, leaving
+the three-arm comparison incomplete. The linked reports retain the
+workload-specific scope and both earlier failures.
+[Copied-log study](docs/benchmarks/halogen0191-pld34log-reference-retry1-raw-20261107.md),
+[earlier GPU-gated attempt](docs/benchmarks/halogen0191-pld34log-reference-raw-20261107.md),
+[original task-format failure](docs/benchmarks/halogen0191-pld34log-raw-20261107.md).
 
 Earlier two-slot/2048 API observations used the synthetic 8K fixture and natural
 16K fixture. Their prefill/decode means were **1191.85 / 46.62 tok/s** and

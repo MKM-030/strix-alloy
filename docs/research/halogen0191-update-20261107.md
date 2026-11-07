@@ -1,8 +1,8 @@
 # Halogen 0.19.1 update, 7 November 2026
 
 The PowerShell 5.1 launcher selects Halogen **0.19.1 CurrentText32K** by default.
-The normal Voice configuration explicitly selects two 32K slots, a 65536-position
-KV pool, two concurrent requests and a paired 2048-token prefill chunk and arena.
+The selected Voice configuration uses one 32K slot, a 32768-position
+KV pool, serialized requests and a paired 2048-token prefill chunk and arena.
 The public model is `halogen-v2` at `http://127.0.0.1:8840/v1`.
 
 ## Verified upstream release
@@ -38,9 +38,51 @@ versions. [Official package](https://github.com/peonist-ai/halogen-flash-server/
 [XRT releases](https://github.com/Xilinx/XRT/releases).
 
 Direct Reddit access returned HTTP 403 and the web listings were cached, so
-current subreddit freshness remains unverified. The next bounded refresh is
-due at or after **17:13:05 UTC**. The private receipt is
+current subreddit freshness remained unverified. At that checkpoint, the next
+bounded refresh was due at or after **17:13:05 UTC**. The private receipt is
 `server/.local/halogen-update-20261107/source-refresh/refresh-20261107T151003Z/receipt.json`.
+
+A narrow official release check at **16:39 UTC** again resolved both `latest`
+and `0.19.1` to the image and config digests above. The official source head and
+version tag still resolved to the pinned public commit. This check covered
+Halogen release identity. The broader driver and community refresh retains
+its separate schedule. [Official package](https://github.com/peonist-ai/halogen-flash-server/pkgs/container/halogen-flash-server),
+[pinned source](https://github.com/peonist-ai/halogen-flash-server/commit/47ceb439fd97ef4b62cc18042fda505113546567).
+
+The subsequent bounded refresh observed sources at **17:14:44–17:15:25 UTC**
+and completed at **17:17:34 UTC**. Halogen source, tag, image and config
+identities matched the retained pins. AMD GPU, Ryzen AI, XRT and WHIRL release
+fields were unchanged. Reddit returned HTTP 403 and available web listings
+were cached. Current community freshness remains unverified. The next bounded
+refresh is due at or after **19:17:35 UTC**. Its receipt is
+`server/.local/halogen-update-20261107/primary0191/completion-closure/source-refresh-1713/receipt.json`.
+
+The refresh identified **libosmos 0.5.4**, published at **16:48:43 UTC**.
+Its upstream report cites about **2.8% higher 16K prefill** from Qwen expert
+table placement. Decode and the 2K/4K cases retained their earlier results.
+These are upstream engine measurements. Local memory fit, compatibility and
+a Halogen implementation of that layout remain unqualified.
+[libosmos 0.5.4 release](https://github.com/mrsirg97-rgb/libosmos/releases/tag/v0.5.4).
+
+## Manufacturer benchmark scope
+
+The official **66.12 decode tok/s** row belongs to **0.18.20 v2**. The current
+documented benchmark invokes `bench-serving.py serial,mtp 256 low 3` over ten
+fixed prompts. It sends three repetitions per prompt and drafter, totaling
+60 requests, and computes an equal-weight mean of per-case native rates.
+Its short prompts, natural output stops and cache settings differ from the
+local cold 8192/16384-token, fixed-128-output RAW cohorts. A direct parity
+comparison requires a fresh replay of that exact protocol.
+[Published performance row](https://github.com/peonist-ai/halogen-flash-server/blob/47ceb439fd97ef4b62cc18042fda505113546567/docs/performance.md#01820-against-01819),
+[benchmark client](https://github.com/peonist-ai/halogen-flash-server/blob/47ceb439fd97ef4b62cc18042fda505113546567/tools/bench-serving.py),
+[fixed prompts](https://github.com/peonist-ai/halogen-flash-server/blob/47ceb439fd97ef4b62cc18042fda505113546567/tools/eval-prompts.json).
+
+The current 0.19.1 tokenizer and template render those ten prompts to
+22–41 input tokens with Thinking Off. The `low` client argument sets reasoning
+effort. Disabling thinking also requires the effective server default to be
+false. No complete 0.19.1 replay of the official 60-call corpus has qualified.
+The retained protocol audit is under
+`server/.local/halogen-update-20261101/primary01822/vendor-protocol-audit/`.
 
 ## Changes relevant to ServiceNow and tools
 
@@ -67,7 +109,7 @@ performance measurements remain specific to their recorded version and workload.
 Run from `C:\Projects\strix-alloy-clean` in Windows PowerShell 5.1.
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 2 -KvPoolPositions 65536 -Concurrency 2 -PrefillTokens 2048 -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 1 -KvPoolPositions 32768 -Concurrency 1 -PrefillTokens 2048 -ConsoleTrace
 ```
 
 The profile uses v2 weights, 32768 context positions per slot, Cache Off,
@@ -84,8 +126,10 @@ retains its comparison and older measurements. [ServiceNow integration guide](..
 The public credential remains `server/.local/servicenow-api-token.txt`. The
 backend uses its separate version-specific token. Existing ServiceNow callers
 continue to use the same public model, base URL and Authorization header.
-The explicit capacity profile retains startup admission of at least 30/131 GiB,
-runtime guards of 18/18 GiB and request-entry admission of 22/22 GiB.
+Startup admission remains at least 30/131 GiB and runtime guards remain
+18/18 GiB. The two-slot gateway separately requires 22/22 GiB at request
+entry. The one-slot gateway reports `not_required` for that capacity guard.
+The private benchmark collector independently enforces 22/22 GiB request entry.
 
 ## Local compatibility work
 
@@ -170,7 +214,36 @@ the normal two-slot/2048 profile. Qualified 4096-prefill gain, PLD speedup and
 beneficial NPU contribution remain open. API phase clocks retain their
 qualification limits.
 
-## Final functional check
+## Copied-log performance study
+
+The original frozen log task required 4934 UTF-8 bytes. Serial generation
+returned 4933 bytes, omitting its final LF. That canonical task remains failed.
+A separate prospectively registered performance study froze the exact recorded
+serial response and retained the original request and sampler.
+[Original pilot](../benchmarks/halogen0191-pld34log-raw-20261107.md),
+[prospective plan](../benchmarks/halogen0191-log-serial-reference-plan-20261107.md).
+
+The first reference attempt stopped after one measured response because a
+post-response frame reported System PID 4 Copy utilization of 1%. Ownership
+of that activity remains unresolved. The failed cohort stays unqualified.
+[Retained GPU-gated attempt](../benchmarks/halogen0191-pld34log-reference-raw-20261107.md).
+
+The separate `retry-1` attempt completed a PLD `3,3` before cohort with one
+excluded warmup and three measurements. Each used 3539 input tokens, 1259
+generated tokens and the exact frozen serial-visible output. RAW midpoint
+means were **1161.93155 prefill / 105.333309 decode tok/s**. Pooled native-head
+acceptance was **69/84 (82.14%)** and lookup acceptance was
+**3228/3234 (99.81%)**. Mean complete-request QPC time was **15.023209 seconds**.
+The result applies to this copied-log workload and profile.
+[Qualified single-condition cohort](../benchmarks/halogen0191-pld34log-reference-retry1-raw-20261107.md).
+
+The PLD `3,4` candidate generated zero responses. Its normal startup first
+observed stable 30 GiB availability, then failed a subsequent admission check
+at 29.99 GiB. The 30/131 GiB startup floors remained unchanged. The after arm
+was unstarted and no three-arm speedup qualified. The campaign restored the
+two-slot serving profile at **17:01:45 UTC**.
+
+## Earlier functional check
 
 The **7 November 15:31:03 UTC** observation recorded the restored normal
 two-slot, pool-65536, concurrency-two, paired-2048 profile ready with matching
@@ -187,3 +260,26 @@ idle before and after that functional availability request. Its saved proof is
 
 The retained 0.18.22 and earlier benchmark quantities describe their original
 runs. [Historical 0.18.22 phase measurements](../benchmarks/halogen01822-raw-8k16k-20261101.md).
+
+## Final functional check
+
+After restoration, the two-slot gateway reported `physical_low` with about
+21.57 GiB free against its 22 GiB request-admission floor. Root selected the
+existing supported one-slot capacity through the normal managed lifecycle.
+The current profile retains 32768 context positions, pool 32768, paired 2048
+prefill settings, PLD `3,3`, gate 0.90, Cache Off and Thinking Off. Requests
+are serialized. The persistent Voice controller selection records that profile.
+
+The **7 November 17:09:37 UTC** functional check recorded controller/backend
+PIDs **28972/24440**, matching API and engine version **0.19.1**, and profile
+SHA256 `69b91ddae6daa21b7c4d7666077847e4913fd9b59aedd149201c9d0ccd994b84`.
+Model discovery returned HTTP 401 without authentication and HTTP 200 with
+authentication. Authenticated chat returned HTTP 200 and `READY`. Both
+captured runtime identities remained ready and idle across that request.
+Observed free physical memory afterward was **22.56879 GiB**. The proof is
+`server/.local/halogen-update-20261107/primary0191/completion-closure/final-functional/proof.json`.
+
+Six additional idle launch windows were closed only after exact creation-time
+identity, controller-exit and child-ownership checks. The original launcher
+and current serving launcher were preserved. The baseline 50 source members
+were checked and all three private observation additions were absent.
