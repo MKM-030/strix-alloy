@@ -512,7 +512,7 @@ models and generated runtime state remain outside this archive. Three existing
 claimed by these CPU checks.
 
 
-## Follow-up performance decision (22:02 UTC)
+## Follow-up performance decision (22:01 UTC)
 
 A saved-response comparison confirms substantive output drift in the paired
 4096 candidate. Request bytes, 8192 input tokens, 128 output tokens, Cache Off
