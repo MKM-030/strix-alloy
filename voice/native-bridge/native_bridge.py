@@ -2341,6 +2341,8 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         signaling_path = '/webrtc/connect/agent_operator'
         if request.path == '/api/webrtc/sessions' or request.path.startswith('/api/webrtc/sessions/'):
             route = 'native_sdk'
+        elif request.path == '/text/chat/agent_operator':
+            route = 'text_chat'
         elif request.path == signaling_path:
             route = 'signaling'
         elif request.path == '/scc-native' + signaling_path:
@@ -2402,6 +2404,12 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         await require_model_ready(app[HTTP_KEY], config.model_health_url,
                                   config.private_model_health_token)
         await require_asr_ready(app[HTTP_KEY], config)
+    async def before_text_create():
+        if responsive is not None and not responsive.available:
+            raise web.HTTPServiceUnavailable(text=availability_notice)
+        await require_model_ready(app[HTTP_KEY], config.model_health_url,
+                                  config.private_model_health_token)
+
     probe_dialog = Dialog(config) if dialog_factory is None and probe_backend else None
     async def lifecycle(app):
         nonlocal responsive, stopping, configured_references
@@ -2729,6 +2737,12 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
     app.router.add_get('/launch', launch)
     app.router.add_get('/health', health)
     app.router.add_get('/webrtc/connect/agent_operator', connect)
+    from native_text_chat import register_native_text_route
+    register_native_text_route(app, config=config, active=active, authorize=authorize,
+                               before_create=before_text_create, http_key=HTTP_KEY,
+                               dialog_factory=(lambda cfg, settings: dialog_factory()
+                                               if dialog_factory else Dialog(cfg, settings)),
+                               creating=wss_creating, is_stopping=lambda: stopping)
     if getattr(config, 'native_sdk_enabled', False):
         from sdk_admission import admit_sdk_session
         from sdk_sessions import register_sdk_routes
