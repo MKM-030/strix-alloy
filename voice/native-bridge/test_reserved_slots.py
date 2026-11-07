@@ -381,17 +381,24 @@ class ReservedSlots(unittest.IsolatedAsyncioTestCase):
             await first
 
     async def test_route_own_ambiguous_timeout_latches_classifier_only(self):
-        async with reserved(.1) as (server, model, owner, _):
+        async with reserved() as (server, model, owner, _):
             hold = asyncio.Event()
             async def infer(request):
                 if json.loads(await request.read())['id_slot'] == 0: await hold.wait()
                 return web.Response(body=choice_body(100))
             server.on_infer = infer
-            with self.assertRaises(TimeoutError): await model.classify(TEXT, RoutingContext('scope', []))
-            await admitted(model)
-            with self.assertRaises(admission.AdmissionUnavailable): await model.classify(TEXT, RoutingContext('scope', []))
-            self.assertIsNone(owner.snapshot()['roles']['classifier']['released_at'])
-            hold.set()
+            classification = asyncio.create_task(model.classify(TEXT, RoutingContext('scope', [])))
+            try:
+                await asyncio.wait_for(server.inferred.wait(), 2)
+                with self.assertRaises(TimeoutError): await classification
+                await admitted(model)
+                with self.assertRaises(admission.AdmissionUnavailable):
+                    await model.classify(TEXT, RoutingContext('scope', []))
+                self.assertIsNone(owner.snapshot()['roles']['classifier']['released_at'])
+            finally:
+                hold.set()
+                classification.cancel()
+                await asyncio.gather(classification, return_exceptions=True)
 
     async def test_native_startup_retains_proof_and_wires_same_owner_into_both_callers(self):
         import sys
@@ -536,24 +543,39 @@ class ReservedSlots(unittest.IsolatedAsyncioTestCase):
             def held_probe(request, owned, frame, **kwargs):
                 if kwargs.get('method') == 'GET' and not started.is_set():
                     started.set()
-                    release.wait(2)
+                    release.wait(5)
                 return real_exchange(request, owned, frame, **kwargs)
             with patch.object(admission, 'exchange', held_probe):
                 req = admission.AdmissionRequest(1, budget=admission.PLANNER_BUDGET)
                 pending = asyncio.create_task(admitted(model, request=req))
-                await server.inferred.wait()
-                pending.cancel()
-                with self.assertRaises(asyncio.CancelledError): await pending
-                self.assertTrue(await asyncio.to_thread(started.wait, .5))
-                await model.classify(TEXT, RoutingContext('scope', []))
-                await asyncio.sleep(1.2)
-                probes = [p for p in owner.snapshot()['probes'] if p['role'] == 'planner']
-                self.assertEqual(len(probes), 1)
-                self.assertIsNone(probes[0]['terminal_at'])
-                self.assertTrue(probes[0]['connection_closed'], 'timeout must close observer while worker remains outstanding')
-                release.set()
-                hold.set()
-                await asyncio.sleep(.04)
+                observation = None
+                try:
+                    await asyncio.wait_for(server.inferred.wait(), 2)
+                    # Establish the outstanding worker before cancellation. Its
+                    # production deadline still retires the connection, while
+                    # cancellation cleanup must wait for this same role owner.
+                    observation = asyncio.create_task(owner.observe_active(req, req.deadline))
+                    self.assertTrue(await asyncio.to_thread(started.wait, 2))
+                    pending.cancel()
+                    with self.assertRaises(asyncio.CancelledError): await pending
+                    await model.classify(TEXT, RoutingContext('scope', []))
+                    with self.assertRaises(TimeoutError):
+                        await asyncio.wait_for(observation, 2)
+                    async with asyncio.timeout(2):
+                        while req.snapshot().cleanup_outstanding:
+                            await asyncio.sleep(.001)
+                    probes = [p for p in owner.snapshot()['probes'] if p['role'] == 'planner']
+                    self.assertEqual(len(probes), 1)
+                    self.assertIsNone(probes[0]['terminal_at'])
+                    self.assertTrue(probes[0]['connection_closed'],
+                                    'timeout must close observer while worker remains outstanding')
+                finally:
+                    release.set()
+                    hold.set()
+                    operations = tuple(task for task in (pending, observation) if task is not None)
+                    for task in operations:
+                        task.cancel()
+                    await asyncio.gather(*operations, return_exceptions=True)
             self.assertEqual(req.snapshot().slot_get_attempts, 1)
 
     async def test_get_framing_authentication_and_startup_attempt_cannot_retry(self):
