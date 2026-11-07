@@ -8,7 +8,8 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 | Backend | Status | Entry point |
 |---|---|---|
-| **Halogen WSL2 0.18.22** | Current text serving: 32K capacity, adaptive MTP, 8K prefill arena; natural 8K/16K phases independently captured | [Current measurements](docs/benchmarks/halogen01822-raw-8k16k-20261101.md) |
+| **Halogen WSL2 0.19.1** | Current v2 text serving with 32K capacity, two slots and a 2K prefill arena | [Update and measurements](docs/research/halogen0191-update-20261107.md) |
+| **Halogen WSL2 0.18.22** | Retained independently captured natural 8K/16K phase measurements | [Earlier measurements](docs/benchmarks/halogen01822-raw-8k16k-20261101.md) |
 | **Halogen WSL2 0.18.16** | Retained independently captured 8K/16K phase measurements | [Earlier phase measurements](docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md) |
 | **Hipfire native Windows** | Source port with completed 16K MTP cohort; 1,240.2 prefill / 26.53 decode tok/s, 63.64% acceptance | [Build, run and measurement limits](backends/hipfire-windows/README.md) |
 | **Halogen WSL2 0.16.2** | Pinned v2 upgrade and sampled filled-context comparison measured with an 18 GiB reserve | [Install and run](backends/halogen-wsl2-0.16.2/README.md) |
@@ -23,12 +24,12 @@ For BYOLLM in ServiceNow, use the [canonical documentation](docs/servicenow-byol
 For the current installed Halogen text configuration, use Windows PowerShell 5.1:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 2 -KvPoolPositions 65536 -Concurrency 2 -PrefillTokens 2048 -ConsoleTrace
 ```
 
-This explicit preset selects 0.18.22, v2, 32768 context positions, 8192 prefill
-chunk/arena, adaptive MTP gate 0.90, PLD `3,3`, Cache Off, Thinking Off and
-Vision Off. It keeps the existing ServiceNow token and endpoint on port 8840.
+This command selects 0.19.1, v2, two 32768-position slots, a 65536-position
+KV pool, paired 2048 prefill settings, adaptive MTP gate 0.90, PLD `3,3`,
+Cache Off, Thinking Off and Vision Off. It keeps the existing ServiceNow token and endpoint on port 8840.
 Stop an existing managed session through its normal controls before changing
 profiles. See the [ServiceNow guide](docs/integrations/halogen-servicenow.md).
 
@@ -46,6 +47,14 @@ Native/GUFO adapter slots do not imply they have passed current qualification.
 
 ## Measurements and implementation evidence
 
+The 7 November 0.19.1 two-slot/2048 cohort reports API prefill/decode means
+of **1191.85 / 46.62 tok/s** at 8192 input tokens and **1125.72 / 48.98 tok/s**
+at 16384. Native head acceptance is **56.78% / 65.42%**. Each case excludes one
+warmup and includes three measurements. The report retains paired Windows QPC
+whole-request clocks, the unavailable OEM mode readback, and the larger-arena
+candidate that stopped at request admission after its warmup.
+[Current 0.19.1 observations](docs/benchmarks/halogen0191-natural-8k16k-20261107.md).
+
 [Halogen 0.18.22, independently captured natural 8K/16K inputs](docs/benchmarks/halogen01822-raw-8k16k-20261101.md)
 records **1917.24 / 55.17 tok/s** prefill/decode at 8192 actual input tokens
 and **1913.00 / 46.86 tok/s** at 16384, with native head acceptance
@@ -57,7 +66,7 @@ engine-version speedup is claimed. The normal server is restored and online.
 
 The later [paired 16K workspace comparison](docs/benchmarks/halogen01822-arena16384-20261101.md)
 completed before/candidate/after controls and rejected the larger workspace:
-the 16K answer changed and acceptance fell to 49.12%. Paired 8192 remains selected;
+the 16K answer changed and acceptance fell to 49.12%. Paired 8192 was selected for that historical cohort;
 the report retains all six rows rather than selecting a new maximum.
 
 [Halogen 0.18.22, 1 November](docs/benchmarks/halogen01822-natural-8k16k-20261101.md)

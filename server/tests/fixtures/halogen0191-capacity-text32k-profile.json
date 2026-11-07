@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "minimum_reserve_gib": 18,
+  "token_file": "<REPO>/server/.local/servicenow-api-token.txt",
+  "backend_token_file": "<REPO>/backends/halogen-wsl2-0.19.1/.local/api-token.txt",
+  "concurrency": 1,
+  "body_bytes": 16777216,
+  "request_seconds": 1800,
+  "backend": {
+    "identifier": "halogen-v2",
+    "upstream": "http://127.0.0.1:8731",
+    "model": "halogen-qwen3.8-flash-next",
+    "checkpoint": "v2",
+    "context": 32768,
+    "expected": {
+      "status": "ok",
+      "version.api": "0.19.1",
+      "version.engine": "0.19.1",
+      "version.match": true,
+      "context": 32768,
+      "slot_ctx": 32768,
+      "kv_pool_positions": 32768,
+      "slots": 1,
+      "vision.enabled": false
+    },
+    "routes": [
+      "/v1/chat/completions",
+      "/v1/completions",
+      "/v1/responses",
+      "/v1/messages",
+      "/v1/messages/count_tokens"
+    ]
+  },
+  "engine": {
+    "kind": "halogen",
+    "directory": "backends/halogen-wsl2-0.19.1",
+    "checkpoint": "v2",
+    "context": 32768,
+    "prompt_cache": "Off",
+    "powershell": "<POWERSHELL>",
+    "launcher": "python",
+    "python_executable": "<REPO>/server/.local/venv/Scripts/python.exe",
+    "speculation_policy": {
+      "HALOGEN_PLD": "3,3",
+      "HALOGEN_MTP_GATE_P": "0.90"
+    },
+    "prefill_chunk": 2048,
+    "max_prefill_tokens": 2048,
+    "api_defaults": {
+      "enable_thinking": false,
+      "reasoning_effort": "low",
+      "max_thinking_tokens": 2048
+    },
+    "disable_vision": true,
+    "kernel_controls": {
+      "HALOGEN_DECODE_PREFETCH": 0
+    }
+  },
+  "console_trace": false
+}

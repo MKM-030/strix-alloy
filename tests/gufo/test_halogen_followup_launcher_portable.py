@@ -39,7 +39,7 @@ class FollowupLauncherTests(unittest.TestCase):
         venv.EnvBuilder(with_pip=False).create(cls.fixture_venv)
         cls.stable = server/".local/servicenow-api-token.txt"
         cls.stable.write_text("SYNTHETIC_PUBLIC_TOKEN_NEVER_PRINT_123", encoding="utf-8")
-        for version in ("0.18.10", "0.18.22"):
+        for version in ("0.18.10", "0.18.22", "0.19.1"):
             package = cls.root/("backends/halogen-wsl2-"+version)
             (package/"profiles").mkdir(parents=True)
             (package/".local").mkdir()
@@ -47,6 +47,10 @@ class FollowupLauncherTests(unittest.TestCase):
             (package/"profiles/release.json").write_text(json.dumps(release))
             (package/".local/machine.json").write_text(json.dumps(dict(version=version, image=release["image"], pwsh=str(PS))))
             (package/".local/api-token.txt").write_text("SYNTHETIC_BACKEND_TOKEN_NEVER_PRINT_456")
+            if version in ("0.18.22", "0.19.1"):
+                (package/"scripts").mkdir()
+                shutil.copy2(REPO/("backends/halogen-wsl2-"+version)/"scripts/capacity_policy.py",
+                             package/"scripts/capacity_policy.py")
         cls.env = os.environ.copy()
         packages = [str(Path(item)) for item in sys.path if (Path(item)/"aiohttp").is_dir()]
         cls.env["PYTHONPATH"] = os.pathsep.join(packages)
@@ -76,23 +80,23 @@ class FollowupLauncherTests(unittest.TestCase):
         self.assertGreaterEqual(start, 0, result.stdout)
         return json.JSONDecoder().raw_decode(result.stdout[start:])[0]
 
-    def expected_current(self):
+    def expected_current(self, version="0.19.1", prefill=2048):
         return {
             "schema":1, "minimum_reserve_gib":18, "token_file":str(self.stable),
-            "backend_token_file":str(self.root/"backends/halogen-wsl2-0.18.22/.local/api-token.txt"),
+            "backend_token_file":str(self.root/("backends/halogen-wsl2-"+version)/".local/api-token.txt"),
             "concurrency":1, "body_bytes":16777216, "request_seconds":1800,
             "backend":{"identifier":"halogen-v2", "upstream":"http://127.0.0.1:8731",
                 "model":"halogen-qwen3.8-flash-next", "checkpoint":"v2", "context":32768,
-                "expected":{"status":"ok", "version.api":"0.18.22", "version.engine":"0.18.22",
+                "expected":{"status":"ok", "version.api":version, "version.engine":version,
                     "version.match":True, "context":32768, "slot_ctx":32768,
                     "kv_pool_positions":32768, "slots":1, "vision.enabled":False},
                 "routes":["/v1/chat/completions", "/v1/completions", "/v1/responses",
                           "/v1/messages", "/v1/messages/count_tokens"]},
-            "engine":{"kind":"halogen", "directory":"backends/halogen-wsl2-0.18.22", "checkpoint":"v2",
+            "engine":{"kind":"halogen", "directory":"backends/halogen-wsl2-"+version, "checkpoint":"v2",
                 "context":32768, "prompt_cache":"Off", "powershell":str(PS),
                 "launcher":"python", "python_executable":str(self.fixture_venv/"Scripts/python.exe"),
                 "speculation_policy":{"HALOGEN_PLD":"3,3", "HALOGEN_MTP_GATE_P":"0.90"},
-                "prefill_chunk":8192, "max_prefill_tokens":8192,
+                "prefill_chunk":prefill, "max_prefill_tokens":prefill,
                 "api_defaults":{"enable_thinking":False, "reasoning_effort":"low", "max_thinking_tokens":2048},
                 "disable_vision":True, "kernel_controls":{"HALOGEN_DECODE_PREFETCH":0}},
             "console_trace":False,
@@ -107,12 +111,20 @@ class FollowupLauncherTests(unittest.TestCase):
         actual = self.decoded(self.invoke(profile="CurrentText32K"))
         self.assertEqual(self.normalize(actual), self.normalize(self.expected_current()))
 
-    def test_followup_differs_from_current_by_cache_only(self):
+    def test_followup_differs_only_by_measured_version_cache_and_prefill(self):
         current = self.decoded(self.invoke(profile="CurrentText32K"))
         result = self.invoke()
         followup = self.decoded(result)
-        self.assertEqual(followup["engine"]["prompt_cache"], "Flexible")
-        followup["engine"]["prompt_cache"] = "Off"
+        expected = self.expected_current("0.18.22", prefill=8192)
+        expected["engine"]["prompt_cache"] = "Flexible"
+        self.assertEqual(self.normalize(followup), self.normalize(expected))
+        current["backend_token_file"] = expected["backend_token_file"]
+        current["engine"]["directory"] = expected["engine"]["directory"]
+        current["engine"]["prompt_cache"] = "Flexible"
+        current["engine"]["prefill_chunk"] = 8192
+        current["engine"]["max_prefill_tokens"] = 8192
+        for field in ("version.api", "version.engine"):
+            current["backend"]["expected"][field] = "0.18.22"
         self.assertEqual(followup, current)
         self.assertIn("follow-up latency", result.stdout.lower())
         self.assertIn("no session configuration was written and no engine was launched", result.stdout)
@@ -121,7 +133,7 @@ class FollowupLauncherTests(unittest.TestCase):
         result = self.invoke("-HalogenVersion", "0.18.22", "-Thinking", "Off",
                              "-MtpPolicy", "Auto", "-PromptCache", "Flexible", "-ConsoleTrace")
         actual = self.decoded(result)
-        expected = self.expected_current()
+        expected = self.expected_current("0.18.22", prefill=8192)
         expected["engine"]["prompt_cache"] = "Flexible"
         expected["console_trace"] = True
         self.assertEqual(self.normalize(actual), self.normalize(expected))
@@ -147,18 +159,68 @@ class FollowupLauncherTests(unittest.TestCase):
         finally:
             self.stable.write_bytes(saved)
 
-    def test_bare_default_remains_01810_current4k(self):
+    def test_bare_default_selects_latest_current_text32k(self):
         result = self.invoke(profile=None)
-        self.assertEqual(result.returncode, 0, result.stderr)
+        actual = self.decoded(result)
+        self.assertEqual(self.normalize(actual), self.normalize(self.expected_current()))
+        self.assertIn("Profile: CurrentText32K; Halogen 0.19.1 v2; MTP policy Confidence90; PLD 3,3; cache Off", result.stdout)
+        self.assertIn("Thinking default: Off; low effort", result.stdout)
+        self.assertIn("Prefill chunk / token arena: 2048 / 2048", result.stdout)
+
+    def test_current_text_allows_explicit_larger_prefill(self):
+        result = self.invoke("-PrefillTokens", "8192", profile="CurrentText32K")
+        actual = self.decoded(result)
+        self.assertEqual(self.normalize(actual), self.normalize(self.expected_current(prefill=8192)))
+        self.assertIn("Prefill chunk / token arena: 8192 / 8192", result.stdout)
+
+    def test_explicit_legacy_version_with_current4k_preserves_its_policy(self):
+        result = self.invoke("-HalogenVersion", "0.18.10", profile="Current4K")
+        self.assertEqual(result.returncode, 0, result.stderr+result.stdout)
         self.assertIn("Profile: Current4K; Halogen 0.18.10 v2; MTP policy Fixed2; PLD 3,3; cache Off", result.stdout)
         self.assertIn("Context capacity: 262144", result.stdout)
         self.assertIn("Thinking default: On; medium effort", result.stdout)
         self.assertIn("Prefill chunk / token arena: 4096 / 4096", result.stdout)
 
-    def test_current_text_rejects_flexible_override(self):
-        result = self.invoke("-PromptCache", "Flexible", profile="CurrentText32K")
+    def test_current_text_forwards_two_slot_capacity_and_2048_prefill(self):
+        result = self.invoke("-Slots", "2", "-KvPoolPositions", "65536", "-Concurrency", "2",
+                             "-PrefillTokens", "2048", profile="CurrentText32K")
+        actual = self.decoded(result)
+        expected = self.expected_current()
+        expected["concurrency"] = 2
+        expected["engine"].update(slots=2, kv_pool_positions=65536,
+                                  prefill_chunk=2048, max_prefill_tokens=2048)
+        expected["backend"]["expected"].update(slots=2, kv_pool_positions=65536, capability_probe="ok")
+        self.assertEqual(self.normalize(actual), self.normalize(expected))
+        self.assertIn("Opt-in gateway concurrency: 2; native slots: 2; KV pool: 65536", result.stdout)
+        self.assertIn("Prefill chunk / token arena: 2048 / 2048", result.stdout)
+
+    def test_current_text_rejects_conflicting_pinned_selectors(self):
+        for options in [("-PromptCache", "Flexible"), ("-PromptCache", "Exact"),
+                        ("-HalogenVersion", "0.18.22"), ("-Thinking", "On"),
+                        ("-MtpPolicy", "Fixed2")]:
+            with self.subTest(options=options):
+                result = self.invoke(*options, profile="CurrentText32K")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("CurrentText32K requires Halogen 0.19.1", result.stdout+result.stderr)
+
+    def test_capacity_and_prefill_selectors_require_current_text32k(self):
+        for profile in ("FollowupText32K", "Current4K"):
+            for options, message in [(("-Slots", "2"), "Capacity selectors require CurrentText32K"),
+                                     (("-PrefillTokens", "2048"), "PrefillTokens requires CurrentText32K")]:
+                with self.subTest(profile=profile, options=options):
+                    result = self.invoke(*options, profile=profile)
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn(message, result.stdout+result.stderr)
+
+    def test_two_slots_require_explicit_two_request_concurrency(self):
+        result = self.invoke("-Slots", "2", "-KvPoolPositions", "65536", profile="CurrentText32K")
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("CurrentText32K requires Halogen 0.18.22", result.stdout+result.stderr)
+        self.assertIn("concurrency", result.stdout+result.stderr)
+
+    def test_unsupported_prefill_size_is_rejected_by_powershell(self):
+        result = self.invoke("-PrefillTokens", "1024", profile="CurrentText32K")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("PrefillTokens", result.stdout+result.stderr)
 
 
 if __name__ == "__main__":

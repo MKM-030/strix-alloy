@@ -1,32 +1,40 @@
 # Halogen foreground console and ServiceNow REST integration
 
-Current serving uses **installed Halogen 0.18.22**, selected with
-`-Profile CurrentText32K`. The [independent 1 November capture](../benchmarks/halogen01822-raw-8k16k-20261101.md)
+The launcher now selects **installed Halogen 0.19.1** with
+`-Profile CurrentText32K`, including when no profile is specified. The latest
+Voice configuration uses 32,768 context positions, two slots, a 65,536-position
+KV pool, two concurrent requests and a paired 2,048-token prefill chunk and arena.
+The public model remains `halogen-v2` and uses the existing ServiceNow API key.
+Fresh runtime qualification and measurements are recorded in the
+[7 November update report](../research/halogen0191-update-20261107.md).
+The [fresh 8K/16K API observations](../benchmarks/halogen0191-natural-8k16k-20261107.md)
+use this two-slot 2048 profile.
+
+The historical **0.18.22** [independent 1 November capture](../benchmarks/halogen01822-raw-8k16k-20261101.md)
 measures 1917.24/55.17 prefill/decode tok/s at 8192 actual input tokens and
 1913.00/ 46.86 at 16384; acceptance remains 66.04% / 52.68%. Each excludes one warmup
 and averages three runs. The earlier [API-only report](../benchmarks/halogen01822-natural-8k16k-20261101.md)
 retains the separate OEM correction and its clock counterexamples; they are
 not rescaled using the newer cohort.
-The current endpoint and public credential are unchanged. The server stays online.
 
 The [current ServiceNow preparation](halogen-servicenow-preparation-20261101.md)
 records the verified PowerShell 5.1 console-trace configuration and existing
 Agent maintenance package. After renewed measurement authorization, the
 [prefix-cache comparison](../benchmarks/halogen01822-cache-followups-20261101.md)
 qualified faster repeated-context follow-ups. `FollowupText32K` explicitly selects
-that Flexible-cache option; `CurrentText32K` and the running server retain Off.
+that historical **0.18.22** Flexible-cache option. `CurrentText32K` selects
+**0.19.1** with Cache Off.
 The separate
 [two-request comparison](../benchmarks/halogen01822-concurrency2-20261101.md)
-improves aggregate throughput but increases individual latency, so normal
-ServiceNow serving retains one slot.
+records its own aggregate-throughput and individual-latency trade-off. The latest
+Voice profile explicitly selects two slots with the command below.
 
 The [larger-workspace trial](../benchmarks/halogen01822-arena16384-20261101.md)
-was rejected after a 16K output change and lower draft acceptance. Keep the
-current paired 8192 prefill settings; no new client header is required.
+was rejected after a 16K output change and lower draft acceptance. The latest
+Voice profile uses paired 2048 prefill settings. The bare text preset also uses 2048.
 
 The retained measured text preset is **Halogen 0.18.16**. Select it
-explicitly with `-Profile MeasuredText32K`; the bare launcher retains 0.18.10,
-fixed MTP depth 2 and `Current4K`. The measured text preset uses 32K capacity,
+explicitly with `-Profile MeasuredText32K`. The measured text preset uses 32K capacity,
 8K prefill chunk/arena, adaptive MTP gate 0.90, PLD `3,3`, Cache Off,
 Thinking Off/low, Vision Off and prefetch off. NPU helpers remain disabled.
 
@@ -47,7 +55,7 @@ The later gate/PLD campaign qualified no replacement for this normal policy.
 The measurements below describe historical 0.16.2 workloads. The separate
 [historical 0.17.2 fixed-depth-2 comparison](../benchmarks/halogen0172-fixed-depth2-20261008.md)
 and [historical 0.17.2 adaptive-depth comparison](../benchmarks/halogen0172-stock-adaptive-20261008.md)
-retain earlier engine measurements; they do not measure the current 0.18.16 runtime.
+retain earlier engine measurements.
 
 The retained **48.423621 tok/s** result is an 8,192-input-token, 128-output-token
 greedy prose measurement from Halogen 0.16.2 on 4 October 2026. The engine had
@@ -79,10 +87,10 @@ does not establish that this host will reproduce its operating state or rate.
 ## Start from Windows PowerShell 5.1
 
 Run from `C:\Projects\strix-alloy-clean` in the console that should display the
-server and API trace:
+server and API trace. This command reproduces the latest two-slot Voice settings.
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 2 -KvPoolPositions 65536 -Concurrency 2 -PrefillTokens 2048 -ConsoleTrace
 ```
 
 For repeated stable context and new follow-up questions, the optional measured
@@ -92,9 +100,10 @@ cache configuration is:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile FollowupText32K -ConsoleTrace
 ```
 
-Select it at a normal controlled restart. Both text presets use Halogen 0.18.22
-with the same authentication, 32K capacity and generation policy. Only
-`FollowupText32K` enables Flexible cache. In the frozen two-question trial,
+Select it at a normal controlled restart. `FollowupText32K` retains Halogen
+0.18.22, 32K capacity, one slot, an 8192-token prefill chunk and arena, and
+Flexible cache. The public authentication and model alias match the current
+text preset. In the frozen 0.18.22 two-question trial,
 first-content latency fell from 4.21–4.34s to 0.324s and complete response latency
 from 4.45–4.57s to 0.558s when 8064 of 8121 input tokens were reused. Initial
 cold requests were slower. These are workload-specific API latencies, separate
@@ -130,7 +139,9 @@ Off and do not qualify Thinking On throughput.
 
 `Current4K` pairs a 4,096-token prefill chunk with a 4,096-token arena;
 `Current8K` explicitly pairs 8,192 with 8,192. Their default installed version
-is 0.18.10. Use `-HalogenVersion` to select another supported installed backend.
+is 0.19.1. Use `-HalogenVersion` to select another supported installed backend.
+For the retained 0.18.10 configuration, pass both `-Profile Current4K` and
+`-HalogenVersion 0.18.10` explicitly.
 The historical Stock A profile requires an explicit 0.16.2 selection; it rejects
 0.17.2 and 0.17.3:
 
@@ -166,16 +177,22 @@ ServiceNow's Authorization header. Credential values are never printed.
 
 ## What the profiles actually select
 
-`Current4K` and `Current8K` default to installed Halogen **0.18.10**;
+The bare launcher selects **0.19.1 CurrentText32K**, one slot, one concurrent
+request and paired 2048 prefill settings. The explicit Voice command above
+selects two slots, a 65536-position pool and paired 2048 prefill settings.
+`-PrefillTokens` applies only to `CurrentText32K` and sets both prefill controls.
+
+`Current4K` and `Current8K` default to installed Halogen **0.19.1**;
 `HistoricalStock` requires explicitly selected **0.16.2**. All three retain
 262,144-position capacity and fixed MTP depth 2. `MeasuredText32K` explicitly
 selects **0.18.16**, 32,768-position capacity, adaptive gate 0.90 and Cache Off.
-`CurrentText32K` selects **0.18.22** with the same text capacity and policy.
-`FollowupText32K` selects that same **0.18.22** text configuration with Flexible
-cache. All other text-preset controls remain identical.
+`CurrentText32K` selects **0.19.1** with the same text capacity and policy.
+`FollowupText32K` retains the measured **0.18.22** text configuration with Flexible
+cache and paired 8192 prefill settings.
 `Measured32K` separately selects **0.18.15**, 32,768-position capacity, adaptive
-gate 0.90 and Flexible cache with Vision On. All select v2, one slot, PLD `3,3`,
-one active API request and an 18 GiB physical/commit runtime reserve.
+gate 0.90 and Flexible cache with Vision On. Every preset selects v2, PLD `3,3`
+and an 18 GiB physical/commit runtime reserve. The explicit two-slot profile also
+checks 22 GiB physical and commit headroom before each request.
 
 The retained historical **0.17.3** image was pinned as:
 
@@ -192,7 +209,7 @@ remain available for an explicit 0.17.2 selection.
 
 | Startup control | HistoricalStock | Current4K | Current8K | MeasuredText32K |
 | --- | --- | --- | --- | --- |
-| Halogen version | `0.16.2` | `0.18.10` | `0.18.10` | `0.18.16` |
+| Halogen version | `0.16.2` | `0.19.1` | `0.19.1` | `0.18.16` |
 | `HALOGEN_CTX` / `HALOGEN_KV_POOL_POSITIONS` | `262144` / `262144` | `262144` / `262144` | `262144` / `262144` | `32768` / `32768` |
 | `HALOGEN_KV_SLOTS` | `1` | `1` | `1` | `1` |
 | `HALOGEN_MTP_DEPTH` / `HALOGEN_PLD` | `2` / `3,3` | `2` / `3,3` | `2` / `3,3` | Depth unset / `3,3` |
@@ -271,7 +288,7 @@ client headers to Halogen.
 | `reasoning_effort: "none"` | The supported equivalent off control |
 | `max_tokens: 128` | Maximum generated budget, including reasoning when enabled |
 | `stream: false` | One JSON response for simple ServiceNow parsing |
-| `prompt_cache_policy: "default"` | Allow the configured cache mode on current 0.18.22; `"no_store"` prevents the tested reuse |
+| `prompt_cache_policy: "default"` | Allow the configured cache mode. The retained 0.18.22 API supports `"no_store"` as a per-request cache policy |
 
 Thinking controls also support `chat_template_kwargs`; agreeing duplicate controls
 are accepted. Send explicit controls so that server defaults cannot unexpectedly

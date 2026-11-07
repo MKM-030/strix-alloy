@@ -24,22 +24,23 @@ class CapacityLauncherTests(unittest.TestCase):
         # installed environments, worktrees or sibling audit bundles.
         for source in (REPO/'server').glob('*.py'):
             dest=cls.root/'server'/source.name;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,dest)
-        source_package=REPO/'backends/halogen-wsl2-0.18.22'
-        pins=json.loads((source_package/'profiles/sources.json').read_text())
-        for name in [*pins['files'],'profiles/sources.json']:
-            relative=Path(name)
-            if relative.is_absolute() or '..' in relative.parts or '.local' in relative.parts:
-                raise AssertionError('Tracked fixture source path is not finite')
-            source=source_package/relative
-            dest=cls.root/'backends/halogen-wsl2-0.18.22'/relative
-            dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,dest)
+        for version in ('0.18.22','0.19.1'):
+            source_package=REPO/('backends/halogen-wsl2-'+version)
+            pins=json.loads((source_package/'profiles/sources.json').read_text())
+            for name in [*pins['files'],'profiles/sources.json']:
+                relative=Path(name)
+                if relative.is_absolute() or '..' in relative.parts or '.local' in relative.parts:
+                    raise AssertionError('Tracked fixture source path is not finite')
+                source=source_package/relative
+                dest=cls.root/('backends/halogen-wsl2-'+version)/relative
+                dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,dest)
         cls.script=cls.root/'scripts/Start-Halogen-ServiceNow.ps1'
         cls.script.parent.mkdir(parents=True);shutil.copy2(REPO/'scripts/Start-Halogen-ServiceNow.ps1',cls.script)
-        cls.expected_text=json.loads((REPO/'server/tests/fixtures/halogen01822-capacity-text32k-profile.json').read_text())
+        cls.expected_text=json.loads((REPO/'server/tests/fixtures/halogen0191-capacity-text32k-profile.json').read_text())
         fixture_venv=cls.root/'server/.local/venv'
         venv.EnvBuilder(with_pip=False).create(fixture_venv)
         (cls.root/'server/.local/servicenow-api-token.txt').write_text('synthetic-public-token-for-cpu-tests-only')
-        for version in ('0.18.22','0.18.16','0.18.15','0.18.10'):
+        for version in ('0.19.1','0.18.22','0.18.16','0.18.15','0.18.10'):
             package=cls.root/('backends/halogen-wsl2-'+version)
             (package/'.local').mkdir(parents=True)
             (package/'profiles').mkdir(exist_ok=True)
@@ -80,7 +81,7 @@ class CapacityLauncherTests(unittest.TestCase):
     def test_current_text_default_matches_explicit_tracked_fixture(self):
         result=self.invoke()
         self.assertEqual(self.normalize(self.decoded(result)),self.expected_text)
-        self.assertIn('Halogen 0.18.22 v2; MTP policy Confidence90; PLD 3,3; cache Off; one request.',result.stdout)
+        self.assertIn('Halogen 0.19.1 v2; MTP policy Confidence90; PLD 3,3; cache Off; one request.',result.stdout)
         self.assertFalse((self.root/'server/.local/servicenow-sessions').exists())
 
     def test_opt_in_control_and_candidate_print_exact_capacity_without_session_write(self):
@@ -112,19 +113,21 @@ class CapacityLauncherTests(unittest.TestCase):
         self.assertFalse((self.root/'server/.local/servicenow-sessions').exists())
 
     def test_backend_start_forwards_capacity_and_rejects_legacy_controls(self):
-        script=self.root/'backends/halogen-wsl2-0.18.22/Start.ps1'
-        result=subprocess.run([str(PS),'-NoProfile','-ExecutionPolicy','Bypass','-File',str(script),
-            '-ContextSize','32768','-Slots','2','-KvPoolPositions','65536','-DisableVision','-PrintOnly'],
-            cwd=self.root,env=self.env,text=True,capture_output=True,encoding='utf-8',errors='replace',timeout=30)
-        actual=self.decoded(result)
-        self.assertEqual(actual['context'],32768);self.assertEqual(actual['slots'],2)
-        self.assertEqual(actual['kv_pool_positions'],65536)
-        self.assertGreaterEqual(actual['admission_gib'][0],30);self.assertGreaterEqual(actual['admission_gib'][1],131)
-        result=subprocess.run([str(PS),'-NoProfile','-ExecutionPolicy','Bypass','-File',str(script),
-            '-Profile','Trace4k','-Checkpoint','w4b','-Slots','2','-PrintOnly'],cwd=self.root,env=self.env,
-            text=True,capture_output=True,encoding='utf-8',errors='replace',timeout=30)
-        self.assertNotEqual(result.returncode,0)
-        self.assertIn('Legacy 4K qualification profiles do not accept',result.stderr+result.stdout)
+        for version in ('0.18.22','0.19.1'):
+            with self.subTest(version=version):
+                script=self.root/('backends/halogen-wsl2-'+version)/'Start.ps1'
+                result=subprocess.run([str(PS),'-NoProfile','-ExecutionPolicy','Bypass','-File',str(script),
+                    '-ContextSize','32768','-Slots','2','-KvPoolPositions','65536','-DisableVision','-PrintOnly'],
+                    cwd=self.root,env=self.env,text=True,capture_output=True,encoding='utf-8',errors='replace',timeout=30)
+                actual=self.decoded(result)
+                self.assertEqual(actual['context'],32768);self.assertEqual(actual['slots'],2)
+                self.assertEqual(actual['kv_pool_positions'],65536)
+                self.assertGreaterEqual(actual['admission_gib'][0],30);self.assertGreaterEqual(actual['admission_gib'][1],131)
+                result=subprocess.run([str(PS),'-NoProfile','-ExecutionPolicy','Bypass','-File',str(script),
+                    '-Profile','Trace4k','-Checkpoint','w4b','-Slots','2','-PrintOnly'],cwd=self.root,env=self.env,
+                    text=True,capture_output=True,encoding='utf-8',errors='replace',timeout=30)
+                self.assertNotEqual(result.returncode,0)
+                self.assertIn('Legacy 4K qualification profiles do not accept',result.stderr+result.stdout)
 
 
 if __name__=='__main__':unittest.main()
