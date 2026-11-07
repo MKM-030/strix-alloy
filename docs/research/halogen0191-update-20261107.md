@@ -295,3 +295,39 @@ control has an inactive, tested source bundle and a prospectively frozen
 natural-text comparison. Hardware admission remains pending.
 [Mechanism evidence](halogen0191-mtp-next-mechanisms-20261107.md),
 [Q8 study plan](../benchmarks/halogen0191-draft-vocab-q8-plan-20261107.md).
+
+## Delivery verification at 18:57 UTC
+
+The fresh official GitHub API and GHCR audit again identified **0.19.1** as
+the newest published Halogen version. The current source head, version tag,
+`latest` image, versioned image and config digest matched the installed pins
+above. The running installation therefore already contains the latest
+release observed during this audit.
+[Official package](https://github.com/peonist-ai/halogen-flash-server/pkgs/container/halogen-flash-server),
+[pinned release source](https://github.com/peonist-ai/halogen-flash-server/tree/v0.19.1).
+
+Authenticated readiness verification recorded the same controller/backend
+PIDs **28972/24440**, matching 0.19.1 API and engine versions, the selected
+one-slot profile hash, an idle gateway and all **50** baseline files exact.
+The three private RAW additions remained absent. The current server stayed
+online throughout this verification. Stale active-handle aliases in the
+private continuation record were archived and resealed to these identities.
+The retained proofs are under
+`server/.local/halogen-update-20261107/primary0191/completion-closure/user-final-20261107/`.
+
+Fresh CPU verification completed at **19:01 UTC**. The server suite passed
+236 tests. The installed backend suite passed 19 tests and skipped eight
+POSIX/GCC vision fixtures on Windows. The coordinator, Q8, native-trace and
+exporter suites passed another 96 tests. The documented one-slot launcher
+command with `-ConsoleTrace -PrintOnly` passed under Windows PowerShell 5.1
+and retained the existing session inventory. These checks qualify the tested
+source and launcher paths. The live audit used authenticated metadata reads
+and generated zero model requests.
+
+Available physical memory was **20.48 GiB**, below the frozen Q8 comparison's
+22 GiB entry requirement. The Q8 study remains prepared with zero model
+requests. Its accuracy, acceptance and throughput effects remain unmeasured.
+The earlier qualified benchmark quantities retain their original workloads
+and clocks. The broader acceleration goal, including a beneficial NPU
+contribution and a complete matched manufacturer-protocol comparison,
+remains open.
