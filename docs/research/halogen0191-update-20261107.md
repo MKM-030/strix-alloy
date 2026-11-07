@@ -1,7 +1,7 @@
 # Halogen 0.19.1 update, 7 November 2026
 
 The PowerShell 5.1 launcher selects Halogen **0.19.1 CurrentText32K** by default.
-The latest Voice configuration explicitly selects two 32K slots, a 65536-position
+The normal Voice configuration explicitly selects two 32K slots, a 65536-position
 KV pool, two concurrent requests and a paired 2048-token prefill chunk and arena.
 The public model is `halogen-v2` at `http://127.0.0.1:8840/v1`.
 
@@ -22,6 +22,25 @@ The registry config digest is
 `sha256:e38fa4d382b9e6e9f88d602d917761a53bda90dbff063c93c899433b709426c9`.
 The local package records the extracted engine, API, entrypoint and provider
 identities. [Version-specific release pins](../../backends/halogen-wsl2-0.19.1/profiles/release.json).
+
+The qualification flags in that release file retain the package's static
+prequalification artifact metadata. Separate dated runtime and provider
+observations establish the recorded live qualification described below.
+
+The bounded source check completed at **15:13 UTC** again identified **0.19.1**
+as the latest official tag and image. The `latest` and versioned image digests,
+registry config and public source head matched the earlier audit. The official
+AMD GPU driver, Ryzen AI and XRT release fields also retained their earlier
+versions. [Official package](https://github.com/peonist-ai/halogen-flash-server/pkgs/container/halogen-flash-server),
+[official tag](https://github.com/peonist-ai/halogen-flash-server/tree/v0.19.1),
+[AMD driver](https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-ai-max-series/amd-ryzen-ai-max-plus-395.html),
+[Ryzen AI release notes](https://ryzenai.docs.amd.com/en/latest/relnotes.html),
+[XRT releases](https://github.com/Xilinx/XRT/releases).
+
+Direct Reddit access returned HTTP 403 and the web listings were cached, so
+current subreddit freshness remains unverified. The next bounded refresh is
+due at or after **17:13:05 UTC**. The private receipt is
+`server/.local/halogen-update-20261107/source-refresh/refresh-20261107T151003Z/receipt.json`.
 
 ## Changes relevant to ServiceNow and tools
 
@@ -106,20 +125,65 @@ The local observation is retained at
 `server/.local/halogen-update-20261107/primary0191/runtime-and-auth-qualified.json`.
 
 After the separate one-slot workspace trial, an independent **13:04 UTC**
-observation confirmed the restored normal two-slot 2048 profile ready, with
-request-entry admission ready. The final controller and backend runs are
+historical snapshot recorded the restored normal two-slot 2048 profile ready,
+with request-entry admission ready. Its controller and backend runs were
 `c0f914b3674d46ff8e22e5059d84900e` and
-`df10d3939eb84bb28088fc93c2ce2b67`. The profile SHA256 remains the same.
+`df10d3939eb84bb28088fc93c2ce2b67`. The recorded profile SHA256 was the same.
 That observation is retained at
 `server/.local/halogen-update-20261107/primary0191/final-ready-20261107T130414824304Z.json`.
 
-The frozen 8K/16K cohort completed one excluded warmup and three measurements
-per input. Its API-reported prefill/decode means are 1191.85/46.62 tok/s at 8K
-and 1125.72/48.98 tok/s at 16K. Complete-request QPC means are 9.666991 and
+The earlier frozen cohort used synthetic prose at 8K and a contiguous novel
+excerpt at 16K. It completed one excluded warmup and three measurements per
+input. Its API-reported prefill/decode means are 1191.85/46.62 tok/s at 8K and
+1125.72/48.98 tok/s at 16K. Complete-request QPC means are 9.666991 and
 17.241034 seconds. Every reported phase sum fits its corresponding whole HTTP
-interval. Independent RAW phase-clock qualification remains pending.
+interval. Independent RAW phase-clock qualification remains pending for that
+earlier cohort.
 The OEM operating-mode readback was unavailable to the non-elevated process.
 [Fresh 0.19.1 observations](../benchmarks/halogen0191-natural-8k16k-20261107.md).
+
+A later genuine **8192-token natural-text RAW cohort** completed one excluded
+warmup and three measured requests in the two-slot, pool-65536, paired-2048
+PLD `3,3` before arm. Its independent
+RAW midpoint means were **1185.559992 prefill tok/s** and **48.802438 decode
+tok/s**, with pooled native-head acceptance **207/327, or 63.30275%**. RAW bounds
+include observer overhead. The API phase clocks remain unqualified.
+[PLD RAW report](../benchmarks/halogen0191-pld34-raw-20261107.md).
+
+The full PLD `3,3` to `3,4` to `3,3` comparison failed before a matched
+three-arm result qualified. Its 16K case stopped after the excluded warmup,
+and the code oracle failed.
+
+The separate prefill comparison completed genuine natural 8K and 16K before
+cohorts with **one slot, pool 32768, concurrency one and paired 2048 prefill
+settings**. Each cohort excluded one warmup and included three measured
+requests with 128 actual output tokens. RAW midpoint means were
+**1143.700731/48.574773 tok/s** at 8K and **1124.357529/49.677162 tok/s** at 16K
+for prefill/decode. Pooled native-head counts were **207/327 (63.30275%)** and
+**210/321 (65.42056%)** respectively. These one-slot observations have their
+own profile and request records.
+[Prefill RAW report](../benchmarks/halogen0191-prefill4096-raw-20261107.md).
+
+The one-slot paired-4096 candidate completed only its 8K excluded warmup before
+failing the 22 GiB request-entry gate. The prefill campaign ended and restored
+the normal two-slot/2048 profile. Qualified 4096-prefill gain, PLD speedup and
+beneficial NPU contribution remain open. API phase clocks retain their
+qualification limits.
+
+## Final functional check
+
+The **7 November 15:31:03 UTC** observation recorded the restored normal
+two-slot, pool-65536, concurrency-two, paired-2048 profile ready with matching
+0.19.1 API and engine versions. Controller/backend PIDs were **25272/28248**,
+with run IDs `a58f2a53c0b441079108b830b3531def` and
+`35abd5bb406440d8b685073eb05fbeaa`. The selected profile SHA256 was
+`0d92158fe58e5ae278eba173aa4d40a0f4978cbc6d8e0bb5e5ca45c44c713cca`.
+
+Model discovery returned HTTP 401 without authentication and HTTP 200 with
+authentication, advertising `halogen-v2`. Authenticated chat returned HTTP 200
+and the reply `READY`. The same captured runtime identities were ready and
+idle before and after that functional availability request. Its saved proof is
+`server/.local/halogen-update-20261107/primary0191/final-functional-check/proof.json`.
 
 The retained 0.18.22 and earlier benchmark quantities describe their original
 runs. [Historical 0.18.22 phase measurements](../benchmarks/halogen01822-raw-8k16k-20261101.md).

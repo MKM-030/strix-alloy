@@ -51,13 +51,38 @@ The frozen 8192-token fixture contains synthetic prose. The 16384-token fixture
 contains a contiguous novel excerpt. Their request identities are documented
 in the [workload classification](docs/benchmarks/halogen-8k-workload-classification-20261107.md).
 
-The 7 November 0.19.1 two-slot/2048 cohort reports API prefill/decode means
-of **1191.85 / 46.62 tok/s** at 8192 input tokens and **1125.72 / 48.98 tok/s**
-at 16384. Native head acceptance is **56.78% / 65.42%**. Each case excludes one
-warmup and includes three measurements. The report retains paired Windows QPC
-whole-request clocks, the unavailable OEM mode readback, and the larger-arena
-candidate that stopped at request admission after its warmup.
-[Current 0.19.1 observations](docs/benchmarks/halogen0191-natural-8k16k-20261107.md).
+The 7 November 0.19.1 genuine natural-text RAW cohorts completed one excluded
+warmup and three measured requests each, with 128 actual output tokens.
+The table gives mean RAW midpoint rates, including observer overhead.
+
+| Profile | Native input tokens | Prefill tok/s | Decode tok/s | Native head accepted/drafted |
+| --- | --- | --- | --- | --- |
+| Two slots, pool 65536, paired 2048 | 8192 | 1185.559992 | 48.802438 | 207/327 (63.30275%) |
+| One slot, pool 32768, paired 2048 | 8192 | 1143.700731 | 48.574773 | 207/327 (63.30275%) |
+| One slot, pool 32768, paired 2048 | 16384 | 1124.357529 | 49.677162 | 210/321 (65.42056%) |
+
+The two-slot row belongs to the PLD comparison's before arm. The one-slot rows
+belong to the separate prefill comparison's before arm. Its paired 4096
+candidate completed only the 8K warmup before failing the 22 GiB request-entry
+gate. Qualified PLD speedup, 4096-prefill gain and beneficial NPU contribution
+remain open. API phase clocks remain unqualified.
+[PLD RAW report](docs/benchmarks/halogen0191-pld34-raw-20261107.md),
+[prefill RAW report](docs/benchmarks/halogen0191-prefill4096-raw-20261107.md).
+
+The **7 November 15:31 UTC** functional check recorded the normal two-slot,
+pool-65536, paired-2048 profile ready with controller/backend PIDs
+**25272/28248**. Model discovery returned HTTP 401 without authentication and
+HTTP 200 with authentication. Authenticated chat returned HTTP 200 and `READY`.
+That request served as a functional availability check.
+[Dated restoration record](docs/research/halogen0191-update-20261107.md#final-functional-check).
+
+Earlier two-slot/2048 API observations used the synthetic 8K fixture and natural
+16K fixture. Their prefill/decode means were **1191.85 / 46.62 tok/s** and
+**1125.72 / 48.98 tok/s**, with native head acceptance **56.78% / 65.42%**.
+Each case excluded one warmup and included three measurements. The report
+retains paired Windows QPC whole-request clocks, the unavailable OEM mode
+readback and the separate one-slot/8192-arena admission failure.
+[Earlier 0.19.1 API observations](docs/benchmarks/halogen0191-natural-8k16k-20261107.md).
 
 [Halogen 0.18.22, independently captured frozen 8K/16K inputs](docs/benchmarks/halogen01822-raw-8k16k-20261101.md)
 records **1917.24 / 55.17 tok/s** prefill/decode at 8192 actual input tokens
@@ -66,7 +91,8 @@ and **1913.00 / 46.86 tok/s** at 16384, with native head acceptance
 All direct RAW phase brackets fit the paired Windows QPC whole-request times.
 Native timing agrees within these cohorts; the earlier API-only clock
 counterexamples remain historical evidence. No new maximum or causal
-engine-version speedup is claimed. The normal server is restored and online.
+engine-version speedup is claimed. That 1 November record includes its
+normal-profile restoration snapshot.
 
 The later [paired 16K workspace comparison](docs/benchmarks/halogen01822-arena16384-20261101.md)
 completed before/candidate/after controls and rejected the larger workspace:
@@ -79,7 +105,7 @@ verified OEM Performance mode. Complete HTTP means fell from 9.2516 to 6.8961
 seconds and from 16.7409 to 11.9060 seconds. Native head acceptance remains
 66.04% / 52.68%. API phase durations exceed whole HTTP time in the Performance
 window, so those reported token rates are provisional; no new RAW best result
-or engine-version speedup is claimed. The server is left online. The historical
+or engine-version speedup is claimed. That dated run ended with serving online. The historical
 `MeasuredText32K` preset still selects 0.18.16.
 
 [Halogen 0.18.16, frozen 8K/16K inputs](docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md)

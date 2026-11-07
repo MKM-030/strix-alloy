@@ -1,0 +1,899 @@
+{
+  "schema": "halogen0191.prefill4096-raw-comparison.public.v1",
+  "experiment": "prefill4096",
+  "version": "0.19.1",
+  "campaign_completed": false,
+  "terminal": true,
+  "restored": true,
+  "immutable_source": {
+    "version": "0.19.1",
+    "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:7ab5c3dfd77acb2387603f1807069cac3494e678f413c0670745ba2df74c0f0e",
+    "upstream_public_commit": "47ceb439fd97ef4b62cc18042fda505113546567",
+    "image_engine_revision": "85b2b0c37d5d",
+    "artifact_sha256": {
+      "engine_sha256": "9dcf048b93111aba93032aa2ba0bea07496bc14c0cd4316a21dc39d2db749d46",
+      "entrypoint_sha256": "7c2edf12c4ab29966a1600ecb27bfe55b3af9cdf54607bde482ef9a103833565",
+      "adapted_entrypoint_sha256": "1108f7c3ac488945b81bfcce790f97b6485adc0cc5b79bf61bdc3446aebcb9fb",
+      "upstream_api_sha256": "de7e6ff8f2136d5c16109e2a7b19c7117a3855e4c36cf1433ef2b4fc16237be3",
+      "bridge_sha256": "29c6a0fe6b60016ed7f1cb972895c8094bc75483f0a559e0fa0dac5bdb57d63b",
+      "v2_bridge_sha256": "817aa24c9a096aef258dba024ca2da9f9e8eb2c3a547ae8f7b5e72781bdd8370",
+      "private_sha256": "3bff115aa0b9f3211ab908efa33a5f4451c3810938c09c4d522d11ff39b06bac",
+      "probe_sha256": "66158d5e6319e17f5df3658f0b613cea63f0aba2d6614059618869454d298a3f"
+    },
+    "public_reference_file": "halogen0191-natural-8k16k-20261107.json",
+    "public_reference_sha256": "50dd53a9b083b536837f743034fb9face3e968cd6ff293bc92d988f86f9639c6"
+  },
+  "executed_source_pins": {
+    "root_campaign.py": {
+      "sha256": "a52d8dda1ea6cf1fe65592b2a507abaced4babbc77b630e5379f028fbd2c0c98",
+      "bytes": 22585,
+      "implementation_version": 2,
+      "selected_source_file": "root_campaign.py"
+    },
+    "collect_epoch.py": {
+      "sha256": "3a91d4d8e03e5ccfd889033edef2cac976c243f7740a5aaf7ff200fc5a736010",
+      "bytes": 26436,
+      "implementation_version": 2
+    },
+    "qpc_audit.py": {
+      "sha256": "cddbca2a95c0a20511e68838e4f6ad3b2ca222e0546f0bdca5aa890b08415b18",
+      "bytes": 8154
+    },
+    "transition.json": {
+      "sha256": "9716172db462f965d4d18decb5b107a616a56115815e08e517b26a235a31e2ca",
+      "bytes": 21092
+    },
+    "root-dso-pin.json": {
+      "sha256": "5364ea9f20aaab052916488a26b139b222acea223f7048a929fb3c9f6a292187",
+      "bytes": 1610
+    }
+  },
+  "response_accounting_implementation_version": 2,
+  "private_observation_pins": {
+    "observer_sha256": "f21a89054208be3c70701b8383de2f84d323159ecd7bb9fcfd889218379ceee1",
+    "observer_bytes": 21432,
+    "binding_sha256": "3ac9f93302c9c0e92ea1b102d1d334caf42c204e2b495fceff5960f0450059ef",
+    "provider_sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+    "private_api_adapter_sha256": "28c36951fa2c1fa7a346858b6514437250eeeabda3259e71445647c6ce3479bf",
+    "private_auth_wrapper_sha256": "85d7cdebfefb0ad41dad10bd368841969174abd4b21add1c9850776c0a4e51cd",
+    "common_api_native_identity_observation": true
+  },
+  "methodology": {
+    "requests_per_complete_cohort": 4,
+    "excluded_warmups_per_cohort": 1,
+    "measured_repetitions_per_cohort": 3,
+    "requests_sent_serially": true,
+    "raw_clock": "Direct CLOCK_MONOTONIC_RAW syscalls bracket one original steady-clock call.",
+    "native_clock": "Untouched native steady-clock values from the exact verified provider.",
+    "http_clock": "Windows QPC before posting through complete response.read, before persistence.",
+    "raw_aggregation": "Arithmetic mean of three per-request midpoint, lower and upper rates.",
+    "raw_numerators": "Processed prompt tokens and actual native/API generated output total.",
+    "native_decode_begin_count": 1,
+    "generated_delta_retained_separately": true,
+    "adjustment": "None. Observer overhead is retained with no scaling or subtraction.",
+    "api_phase_clock_qualified": false,
+    "full_responses_kept_private": true,
+    "headline_requires_three_complete_matching_arms": true
+  },
+  "profiles": {
+    "before": {
+      "sha256": "ff791f605a45b7e448ad0c8ebb0c6f4274954f97728a93f62fe1bf3ee20579e7",
+      "concurrency": 1,
+      "context": 32768,
+      "slots": 1,
+      "kv_pool_positions": 32768,
+      "prefill_chunk": 2048,
+      "max_prefill_tokens": 2048,
+      "prompt_cache": "Off",
+      "disable_vision": true,
+      "pld": "3,3",
+      "mtp_gate": "0.90",
+      "raw_observer_enabled": true
+    },
+    "candidate": {
+      "sha256": "2dd8a4e366cd908a2ea74a7e4deef5dbc2c64958a3808588f5b033a1fbf1f4fb",
+      "concurrency": 1,
+      "context": 32768,
+      "slots": 1,
+      "kv_pool_positions": 32768,
+      "prefill_chunk": 4096,
+      "max_prefill_tokens": 4096,
+      "prompt_cache": "Off",
+      "disable_vision": true,
+      "pld": "3,3",
+      "mtp_gate": "0.90",
+      "raw_observer_enabled": true
+    }
+  },
+  "arms": {
+    "before": {
+      "natural8192": {
+        "status": "complete",
+        "complete_cohort": true,
+        "phase_measurement_qualified": true,
+        "included_in_comparison": false,
+        "epoch_nonce": "0191000000000001",
+        "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+        "profile_sha256": "ff791f605a45b7e448ad0c8ebb0c6f4274954f97728a93f62fe1bf3ee20579e7",
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "native_request_id": 4,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "4ae90227259c057d1c3cd269720a0a3f27df1d45d7fd7eff4e9153c8de0b4aa5",
+            "response_sha256": "412e093ae310f96c4f31fcaaff9b056734fd3cb9feff41bff4264d5c8d8b6b97",
+            "journal_sha256": "ca94c28eaa55643773c0c91571fd9f1839ef92685b8a9c73f430b0d3bb44345c",
+            "http_qpc_seconds": 13.6089896,
+            "scoped": {
+              "head": {
+                "rounds": 57,
+                "drafted": 109,
+                "accepted": 69
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 10223.2,
+              "predicted_ms": 3344.4,
+              "prompt_per_second": 801.315,
+              "predicted_per_second": 38.273,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 10223248744,
+            "prefill_raw_lower_ns": 10223247397,
+            "prefill_raw_upper_ns": 10223249767,
+            "prefill_native_tps": 801.3108362258979,
+            "prefill_raw_tps_lower": 801.310756041905,
+            "prefill_raw_tps_upper": 801.3109418054319,
+            "prefill_raw_tps_mid": 801.3108489236578,
+            "decode_native_ns": 3344441578,
+            "decode_raw_lower_ns": 3344440019,
+            "decode_raw_upper_ns": 3344442879,
+            "decode_native_tps": 38.27245805159046,
+            "decode_raw_tps_lower": 38.27244316347016,
+            "decode_raw_tps_upper": 38.272475892174164,
+            "decode_raw_tps_mid": 38.272459527815165
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "native_request_id": 5,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "4ae90227259c057d1c3cd269720a0a3f27df1d45d7fd7eff4e9153c8de0b4aa5",
+            "response_sha256": "86e55a0ec0b9b61ff79cbc8c5d38f5c0d79b82688971f8d8cf63b1e4644482dc",
+            "journal_sha256": "eae4e85edc38c1bc2660342b12a64e948e2bb569944353820a807f01f131b08e",
+            "http_qpc_seconds": 9.680287,
+            "scoped": {
+              "head": {
+                "rounds": 57,
+                "drafted": 109,
+                "accepted": 69
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 7039.0,
+              "predicted_ms": 2620.8,
+              "prompt_per_second": 1163.802,
+              "predicted_per_second": 48.84,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 7038964530,
+            "prefill_raw_lower_ns": 7038963150,
+            "prefill_raw_upper_ns": 7038965250,
+            "prefill_native_tps": 1163.80754087988,
+            "prefill_raw_tps_lower": 1163.8074218366116,
+            "prefill_raw_tps_upper": 1163.8077690462123,
+            "prefill_raw_tps_mid": 1163.8075954413862,
+            "decode_native_ns": 2620838179,
+            "decode_raw_lower_ns": 2620836519,
+            "decode_raw_upper_ns": 2620839429,
+            "decode_native_tps": 48.839337363758695,
+            "decode_raw_tps_lower": 48.83931407001127,
+            "decode_raw_tps_upper": 48.83936829788963,
+            "decode_raw_tps_mid": 48.839341183935396
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "native_request_id": 6,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "4ae90227259c057d1c3cd269720a0a3f27df1d45d7fd7eff4e9153c8de0b4aa5",
+            "response_sha256": "526753715cc2e4b0e8f58b64e88fa08846870d297ed7982d66997068ff31ebac",
+            "journal_sha256": "568001ce72f0e65910d82df5b3e5ce37f9ad65ef0ac5be41c08c113886cf57e4",
+            "http_qpc_seconds": 10.2060952,
+            "scoped": {
+              "head": {
+                "rounds": 57,
+                "drafted": 109,
+                "accepted": 69
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 7551.9,
+              "predicted_ms": 2633.7,
+              "prompt_per_second": 1084.76,
+              "predicted_per_second": 48.601,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 7551852190,
+            "prefill_raw_lower_ns": 7551850711,
+            "prefill_raw_upper_ns": 7551853171,
+            "prefill_native_tps": 1084.766994095524,
+            "prefill_raw_tps_lower": 1084.7668531822412,
+            "prefill_raw_tps_upper": 1084.767206542836,
+            "prefill_raw_tps_mid": 1084.7670298625098,
+            "decode_native_ns": 2633671980,
+            "decode_raw_lower_ns": 2633670501,
+            "decode_raw_upper_ns": 2633673341,
+            "decode_native_tps": 48.6013448037671,
+            "decode_raw_tps_lower": 48.601319688112376,
+            "decode_raw_tps_upper": 48.6013720970025,
+            "decode_raw_tps_mid": 48.60134589254331
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "native_request_id": 7,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "4ae90227259c057d1c3cd269720a0a3f27df1d45d7fd7eff4e9153c8de0b4aa5",
+            "response_sha256": "8111a392301491587e13864cefc2375beda57138a5f3b869a7a4f73da30450ae",
+            "journal_sha256": "0ebe019c7530486fbde9f0a1762d3676031ea40c3bef0a6ba7d2f9f901d6c5c0",
+            "http_qpc_seconds": 9.6035474,
+            "scoped": {
+              "head": {
+                "rounds": 57,
+                "drafted": 109,
+                "accepted": 69
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 6927.5,
+              "predicted_ms": 2651.0,
+              "prompt_per_second": 1182.533,
+              "predicted_per_second": 48.284,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 6927534154,
+            "prefill_raw_lower_ns": 6927533164,
+            "prefill_raw_upper_ns": 6927534964,
+            "prefill_native_tps": 1182.5275513466636,
+            "prefill_raw_tps_lower": 1182.5274130799753,
+            "prefill_raw_tps_upper": 1182.5277203393262,
+            "prefill_raw_tps_mid": 1182.527566709631,
+            "decode_native_ns": 2651002139,
+            "decode_raw_lower_ns": 2651000479,
+            "decode_raw_upper_ns": 2651003379,
+            "decode_native_tps": 48.283627582542664,
+            "decode_raw_tps_lower": 48.28360499800027,
+            "decode_raw_tps_upper": 48.2836578167212,
+            "decode_raw_tps_mid": 48.28363140734629
+          }
+        ],
+        "summary": {
+          "excluded_warmups": 1,
+          "measured_repetitions": 3,
+          "mean_raw_tps": {
+            "prefill": {
+              "lower": 1143.7005626996095,
+              "mid": 1143.7007306711757,
+              "upper": 1143.7008986427916
+            },
+            "decode": {
+              "lower": 48.57474625204131,
+              "mid": 48.574772827941665,
+              "upper": 48.57479940387111
+            }
+          },
+          "native_clock_observations": {
+            "prefill_mean_tps": 1143.7006954406893,
+            "decode_mean_tps": 48.57476991668948
+          },
+          "api_reported_observations": {
+            "prefill_mean_tps": 1143.6983333333333,
+            "decode_mean_tps": 48.575
+          },
+          "actual_input_tokens": [
+            8192,
+            8192,
+            8192
+          ],
+          "actual_output_tokens": [
+            128,
+            128,
+            128
+          ],
+          "output_caps": [
+            128,
+            128,
+            128
+          ],
+          "mean_http_qpc_seconds": 9.829976533333333,
+          "pooled_scoped_counters": {
+            "head": {
+              "rounds": 171,
+              "drafted": 327,
+              "accepted": 207,
+              "acceptance_fraction": 0.6330275229357798
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false
+        },
+        "evidence": {
+          "collector_handle_sha256": "de0ab02125dab09bd7f5a09762fe59b46089ec7c3a55182f4b77e42ba73a12e9",
+          "raw_report_sha256": "036a48116d76ac40c9f59ea2a6c910bef87c9e032a63a30d9d3b0daa2ac52375",
+          "qpc_audit_sha256": "2bfc9895beeb78c0876f4bbd9520ec06ce1bb52c57591f4fee412fd85592fda2",
+          "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+          "binding_sha256": "3ac9f93302c9c0e92ea1b102d1d334caf42c204e2b495fceff5960f0450059ef"
+        }
+      },
+      "natural16384": {
+        "status": "complete",
+        "complete_cohort": true,
+        "phase_measurement_qualified": true,
+        "included_in_comparison": false,
+        "epoch_nonce": "0191000000000002",
+        "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+        "profile_sha256": "ff791f605a45b7e448ad0c8ebb0c6f4274954f97728a93f62fe1bf3ee20579e7",
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "native_request_id": 8,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "3e2006924876543bf1392e158463f080079dfba796162370a504e253feb3255d",
+            "response_sha256": "ac3234e2e2dda92af873ea5c755917febe6687dba0946047e63a2860549ac191",
+            "journal_sha256": "b77705de0c7da6ae13df56312d01071c6ad0cc31e628590c92c6aaaf449ae917",
+            "http_qpc_seconds": 19.2449841,
+            "scoped": {
+              "head": {
+                "rounds": 56,
+                "drafted": 107,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 16092.5,
+              "predicted_ms": 3108.3,
+              "prompt_per_second": 1018.114,
+              "predicted_per_second": 41.18,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 16092493704,
+            "prefill_raw_lower_ns": 16092492135,
+            "prefill_raw_upper_ns": 16092494946,
+            "prefill_native_tps": 1018.11442659925,
+            "prefill_raw_tps_lower": 1018.1143480223653,
+            "prefill_raw_tps_upper": 1018.1145258642688,
+            "prefill_raw_tps_mid": 1018.1144369433093,
+            "decode_native_ns": 3108314460,
+            "decode_raw_lower_ns": 3108313099,
+            "decode_raw_upper_ns": 3108315759,
+            "decode_native_tps": 41.17987470289605,
+            "decode_raw_tps_lower": 41.179857493364786,
+            "decode_raw_tps_upper": 41.17989273383685,
+            "decode_raw_tps_mid": 41.179875113593276
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "native_request_id": 9,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "3e2006924876543bf1392e158463f080079dfba796162370a504e253feb3255d",
+            "response_sha256": "282154bd9378cf0ed583e9b1693e4f21e3b0d20b06554f57b98d0680e1cb67e3",
+            "journal_sha256": "d89faf21ef2895b5dc0769148d08dcbd48add5229d5d7124c18e6f0298fb43c8",
+            "http_qpc_seconds": 17.0947845,
+            "scoped": {
+              "head": {
+                "rounds": 56,
+                "drafted": 107,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 14448.0,
+              "predicted_ms": 2577.0,
+              "prompt_per_second": 1133.998,
+              "predicted_per_second": 49.67,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 14448033032,
+            "prefill_raw_lower_ns": 14448032083,
+            "prefill_raw_upper_ns": 14448033653,
+            "prefill_native_tps": 1133.99519254366,
+            "prefill_raw_tps_lower": 1133.995143802701,
+            "prefill_raw_tps_upper": 1133.9952670286439,
+            "prefill_raw_tps_mid": 1133.9952054156693,
+            "decode_native_ns": 2577010622,
+            "decode_raw_lower_ns": 2577009062,
+            "decode_raw_upper_ns": 2577011602,
+            "decode_native_tps": 49.66995436777055,
+            "decode_raw_tps_lower": 49.66993547900992,
+            "decode_raw_tps_upper": 49.66998443562322,
+            "decode_raw_tps_mid": 49.669959957304506
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "native_request_id": 10,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "3e2006924876543bf1392e158463f080079dfba796162370a504e253feb3255d",
+            "response_sha256": "6708e9cd547dee19f71fecc627d1e3b27eb34c3c0530b9b04f44f5ca58df591d",
+            "journal_sha256": "3a69593b61d196260287fcb287e1d980bc8e7469d8387c51d23c41cc3e8e66e7",
+            "http_qpc_seconds": 17.1346534,
+            "scoped": {
+              "head": {
+                "rounds": 56,
+                "drafted": 107,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 14529.4,
+              "predicted_ms": 2581.1,
+              "prompt_per_second": 1127.645,
+              "predicted_per_second": 49.591,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 14529403048,
+            "prefill_raw_lower_ns": 14529401751,
+            "prefill_raw_upper_ns": 14529404271,
+            "prefill_native_tps": 1127.6444012099512,
+            "prefill_raw_tps_lower": 1127.644306291462,
+            "prefill_raw_tps_upper": 1127.644501871686,
+            "prefill_raw_tps_mid": 1127.6444040815657,
+            "decode_native_ns": 2581110400,
+            "decode_raw_lower_ns": 2581109139,
+            "decode_raw_upper_ns": 2581111710,
+            "decode_native_tps": 49.591059723753,
+            "decode_raw_tps_lower": 49.591034554641574,
+            "decode_raw_tps_upper": 49.59108395144852,
+            "decode_raw_tps_mid": 49.591059253032746
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "native_request_id": 11,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "3e2006924876543bf1392e158463f080079dfba796162370a504e253feb3255d",
+            "response_sha256": "c78f0fd99bd083965e02632ae675a864e4b766f0bb49d5e3484a86d39e7062ea",
+            "journal_sha256": "7c38a93df04085d2bda56e4b359670a284ce46878f2d575e6b80de1deb40820c",
+            "http_qpc_seconds": 17.3400027,
+            "scoped": {
+              "head": {
+                "rounds": 56,
+                "drafted": 107,
+                "accepted": 70
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 14741.3,
+              "predicted_ms": 2571.8,
+              "prompt_per_second": 1111.435,
+              "predicted_per_second": 49.771,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 14741330039,
+            "prefill_raw_lower_ns": 14741328569,
+            "prefill_raw_upper_ns": 14741330930,
+            "prefill_native_tps": 1111.4329546013905,
+            "prefill_raw_tps_lower": 1111.4328874238224,
+            "prefill_raw_tps_upper": 1111.4330654330863,
+            "prefill_raw_tps_mid": 1111.432976428447,
+            "decode_native_ns": 2571806443,
+            "decode_raw_lower_ns": 2571804833,
+            "decode_raw_upper_ns": 2571807683,
+            "decode_native_tps": 49.77046400532717,
+            "decode_raw_tps_lower": 49.770440008441334,
+            "decode_raw_tps_upper": 49.77049516260863,
+            "decode_raw_tps_mid": 49.7704675855097
+          }
+        ],
+        "summary": {
+          "excluded_warmups": 1,
+          "measured_repetitions": 3,
+          "mean_raw_tps": {
+            "prefill": {
+              "lower": 1124.3574458393284,
+              "mid": 1124.357528641894,
+              "upper": 1124.357611444472
+            },
+            "decode": {
+              "lower": 49.67713668069761,
+              "mid": 49.67716226528232,
+              "upper": 49.67718784989346
+            }
+          },
+          "native_clock_observations": {
+            "prefill_mean_tps": 1124.357516118334,
+            "decode_mean_tps": 49.67715936561691
+          },
+          "api_reported_observations": {
+            "prefill_mean_tps": 1124.3593333333333,
+            "decode_mean_tps": 49.67733333333334
+          },
+          "actual_input_tokens": [
+            16384,
+            16384,
+            16384
+          ],
+          "actual_output_tokens": [
+            128,
+            128,
+            128
+          ],
+          "output_caps": [
+            128,
+            128,
+            128
+          ],
+          "mean_http_qpc_seconds": 17.189813533333332,
+          "pooled_scoped_counters": {
+            "head": {
+              "rounds": 168,
+              "drafted": 321,
+              "accepted": 210,
+              "acceptance_fraction": 0.6542056074766355
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false
+        },
+        "evidence": {
+          "collector_handle_sha256": "58d7ac0e08538495da7e8c139bac899edab74ca8fc65a7c1464203755dbc13c0",
+          "raw_report_sha256": "8355f1bb1b2713c11b74558bb873a1f2ae8c0956d1e93b7b65e5d4f7d04680ad",
+          "qpc_audit_sha256": "acaa484b0553f9381fb6299c2d292a896fc6f549acd02cfa052852a221cc2740",
+          "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+          "binding_sha256": "3ac9f93302c9c0e92ea1b102d1d334caf42c204e2b495fceff5960f0450059ef"
+        }
+      }
+    },
+    "candidate": {
+      "natural8192": {
+        "status": "failed_or_partial",
+        "complete_cohort": false,
+        "phase_measurement_qualified": false,
+        "included_in_comparison": false,
+        "summary": null,
+        "collector_reported_completed_requests": 1,
+        "saved_samples": 1,
+        "saved_responses": 1,
+        "saved_journals": 4,
+        "fully_flushed_journals": 1,
+        "excluded_warmup_only": true,
+        "unsupported": false,
+        "restart_required": true,
+        "error_type": "ValueError",
+        "evidence": {
+          "handle_sha256": "ff99c944c8782b0110305acb32727667191ecf7ef75472cb1adbce702d9e8729",
+          "sample_sha256": [
+            "61d1dc44e08a851ab682222e0dd08fd51db0ac9f27e1f41793bed6a58178d106"
+          ],
+          "response_sha256": [
+            "471bdddd1e56a8f9ca10fd86de3e05a9d162e2859c02ab0cf752243a6b085173"
+          ],
+          "journal_sha256": [
+            "b04b564b440f5c51a024366c5535adc2f6112f252e47399f013db23b2223db36",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          ],
+          "journal_bytes": [
+            8768,
+            0,
+            0,
+            0
+          ],
+          "serial_oracle_sha256": {}
+        }
+      },
+      "natural16384": {
+        "status": "not_started",
+        "complete_cohort": false,
+        "phase_measurement_qualified": false,
+        "included_in_comparison": false,
+        "summary": null,
+        "collector_reported_completed_requests": 0,
+        "saved_samples": 0,
+        "saved_responses": 0,
+        "saved_journals": 0,
+        "fully_flushed_journals": 0,
+        "excluded_warmup_only": false,
+        "unsupported": false,
+        "restart_required": false,
+        "error_type": null,
+        "evidence": {
+          "handle_sha256": null,
+          "sample_sha256": [],
+          "response_sha256": [],
+          "journal_sha256": [],
+          "journal_bytes": [],
+          "serial_oracle_sha256": {}
+        }
+      }
+    },
+    "after": {
+      "natural8192": {
+        "status": "not_started",
+        "complete_cohort": false,
+        "phase_measurement_qualified": false,
+        "included_in_comparison": false,
+        "summary": null,
+        "collector_reported_completed_requests": 0,
+        "saved_samples": 0,
+        "saved_responses": 0,
+        "saved_journals": 0,
+        "fully_flushed_journals": 0,
+        "excluded_warmup_only": false,
+        "unsupported": false,
+        "restart_required": false,
+        "error_type": null,
+        "evidence": {
+          "handle_sha256": null,
+          "sample_sha256": [],
+          "response_sha256": [],
+          "journal_sha256": [],
+          "journal_bytes": [],
+          "serial_oracle_sha256": {}
+        }
+      },
+      "natural16384": {
+        "status": "not_started",
+        "complete_cohort": false,
+        "phase_measurement_qualified": false,
+        "included_in_comparison": false,
+        "summary": null,
+        "collector_reported_completed_requests": 0,
+        "saved_samples": 0,
+        "saved_responses": 0,
+        "saved_journals": 0,
+        "fully_flushed_journals": 0,
+        "excluded_warmup_only": false,
+        "unsupported": false,
+        "restart_required": false,
+        "error_type": null,
+        "evidence": {
+          "handle_sha256": null,
+          "sample_sha256": [],
+          "response_sha256": [],
+          "journal_sha256": [],
+          "journal_bytes": [],
+          "serial_oracle_sha256": {}
+        }
+      }
+    }
+  },
+  "comparison_qualification": {
+    "natural8192": {
+      "qualified": false,
+      "all_three_arms_complete": false,
+      "same_request_sha256": false,
+      "same_output_sha256": false,
+      "same_actual_input_tokens": false,
+      "same_actual_output_tokens": false
+    },
+    "natural16384": {
+      "qualified": false,
+      "all_three_arms_complete": false,
+      "same_request_sha256": false,
+      "same_output_sha256": false,
+      "same_actual_input_tokens": false,
+      "same_actual_output_tokens": false
+    }
+  },
+  "qualified_cases": [],
+  "single_condition_qualified_cohorts": [
+    {
+      "arm": "before",
+      "case": "natural8192"
+    },
+    {
+      "arm": "before",
+      "case": "natural16384"
+    }
+  ],
+  "first_preoverlay_attempt": null,
+  "final_runtime": {
+    "restored": true,
+    "readiness_available": true,
+    "profile_sha256": "0d92158fe58e5ae278eba173aa4d40a0f4978cbc6d8e0bb5e5ca45c44c713cca",
+    "context": 32768,
+    "slots": 2,
+    "kv_pool_positions": 65536
+  },
+  "evidence": {
+    "campaign_handle_sha256": "8e55df1c98657332aa876c24cd712acc4674189b53a3e3fe9c5827433b907414",
+    "executed_source_manifest_sha256": "d4436697849bdb8a136ce76c22b350d2a9094ab9c64f30d1e69a3852f4b0f45d"
+  },
+  "exporter_sha256": "1138e2a1b1f1b30aa90e99aa9ffa98597e8f1b69aa5d642e64e2106bdf2f253e"
+}

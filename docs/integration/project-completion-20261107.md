@@ -1,10 +1,30 @@
 # Halogen update and project consolidation, 7 November 2026
 
-Halogen 0.19.1 is installed and the selected v2 text server is ready on
-`http://127.0.0.1:8840/v1`. API and engine versions agree. Authenticated model
-discovery advertises `halogen-v2`. The persistent Voice selection points to
-the verified new profile. The normal Voice startup check completed successfully.
+Halogen 0.19.1 was installed and qualified with the normal v2 text profile on
+`http://127.0.0.1:8840/v1`. The dated runtime receipts recorded matching API and
+engine versions, authenticated discovery of `halogen-v2` and the persistent
+Voice selection of the verified profile. The normal Voice startup check
+completed successfully. The **13:04 UTC** readiness record is a historical
+snapshot. After the later campaigns, the **7 November 15:31:03 UTC** functional
+check recorded the normal two-slot, pool-65536, concurrency-two, paired-2048
+profile ready with controller/backend PIDs **25272/28248**. Model discovery
+returned HTTP 401 without authentication and HTTP 200 with authentication.
+Authenticated chat returned HTTP 200 and `READY`. The same runtime identities
+were ready and idle before and after that functional availability request.
+The private proof is
+`server/.local/halogen-update-20261107/primary0191/final-functional-check/proof.json`.
 [Update record](../research/halogen0191-update-20261107.md).
+
+The qualification flags in the package's `release.json` retain static
+prequalification artifact metadata. The separate dated runtime and provider
+receipts supply the observed qualification evidence.
+
+The **15:13 UTC** bounded source check retained **0.19.1** as the latest official
+tag and image with the same immutable identities. Direct Reddit access returned
+HTTP 403 and cached web listings left current subreddit freshness unverified.
+The next refresh is due at or after **17:13:05 UTC**.
+[Official package](https://github.com/peonist-ai/halogen-flash-server/pkgs/container/halogen-flash-server),
+[official tag](https://github.com/peonist-ai/halogen-flash-server/tree/v0.19.1).
 
 ## Source consolidation
 
@@ -46,17 +66,41 @@ test target and supplied through `PYTHONPATH`. The private test logs, final
 summary and startup-check receipt are retained under
 `server/.local/halogen-update-20261107/voice-completion/`.
 
-The selected runtime uses two 32768-position slots, pool 65536, concurrency two
-and paired 2048 prefill settings. Its complete 8K/16K observations retain the
-actual input lengths, API phase values, acceptance counts and Windows QPC
-whole-request times. A separate larger-arena candidate stopped at request
-admission after its excluded warmup. The 2048 configuration is the current
+The normal serving profile selects two 32768-position slots, pool 65536,
+concurrency two and paired 2048 prefill settings. Its earlier complete 8K/16K
+observations used synthetic prose and a contiguous novel excerpt respectively,
+and retain actual input lengths, API phase values, acceptance counts and
+Windows QPC whole-request times. A separate larger-arena candidate stopped at
+request admission after its excluded warmup. The 2048 configuration is the current
 launcher default. [Measurement report](../benchmarks/halogen0191-natural-8k16k-20261107.md).
+
+A later genuine natural **8192-token RAW cohort** completed one excluded warmup
+and three measurements. The two-slot, pool-65536, paired-2048 PLD `3,3` before
+arm recorded RAW midpoint means of
+**1185.559992 prefill tok/s** and **48.802438 decode tok/s**, with pooled
+native-head acceptance **207/327, or 63.30275%**. The full PLD comparison failed
+before a matched three-arm result qualified. Its 16K case completed only the
+excluded warmup, and the code oracle failed. RAW bounds include observer
+overhead and API phase clocks remain unqualified.
+[PLD RAW report](../benchmarks/halogen0191-pld34-raw-20261107.md).
+
+The separate prefill comparison completed genuine natural 8K and 16K before
+cohorts with **one slot, pool 32768, concurrency one and paired 2048 prefill
+settings**. Each excluded one warmup and included three measurements with 128
+actual output tokens. RAW midpoint prefill/decode means were
+**1143.700731/48.574773 tok/s** and **1124.357529/49.677162 tok/s**, with pooled
+native-head counts **207/327 (63.30275%)** and **210/321 (65.42056%)** respectively.
+Its paired-4096 candidate completed only the 8K excluded warmup before failing
+the 22 GiB request-entry gate. The campaign ended and restored the normal
+two-slot/2048 profile.
+[Prefill RAW report](../benchmarks/halogen0191-prefill4096-raw-20261107.md).
 
 ## Remaining optimization scope
 
-Independent RAW qualification for these new phase clocks, a matched engine-only
-comparison and a beneficial NPU contribution remain open. The current OEM mode
+Independent qualification of the API phase clocks, a completed matched PLD
+comparison, qualified 4096-prefill gain, a matched engine-only comparison and a
+beneficial NPU contribution remain required for the broader project acceleration
+goal. The OEM mode
 readback requires an elevated process. The source refresh identified further
 kernel and speculative-verification mechanisms in WHIRL and libosmos for
 separate qualification. [WHIRL release](https://github.com/tsaipifong/whirl-llm/releases/tag/v0.2.5.1),
