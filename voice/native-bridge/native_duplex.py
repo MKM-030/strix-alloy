@@ -1075,7 +1075,7 @@ class NativeDuplex:
                 or active is not None and active.fallback_snapshot == snapshot and self._valid(active)):
             return
         LOG.info('Voice independent help call=%s stage=fallback reason=%s', self.call.call_id, reason)
-        self._enqueue('Ich kann Ihre Frage gerade nicht zuverlässig beantworten.', turn, kind='local',
+        self._enqueue('Ich kann gerade keine verlässliche Antwort geben.', turn, kind='local',
                       fallback_snapshot=snapshot)
 
     def _repeat_last_reply(self):

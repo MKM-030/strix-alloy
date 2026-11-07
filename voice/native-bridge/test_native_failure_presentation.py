@@ -14,6 +14,17 @@ class FailurePresentationTests(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.lane.close()
 
+    async def test_statement_failure_is_neutral_and_preserves_original_fifo(self):
+        original = (0, 'Ein Laptop für Mara Testfeld.', 1, 'original-statement', 0)
+        self.lane._bootstrap_state = 'pending'
+        await self.lane._accept(original)
+        self.lane._enqueue_help_fallback(original, reason='controller_busy')
+        self.assertEqual([item.text for item in self.lane._outputs],
+                         ['Ich kann gerade keine verlässliche Antwort geben.'])
+        self.assertEqual(list(self.lane._pending), [original])
+        self.assertEqual(list(self.lane._raw), [original[1]])
+        self.assertEqual(self.call.dialog.calls, [])
+
     async def test_repeated_same_failure_snapshot_has_one_truthful_short_message(self):
         self.lane._enqueue_help_fallback(self.turn)
         self.lane._enqueue_help_fallback((0, 'Noch eine Frage.', 2, 'second', 0))

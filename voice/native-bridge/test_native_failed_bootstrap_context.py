@@ -7,9 +7,9 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from conversation_repair import NATURAL_CONVERSATION_PROMPT
-from local_llm_socket import model_messages
+from local_llm_socket import CONTROLLER_CHAT_URL, LocalTextSocket, model_messages
 from native_backend import BackendEvent
-from native_duplex import NativeDuplex
+from native_duplex import NativeDuplex, _conversation_class
 from servicenow_voice_context import build_servicenow_voice_context
 from test_native_duplex import FakeCall
 from test_native_duplex_claim_release import SentenceModel
@@ -40,14 +40,24 @@ class FailedBootstrapContextTests(unittest.IsolatedAsyncioTestCase):
                     call.dialog.input_boundary = dict(source='servicenow_input_control',
                         controlType='InputText', businessRequestId=request_id, label=requirement)
                     lane.question_context = lambda: (requirement, 'servicenow_input_control', True)
+                source = LocalTextSocket(CONTROLLER_CHAT_URL, 'C:/synthetic-unused-token')
+                adapter = _conversation_class()(lambda: source)
                 try:
                     key, snapshot, observation = lane._dialogue_snapshot(turn, lane.epoch)
                     seed = NATURAL_CONVERSATION_PROMPT + '\n' + build_servicenow_voice_context().system_prompt_fragment
-                    messages = model_messages(seed, json.dumps(snapshot), correction)
+                    await adapter.start(call.call_id, lane.epoch, seed)
+                    messages = model_messages(source._seed, json.dumps(snapshot), correction)
+                    self.assertIn('final ASR wording. Preserve original words and later corrections as evidence.',
+                        messages[0]['content'])
+                    self.assertIn('Ground technical destinations and capabilities in the configured integration '
+                        'and observed state.', messages[0]['content'])
+                    self.assertIn('Technische Gegenstellen und Verbindungsmöglichkeiten folgen aus der '
+                        'konfigurierten ServiceNow-Anbindung und dem beobachteten Stand.',
+                        messages[0]['content'])
                     self.assertIn('Bei einer sprachlich unklaren Namensnennung oder Äußerung frage kurz '
                         'nur zu dem unklaren Teil nach.', messages[0]['content'])
                     self.assertIn('Bewahre ursprüngliche Formulierungen und spätere Korrekturen als '
-                        'Gesprächsinhalt und erfinde keine kanonische Namensform.', messages[0]['content'])
+                        'vorläufigen Gesprächsinhalt. Erfinde keine kanonische Namensform.', messages[0]['content'])
                     self.assertEqual(json.loads(messages[2]['content'])['raw_inputs'], [original, correction])
                     self.assertEqual(messages[-1]['content'], correction)
                     self.assertNotIn(original, messages[0]['content'] + messages[1]['content'])
@@ -78,6 +88,7 @@ class FailedBootstrapContextTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual([item[1] for item in lane._pending], [original, correction])
                     self.assertEqual(call.dialog.calls, [])
                 finally:
+                    await adapter.close()
                     call.closed = True
                     await lane.close()
 
