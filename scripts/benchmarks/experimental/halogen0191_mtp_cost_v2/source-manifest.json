@@ -1,0 +1,79 @@
+{
+  "schema": "halogen0191.mtp-cost-v2-source-archive.v1",
+  "scope": "Exact source snapshots plus portable sanitized trace-counter replay",
+  "sources": {
+    "snapshots/root_campaign.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/root_campaign.py",
+      "sha256": "f6ffa51f7fd9c310a3abe75fee151a209189aa22bcef6a467876ff2ef11e84a1",
+      "bytes": 40006
+    },
+    "snapshots/mtp_cost_trace.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/mtp_cost_trace.py",
+      "sha256": "b88df08b942b14b00a3a51b6f3876b1263948991d4494664913949997237ea1e",
+      "bytes": 3285
+    },
+    "snapshots/export_comparison.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/export_comparison.py",
+      "sha256": "c152db5943ebe4b6a8b6422d29c1d1856b3cf7c253529cf967938b0d1ba5552c",
+      "bytes": 60141
+    },
+    "snapshots/prepare_integration.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/prepare_integration.py",
+      "sha256": "9973fccadf572e7dd1e7e13ad6f6281cbbcb93a6251058e2450e01fb9738a1ef",
+      "bytes": 4017
+    },
+    "snapshots/test_cost_campaign.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/test_cost_campaign.py",
+      "sha256": "a13a588bd8b4887c106f2c17c970c7babd2b5004574f6114b5beba6b78967b26",
+      "bytes": 20194
+    },
+    "snapshots/test_mtp_cost_trace.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/test_mtp_cost_trace.py",
+      "sha256": "a22a0df6f1a69975c6b1a4c048d8b677ea9567dbdf1b4c7b5dfbca8c935ea8bf",
+      "bytes": 4946
+    },
+    "snapshots/test_actual_trace.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/test_actual_trace.py",
+      "sha256": "7e68d6ccedc6ab646d268e64502a862c98f0ac321182ef046182d8e6fd3c7f04",
+      "bytes": 2305
+    },
+    "snapshots/test_export_comparison.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/test_export_comparison.py",
+      "sha256": "7caae54d7e7630697aff4a85fe299596c74bb190064ca6f105050d1722cbe3d5",
+      "bytes": 4910
+    },
+    "snapshots/test_cost_evidence.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep-v2/test_cost_evidence.py",
+      "sha256": "6cc106974e0f76b804f184c907fad8eabe9ea9b033bd595877af1dde6467c864",
+      "bytes": 22662
+    },
+    "snapshots/v1/mtp_cost_trace.py": {
+      "original_path": "server/.local/halogen-update-20261107/primary0191/cost-gate-cohort-prep/mtp_cost_trace.py",
+      "sha256": "1fe0b63a5f700802977fadf103ce196115f6215fc959cb96cf35e0ffce0d695a",
+      "bytes": 3172
+    }
+  },
+  "fixtures": {
+    "fixtures/native-trace.txt": {
+      "sha256": "681d4169ea0dba6a6c6e9515554104a04b659b93efaee318038ccc4b8dd91c23",
+      "bytes": 1279
+    },
+    "fixtures/api-speculation.json": {
+      "sha256": "304235459e25f9fa830a2029b18353939f1d9e36ed2a73fbed64f9db01fa3d17",
+      "bytes": 1637
+    }
+  },
+  "fixture_derivation": {
+    "native_log_source": {
+      "sha256": "6e26ad4a2416dd269504da1f8b0e13b641f1007dcf7e20a22718d6ac1ccf8373",
+      "bytes": 147915
+    },
+    "samples_source": {
+      "sha256": "3afd8adb9a49de5d27d88b4d57d075ca474f276050a6ad49d84ad241cfd15e86",
+      "bytes": 10070
+    },
+    "retained": "One actual native startup banner, request4/5/6/7 spec trace lines, matching API request IDs and speculation counters only",
+    "removed": "Timestamps, unrelated startup/API logs, request/response text, machine paths, process/run identities and timings",
+    "aggregate_accepted_unit": "Unasserted; legacy_accepted is diagnostic and not an API accepted-token counter"
+  }
+}

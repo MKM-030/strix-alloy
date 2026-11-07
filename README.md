@@ -64,8 +64,10 @@ The table gives mean RAW midpoint rates, including observer overhead.
 The two-slot row belongs to the PLD comparison's before arm. The one-slot rows
 belong to the separate prefill comparison's before arm. Its paired 4096
 candidate completed only the 8K warmup before failing the 22 GiB request-entry
-gate. Qualified PLD speedup, 4096-prefill gain and beneficial NPU contribution
-remain open. API phase clocks remain unqualified.
+gate. Its warmup output also differed from the control, so neither timing nor
+output preservation establishes a qualified 4096-prefill gain. Qualified PLD
+speedup and beneficial NPU contribution remain open. API phase clocks remain
+unqualified.
 [PLD RAW report](docs/benchmarks/halogen0191-pld34-raw-20261107.md),
 [prefill RAW report](docs/benchmarks/halogen0191-prefill4096-raw-20261107.md).
 
@@ -92,8 +94,19 @@ workload-specific scope and both earlier failures.
 
 The subsequent source audit closes another K4 chain-length trial on that log
 case and prepares an existing Q8 draft-vocabulary control for a separate frozen
-comparison. The selected server retains its current profile while resource
-admission is pending. [Mechanism audit and preparation](docs/research/halogen0191-mtp-next-mechanisms-20261107.md).
+comparison. The first native MTP cost-rule attempt completed four 8K control
+requests, then failed counter qualification: the helper had incorrectly equated
+a legacy aggregate scalar with accepted-token counts. No cost-rule arm was
+measured and no comparative gain qualified. Normal serving was restored.
+
+The [corrected V2 protocol](docs/benchmarks/halogen0191-mtp-cost-gate-plan-20261107-v2.md)
+is registered and source-verified, with exact scoped-counter checks and real-log
+replay. It remains unstarted: the 21:47 UTC entry check found about 20.8 GiB
+physical memory free, below the unchanged 22 GiB request/pre-stop requirement.
+The selected server retains its normal profile. Background Riot services alone
+are not a blocker; actual games and competing GPU activity remain excluded.
+[Mechanism audit](docs/research/halogen0191-mtp-next-mechanisms-20261107.md),
+[actual failure and corrected comparison](docs/research/halogen0191-update-20261107.md#actual-counter-failure-and-corrected-comparison-2147-utc).
 
 Earlier two-slot/2048 API observations used the synthetic 8K fixture and natural
 16K fixture. Their prefill/decode means were **1191.85 / 46.62 tok/s** and

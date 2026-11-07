@@ -467,3 +467,46 @@ Windows reserve impact remains unmeasured. The earlier 4096 attempt changed
 greedy output on its candidate warmup and has no qualified measured speed.
 The historical 1913 versus 1124 prefill rates remain confounded. No new arena
 comparison or second hardware campaign has started.
+
+
+## Delivery verification (21:54 UTC)
+
+A fresh read of the [official tags](https://github.com/peonist-ai/halogen-flash-server/tags)
+and [changelog](https://github.com/peonist-ai/halogen-flash-server/blob/main/CHANGELOG.md)
+confirmed that 0.19.1 remains the latest published version. Its public commit
+is `47ceb439fd97ef4b62cc18042fda505113546567`. Authenticated local health
+checks confirmed matching API and engine 0.19.1, the exact selected one-slot
+32768-position profile, paired 2048 prefill limits, and an idle, ready endpoint
+at `http://127.0.0.1:8840/v1`. Controller 19368 and backend 24360 retained
+the captured creation-time identities; no lifecycle or benchmark coordinator
+was active.
+
+Physical reserve was 20.51 GiB and commit headroom 112.37 GiB. The registered
+V2 comparison still requires 22 GiB of each before any stop or cohort request;
+no additional generation or restart was attempted. Source registration was
+revalidated against the committed plan and actual frozen sources. This
+release check does not replace the scheduled broader driver/source review.
+The private verification receipt is
+`primary0191/cost-gate-cohort-prep-v2/delivery-verification-20261107.json`.
+
+The normal server remains available for ServiceNow. Delivery of the current
+implementation and documentation does not close the performance objective:
+the cost-rule comparison, a qualified higher-prefill configuration and a
+beneficial NPU contribution remain unresolved. The last qualified one-slot
+natural-text means remain 1143.70 prefill / 48.57 decode tok/s with 63.30%
+head acceptance at 8192 input tokens, and 1124.36 / 49.68 tok/s with 65.42%
+at 16384 input tokens. Each uses 128 output tokens, one excluded warmup and
+three measured requests, Cache Off and Thinking Off; these are completed
+control cohorts, not evidence of a cost-rule speedup.
+
+
+The [tracked source archive](../../scripts/benchmarks/experimental/halogen0191_mtp_cost_v2/README.md)
+now preserves exact coordinator/helper/exporter sources and focused tests,
+plus a sanitized real trace fixture. Six portable standard-library tests
+reproduce the original counter failure, verify the correction and reject
+counter, request-ID and rule drift. Source and fixture hashes are verified
+by the replay. The snapshots retain their original private-layout dependencies;
+they are not a fresh-clone hardware launcher. Full prompts, responses, credentials,
+models and generated runtime state remain outside this archive. Three existing
+0.19.1 profile/forwarding tests also pass. No new throughput measurements are
+claimed by these CPU checks.
