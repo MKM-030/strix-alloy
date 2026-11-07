@@ -17,6 +17,25 @@ class WordingTests(unittest.TestCase):
         self.assertTrue(claim('Dies ist keine gültige Gegenstelle.'))
         self.assertTrue(claim('Der Zielname Nordhafen ist ungültig.'))
 
+    def test_observed_connection_function_denial_without_target_assumptions(self):
+        for text in (
+            'Ich habe keine technischen Verbindungsfunktionen.',
+            'Ich besitze keine Verbindungsfunktionen.',
+            'Ich kann keine Verbindung zu „Team Blau“ herstellen, da ich keine technischen Verbindungsfunktionen habe.',
+            'Ich kann das nicht tun, weil ich keine Verbindungsfunktionen besitze.'):
+            with self.subTest(text=text):
+                self.assertTrue(claim(text))
+                self.assertFalse(claim(text,(text.upper(),)))
+        for text in (
+            'Habe ich keine technischen Verbindungsfunktionen?',
+            'Sie sagten: „Ich habe keine technischen Verbindungsfunktionen.“',
+            'Wenn ich keine technischen Verbindungsfunktionen habe, kann ich das nicht prüfen.',
+            'Ich habe möglicherweise keine technischen Verbindungsfunktionen.',
+            'Ich habe keine eigene Telefonnummer.',
+            'Die Verbindung zu ServiceNow konnte nicht vorbereitet werden.',
+            'Ich kann gerade keine Verbindung zu ServiceNow herstellen.'):
+            with self.subTest(text=text): self.assertFalse(claim(text))
+
     def test_qualified_language_and_clause_local_exceptions(self):
         for text in ('Ist dies kein gültiger Zielname?',
             'Sie sagten: „Dies ist kein gültiger Zielname.“',
@@ -67,8 +86,28 @@ class ReleaseTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(list(self.lane._pending), [self.turn])
             self.assertEqual(self.call.dialog.calls, [])
 
+    async def test_historical_function_denial_hard_rejects_whole_optional_reply(self):
+        self.lane._bootstrap_state='failed'
+        self.lane._backend_unavailable=True
+        first='Ich kann keine Verbindung zu „Aschloch“ herstellen, da ich keine technischen Verbindungsfunktionen habe.'
+        remainder='Bitte nennen Sie mir die benötigten Angaben für Lea Odlmäde, wie Eintrittsdatum, Führungskraft und Lieferort.'
+        model=SentenceModel([first,remainder])
+        self.lane.conversation=model
+        await self.lane._general_help(self.turn,self.lane.epoch)
+        self.assertEqual(model.offered,[first])
+        self.assertTrue(model.closed)
+        self.assertIsNone(self.lane.conversation)
+        self.assertEqual([item.text for item in self.lane._outputs],[self.lane._status()])
+        self.assertEqual(list(self.lane._pending),[self.turn])
+        self.assertEqual(self.call.dialog.calls,[])
+
     async def test_only_current_owned_matching_outputtext_corroborates(self):
-        text = 'Dies ist kein gültiger Zielname.'
+        await self.check_owned_outputtext('Dies ist kein gültiger Zielname.')
+
+    async def test_only_current_owned_function_denial_corroborates(self):
+        await self.check_owned_outputtext('Ich habe keine technischen Verbindungsfunktionen.')
+
+    async def check_owned_outputtext(self, text):
         self.call.dialog.business_request_id = 'native-request'
         model = SentenceModel([])
         self.lane.conversation = model

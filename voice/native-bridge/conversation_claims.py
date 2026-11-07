@@ -111,7 +111,7 @@ def unproven_storage_or_check_claim(text):
 
 
 def unproven_technical_destination_claim(text, current_outputs=()):
-    """Hold direct destination-validity assertions without owned native evidence.
+    """Hold direct destination/function assertions without owned native evidence.
 
     This is a narrow German wording class, not name validation or intent
     recognition. Exact current OutputText equivalence is the sole exception.
@@ -136,6 +136,15 @@ def unproven_technical_destination_claim(text, current_outputs=()):
                     or re.search(r'\b(?:allgemein|grundsätzlich|üblicherweise|normalerweise|typischerweise|beispielsweise)\b', clause)
                     or re.search(r'\b(?:laut|sagte[n]?|sagen|meinte[n]?|behauptet|berichtete)\b', clause)):
                 continue
+            # Absence of configured connection functions is an architectural
+            # claim, unlike a current connection failure. Recognize only direct
+            # first-person possession and its causal subordinate form; quoted,
+            # conditional and reported clauses remain nonassertions above.
+            functions = r'keine\s+(?:technischen\s+)?verbindungsfunktionen?\b'
+            if (re.match(r'ich\s+(?:habe|besitze)\s+' + functions, clause)
+                    or re.search(r'\b(?:da|weil)\s+ich\s+' + functions
+                                 + r'\s+(?:habe|besitze)\b', clause)):
+                return True
             # Complement causes and target-validity predicates cover the
             # observed class, regardless of the target's actual spelling.
             if (re.search(r'\b(?:ist|sind)\s+' + invalid + r'\s+' + destination + r'\b', clause)
