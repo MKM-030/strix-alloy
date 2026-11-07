@@ -165,6 +165,37 @@ def gateway_args():
             str(GATEWAY_CONFIG), '--port', '8841', '--log', str(ACTIVE / 'server/.local/scc-gateway.log')]
 
 
+
+def gateway_listener():
+    """Recognize the canonical launcher or the bounded central recovery argv."""
+    sockets = services.listeners(8841)
+    if not sockets:
+        return None
+    owners = {item.pid for item in sockets}
+    if len(owners) != 1 or any(item.laddr.ip != '127.0.0.1' for item in sockets):
+        raise RuntimeError('Gateway-Port ist nicht eindeutig lokal zugeordnet.')
+    pid = next(iter(owners))
+    actual = services.process_args(pid)
+    cwd = Path(services.psutil.Process(pid).cwd()).resolve(strict=True)
+    if cwd != ACTIVE.resolve(strict=True):
+        raise RuntimeError('Gateway-Arbeitsverzeichnis entspricht nicht der zentralen Laufzeit.')
+    canonical = gateway_args()
+    if not actual or actual[1:] != canonical[1:]:
+        if (len(actual) != 8 or actual[1:3] != ['-u', '-B']
+                or actual[4] != '--config' or actual[6:] != ['--port', '8841']):
+            raise RuntimeError('Gateway-Prozess entspricht nicht der zentralen Laufzeit.')
+        script, config = Path(actual[3]), Path(actual[5])
+        script = (script if script.is_absolute() else cwd / script).resolve(strict=True)
+        config = (config if config.is_absolute() else cwd / config).resolve(strict=True)
+        if (script != (ACTIVE / 'server/gateway.py').resolve(strict=True)
+                or config != GATEWAY_CONFIG.resolve(strict=True)):
+            raise RuntimeError('Gateway-Pfade entsprechen nicht der zentralen Laufzeit.')
+    # Anchor executable authority to configured Python, never to actual argv[0].
+    if services.owned_listener(8841, [str(PYTHON), *actual[1:]]) != pid:
+        raise RuntimeError('Gateway-Prozessidentitaet wurde geaendert.')
+    return pid
+
+
 def gateway_ready(profile, require_health=True):
     config = read_json(GATEWAY_CONFIG)
     # Fixed model identities cannot be dynamic compatibility aliases.
@@ -176,7 +207,7 @@ def gateway_ready(profile, require_health=True):
             or config.get('backend', {}).get('upstream') != 'http://127.0.0.1:8840'
             or credential(GATEWAY_CONFIG, 'backend_token_file') != credential(PROFILE)):
         raise RuntimeError('Gateway ist noch nicht mit dem zentralen Controller verbunden.')
-    if not services.owned_listener(8841, gateway_args()):
+    if not gateway_listener():
         return False
     if not require_health:
         return True
