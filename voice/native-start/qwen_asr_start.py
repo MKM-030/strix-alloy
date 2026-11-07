@@ -26,7 +26,7 @@ BACKEND = 'qwen3-asr-0.6b'
 URL = 'http://127.0.0.1:8851/v1/audio/transcriptions'
 NATIVE_MANIFEST = Path(r'C:\Projects\strix-alloy-clean\server\.local\voice-deployment\native-asr-artifacts.local.json')
 # Root fills this only after final qualified GGUF bytes and manifest review.
-NATIVE_MANIFEST_SHA256 = 'ed0b8eb19c656412151a949a5b6d8c203cae142d022278daecba72e8ce25a52b'
+NATIVE_MANIFEST_SHA256 = '464817c0014f760dd1985fa09778d03971395530b43f2e086bf31f4e100f64da'
 PINS = {
     SCRIPT: '211db87c455eacfb891d109d040a3beb95feca79a6b16d78b8b1e65e971a993e',
     PYTHON: '0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14',
@@ -92,6 +92,7 @@ def native_manifest():
         fixed = {'audio_service': SCRIPT, 'native_qwen_asr': ROOT / 'voice/native_qwen_asr.py',
                  'python': PYTHON, 'base_python': BASE, 'pyvenv': PYTHON.parents[1] / 'pyvenv.cfg',
                  'native_bridge': ROOT / 'voice/native-bridge/native_bridge.py',
+                 'native_text_chat': ROOT / 'voice/native-bridge/native_text_chat.py',
                  'native_core': ROOT / 'voice/native-bridge/core.py',
                  'assistant_settings': ROOT / 'voice/native-bridge/assistant_settings.py',
                  'voice_reference_cache': ROOT / 'voice/native-bridge/voice_reference_cache.py',
