@@ -430,3 +430,40 @@ Reddit direct listings remained inaccessible (HTTP 403), so newest-post
 coverage remains unverified. The next broad check is due at 23:25:20 UTC.
 The broader acceleration goal remains unachieved. Private receipts are
 retained in `primary0191/cost-gate-cohort-prep/`.
+
+## Actual counter failure and corrected comparison (21:47 UTC)
+
+The first cost-study attempt completed one 8192-token before-control cohort
+(one excluded warmup plus three measurements), then stopped during trace
+qualification. Its helper incorrectly equated the log's aggregate accepted
+scalar (45) with scoped accepted-token totals (69). Actual native head and
+API counters agree at 69 accepted out of 109 drafted tokens, over 57 rounds.
+The API exposes no counterpart for the aggregate scalar. No cost-rule arm
+was measured, so this attempt establishes no comparative speedup. The
+normal selected server was restored, authenticated and left online; the
+attempt is terminal with `completed=false` and `restored=true`.
+
+The separately frozen [corrected protocol](../benchmarks/halogen0191-mtp-cost-gate-plan-20261107-v2.md)
+retains the aggregate as diagnostic `legacy_accepted` while requiring exact
+agreement for total rounds and all nine scoped counters. Its real-log replay
+covers all four saved requests and counter tampering. V2 passes 31
+coordinator/trace/real-replay tests and 20 exporter cost tests. The 55 legacy
+and profile tests passed; the final cost-only rendering correction preserves
+all five historical Markdown exports. Independent review replayed the actual
+saved log, manifest and responses through the final V2 exporter. V1 sources,
+registration and evidence remain unchanged. The corrected registration is
+committed and source-verified; no V2 model requests have started.
+
+A fresh entry check at 21:47 UTC found about 20.8 GiB physical memory free,
+below the unchanged 22 GiB request/pre-stop requirement. Normal serving
+remained ready. The corrected comparison was therefore not started. Riot
+background services are not an admission blocker; the effective inherited
+gate records them and rejects actual games or competing GPU activity.
+
+The independent next prefill candidate is a matched paired 2048/8192/2048
+chunk-and-arena comparison on 0.19.1. Retained one-slot startup logs report
+4.1 GiB working memory at 2048 and 5.9 GiB at 8192, rounded to 0.1 GiB;
+Windows reserve impact remains unmeasured. The earlier 4096 attempt changed
+greedy output on its candidate warmup and has no qualified measured speed.
+The historical 1913 versus 1124 prefill rates remain confounded. No new arena
+comparison or second hardware campaign has started.
