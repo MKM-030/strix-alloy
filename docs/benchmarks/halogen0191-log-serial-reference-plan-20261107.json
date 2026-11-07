@@ -1,0 +1,63 @@
+{
+  "schema": "halogen0191.pld-log-serial-reference-plan.v1",
+  "registered_utc": "2026-11-07T16:20:39.594159+00:00",
+  "version": "0.19.1",
+  "engine_sha256": "9dcf048b93111aba93032aa2ba0bea07496bc14c0cd4316a21dc39d2db749d46",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:7ab5c3dfd77acb2387603f1807069cac3494e678f413c0670745ba2df74c0f0e",
+  "freeze_manifest_sha256": "c920c79bd7950d9daa462fba9864daf55306c1129656af281e612a40f3f1347c",
+  "original_request_sha256": "01cc7e91b876efb6a40b531e15716be3a0c8d15f72aef3f994b5f67d15ff26d9",
+  "original_serial_request_sha256": "c4d9d4ce2af9ce4a5cdf0b888318db5c85f62ae3939c18562162bf8c21739519",
+  "recorded_serial_response_sha256": "95ac26c92cf30db7e8e2ba7d5e80b5a727987905738093503f1b4b9221acfc0b",
+  "serial_visible_output_sha256": "0465ec6c46f28e1379673e13ce0fe67d55bf2fac36ee66d76a42b77141d53e50",
+  "canonical_task_output_sha256": "c4cbbcd81d735ad71e43bf99d87a8e5f8080646bc90db8e55e5a45dc2e1a58ee",
+  "original_task_result": {
+    "passed": false,
+    "failure": "Exactly one final LF missing",
+    "expected_utf8_bytes": 4934,
+    "actual_serial_utf8_bytes": 4933,
+    "original_failed_pilot_preserved": true
+  },
+  "new_study_scope": "Throughput with exact API-visible equivalence to the recorded serial response",
+  "required_prompt_tokens": 3539,
+  "required_generated_tokens": 1259,
+  "output_cap": 8192,
+  "finish_reason": "stop",
+  "profile": {
+    "slots": 1,
+    "context": 32768,
+    "kv_pool_positions": 32768,
+    "concurrency": 1,
+    "prefill_chunk": 2048,
+    "max_prefill_tokens": 2048,
+    "prompt_cache": "Off",
+    "thinking": false,
+    "temperature": 0,
+    "seed": 1,
+    "MTP_gate_probability": "0.90",
+    "decode_prefetch": 0
+  },
+  "arms": [
+    "PLD3,3",
+    "PLD3,4",
+    "PLD3,3"
+  ],
+  "serial_reference": "Separate serial-drafter control before first MTP epoch",
+  "excluded_warmup_per_arm": 1,
+  "measured_requests_per_arm": 3,
+  "requirements": [
+    "Same original request bytes in every MTP arm",
+    "Exact visible UTF-8 bytes and actual generated token count match frozen serial reference",
+    "Keep original canonical task failure explicit",
+    "No trimming, normalization, request shortening or retries",
+    "Keep head, lookup and grammar counters separate",
+    "Positive measured native lookup proposals and accepted tokens in every arm before a lookup mechanism claim",
+    "Unadjusted RAW phase intervals with exact native request ID and paired complete HTTP QPC",
+    "Restore the selected normal server on port8840 afterward"
+  ],
+  "canonical_task_completion_claimed": false,
+  "native_token_sequence_identity_claimed": false,
+  "NPU_benefit_claimed": false,
+  "numeric_tolerances_changed": false,
+  "full_goal_achieved": false,
+  "candidate_measurements_started_at_registration": false
+}
