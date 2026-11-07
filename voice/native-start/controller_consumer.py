@@ -45,18 +45,41 @@ def request(path, credential):
 
 def load_selected(services, server, python, current, selection):
     """Live controller wins; a frozen previous selection permits a cold start."""
+    runtime_args = None
     sockets = services.listeners(8840)
     if sockets:
         owners = {item.pid for item in sockets}
         if len(owners) != 1 or any(item.laddr.ip != '127.0.0.1' for item in sockets):
             raise RuntimeError('Controller-Port ist nicht eindeutig lokal zugeordnet.')
-        actual = services.process_args(next(iter(owners)))
-        prefix = ['-u', '-B', str(server / 'controller.py'), 'run', '--config']
-        if len(actual) != 9 or actual[1:6] != prefix or actual[7:] != ['--port', '8840']:
+        pid = next(iter(owners))
+        actual = services.process_args(pid)
+        if (len(actual) != 9 or actual[1:3] != ['-u', '-B']
+                or actual[4:6] != ['run', '--config'] or actual[7:] != ['--port', '8840']):
             raise RuntimeError('Controller-Prozess entspricht nicht der zentralen Laufzeit.')
+        # Relative script/config arguments are meaningful only in the actual
+        # process working directory, never this consumer's working directory.
+        process_cwd = Path(services.psutil.Process(pid).cwd()).resolve(strict=True)
+        if process_cwd != server.parent.resolve(strict=True):
+            raise RuntimeError('Controller-Arbeitsverzeichnis entspricht nicht der zentralen Laufzeit.')
+        script = Path(actual[3])
+        script = (script if script.is_absolute() else process_cwd / script).resolve(strict=True)
+        if script != (server / 'controller.py').resolve(strict=True):
+            raise RuntimeError('Controller-Script entspricht nicht der zentralen Laufzeit.')
         profile_path = Path(actual[6])
+        profile_path = (profile_path if profile_path.is_absolute() else process_cwd / profile_path).resolve(strict=True)
+        if not profile_path.is_relative_to(server.resolve(strict=True)):
+            raise RuntimeError('Controller-Profil liegt ausserhalb der zentralen Laufzeit.')
+        # Keep the executable allowlist anchored to configured Python. Passing
+        # actual[0] here would incorrectly let a foreign executable authorize itself.
+        if services.owned_listener(8840, [str(python), *actual[1:]]) != pid:
+            raise RuntimeError('Controller-Prozessidentitaet wurde geaendert.')
         state = read_json(current)
+        if state.get('pid') != pid or state.get('port') != 8840:
+            raise RuntimeError('Controller-Status gehoert nicht zur zentralen Laufzeit.')
         expected_sha = state.get('profile_sha256')
+        # Reuse only this validated argv for ready checks; cold launch always
+        # keeps the canonical absolute arguments returned separately below.
+        runtime_args = list(actual)
     else:
         if not selection.is_file():
             raise RuntimeError('Bitte das gewuenschte lokale Modell zuerst zentral starten.')
@@ -84,7 +107,8 @@ def load_selected(services, server, python, current, selection):
     # Validate the credential before any service starts, without retaining it.
     token(profile_path, profile)
     return {'profile_path': profile_path, 'profile_sha256': expected_sha,
-            'profile': profile, 'args': [str(python), *prefix_args(server, profile_path)]}
+            'profile': profile, 'args': [str(python), *prefix_args(server, profile_path)],
+            'runtime_args': runtime_args}
 
 
 def prefix_args(server, profile):
@@ -92,7 +116,7 @@ def prefix_args(server, profile):
 
 
 def ready(services, selected, current):
-    pid = services.owned_listener(8840, selected['args'])
+    pid = services.owned_listener(8840, selected.get('runtime_args') or selected['args'])
     if not pid:
         return False
     state = read_json(current)
