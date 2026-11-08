@@ -180,8 +180,9 @@ class HeldNoteRecoveryTests(HeldContextFixture, unittest.IsolatedAsyncioTestCase
         self.assertEqual([item['text'] for item in note['originals']], originals)
         self.assertEqual([item['turn_index'] for item in note['originals']], [2, 3])
         self.assertTrue(all(item['onset_control'] is None for item in note['originals']))
-        self.assertLess(self.context_publications[-1].index(FACT),
-                        self.context_publications[-1].index('Zusätzliche neue Rückfrage.'))
+        self.assertNotIn('Zusätzliche neue Rückfrage.', self.context_publications[-1])
+        self.assertIn('Zusätzliche neue Rückfrage.', [turn[1] for turn in self.lane._pending],
+                      'A fresh original waits for ordinary native input instead of overtaking it as context')
 
     async def test_disabled_context_lane_never_recovers_held_notes(self):
         await self.stage_notes([FACT])

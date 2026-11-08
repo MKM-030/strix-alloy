@@ -1,8 +1,9 @@
 """Independent Native conversation while the existing VA business turn waits.
 
 The VA remains the only business executor. Caller input is kept verbatim and
-submitted once, serially, after readiness. Optional local conversation never
-consumes those original messages or invents a name-validation workflow.
+submitted once, serially, after readiness. Unsent supplements at the same open
+text boundary may share one request, preserving their exact text and order.
+Optional local conversation never consumes originals or invents name validation.
 """
 import asyncio
 from collections import deque
@@ -457,6 +458,7 @@ class NativeDuplex:
         # messages live only in _pending and are not parked as supplements.
         self._supplements = deque()
         self._submission_onsets = {}
+        self._retired_optional_turns = set()
         self._answered_inputtext = None
         self._spoken_history = deque(maxlen=8)
         self._spoken_sequence = 0
@@ -829,7 +831,8 @@ class NativeDuplex:
     def _enqueue(self, text, turn=None, *, kind='local', observation=None, request=None, identity=None,
                  expires_at=None, question_binding=None, control_binding=None, fallback_snapshot=None,
                  transcript_part=None):
-        if not text or not self._live():
+        if (not text or not self._live() or kind in ('conversation', 'local', 'status')
+                and self._optional_reply_retired(turn)):
             return
         if kind == 'backend' and _generic_processing_reply(text):
             # Actual callbacks remain in the transcript; only unsolicited filler
@@ -924,6 +927,8 @@ class NativeDuplex:
             self._log_dialogue_discard(reason, boundary)
 
     def _valid(self, item):
+        if self._optional_output_retired(item):
+            return False
         if item.fallback_snapshot is not None and item.fallback_snapshot != self._help_failure_snapshot():
             return False
         if item.backend_event is not None:
@@ -941,6 +946,8 @@ class NativeDuplex:
                      self.conversation.is_current(item.identity)))
 
     def _active_speech_current(self, item, generation, lease):
+        if self._optional_output_retired(item):
+            return False
         if lease is None:
             return self._valid(item) and generation == self.call.playback.generation
         if (not self._live() or lease.output is not item or lease.generation != generation
@@ -1060,6 +1067,8 @@ class NativeDuplex:
                 current_key, next(reversed(self._backend_receipts), None))
 
     def _enqueue_help_fallback(self, turn, *, reason='unavailable'):
+        if self._optional_reply_retired(turn):
+            return
         if turn is not None and turn[3] in self._turn_speech_started:
             return
         if self._backend_outputs or any(item.kind in ('backend', 'backend_control') and self._valid(item)
@@ -1130,6 +1139,9 @@ class NativeDuplex:
                 boundary.get('businessRequestId', ''), self.task_revision)
             and self._question_current(self._spoken_question)
             and self._speech is self._spoken_question))
+        local_binding = self._local_input_binding()
+        if local_binding is not None and self._submission_onsets[turn[3]]['current_complete']:
+            self._submission_onsets[turn[3]].update(local_control=local_binding, control=local_binding)
         if self._backend_input_closed:
             self._control_gate.hold(turn, onset, self.call.turn_contexts.pop(number, None), 'backend_ended')
             self._submission_onsets.pop(turn[3], None)
@@ -1158,6 +1170,10 @@ class NativeDuplex:
         dialog = self.call.dialog
         boundary = getattr(dialog, 'input_boundary', None)
         owner = getattr(dialog, 'backend_owner', None)
+        submission = self._submission_onsets.get(turn[3])
+        if submission is not None:
+            submission['batch_origin'] = (('bootstrap', owner) if self.bootstrap_pending
+                and owner is not None else self._open_text_batch_boundary())
         self._answered_inputtext = None
         if (type(boundary) is dict
                 and set(boundary) == {'source', 'businessRequestId', 'controlType', 'label'}
@@ -1180,6 +1196,125 @@ class NativeDuplex:
             # Optional prompt context can describe an input, never retire its send.
             self._queue_context_update(turn)
 
+    def _open_text_batch_boundary(self):
+        """Only an owned, explicitly open information question accepts batching."""
+        dialog = self.call.dialog
+        boundary = getattr(dialog, 'input_boundary', None)
+        owner = getattr(dialog, 'backend_owner', None)
+        if (self.bootstrap_pending or self._backend_input_closed or self._backend_unavailable
+                or self._control_gate.binding is not None or owner is None
+                or type(boundary) is not dict
+                or set(boundary) != {'source', 'businessRequestId', 'controlType', 'label'}
+                or boundary['source'] != 'servicenow_input_control'
+                or boundary['controlType'] != 'InputText'
+                or type(boundary['businessRequestId']) is not str
+                or not re.fullmatch(r'[0-9a-f]{32}', boundary['businessRequestId'])
+                or type(boundary['label']) is not str):
+            return None
+        label = boundary['label'].strip()
+        request = getattr(dialog, 'business_request_id', '')
+        # CREATE/topic startup exposes its first input boundary before this
+        # Dialog has submitted a business MESSAGE. Later boundaries must belong
+        # to the current accepted request, not a retained earlier input event.
+        if (request != boundary['businessRequestId']
+                and (request or self._request != 0)):
+            return None
+        # Do not infer an approval from free text. Non-question labels, multiple
+        # questions, polar questions and confirmation wording stay one-for-one.
+        if (label.count('?') != 1 or not label.endswith('?') or _polar(label)
+                or not re.match(r'(?i)^(?:(?:für|von|an|mit|for|from|to|with)\s+)?'
+                    r'(?:wer|wen|wem|wessen|was|wann|wo|wohin|woher|wie|welch\w*|'
+                    r'what|which|when|where|who|whom|whose|how)\b', label)
+                or re.search(r'(?i)\b(?:bestätig\w*|bestaetig\w*|freigab\w*|genehmig\w*|'
+                    r'einverstanden|confirm\w*|approv\w*|authoriz\w*|authoris\w*)\b', label)):
+            return None
+        event = getattr(dialog, 'input_control', None)
+        if (event is not None and (not isinstance(event, BackendEvent)
+                or event.owner is not owner or event.ui_type != 'InputText'
+                or event.business_request_id != boundary['businessRequestId'])):
+            return None
+        return ('input', owner, boundary['businessRequestId'], boundary['label'])
+
+    def _coalesce_pending_input(self, first):
+        boundary = self._open_text_batch_boundary()
+        submission = self._submission_onsets.get(first[3], {})
+        origin = submission.get('batch_origin')
+        if (boundary is None or origin not in (boundary, ('bootstrap', boundary[1]))
+                or submission.get('control') is not None or _polar_answer(first[1])):
+            return first
+        members = [first]
+        texts = [first[1]]
+        context = self.call.turn_contexts.get(first[2])
+        length = len(first[1])
+        while self._pending and len(members) < 8:
+            candidate = self._pending[0]
+            candidate_submission = self._submission_onsets.get(candidate[3], {})
+            if (candidate_submission.get('batch_origin') != origin
+                    or candidate_submission.get('control') is not None
+                    or _polar_answer(candidate[1])
+                    or self.call.turn_contexts.get(candidate[2]) != context
+                    or length + 1 + len(candidate[1]) > 4000):
+                break
+            members.append(self._pending.popleft())
+            texts.append(candidate[1])
+            length += 1 + len(candidate[1])
+        if len(members) == 1:
+            return first
+        # The existing individual transcript entries remain unchanged. The most
+        # recent member owns response correlation; all originals are sent once
+        # in their original order, without a rewrite or an additional wait.
+        for member in members[:-1]:
+            self._submission_onsets.pop(member[3], None)
+            self.call.turn_contexts.pop(member[2], None)
+            self._context_covered.discard(id(member))
+        last = members[-1]
+        LOG.info('Voice independent input call=%s stage=raw_batch count=%d caller_turn_ids=%s',
+                 self.call.call_id, len(members), ','.join(member[3] for member in members))
+        return (last[0], '\n'.join(texts), last[2], last[3], first[4])
+
+    def _local_input_binding(self):
+        """Bind non-open typed questions locally without changing the Bot wire."""
+        dialog = self.call.dialog
+        event = getattr(dialog, 'input_control', None)
+        boundary = getattr(dialog, 'input_boundary', None)
+        if (self._open_text_batch_boundary() is not None
+                or not isinstance(event, BackendEvent) or event.ui_type in ('Boolean', 'OutputText')
+                or event.owner is not getattr(dialog, 'backend_owner', None)
+                or event.business_request_id != getattr(dialog, 'business_request_id', None)
+                or type(boundary) is not dict or boundary.get('source') != 'servicenow_input_control'
+                or boundary.get('businessRequestId') != event.business_request_id
+                or boundary.get('controlType') != event.ui_type or boundary.get('label') != event.text):
+            return None
+        return ControlBinding(event.business_request_id, event.ui_type, event.text,
+                              event.event_id, event.control_uid, event.owner)
+
+    def _hold_before_local_control(self, turn, submitted, binding):
+        # This original did not answer the newly published typed question.
+        # Retire only its optional reply, including a model response already in
+        # flight. It must never speak after the reask and replace heard onset.
+        self._retired_optional_turns.add(turn[3])
+        self._outputs = deque(item for item in self._outputs if not self._optional_output_retired(item))
+        if self._active_output is not None and self._optional_output_retired(self._active_output):
+            self.call.playback.interrupt()
+            if self._synthesis_task is not None:
+                self._synthesis_task.cancel()
+        old_count = len(self._control_gate.held)
+        self._control_gate.hold(turn, submitted.get('onset') if submitted else None,
+            self.call.turn_contexts.pop(turn[2], None), 'control_prequestion')
+        if len(self._control_gate.held) > old_count:
+            # This is a local provenance record, never a new wire-control type.
+            self._control_gate.held[-1] = replace(self._control_gate.held[-1], binding=binding)
+        self._held_context_boundary = (binding, self._context_owner_snapshot())
+        self._reask_control(turn)
+        LOG.info('Voice independent input call=%s stage=prequestion_held control_type=%s',
+                 self.call.call_id, binding.control_type)
+
+    def _optional_reply_retired(self, turn):
+        return turn is not None and turn[3] in self._retired_optional_turns
+
+    def _optional_output_retired(self, item):
+        return item.kind in ('conversation', 'local', 'status') and self._optional_reply_retired(item.turn)
+
 
     def _reask_control(self, turn):
         control = self._control_gate.binding
@@ -1196,7 +1331,12 @@ class NativeDuplex:
         boundary = getattr(self.call.dialog, 'input_boundary', None)
         if (self._bootstrap_state == 'ready' and type(boundary) is dict
                 and boundary.get('source') == 'servicenow_input_control' and boundary.get('label')):
-            self._enqueue(boundary['label'], turn, kind='backend')
+            label = boundary['label']
+            if (not any(item.kind == 'backend' and item.text == label and self._valid(item)
+                        for item in self._outputs)
+                    and not (self._active_output is not None and self._active_output.kind == 'backend'
+                        and self._active_output.text == label and self._valid(self._active_output))):
+                self._enqueue(label, turn, kind='backend')
 
     def _native_control_current(self, binding):
         event = getattr(self.call.dialog, 'input_control', None)
@@ -1324,6 +1464,12 @@ class NativeDuplex:
         self._context_pending = self._context_candidate = None
 
     def _queue_context_update(self, turn, *, context_text=None):
+        # A later raw correction must not advance native collection before its
+        # earlier FIFO input arrives. Otherwise the earlier factual answer can
+        # be misread as an answer to a newer confirmation. Only explicitly held
+        # originals recovered after a changed input boundary use this lane.
+        if context_text is None:
+            return
         if (self._context_publisher is None or not self._live() or self._context_full or self._context_disabled
                 or self._held_context_recovery is not None
                 or self._backend is None or self._backend.done()):
@@ -1467,17 +1613,22 @@ class NativeDuplex:
         self._queue_context_update(records[0].turn, context_text=text)
         if self._context_candidate is not None:
             self._held_context_offered.update(held.turn[3] for held in records)
-        for pending in tuple(self._pending):
-            self._queue_context_update(pending)
 
     async def _business(self, turn):
+        self._sync_native_control()
+        turn = self._coalesce_pending_input(turn)
         _, text, number, _, _ = turn
         if self._backend_input_closed:
             self._control_gate.hold(turn, None, self.call.turn_contexts.pop(number, None), 'backend_ended')
             return
         submitted = self._submission_onsets.pop(turn[3], None)
-        self._sync_native_control()
         native_binding = self._control_gate.binding
+        local_binding = self._local_input_binding()
+        if (native_binding is None and local_binding is not None
+                and (submitted is None or not submitted['current_complete']
+                     or submitted.get('local_control') != local_binding)):
+            self._hold_before_local_control(turn, submitted, local_binding)
+            return
         if native_binding is not None:
             bound = submitted.get('control') if submitted else None
             if not self._native_control_current(native_binding):
@@ -1606,7 +1757,7 @@ class NativeDuplex:
             self._reask_control(turn)
             return
         self._settle_backend_state()
-        self._stage_held_context(native_binding, submitted)
+        self._stage_held_context(native_binding or local_binding, submitted)
         label = input_label()
         if label:
             # This label is an observed ServiceNow input control, not a locally
@@ -1965,6 +2116,9 @@ class NativeDuplex:
     def _release_conversation_sentence(self, candidate, turn, epoch, observation, snapshot, *,
                                        skip_unsupported_claim=False, transcript_group=None):
         """Report actual queue admission separately from a safe streaming skip."""
+        if self._optional_reply_retired(turn):
+            self._log_dialogue_discard('held_input_reply_retired', 'sentence')
+            return 'rejected'
         if epoch != self.epoch:
             self._log_dialogue_discard('caller_epoch_changed', 'sentence')
             return 'rejected'
@@ -2148,6 +2302,8 @@ class NativeDuplex:
                      self.call.call_id)
 
     async def _general_help_attempt(self, turn, epoch, kind, *, refresh_bootstrap, deadline):
+        if self._optional_reply_retired(turn):
+            return
         if self._control_gate.binding is not None and not self._control_gate.dispatched:
             self._reask_control(turn)
             return
@@ -2175,6 +2331,8 @@ class NativeDuplex:
             if epoch != self.epoch:
                 self._log_dialogue_discard('caller_epoch_changed', 'connection')
                 return
+            if self._optional_reply_retired(turn):
+                return
             if self.conversation.output_epoch < self.epoch:
                 await self.conversation.invalidate(self.epoch, 'input during connection')
             self._dialogue_turn = turn
@@ -2190,6 +2348,8 @@ class NativeDuplex:
             admitted = 0
             async def sentence(candidate):
                 nonlocal admitted
+                if self._optional_reply_retired(turn):
+                    return
                 disposition = self._release_conversation_sentence(candidate, turn, epoch, observation, snapshot,
                     skip_unsupported_claim=True, transcript_group=transcript_group)
                 if disposition == 'skipped_claim':
@@ -2220,6 +2380,8 @@ class NativeDuplex:
                             return refresh and self._bootstrap_refresh_context_current(observation, turn, epoch)
                         return False
                 candidate = await response_task
+            if self._optional_reply_retired(turn):
+                return
             if self._control_gate.binding is not None and not self._control_gate.dispatched:
                 self._revoke_dialogue_output(turn)
                 self._reask_control(turn)
@@ -2273,6 +2435,8 @@ class NativeDuplex:
             raise
         except Exception as error:
             self._revoke_dialogue_output(turn)
+            if self._optional_reply_retired(turn):
+                return
             busy = getattr(getattr(self.conversation, 'controller_transport', None), 'transient_busy', False)
             if busy:
                 await self.conversation.close()
@@ -2493,3 +2657,4 @@ class NativeDuplex:
             await asyncio.gather(*tasks, return_exceptions=True)
         if self.conversation is not None:
             await self.conversation.close()
+        self._retired_optional_turns.clear()

@@ -1,4 +1,4 @@
-"""CPU-only acknowledged context-prefix and asynchronous ownership regressions."""
+"""Transport-only explicit-note ACK/prefix checks; raw admission is tested separately."""
 import asyncio
 import json
 from pathlib import Path
@@ -114,6 +114,9 @@ class ContextSnapshotFixture:
     async def publish_original(self, text, number):
         turn = (self.call.playback.generation, text, number, str(number), 0)
         await self.lane._accept(turn)
+        # Invoke the explicit admitted-note transport; queued raw speech no
+        # longer publishes itself ahead of its normal business MESSAGE.
+        self.lane._queue_context_update(turn, context_text=text)
         item = self.lane._context_candidate
         self.assertIsNotNone(item)
         await asyncio.wait_for(item['done'].wait(), 1)
@@ -146,7 +149,7 @@ class ContextSnapshotFixture:
         await asyncio.gather(self.context_worker, return_exceptions=True)
         turn = (0, FACT, 1, '1', 0)
         await self.lane._accept(turn)
-        self.assertEqual(self.lane._context_candidate['snapshot'], FACT)
+        self.assertIsNone(self.lane._context_candidate)
         self.cross_boolean_boundary()
         self.assertEqual([item.turn for item in self.lane._control_gate.held], [turn])
         self.context_worker = asyncio.create_task(self.lane._context_loop())
@@ -180,6 +183,7 @@ class AcknowledgedContextPrefixTests(ContextSnapshotFixture, unittest.IsolatedAs
     async def begin_publication(self, text, number=1):
         turn = (self.call.playback.generation, text, number, str(number), 0)
         await self.lane._accept(turn)
+        self.lane._queue_context_update(turn, context_text=text)
         item = self.lane._context_candidate
         await asyncio.wait_for(self.upstream_arrived.wait(), 1)
         return item
@@ -188,6 +192,7 @@ class AcknowledgedContextPrefixTests(ContextSnapshotFixture, unittest.IsolatedAs
         count = len(self.upstream)
         turn = (self.call.playback.generation, 'Neue unveränderte Originalangabe.', 9, '9', 0)
         await self.lane._accept(turn)
+        self.lane._queue_context_update(turn, context_text=turn[1])
         await asyncio.sleep(.01)
         self.assertEqual(len(self.upstream), count)
         self.assertIsNone(self.lane._context_candidate)
@@ -199,7 +204,7 @@ class AcknowledgedContextPrefixTests(ContextSnapshotFixture, unittest.IsolatedAs
         # admission filters this short backchannel before the context queue.
         turn = (0, 'Ja', 1, '1', 0)
         self.lane._pending.append(turn)
-        self.lane._queue_context_update(turn)
+        self.lane._queue_context_update(turn, context_text=turn[1])
         first = self.lane._context_candidate
         await asyncio.wait_for(first['done'].wait(), 1)
         self.assertTrue(first['ack']['queuedOnly'])

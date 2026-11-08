@@ -101,7 +101,8 @@ class NativeControlHandoffTests(unittest.IsolatedAsyncioTestCase):
         later = self.turn('LATER_NEW_INPUT', 2)
         self.lane._pending.append(later)
         self.lane._queue_context_update(later)
-        self.assertEqual(self.lane._context_pending['snapshot'], 'LATER_NEW_INPUT')
+        self.assertIsNone(self.lane._context_pending,
+                          'Unsent FIFO originals must not advance native context ahead of raw delivery')
         self.assertEqual(self.lane._control_gate.held[0].turn[1], 'EARLY_UNBOUND_REMARK')
 
     async def test_caller_interrupt_requeues_the_unheard_control_under_new_epoch(self):
@@ -147,6 +148,9 @@ class NativeControlHandoffTests(unittest.IsolatedAsyncioTestCase):
         self.call.dialog.input_control = self.call.dialog.input_boundary = None
         for number, kind in enumerate(('InputText', 'Date', 'Picker'), 1):
             with self.subTest(kind=kind):
+                # Each case observes a fresh result, not a queued answer to the
+                # preceding case's unheard typed input control.
+                self.call.dialog.input_control = self.call.dialog.input_boundary = None
                 label = f'Bitte beachten Sie die aktuelle Rückfrage.\nWelche Angabe brauchen wir für {kind}?'
                 self.call.dialog.release.put_nowait(dict(reply=label,
                     input_boundary=dict(source='servicenow_input_control', controlType=kind,

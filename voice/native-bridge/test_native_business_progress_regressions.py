@@ -201,6 +201,9 @@ class ContextSnapshotBoundaryTests(unittest.IsolatedAsyncioTestCase):
     async def publish_original(self, text, number):
         turn = (self.call.playback.generation, text, number, str(number), 0)
         await self.lane._accept(turn)
+        # Low-level explicit-note transport fixture. Unsent raw admission must
+        # not automatically enter this lane before its ordinary MESSAGE.
+        self.lane._queue_context_update(turn, context_text=text)
         item = self.lane._context_candidate
         self.assertIsNotNone(item)
         await asyncio.wait_for(item['done'].wait(), 1)
@@ -233,7 +236,7 @@ class ContextSnapshotBoundaryTests(unittest.IsolatedAsyncioTestCase):
         await asyncio.gather(self.context_worker, return_exceptions=True)
         turn = (0, FACT, 1, '1', 0)
         await self.lane._accept(turn)
-        self.assertEqual(self.lane._context_candidate['snapshot'], FACT)
+        self.assertIsNone(self.lane._context_candidate)
         self.cross_boolean_boundary()
         self.assertEqual([item.turn for item in self.lane._control_gate.held], [turn])
         self.context_worker = asyncio.create_task(self.lane._context_loop())
