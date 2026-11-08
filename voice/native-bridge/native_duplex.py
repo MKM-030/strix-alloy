@@ -458,6 +458,7 @@ class NativeDuplex:
         # messages live only in _pending and are not parked as supplements.
         self._supplements = deque()
         self._submission_onsets = {}
+        self._business_delivery = None
         self._retired_optional_turns = set()
         self._answered_inputtext = None
         self._spoken_history = deque(maxlen=8)
@@ -1666,6 +1667,10 @@ class NativeDuplex:
         self.updates.start(self.clock())
         replies, deferred = [], []
         published, admitted_replies = set(), set()
+        # Optional dialogue gets evidence for this exact caller turn. A busy
+        # lane or an older request cannot prove this input was handed off.
+        delivery = dict(turn_id=turn[3], owner=self.call.dialog.backend_owner,
+                        request_id=None, phase='handoff')
 
         def input_label():
             boundary = getattr(self.call.dialog, 'input_boundary', None)
@@ -1719,6 +1724,10 @@ class NativeDuplex:
             admit(reply)
             self._queue_dialogue_observation()
         async def on_event(event):
+            if (event.owner is delivery['owner']
+                    and event.business_request_id == delivery['request_id']
+                    and event.text and not _generic_processing_reply(event.text)):
+                delivery['phase'] = 'native_reply'
             self._sync_native_control()
             self._settle_backend_state()
             if event.ui_type == 'OutputText':
@@ -1732,19 +1741,26 @@ class NativeDuplex:
                     and self._backend_key(event) == self._backend_key(self.call.dialog.input_control)):
                 await on_reply(event.text)
         context = self.call.turn_contexts.pop(number, None)
-        accepted = {}
-        if native_binding is None and self._held_context_recovery is not None:
-            def publish_held(request_id, owner):
+        def accepted(request_id, owner):
+            if (owner is delivery['owner'] and owner is self.call.dialog.backend_owner
+                    and type(request_id) is str and re.fullmatch(r'[0-9a-f]{32}', request_id)
+                    and request_id == self.call.dialog.business_request_id):
+                delivery['request_id'] = request_id
+            # The ACK proves transport acceptance, never agent processing. Keep
+            # its conservative prompt phase stable so it cannot cancel a fast
+            # reply merely by arriving after optional generation has begun.
+            if native_binding is None and self._held_context_recovery is not None:
                 try:
                     self._publish_held_context_after_ack(request_id, owner)
                 except Exception:
                     self._disable_context()
                     LOG.warning('Voice independent context stage=held_note_unavailable')
-            accepted['on_accepted'] = publish_held
+        self._business_delivery = delivery
         try:
             await self.call.dialog.turn(text, on_event=on_event, voice_context=context,
-                                        native_control_binding=native_binding, **accepted)
+                                        native_control_binding=native_binding, on_accepted=accepted)
         except BackendControlChanged as conflict:
+            delivery['phase'] = 'held'
             if conflict.owner is not getattr(self.call.dialog, 'backend_owner', None):
                 raise BackendTurnUnavailable('Unowned input conflict') from None
             self.call.dialog.input_control = conflict.input_control
@@ -1756,6 +1772,9 @@ class NativeDuplex:
             self._control_gate.hold(turn, submitted, context, 'control_changed_before_dispatch')
             self._reask_control(turn)
             return
+        except BaseException:
+            delivery['phase'] = 'uncertain'
+            raise
         self._settle_backend_state()
         self._stage_held_context(native_binding or local_binding, submitted)
         label = input_label()
@@ -1983,6 +2002,24 @@ class NativeDuplex:
         encoded = json.dumps(normalize(context), sort_keys=True, ensure_ascii=False, separators=(',', ':'))
         return hashlib.sha256(encoded.encode('utf-8')).hexdigest()
 
+    def _turn_delivery_phase(self, turn):
+        if any(item[3] == turn[3] for item in self._pending):
+            return 'local'
+        if any(item.turn[3] == turn[3] for item in self._control_gate.held):
+            return 'held'
+        # run() removes an accepted input before the business task first runs.
+        # Preserve that selected-for-handoff phase across its first timeslice;
+        # it is not proof of a network send or native business processing.
+        if turn[3] in self._submission_onsets:
+            return 'handoff'
+        delivery = self._business_delivery
+        if (delivery is None or delivery['turn_id'] != turn[3]
+                or delivery['owner'] is not getattr(self.call.dialog, 'backend_owner', None)
+                or delivery['request_id'] is not None and delivery['request_id'] !=
+                    getattr(self.call.dialog, 'business_request_id', None)):
+            return 'unknown'
+        return delivery['phase']
+
     def _dialogue_snapshot(self, turn, epoch, *, bind_observation=True):
         observation = getattr(self.call.dialog, 'observation_revision', 0)
         key = dict(call_id=self.call.call_id, task_id=self.call.call_id + '-va',
@@ -1994,8 +2031,7 @@ class NativeDuplex:
         actual_question, question_source, _ = self.question_context()
         backend_closed = bool(getattr(self.call.dialog, 'conversation_ended', False))
         snapshot = conversational_snapshot(snapshot, question=actual_question,
-            question_source=question_source,
-            busy=self.busy and not self.bootstrap_pending and not backend_closed and not self._backend_unavailable)
+            question_source=question_source)
         if self._interrupted_speech is not None:
             snapshot['capability_limits'] += (
                 'Die vorige Sprachausgabe wurde unterbrochen. Behandle deren ungesprochenen '
@@ -2011,7 +2047,7 @@ class NativeDuplex:
             'weitere Übermittlung in diesen Dialog; erkläre nur die vorhandene Rückmeldung.' if backend_closed else
             'Die Anfrage ist derzeit nicht verfügbar; eine weitere Bearbeitung ist nicht belegt.'
             if self._backend_unavailable else
-            'Die Anfrage wartet noch auf vollständige Rückmeldung. Unterscheide in einer Übersicht '
+            'Unterscheide in einer Übersicht '
             'zwischen Angaben des Anrufers und passenden bereits vorliegenden ServiceNow-Rückmeldungen. '
             'Bisher nicht genannt bedeutet nicht, dass diese Angabe fachlich fehlt: '
             'ServiceNow kann sie noch ermitteln. Ohne passende bereits vorliegende ServiceNow-Rückmeldung '
@@ -2024,10 +2060,10 @@ class NativeDuplex:
         if self._pending or self._supplements:
             snapshot['capability_limits'] += (
                 'Neue Caller-Ergänzungen bleiben für die reguläre Eingabe vorgemerkt. '
-                'Eine Übernahme als Kontext durch laufende ServiceNow-Agenten ist NICHT bestätigt.'
+                'Eine Übernahme als Kontext durch ServiceNow-Agenten ist NICHT bestätigt.'
                 if self._context_publisher is not None else
                 'Neue Caller-Ergänzungen sind lokal vorgemerkt '
-                'und noch NICHT an die laufenden ServiceNow-Agenten weitergegeben.',)
+                'und noch NICHT an ServiceNow-Agenten weitergegeben.',)
         selected, remaining = [], 2000
         for reply in reversed(self._current_public_findings()):
             if len(selected) >= 3 or len(reply.text) > remaining:
@@ -2056,6 +2092,7 @@ class NativeDuplex:
             self.call.call_settings, dict(business_available=not self._backend_unavailable and not self.bootstrap_pending,
                 business_busy=self.busy and not self.bootstrap_pending, backend_closed=backend_closed,
                 bootstrap_state=self._bootstrap_state,
+                current_turn_delivery=self._turn_delivery_phase(turn),
                 context_updates_enabled=self._context_publisher is not None and not self.bootstrap_pending,
                 pending_count=len(self._pending), supplement_count=len(self._supplements),
                 question_source=question_source)))
@@ -2174,7 +2211,7 @@ class NativeDuplex:
             reason = 'unproven_technical_destination_claim'
         elif unproven_storage_or_check_claim(text):
             reason = 'unproven_storage_or_check_claim'
-        elif ((self.busy and not self.bootstrap_pending or self._bootstrap_state == 'failed')
+        elif ((self.busy or self._bootstrap_state == 'failed')
                 and unproven_pending_data_claim(text, self._corroborating_inputtext(snapshot))):
             reason = 'unproven_pending_data_claim'
         elif unproven_current_action_claim(text, self._current_action_outputs()):
@@ -2235,8 +2272,19 @@ class NativeDuplex:
                 if (self._dialogue_observation_state is not scheduled
                         or self.conversation is not conversation or self.epoch != key['output_epoch']):
                     return
-                if await observe(snapshot, key) is not True and self._dialogue_observation_state is scheduled:
-                    self._dialogue_observation_state = None
+                if await observe(snapshot, key) is not True:
+                    if self._dialogue_observation_state is scheduled:
+                        self._dialogue_observation_state = None
+                    return
+                retire = getattr(conversation, 'retire_unstarted', None)
+                if (callable(retire) and self._dialogue_observation_state is scheduled
+                        and self.conversation is conversation and self.epoch == key['output_epoch']):
+                    # The signature gate above excludes transport ACKs, passive
+                    # caller sounds, progress labels and our own speech history.
+                    # Cancel only an obsolete optional request before first text;
+                    # the native business request and admitted speech keep running.
+                    if await retire(key):
+                        self._log_dialogue_discard('context_changed', 'queued_request')
             except asyncio.CancelledError:
                 if self._dialogue_observation_state is scheduled:
                     self._dialogue_observation_state = None

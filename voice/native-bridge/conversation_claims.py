@@ -14,7 +14,7 @@ def _unquoted(text):
 
 
 def unproven_pending_data_claim(text, native_question=''):
-    """Two direct forms only; full owned question equivalence preserves its words."""
+    """Direct invented intake/withholding claims; owned question equivalence remains."""
     def normal(value):
         return re.sub(r'[^\w]+', ' ', value.casefold()).strip()
     if native_question and normal(text) == normal(native_question):
@@ -24,6 +24,13 @@ def unproven_pending_data_claim(text, native_question=''):
         if value.endswith('?'):
             continue
         value = normal(value)
+        # A local queue/transport wait cannot prove that delivery was withheld
+        # for missing business fields. Keep this actor/causal form general;
+        # quotations, questions and conditional wording are not direct claims.
+        if (re.fullmatch(r'ich habe .+ (?:noch )?nicht .*(?:übergeben|übermittelt|weitergegeben|gesendet) '
+                         r'(?:da|weil) ich .+ (?:benötige|brauche)', value)
+                and not re.search(r'\b(?:wenn|falls|sofern|würde|könnte|müsste|kein\w*|nichts)\b', value)):
+            return True
         if (re.fullmatch(r'(?:der|die|das) .+ (?:ist|sind) für den prozess nicht relevant '
                          r'da wir nur .+ benötigen', value)
                 or re.fullmatch(r'bitte nennen sie mir noch den vollständigen '

@@ -1,4 +1,5 @@
 """Prepared-handle and SDK callback boundaries without starting the application."""
+import asyncio
 from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
@@ -31,6 +32,70 @@ def prepared(values):
 
 
 class PreparedHandleTests(unittest.IsolatedAsyncioTestCase):
+    async def test_languages_prepare_in_parallel_before_publishing_handles(self):
+        call = settings()
+        started, release = set(), asyncio.Event()
+        both_started = asyncio.Event()
+        async def prepare(**values):
+            started.add(values['language'])
+            if len(started) == 2:
+                both_started.set()
+            await release.wait()
+            return prepared(values)
+        task = asyncio.create_task(prepare_references(SimpleNamespace(prepare=prepare), call,
+                                                     'Bearer original-test-caller'))
+        try:
+            await asyncio.wait_for(both_started.wait(), .25)
+            self.assertEqual(call._prepared_voices, {})
+            release.set()
+            await task
+            self.assertEqual(set(call._prepared_voices), {'de-de', 'en-us'})
+        finally:
+            release.set()
+            task.cancel()
+            await asyncio.gather(task, return_exceptions=True)
+
+    async def test_failure_drains_other_language_without_partial_handles(self):
+        call = settings()
+        waiting, finished = asyncio.Event(), asyncio.Event()
+        async def prepare(**values):
+            if values['language'] == 'en-US':
+                await waiting.wait()
+                raise ReferenceUnavailable()
+            waiting.set()
+            try:
+                await asyncio.Event().wait()
+            finally:
+                finished.set()
+        with self.assertRaises(ReferenceUnavailable):
+            await asyncio.wait_for(prepare_references(SimpleNamespace(prepare=prepare), call,
+                                                     'Bearer original-test-caller'), .5)
+        self.assertTrue(finished.is_set())
+        self.assertEqual(call._prepared_voices, {})
+
+    async def test_cancellation_drains_every_reference_request(self):
+        call = settings()
+        started, finished = set(), set()
+        both_started = asyncio.Event()
+        async def prepare(**values):
+            language = values['language']
+            started.add(language)
+            if len(started) == 2:
+                both_started.set()
+            try:
+                await asyncio.Event().wait()
+            finally:
+                finished.add(language)
+        task = asyncio.create_task(prepare_references(SimpleNamespace(prepare=prepare), call,
+                                                     'Bearer original-test-caller'))
+        try:
+            await asyncio.wait_for(both_started.wait(), .25)
+        finally:
+            task.cancel()
+            await asyncio.gather(task, return_exceptions=True)
+        self.assertEqual(finished, {'de-DE', 'en-US'})
+        self.assertEqual(call._prepared_voices, {})
+
     async def test_admission_prepares_all_locales_without_retaining_credential(self):
         call = settings()
         cache = SimpleNamespace(prepare=AsyncMock(side_effect=lambda **kw:prepared(kw)))

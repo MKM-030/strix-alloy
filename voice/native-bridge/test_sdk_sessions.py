@@ -413,6 +413,64 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.calls[0].peer.remote), 1)
         self.assertEqual(self.calls[0].process_count, 1)
 
+    async def test_owned_greeting_starts_while_valid_offer_gathers_ice(self):
+        sid = await self.session()
+        call = self.calls[0]
+        entered, release = asyncio.Event(), asyncio.Event()
+        original = call.peer.setLocalDescription
+        async def gathering(description):
+            entered.set()
+            await release.wait()
+            await original(description)
+        call.peer.setLocalDescription = gathering
+        offering = asyncio.create_task(self.offer(sid))
+        try:
+            await asyncio.wait_for(entered.wait(), 1)
+            await asyncio.wait_for(call.worker_started.wait(), .25)
+            self.assertFalse(offering.done())
+            self.assertEqual(call.process_count, 1)
+            release.set()
+            self.assertEqual((await offering).status, 200)
+            self.assertEqual((await self.offer(sid)).status, 409)
+            self.assertEqual(call.process_count, 1)
+        finally:
+            release.set()
+            await asyncio.gather(offering, return_exceptions=True)
+
+    async def test_failed_ice_drains_early_owned_startup(self):
+        sid = await self.session()
+        call = self.calls[0]
+        async def failed_gathering(description):
+            await asyncio.wait_for(call.worker_started.wait(), .25)
+            raise RuntimeError('private negotiation failure')
+        call.peer.setLocalDescription = failed_gathering
+        response = await self.offer(sid)
+        self.assertEqual(response.status, 400)
+        await asyncio.wait_for(call.close_complete.wait(), 1)
+        await asyncio.sleep(0)
+        self.assertEqual(call.process_count, 1)
+        self.assertFalse(call.tasks)
+        self.assertFalse(self.active)
+
+    async def test_delete_during_ice_drains_early_owned_startup(self):
+        sid = await self.session()
+        call = self.calls[0]
+        async def gathering(description):
+            await asyncio.Event().wait()
+        call.peer.setLocalDescription = gathering
+        offering = asyncio.create_task(self.offer(sid))
+        try:
+            await asyncio.wait_for(call.worker_started.wait(), .25)
+            response = await self.client.delete(BASE+'/'+sid, headers=self.headers())
+            self.assertIn(response.status, (202, 204))
+            await asyncio.wait_for(call.close_complete.wait(), 1)
+            self.assertEqual(call.process_count, 1)
+            self.assertFalse(call.tasks)
+            self.assertFalse(self.active)
+        finally:
+            offering.cancel()
+            await asyncio.gather(offering, return_exceptions=True)
+
     async def test_preoffer_candidates_are_queued_and_flushed_after_offer(self):
         sid = await self.session()
         path = BASE + '/' + sid
@@ -674,7 +732,10 @@ class SDKHTTPTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await self.offer(sid)).status,400)
         await asyncio.wait_for(call.close_complete.wait(),1)
         await asyncio.sleep(0)
-        self.assertEqual(call.process_count,0)
+        # The valid remote offer may start buffered speech during gathering;
+        # an unusable local answer must still close/drain that same owner.
+        self.assertEqual(call.process_count,1)
+        self.assertFalse(call.tasks)
         self.assertFalse(self.active)
 
     async def test_sdk_answer_validation_checks_section_attributes(self):

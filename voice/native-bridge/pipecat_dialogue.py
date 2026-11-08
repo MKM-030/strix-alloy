@@ -39,6 +39,8 @@ class _Operation:
     identity: object = None
     first_at: float | None = None
     callback_failed: bool = False
+    model_started: bool = False
+    retired: bool = False
 
 
 @dataclass
@@ -107,9 +109,11 @@ class _OmniModelProcessor(FrameProcessor):
             await self.push_frame(LLMTextFrame(text))
         try:
             await self.push_frame(LLMFullResponseStartFrame())
-            if tuple(snapshot[name] for name in SCOPE) != tuple(operation.key[name] for name in SCOPE):
+            if (operation.retired
+                    or tuple(snapshot[name] for name in SCOPE) != tuple(operation.key[name] for name in SCOPE)):
                 result = CandidateReply(cancelled=True, failure='superseded')
             else:
+                operation.model_started = True
                 result = await self.owner.conversation.respond(
                     operation.text, snapshot, operation.key, on_delta=delta)
             if result.failure is None and not result.cancelled:
@@ -255,12 +259,39 @@ class PipecatDialogue:
             return False
 
     def _valid(self, operation, identity):
-        return (not self._closed and not operation.callback_failed
+        return (not self._closed and not operation.callback_failed and not operation.retired
                 and self._operation is operation and identity is not None
                 and self._scope == tuple(operation.key[name] for name in SCOPE)
                 and tuple(getattr(identity, name, None) for name in KEY)
                     == tuple(operation.key[name] for name in KEY)
                 and self.conversation.is_stream_current(identity))
+
+    async def retire_unstarted(self, observed_key):
+        """Retire optional work after Native confirms a semantic context change.
+
+        Merely observing an ACK or progress label does not call this method.
+        No source with text already admitted to the pipeline is interrupted.
+        """
+        op = self._operation
+        retire = getattr(self.conversation, 'retire_unstarted', None)
+        if (self._closed or op is None or op.identity is not None or op.retired
+                or not callable(retire) or type(observed_key) is not dict
+                or observed_key.keys() != set(KEY)
+                or self._scope != tuple(observed_key[name] for name in SCOPE)
+                or any(op.key[name] != observed_key[name]
+                       for name in ('call_id', 'task_id', 'output_epoch', 'request_id'))):
+            return False
+        if not op.model_started:
+            op.retired = True
+            return True
+        # The source independently checks first_at: a delta can be received
+        # before Pipecat's callback sets op.identity. Refusal changes nothing.
+        drain = retire(op.key)
+        if drain is None:
+            return False
+        op.retired = True
+        await drain
+        return True
 
     def is_current(self, identity):
         return (not self._closed and identity is not None and self._scope is not None

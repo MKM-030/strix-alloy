@@ -410,6 +410,8 @@ class SDKSessionManager:
             status = getattr(error,'status',403)
             raise _Rejected(status if type(status) is int and status in (400,401,403) else 403) from None
         self._check_context(context)
+        LOG.info('Voice setup transport=sdk stage=admission_ready elapsed_ms=%d',
+                 int((time.monotonic() - started) * 1000))
         if self.before_create is not None:
             try:
                 await self.before_create()
@@ -423,6 +425,8 @@ class SDKSessionManager:
         if self.relay_runtime is not None:
             self.relay_runtime.ensure_running()
         call,managed_servers = await self._allocate_call(request,context)
+        LOG.info('Voice setup transport=sdk stage=allocated elapsed_ms=%d',
+                 int((time.monotonic() - started) * 1000))
         session = None
         try:
             if self.bind_call_authorization is not None:
@@ -487,6 +491,7 @@ class SDKSessionManager:
             raise _Rejected(410)
 
     async def offer(self, request):
+        started = time.monotonic()
         session = await self._lookup(request,json_body=True)
         body = _json(await _body(request,MAX_SDP_BYTES+1024))
         sdp = body.get('sdp')
@@ -508,6 +513,12 @@ class SDKSessionManager:
                         self._open(session)
                     answer = await session.call.peer.createAnswer()
                     self._open(session)
+                    # Admission, voice preparation and the remote offer are
+                    # validated. The same owned startup can now synthesize the
+                    # configured introduction while ICE gathers. Audio remains
+                    # buffered until media connects; every failed offer below
+                    # closes this call and drains its startup too.
+                    session.call.spawn(session.call.process_turns())
                     await session.call.peer.setLocalDescription(answer)
                     self._open(session)
                     local = session.call.peer.localDescription
@@ -521,7 +532,8 @@ class SDKSessionManager:
                         self.relay_registry.set_peers(session.session_id,session.call.peer)
                     session.offered = True
                     session.accepted.set()
-                    session.call.spawn(session.call.process_turns())
+                    LOG.info('Voice setup transport=sdk stage=media_ready elapsed_ms=%d',
+                             int((time.monotonic() - started) * 1000))
                     response = _response({'sdp':{'type':'answer','sdp':local.sdp}})
                     if session.media_diagnostics is not None:
                         await session.media_diagnostics.observe_offer(sdp,local.sdp,response.body)

@@ -373,14 +373,20 @@ class OmniConversation:
         try:
             submitted = self._now()
             await self._session.update_context(patch)
-            if self._state != 'ready' or key[5] != self.output_epoch:
+            if self._state != 'ready' or key[5] != self.output_epoch or self._key != key:
                 return self._candidate(key, raw, submitted, cancelled=True, failure='superseded')
             async def stream(delta):
                 identity = self._candidate(key, raw, submitted).identity
                 if self.is_stream_current(identity):
                     await on_delta(delta, identity)
-            self._active_turn = asyncio.create_task(self._session.turn(key[6], raw,
-                on_delta=stream if on_delta is not None else None))
+            async def owned_turn():
+                # Retirement can happen after task creation but before this
+                # coroutine starts. Never dispatch a relinquished request.
+                if self._key != key or key[5] != self.output_epoch:
+                    return {'text': '', 'cancelled': True}
+                return await self._session.turn(key[6], raw,
+                    on_delta=stream if on_delta is not None else None)
+            self._active_turn = asyncio.create_task(owned_turn())
             result = await self._active_turn
             candidate = self._candidate(key, raw, submitted, text=result['text'], cancelled=result['cancelled'])
             if result['cancelled'] or not self.is_current(candidate.identity):
@@ -400,6 +406,23 @@ class OmniConversation:
             self._active_turn = None
             self._busy = False
             self._response_done.set()
+
+    def retire_unstarted(self, response_key):
+        """Claim an exact unspoken request; await the returned drain if claimed.
+
+        This uses response.cancel, preserving the session for later inputs.
+        The synchronous claim fences both the context-update await and the
+        scheduled turn. Once any source text arrives, normal release/playback
+        guards own the response and this optimization leaves it alone.
+        """
+        if (self._state != 'ready' or not self._busy or self._invalidating
+                or type(response_key) is not dict or response_key.keys() != set(KEY)
+                or tuple(response_key[name] for name in KEY) != self._key
+                or self._socket is None or self._socket.first_at is not None):
+            return None
+        self._key = None
+        self._invalidating += 1
+        return self._drain()
 
     def invalidate(self, new_epoch, reason):
         """Invalidate immediately; await return value before another respond()."""

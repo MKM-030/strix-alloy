@@ -98,19 +98,40 @@ def build_servicenow_voice_context(settings=None, known_state=None):
         status = 'Der native Dialog ist beendet; keine weitere Übermittlung behaupten.'
     elif available is False:
         status = 'Die native Verbindung ist noch nicht bereit; keine laufende Verarbeitung behaupten.'
-    elif busy is True:
-        status = 'Eine übermittelte Eingabe wartet auf Antwort; ein Ergebnis ist noch nicht belegt.'
-    elif available is True and busy is False:
+    elif available is True:
         status = 'Der native Dialog ist bereit; nur vorhandene Rückmeldungen sind belegt.'
     else:
         status = 'Der aktuelle Verarbeitungsstand ist unbekannt.'
     pending = _count(state, 'pending_count')
     retained = (f'{pending} Originaleingaben warten noch auf Übermittlung.' if pending is not None else '')
+    delivery = {
+        'local': 'Noch lokal: Die aktuelle Äußerung wartet auf ihre reguläre Übergabe. '
+                 'Eine ältere Anfrage oder Rückmeldung belegt keine Übernahme dieser Äußerung.',
+        'held': 'Noch lokal: Die aktuelle Äußerung ist an einer nativen Rückfrage zurückgehalten. '
+                'Sie wurde nicht als Antwort auf eine neue, noch nicht gehörte Frage übergeben.',
+        'handoff': 'Übergabe angestoßen: Diese Äußerung ist für die reguläre Übergabe ausgewählt '
+                   'oder bereits im Übergabeversuch. '
+                   'Daraus lässt sich weder eine laufende fachliche Verarbeitung noch ein Ergebnis ableiten. '
+                   'Auch eine Transportquittung belegt keine fachliche Übernahme der einzelnen Angaben.',
+        'native_reply': 'Native Rückmeldung: Zur Übergabe dieser Äußerung ist eine zugeordnete native '
+                       'Rückmeldung eingegangen. Deren konkreter Inhalt ist maßgeblich; '
+                       'ein Abschluss oder eine Übernahme aller Angaben folgt daraus nicht.',
+        'uncertain': 'Übergabe ungewiss: Der Übergabeversuch dieser Äußerung endete ohne verlässlichen '
+                     'Abschluss. Behaupte weder Nichtzustellung noch laufende Verarbeitung; '
+                     'die Eingabe wird nicht automatisch wiederholt.',
+    }.get(state.get('current_turn_delivery'),
+          'Für die aktuelle Äußerung liegt kein zugeordneter Übermittlungsnachweis vor. '
+          'Leite ihren Stand nicht aus einer anderen Anfrage ab.')
     # Caller facts retain their conversational meaning in every lifecycle phase.
     # Preserving an identifier is not identity verification or business authority.
     limits = (
         f'Konfigurierte Anrufsprache: {_language(settings)}. Antworte passend zur tatsächlichen Äußerung.',
         status + (' ' + retained if retained else ''),
+        delivery,
+        'Erwähne Übermittlung, Verarbeitung oder fehlende Bestätigung nur, wenn die Person nach dem '
+        'Status fragt oder der belegte Zustand ihre aktuelle Frage erklärt. Bei Angaben und Korrekturen '
+        'gehe auf deren Inhalt ein; wiederhole keine technischen Wartehinweise. Erfinde keinen '
+        'Zusammenhang zwischen einer ausstehenden Übermittlung und vermeintlich fehlenden Pflichtangaben.',
         'Der Gesprächsverlauf und die aktuelle Frage geben Zusammenhang; freie Fragen sind keine Mitarbeiterangaben.',
         'Originaleingaben gehen unverändert an denselben ServiceNow-Dialog. Bestätigungen und Geschäftsabschluss erfindest du nicht.',
         'Greife ausdrücklich genannte Angaben und Identifikatoren im Zusammenhang auf, auch über Satzgrenzen hinweg. '
@@ -125,7 +146,7 @@ def build_servicenow_voice_context(settings=None, known_state=None):
     )
     if available is True and busy is True and closed is not True:
         limits += (
-            'Während ServiceNow die Eingabe bearbeitet, betreibst du keine parallele fachliche Datenerhebung. '
+            'Während eine Eingabe lokal wartet oder ihre Übergabe läuft, betreibst du keine parallele fachliche Datenerhebung. '
             'ServiceNow klärt fachlich benötigte Angaben. Greife bekannte Angaben als vorläufigen Gesprächsinhalt auf, '
             'beantworte freie Fragen und kläre bei Bedarf eine echte sprachliche Unklarheit.',
             'Entscheide nicht über die fachliche Relevanz von Originalangaben oder Identifikatoren und erkläre sie '
