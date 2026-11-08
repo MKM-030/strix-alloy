@@ -2401,9 +2401,17 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
     app.on_shutdown.append(stop_wss_creates)
 
     async def before_create():
-        await require_model_ready(app[HTTP_KEY], config.model_health_url,
-                                  config.private_model_health_token)
-        await require_asr_ready(app[HTTP_KEY], config)
+        try:
+            await require_model_ready(app[HTTP_KEY], config.model_health_url,
+                                      config.private_model_health_token)
+        except RuntimeError:
+            LOG.warning('Native create stage=model_readiness outcome=unavailable')
+            raise
+        try:
+            await require_asr_ready(app[HTTP_KEY], config)
+        except RuntimeError:
+            LOG.warning('Native create stage=asr_readiness outcome=unavailable')
+            raise
     async def before_text_create():
         if responsive is not None and not responsive.available:
             raise web.HTTPServiceUnavailable(text=availability_notice)
@@ -2698,13 +2706,21 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
             headers=headers)
 
     async def health(request):
-        result = {'status':'ok','nativeSessions':len(active),
+        result = {'status':'ok','bridgeAlive':True,'nativeSessions':len(active),
                   'authMode':'loopback-development' if config.development_token else config.auth_mode,
                   'conversationLayer':'independent' if config.conversation_ws_url or config.conversation_http_url else 'legacy'}
         result['conversationPipeline'] = 'pipecat' if config.conversation_ws_url or config.conversation_http_url else 'legacy'
         result['conversationSentenceStreaming'] = bool(config.conversation_ws_url or config.conversation_http_url)
         if config.conversation_http_url:
             result['conversationTransport'] = 'controller-text'
+        if config.model_health_url:
+            try:
+                await require_model_ready(app[HTTP_KEY], config.model_health_url,
+                                          config.private_model_health_token)
+            except RuntimeError:
+                result.update(status='unavailable', modelReady=False)
+            else:
+                result['modelReady'] = True
         if config.asr_backend == QWEN_ASR_BACKEND:
             result['asrBackend'] = config.asr_backend
             result['asrRuntime'] = config.asr_runtime
@@ -2713,8 +2729,8 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                 await require_asr_ready(app[HTTP_KEY], config)
             except RuntimeError:
                 result.update(status='unavailable', asrReady=False)
-                return web.json_response(result, status=503)
-            result.update(asrReady=True, asrModel=QWEN_ASR_MODEL)
+            else:
+                result.update(asrReady=True, asrModel=QWEN_ASR_MODEL)
         if request.query.get('assistant_settings') == '1':
             result['assistantSettingsSupport'] = {'version':1,'perCallLanguage':True,
                     'nativeCloudVoiceSelection':False,'nativeVadConfidenceAndVolume':False,
@@ -2733,7 +2749,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                 'capabilities':asdict(ExecutorCapabilities()),
                 'reservedContexts':int(not responsive.available),
                 'unresolvedContexts':int(responsive.store.has_unresolved())}
-        return web.json_response(result)
+        return web.json_response(result, status=200 if result['status'] == 'ok' else 503)
     app.router.add_get('/launch', launch)
     app.router.add_get('/health', health)
     app.router.add_get('/webrtc/connect/agent_operator', connect)
