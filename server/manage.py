@@ -15,15 +15,15 @@ def make_profile(backend, checkpoint, context, prompt_cache='Off', halogen_versi
         raise ValueError('Context must be 4096..262144 positions')
     if checkpoint not in ('w4b','v2'): raise ValueError('Unknown checkpoint')
     if prompt_cache not in ('Off','Exact','Flexible'): raise ValueError('Unknown cache policy')
-    if halogen_version not in ('0.16.2','0.17.0','0.17.1','0.17.2','0.17.3','0.18.0','0.18.1','0.18.5','0.18.7','0.18.8','0.18.10','0.18.11','0.18.15','0.18.16','0.18.22','0.19.1'):
+    if halogen_version not in ('0.16.2','0.17.0','0.17.1','0.17.2','0.17.3','0.18.0','0.18.1','0.18.5','0.18.7','0.18.8','0.18.10','0.18.11','0.18.15','0.18.16','0.18.22','0.19.1','0.20.0'):
         raise ValueError('Unsupported managed Halogen version')
     if type(slots) is not int or slots not in (1,2) or type(concurrency) is not int or concurrency not in (1,2):
         raise ValueError('Slots and concurrency must be integer 1 or opt-in 2')
     capacity_opt_in = slots != 1 or kv_pool_positions is not None or concurrency != 1
     if capacity_opt_in and prompt_cache != 'Off':
         raise ValueError('Capacity opt-in requires Cache Off')
-    if capacity_opt_in and (backend != 'Halogen' or halogen_version not in ('0.18.22', '0.19.1') or checkpoint != 'v2' or context != 32768):
-        raise ValueError('Capacity opt-in requires Halogen 0.18.22 or 0.19.1 v2 at context 32768')
+    if capacity_opt_in and (backend != 'Halogen' or halogen_version not in ('0.18.22', '0.19.1','0.20.0') or checkpoint != 'v2' or context != 32768):
+        raise ValueError('Capacity opt-in requires Halogen 0.18.22, 0.19.1 or 0.20.0 v2 at context 32768')
     if backend!='Halogen':
         if halogen_version!='0.16.2':
             raise ValueError('Halogen version selection applies only to the Halogen backend')
@@ -77,7 +77,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('action',choices=['start','status','stop','describe'])
     p.add_argument('--backend',choices=['Halogen','GUFO','Projfix'],default='Halogen')
-    p.add_argument('--halogen-version',choices=['0.16.2','0.17.0','0.17.1','0.17.2','0.17.3','0.18.0','0.18.1','0.18.5','0.18.7','0.18.8','0.18.10','0.18.11','0.18.15','0.18.16','0.18.22','0.19.1'],default='0.16.2')
+    p.add_argument('--halogen-version',choices=['0.16.2','0.17.0','0.17.1','0.17.2','0.17.3','0.18.0','0.18.1','0.18.5','0.18.7','0.18.8','0.18.10','0.18.11','0.18.15','0.18.16','0.18.22','0.19.1','0.20.0'],default='0.16.2')
     p.add_argument('--checkpoint',choices=['w4b','v2'],default='v2')
     p.add_argument('--context',type=int,default=129024)
     p.add_argument('--prompt-cache',choices=['Off','Exact','Flexible'],default='Off')

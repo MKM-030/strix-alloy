@@ -39,7 +39,7 @@ class FollowupLauncherTests(unittest.TestCase):
         venv.EnvBuilder(with_pip=False).create(cls.fixture_venv)
         cls.stable = server/".local/servicenow-api-token.txt"
         cls.stable.write_text("SYNTHETIC_PUBLIC_TOKEN_NEVER_PRINT_123", encoding="utf-8")
-        for version in ("0.18.10", "0.18.22", "0.19.1"):
+        for version in ("0.18.10", "0.18.22", "0.19.1", "0.20.0"):
             package = cls.root/("backends/halogen-wsl2-"+version)
             (package/"profiles").mkdir(parents=True)
             (package/".local").mkdir()
@@ -47,7 +47,7 @@ class FollowupLauncherTests(unittest.TestCase):
             (package/"profiles/release.json").write_text(json.dumps(release))
             (package/".local/machine.json").write_text(json.dumps(dict(version=version, image=release["image"], pwsh=str(PS))))
             (package/".local/api-token.txt").write_text("SYNTHETIC_BACKEND_TOKEN_NEVER_PRINT_456")
-            if version in ("0.18.22", "0.19.1"):
+            if version in ("0.18.22", "0.19.1", "0.20.0"):
                 (package/"scripts").mkdir()
                 shutil.copy2(REPO/("backends/halogen-wsl2-"+version)/"scripts/capacity_policy.py",
                              package/"scripts/capacity_policy.py")
@@ -80,7 +80,7 @@ class FollowupLauncherTests(unittest.TestCase):
         self.assertGreaterEqual(start, 0, result.stdout)
         return json.JSONDecoder().raw_decode(result.stdout[start:])[0]
 
-    def expected_current(self, version="0.19.1", prefill=2048):
+    def expected_current(self, version="0.20.0", prefill=2048):
         return {
             "schema":1, "minimum_reserve_gib":18, "token_file":str(self.stable),
             "backend_token_file":str(self.root/("backends/halogen-wsl2-"+version)/".local/api-token.txt"),
@@ -163,7 +163,7 @@ class FollowupLauncherTests(unittest.TestCase):
         result = self.invoke(profile=None)
         actual = self.decoded(result)
         self.assertEqual(self.normalize(actual), self.normalize(self.expected_current()))
-        self.assertIn("Profile: CurrentText32K; Halogen 0.19.1 v2; MTP policy Confidence90; PLD 3,3; cache Off", result.stdout)
+        self.assertIn("Profile: CurrentText32K; Halogen 0.20.0 v2; MTP policy Confidence90; PLD 3,3; cache Off", result.stdout)
         self.assertIn("Thinking default: Off; low effort", result.stdout)
         self.assertIn("Prefill chunk / token arena: 2048 / 2048", result.stdout)
 
@@ -180,6 +180,11 @@ class FollowupLauncherTests(unittest.TestCase):
         self.assertIn("Context capacity: 262144", result.stdout)
         self.assertIn("Thinking default: On; medium effort", result.stdout)
         self.assertIn("Prefill chunk / token arena: 4096 / 4096", result.stdout)
+
+    def test_explicit_previous_release_remains_selectable(self):
+        result = self.invoke("-HalogenVersion", "0.19.1", "-MtpPolicy", "Confidence90", profile="Current4K")
+        self.assertEqual(result.returncode, 0, result.stderr+result.stdout)
+        self.assertIn("Profile: Current4K; Halogen 0.19.1 v2; MTP policy Confidence90", result.stdout)
 
     def test_current_text_forwards_two_slot_capacity_and_2048_prefill(self):
         result = self.invoke("-Slots", "2", "-KvPoolPositions", "65536", "-Concurrency", "2",
@@ -201,7 +206,7 @@ class FollowupLauncherTests(unittest.TestCase):
             with self.subTest(options=options):
                 result = self.invoke(*options, profile="CurrentText32K")
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn("CurrentText32K requires Halogen 0.19.1", result.stdout+result.stderr)
+                self.assertIn("CurrentText32K requires Halogen 0.20.0", result.stdout+result.stderr)
 
     def test_capacity_and_prefill_selectors_require_current_text32k(self):
         for profile in ("FollowupText32K", "Current4K"):

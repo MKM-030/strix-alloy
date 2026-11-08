@@ -8,7 +8,8 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 | Backend | Status | Entry point |
 |---|---|---|
-| **Halogen WSL2 0.19.1** | Current v2 text serving with one 32K slot and a 2K prefill arena | [Update and measurements](docs/research/halogen0191-update-20261107.md) |
+| **Halogen WSL2 0.20.0** | Installed ROCm 10.1 update; runtime and new measurements pending memory admission | [Installation and qualification status](docs/research/halogen0200-update-20261108.md) |
+| **Halogen WSL2 0.19.1** | Retained qualified one-slot 32K text measurements and explicit rollback | [Earlier update and measurements](docs/research/halogen0191-update-20261107.md) |
 | **Halogen WSL2 0.18.22** | Retained independently captured frozen 8K/16K phase measurements | [Earlier measurements](docs/benchmarks/halogen01822-raw-8k16k-20261101.md) |
 | **Halogen WSL2 0.18.16** | Retained independently captured 8K/16K phase measurements | [Earlier phase measurements](docs/benchmarks/halogen01816-natural-8k16k-20261026-evening.md) |
 | **Hipfire native Windows** | Source port with completed 16K MTP cohort; 1,240.2 prefill / 26.53 decode tok/s, 63.64% acceptance | [Build, run and measurement limits](backends/hipfire-windows/README.md) |
@@ -27,9 +28,10 @@ For the current installed Halogen text configuration, use Windows PowerShell 5.1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 1 -KvPoolPositions 32768 -Concurrency 1 -PrefillTokens 2048 -ConsoleTrace
 ```
 
-This command selects 0.19.1, v2, one 32768-position slot, a 32768-position
+This command selects installed 0.20.0, v2, one 32768-position slot, a 32768-position
 KV pool, paired 2048 prefill settings, adaptive MTP gate 0.90, PLD `3,3`,
 Cache Off, Thinking Off and Vision Off. It keeps the existing ServiceNow token and endpoint on port 8840.
+The 0.20.0 installation has passed CPU checks, but is not online or performance-qualified yet: the latest 27.028 GiB free-RAM check is below the authorized 30 GiB startup floor. See the [8 November status](docs/research/halogen0200-update-20261108.md).
 Stop an existing managed session through its normal controls before changing
 profiles. See the [ServiceNow guide](docs/integrations/halogen-servicenow.md).
 
