@@ -1,0 +1,370 @@
+{
+  "schema": "halogen0201.prefill8192-plan.v2",
+  "version": "0.20.1",
+  "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+  "weights_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+  "normal_profile": {
+    "path": "server\\.local\\servicenow-sessions\\86b9d6d5ef174a25949a5966e5f61c55.json",
+    "sha256": "06df227385b7f6de97d1de0123c08f70a544cad9396ab4aedbd6d2607598a128"
+  },
+  "arms": [
+    "before",
+    "candidate",
+    "after"
+  ],
+  "cases": [
+    {
+      "name": "natural8192",
+      "input_tokens": 8192,
+      "request_path": "server/.local/halogen-update-20261107/primary0191/natural8192-prep/request-natural8192.json",
+      "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d"
+    },
+    {
+      "name": "natural16384",
+      "input_tokens": 16384,
+      "request_path": "server/.local/halogen-update-20261025/primary01816/measurement-20261026T1903Z/plain-packet/request-natural16k.json",
+      "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+    }
+  ],
+  "required_complete_cohorts": 6,
+  "warmups_excluded_per_case_per_arm": 1,
+  "measured_repetitions_per_case_per_arm": 3,
+  "output_token_cap": 128,
+  "supported_actual_output_tokens": {
+    "min": 2,
+    "max": 128
+  },
+  "route": "/v1/completions",
+  "only_between_arm_changes": [
+    "engine.prefill_chunk",
+    "engine.max_prefill_tokens"
+  ],
+  "paired_prefill_by_arm": {
+    "before": 2048,
+    "candidate": 8192,
+    "after": 2048
+  },
+  "limits": {
+    "startup_physical_gib": 30,
+    "startup_commit_gib": 131,
+    "runtime_physical_gib": 18,
+    "runtime_commit_gib": 18,
+    "request_entry_physical_gib": 22,
+    "request_entry_commit_gib": 22
+  },
+  "gpu_quality": {
+    "all_nonzero_GPU_rejected": true,
+    "PID_exemptions": [],
+    "before_request_zero_frames": 2,
+    "before_request_wait_max_seconds": 120,
+    "after_request_zero_frames": 2,
+    "after_request_wait_max_seconds": 120,
+    "before_request_reserve_gib": 22,
+    "after_request_reserve_gib": 18,
+    "counter_semantics": "interval average",
+    "settling_wait_outside_RAW_and_HTTP_QPC": true,
+    "foreign_processes_preserved": true
+  },
+  "fixed_controls": {
+    "checkpoint": "v2",
+    "weights": "selected exact v2 checkpoint",
+    "draft_vocabulary_bank": "Q4",
+    "context": 32768,
+    "slots": 1,
+    "kv_pool_positions": 32768,
+    "concurrency": 1,
+    "temperature": 0,
+    "seed": 1,
+    "cache": "Off/no_store",
+    "thinking": false,
+    "vision": false,
+    "gate_rule": "gate",
+    "gate_probability": "0.90",
+    "pld": "3,3",
+    "prefetch": 0,
+    "draft_vocab_q8": 0,
+    "native_cost_patch": false,
+    "NPU": false
+  },
+  "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+  "acceptance_independently_reconciled": false,
+  "accepted_independent_trace_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+  "native_trace_chain_kept_separate": true,
+  "phase_policy": {
+    "prefill": "Same frozen input, weights, engine and fixed controls qualify input-side comparison across arenas; generated output may differ.",
+    "decode": "Causal comparison additionally requires exact output hashes, 128 actual output tokens, finish reasons and128-token caps across all arms.",
+    "headline": "All six complete cohorts and both2048 bookends are required. Use all three measured repetitions; retain the excluded warmup.",
+    "clocks": "Use unadjusted RAW bounds and corresponding HTTP QPC. GPU counter settling waits remain outside both. Retain native/API observations separately.",
+    "output_differences": "Retain each arena output hash and finish/cap metadata; preserve unmatched decode observations without a speed-gain claim."
+  },
+  "reuse": {
+    "coordinator": "prefill8192-cohort-prep-v2/root_campaign.py",
+    "exporter": "prefill8192-cohort-prep-v2/export_comparison.py",
+    "gpu_admission": "prefill8192-cohort-prep-v2/gpu_admission.py",
+    "owned_readiness": "cost-cohort-prep-v5/await_owned.py",
+    "trace_parser": "prefill8192-cohort-prep-v2/mtp_trace.py",
+    "collector": "prefill8192-cohort-prep-v2/collector/collect_epoch.py",
+    "RAW_observer": "raw-phase-prep-v2/observer",
+    "overlay": "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/integration/root-bound"
+  },
+  "experiment": "prefill8192",
+  "prospective": true,
+  "comparison_executed": false,
+  "full_goal_achieved": false,
+  "source_preparation_complete": true,
+  "post_request_GPU_observation": {
+    "maximum_seconds": 120,
+    "required_zero_frames": 2,
+    "runtime_reserve_gib": 18,
+    "counter_type": 542180608,
+    "counter_constant": "PERF_100NSEC_TIMER",
+    "timing": "All observations and settling remain outside RAW and HTTP QPC.",
+    "PID_exemptions": [],
+    "PID4_ownership": "unresolved",
+    "source": "https://learn.microsoft.com/en-us/windows/win32/wmisdk/timer-algorithm-counter-types"
+  },
+  "executed_source_pins": {
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/root_campaign.py": {
+      "bytes": 39209,
+      "sha256": "6bee4f95637e4de049e4fa30ab24be36be2f84b9d6de67fc150ca389a214a995"
+    },
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/coordinator_skeleton.py": {
+      "bytes": 12238,
+      "sha256": "e2c74dd6ea36d4b9950fb4da70c44c73fb65bb018d292bda7240287627df8ec3"
+    },
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/export_comparison.py": {
+      "bytes": 22069,
+      "sha256": "7b37d272dfd48bb75d9f29a709215b1556a13e45b11eacb52127556775fe3ed6"
+    },
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/mtp_trace.py": {
+      "bytes": 6029,
+      "sha256": "57e94d5bb654b6ac899ae8a76798bb2f147a5c2869de865fb77cbf2c79f2ede9"
+    },
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/prepare_overlay.py": {
+      "bytes": 3944,
+      "sha256": "62d51e08bb386c4bec34790326096b26c5433681ab750668e0b0ffc5ef382871"
+    },
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/prepare_study.py": {
+      "bytes": 6648,
+      "sha256": "46aa5e60da1141f062b32112e54d3a3615098f51c3f38ac369a0aa4cb2df673e"
+    },
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/cpu_preflight.py": {
+      "bytes": 3368,
+      "sha256": "2db06d20f06412ff8d3cdb139ac8c902790acabdf045e9c7759438609f82b118"
+    },
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/gpu_admission.py": {
+      "bytes": 5923,
+      "sha256": "d49af82bc2f17947ca465249d13f827c1db6c72449cc7a0cc3a518cdcddd70bc"
+    },
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/collector/collect_epoch.py": {
+      "bytes": 27305,
+      "sha256": "5552572541418744496bf9626dce45f9b6aa479cc8cb068e46495862d2216c72"
+    },
+    "server/.local/halogen-update-20261110/primary0201/prefill8192-cohort-prep-v2/integration/root-bound/transition.json": {
+      "bytes": 21725,
+      "sha256": "0fc9906e311e6ea4282934791b054f318d4485b55b14bf582c1e32f9f6c832a5"
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v5/gpu_admission.py": {
+      "bytes": 6007,
+      "sha256": "a96f14a69836938490aa8cc860fcc0440f0a7fe54515330d981a27f5658b56ae"
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v5/await_owned.py": {
+      "bytes": 6620,
+      "sha256": "031749f13c5a5ccee029f87f076f3c92203b6f50a76c6536f445dd58db563f8d"
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v5/export_comparison.py": {
+      "bytes": 27749,
+      "sha256": "41db77b789f98e21eb40d56af2b2a2329f9bcb7340c38ebf3942a053e026ca7e"
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v5/mtp_cost_trace.py": {
+      "bytes": 6175,
+      "sha256": "c7e61068cd90cfa5fa994a4efd496386b3b6fbe954fb0c9efe78f29bc79ad9f6"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/collector/collect_epoch.py": {
+      "bytes": 27508,
+      "sha256": "fc0adcdc6e6a424d3639424d14aa6c480902b13a55f26822c39da58b7ff2a034"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/collector/qpc_audit.py": {
+      "bytes": 8154,
+      "sha256": "385822cfb6baf97d216b2a72b97c6bbd084f8998abeaed1ed943524c05aa8698"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/integration/root-dso-pin.json": {
+      "bytes": 1613,
+      "sha256": "4d168a9e8185238293923d0474601a370dae369542536f32196858b609cedbb9"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/binding.json": {
+      "bytes": 39531,
+      "sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/observer.c": {
+      "bytes": 15567,
+      "sha256": "0deca544b5094c6434e75eb23e5d0e8bfb0a728899012ffbda5bb5413ea5a3fb"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/entry.S": {
+      "bytes": 394,
+      "sha256": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/observer.map": {
+      "bytes": 84,
+      "sha256": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/capture_core.h": {
+      "bytes": 1593,
+      "sha256": "5032ef6ac99847aaa003c01f178075fe3c914e9dd0168af46036b3f0457777a8"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/pins.h": {
+      "bytes": 3164,
+      "sha256": "21265ccb3cadeffbe91d31965f4e3bc9bcb9ade69513d8e595309204292d0873"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/endpoint_pins.h": {
+      "bytes": 195,
+      "sha256": "53721e68658ad8fc3c856c1f58127344933d16fbb9ac287be6101144c2fbe830"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/sha256_core.h": {
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/binding.json": {
+      "bytes": 39531,
+      "sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/validate_capture.py": {
+      "bytes": 13219,
+      "sha256": "776fdb05f0ec9b883a5c1146d7af558fe686fd3051154130ac44e95169ceb476"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/validate_cohort.py": {
+      "bytes": 4288,
+      "sha256": "1f07aa5b16a03a2ce9f1c06226cc0b4498a1734b72f53817e219b223b172566f"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/producer_test.c": {
+      "bytes": 6810,
+      "sha256": "aefedd27a2172ea4ad22539c992b0693b5ac74d6d3777a3b7cc8963b96714213"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/test_validator.py": {
+      "bytes": 13894,
+      "sha256": "23a2ba5d32d7bcbc45e29da37bf92a0c68724f603e534529b63a8e9fb1d4afad"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/build-linux.sh": {
+      "bytes": 566,
+      "sha256": "fba0ab8767e7bd764ed6355d2822f898f4dc899a074a6b6e7bb7e751831e4584"
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/libhgn0201_raw_side.so": {
+      "bytes": 21432,
+      "sha256": "f82f6a4f2bb1a3d970578d590dfa617f18c81c03b674eaa8be97f7a9e5ad1aa3"
+    },
+    "server/.local/halogen-update-20261110/primary0201/measure.py": {
+      "bytes": 16441,
+      "sha256": "a50e87602e90817c8244351d8ae23e877fcb0466d2065f0dc1a7f99faba6b94c"
+    },
+    "server/.local/halogen-update-20261110/primary0201/extracted/flash_serve": {
+      "bytes": 34367712,
+      "sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577"
+    },
+    "server/.local/halogen-update-20261110/primary0201/extracted/serve_api.py": {
+      "bytes": 327437,
+      "sha256": "b2d1d6df7580d69baf9952feb9383682387db20ec1211620437e78c3d2ee9e30"
+    },
+    "server/controller.py": {
+      "bytes": 43652,
+      "sha256": "114b38980bf1488b473df4de4c607b544b27a78315c5b9c0a76dc9266cd7fa85"
+    },
+    "server/.local/halogen-update-20261017/root_ops.py": {
+      "bytes": 6451,
+      "sha256": "483e1481410742f4caac5ff7f6229d508993b2fece3cfd43a74f8c4b8c908770"
+    },
+    "server/.local/halogen-update-20261017/lifecycle.py": {
+      "bytes": 7146,
+      "sha256": "91c97dfef4396946e5655ddb82b98310015fa12ba285bca6afdbf04f14477e6f"
+    },
+    "server/.local/halogen-update-20261017/goal-next-20261017/primary0188/run_finite_update.py": {
+      "bytes": 19135,
+      "sha256": "01d3881559fe1a8e7147399e7d2946594979789b7e9266eb3ca2c7b169dca4f5"
+    },
+    "server/.local/halogen-update-20261025/primary01815/run_measurement.py": {
+      "bytes": 9685,
+      "sha256": "c575b55e38af3be326baeb5e3636bd7c8bedc5c6bdafbad628af0cd17f70316b"
+    },
+    "server/.local/halogen-update-20261101/primary01822/run_cache_followup_finite.py": {
+      "bytes": 13373,
+      "sha256": "49057d15e2e3860884441caec11e15f06c75c93400c6bec7b64afaabd9a34bd8"
+    },
+    "server/.local/halogen-update-20261101/primary01822/resume_concurrency2_finite.py": {
+      "bytes": 5606,
+      "sha256": "373919c4a7d1d651df70e9eb968ac117fd33f76411229835aa366bad2be8e50c"
+    },
+    "server/.local/halogen-update-20261017/goal-next-20261017/hipfire-mq2-memory/run_windows_trial_inline_q8_v1.py": {
+      "bytes": 32235,
+      "sha256": "311176e7b1fe61360bf32e8565517a0935e593e8cbf99ae3d938d9e50e72daa0"
+    },
+    "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/halogen0180-adaptive-option-20261011/client/measure.py": {
+      "bytes": 26012,
+      "sha256": "ddfc64739e365dd0e25632019ac56c90dea6ec33596f0466c2bf6c8e563c8341"
+    },
+    "backends/halogen-wsl2-0.18.1/scripts/host_frames.py": {
+      "bytes": 1479,
+      "sha256": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e"
+    },
+    "server/.local/halogen-update-20261110/primary0201/gpu-counter-interval-assessment-20261111.json": {
+      "bytes": 1419,
+      "sha256": "5d6642fffa85736c29e4538a8ed44811ade3d1db8f4cda1284b0e700cd8eddff"
+    },
+    "server/.local/halogen-update-20261110/primary0201/gpu-counter-class-metadata-20261111.json": {
+      "bytes": 188,
+      "sha256": "57a2a1a25d756b332cb430892742ceb64170a8f8c9299f0062d539739087916c"
+    },
+    "server/.local/halogen-update-20261110/primary0201/mtp_gate_cost-raw-comparison-native-cost-v2/epoch-0201000000000001-2-before-GPU.json": {
+      "bytes": 451,
+      "sha256": "034efe4b447f5169ab1d409eb7bcdb7910c71bb26d432e0e937fa06c168bbdab"
+    },
+    "server/.local/halogen-update-20261110/primary0201/mtp_gate_cost-raw-comparison-native-cost-v2/epoch-0201000000000001-0-before-GPU.json": {
+      "bytes": 312,
+      "sha256": "08eff1b944f7f102e2fba879f9eaabf508704075e7539bb78bcc1dbe12cffb1f"
+    }
+  },
+  "exporter_source_pin": {
+    "bytes": 22069,
+    "sha256": "7b37d272dfd48bb75d9f29a709215b1556a13e45b11eacb52127556775fe3ed6"
+  },
+  "native_environment_by_arm": {
+    "before": {
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "HALOGEN_DRAFT_VOCAB_Q8": "0",
+      "HALOGEN_SERVE_TRACE": "1",
+      "HALOGEN_DECODE_PREFETCH": "0",
+      "HALOGEN_PLD": "3,3",
+      "HGN0201_RAW_ENABLE": "1",
+      "HALOGEN_PREFILL_CHUNK": "2048",
+      "HALOGEN_MAX_TOK": "2048"
+    },
+    "candidate": {
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "HALOGEN_DRAFT_VOCAB_Q8": "0",
+      "HALOGEN_SERVE_TRACE": "1",
+      "HALOGEN_DECODE_PREFETCH": "0",
+      "HALOGEN_PLD": "3,3",
+      "HGN0201_RAW_ENABLE": "1",
+      "HALOGEN_PREFILL_CHUNK": "8192",
+      "HALOGEN_MAX_TOK": "8192"
+    },
+    "after": {
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "HALOGEN_DRAFT_VOCAB_Q8": "0",
+      "HALOGEN_SERVE_TRACE": "1",
+      "HALOGEN_DECODE_PREFETCH": "0",
+      "HALOGEN_PLD": "3,3",
+      "HGN0201_RAW_ENABLE": "1",
+      "HALOGEN_PREFILL_CHUNK": "2048",
+      "HALOGEN_MAX_TOK": "2048"
+    }
+  },
+  "raw_only_transition": {
+    "bytes": 21725,
+    "sha256": "0fc9906e311e6ea4282934791b054f318d4485b55b14bf582c1e32f9f6c832a5"
+  },
+  "established_checkpoint_receipt": {
+    "bytes": 311,
+    "sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2"
+  },
+  "source_binding": "Exact current sources and existing binary-bound RAW observer",
+  "weights_binding": "Established complete-file receipt and saved current-file identities per arm"
+}
