@@ -1,0 +1,238 @@
+{
+  "schema": "halogen0201.native-cost-finite-proof-summary.v1",
+  "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+  "engine_bytes": 34367712,
+  "llvm_sha256": "feaaf3874824cd550505b9be47ab6519240301f0ea80562d2c9720fc98fef5d1",
+  "initializer": {
+    "start_rva": 32228320,
+    "end_rva": 32228699,
+    "bytes": 379,
+    "file_offset": 32224224,
+    "sha256": "4a760f939ae480377677aac15201d1b9a87156e4e85e63faf63308193d6f0929",
+    "fde_rva": 31684976,
+    "fde_file_offset": 31684976,
+    "fde_bytes": 52,
+    "fde_sha256": "6301fd7ca39437a2d966a3fb0430950567fdb1acdbbc1201e470adb6e2941266",
+    "cie_file_offset": 31684268,
+    "cie_bytes": 24,
+    "cie_hex": "1400000000000000017a5200017810011b0c070890010000",
+    "cfi_hex": "410e10420e18410e20440e3083048e038602036e010e20410e18420e10410e08000000",
+    "cie_cfi_hex": "0c070890010000",
+    "augmentation": "zR",
+    "code_align": 1,
+    "data_align": -8,
+    "return_register": 16,
+    "lsda_encoding": null,
+    "fde_augmentation_hex": ""
+  },
+  "greedy_consumer": {
+    "start_rva": 32210480,
+    "end_rva": 32215936,
+    "bytes": 5456,
+    "file_offset": 32206384,
+    "sha256": "3ca5e4027645823b4f4af8fe491a5bc89ccbffd03ee3f2cc81170558fa3f919e",
+    "fde_rva": 31709248,
+    "fde_file_offset": 31709248,
+    "fde_bytes": 108,
+    "fde_sha256": "2d134757d6acd8f83dde07bda6924a83324f7eab399302bdcb904784c6d296dd",
+    "cie_file_offset": 31684268,
+    "cie_bytes": 24,
+    "cie_hex": "1400000000000000017a5200017810011b0c070890010000",
+    "cfi_hex": "410e10420e18420e20420e28420e30410e38470ea00283078c068d058e048f0386020309080ea802420eb002490ea002033a0b0ea802410eb002450ea002034c010e38410e30420e28420e20420e18420e10410e08410ea0020000",
+    "cie_cfi_hex": "0c070890010000",
+    "augmentation": "zR",
+    "code_align": 1,
+    "data_align": -8,
+    "return_register": 16,
+    "lsda_encoding": null,
+    "fde_augmentation_hex": ""
+  },
+  "instruction_assertions": [
+    {
+      "rva": "0x1ebc3ed",
+      "hex": "48c7474c00000000",
+      "assembly": "mov\tqword ptr [rdi + 0x4c], 0x0"
+    },
+    {
+      "rva": "0x1ebc470",
+      "hex": "c7434c03000000",
+      "assembly": "mov\tdword ptr [rbx + 0x4c], 0x3"
+    },
+    {
+      "rva": "0x1ebc48c",
+      "hex": "48894b58",
+      "assembly": "mov\tqword ptr [rbx + 0x58], rcx"
+    },
+    {
+      "rva": "0x1eb7e6c",
+      "hex": "4883bb3802000000",
+      "assembly": "cmp\tqword ptr [rbx + 0x238], 0x0"
+    },
+    {
+      "rva": "0x1eb8cec",
+      "hex": "4883bb3802000000",
+      "assembly": "cmp\tqword ptr [rbx + 0x238], 0x0"
+    },
+    {
+      "rva": "0x1eb8d49",
+      "hex": "4883bb3802000000",
+      "assembly": "cmp\tqword ptr [rbx + 0x238], 0x0"
+    },
+    {
+      "rva": "0x1eb91fa",
+      "hex": "4883bb3802000000",
+      "assembly": "cmp\tqword ptr [rbx + 0x238], 0x0"
+    },
+    {
+      "rva": "0x1eb7e78",
+      "hex": "f30f108bc4010000",
+      "assembly": "movss\txmm1, dword ptr [rbx + 0x1c4]"
+    },
+    {
+      "rva": "0x1eb7ee8",
+      "hex": "488b8bd8010000",
+      "assembly": "mov\trcx, qword ptr [rbx + 0x1d8]"
+    },
+    {
+      "rva": "0x1eb81a8",
+      "hex": "488b8bd8010000",
+      "assembly": "mov\trcx, qword ptr [rbx + 0x1d8]"
+    },
+    {
+      "rva": "0x1eb83d3",
+      "hex": "488b8bd8010000",
+      "assembly": "mov\trcx, qword ptr [rbx + 0x1d8]"
+    },
+    {
+      "rva": "0x1eb7f53",
+      "hex": "83fa03",
+      "assembly": "cmp\tedx, 0x3"
+    },
+    {
+      "rva": "0x1eb7fa9",
+      "hex": "83fa03",
+      "assembly": "cmp\tedx, 0x3"
+    },
+    {
+      "rva": "0x1eb7ffd",
+      "hex": "83fa03",
+      "assembly": "cmp\tedx, 0x3"
+    },
+    {
+      "rva": "0x1eb8039",
+      "hex": "f30f104c912c",
+      "assembly": "movss\txmm1, dword ptr [rcx + 4*rdx + 0x2c]"
+    },
+    {
+      "rva": "0x1eb8050",
+      "hex": "f30f5981fc010000",
+      "assembly": "mulss\txmm0, dword ptr [rcx + 0x1fc]"
+    },
+    {
+      "rva": "0x1eb805d",
+      "hex": "f30f5c4908",
+      "assembly": "subss\txmm1, dword ptr [rcx + 0x8]"
+    },
+    {
+      "rva": "0x1eb8062",
+      "hex": "f30f584c2420",
+      "assembly": "addss\txmm1, dword ptr [rsp + 0x20]"
+    }
+  ],
+  "initializer_references": [
+    {
+      "instruction": "0x1ebc3f5",
+      "target": "0x4ad66",
+      "text": "HALOGEN_MTP_GATE_RULE"
+    },
+    {
+      "instruction": "0x1ebc419",
+      "target": "0x41dfb",
+      "text": "gate"
+    },
+    {
+      "instruction": "0x1ebc430",
+      "target": "0x271c5",
+      "text": "cost"
+    },
+    {
+      "instruction": "0x1ebc443",
+      "target": "0x33e0a",
+      "text": "drop"
+    },
+    {
+      "instruction": "0x1ebc456",
+      "target": "0x25597",
+      "text": "ride"
+    },
+    {
+      "instruction": "0x1ebc477",
+      "target": "0x55894",
+      "text": ""
+    },
+    {
+      "instruction": "0x1ebc47e",
+      "target": "0x55a98",
+      "text": ""
+    },
+    {
+      "instruction": "0x1ebc49c",
+      "target": "0x504bb",
+      "text": "HALOGEN_MTP_GATE_LINE"
+    },
+    {
+      "instruction": "0x1ebc4c3",
+      "target": "0x504bb",
+      "text": "HALOGEN_MTP_GATE_LINE"
+    }
+  ],
+  "config_copy_rva": "0x1ecd234",
+  "config_copy_hex": "0f104340410f1186c00100000f104350410f1186d001",
+  "mode": 3,
+  "initializer_offsets": {
+    "mode": 76,
+    "table": 88
+  },
+  "consumer_offsets": {
+    "mode": 460,
+    "table": 472
+  },
+  "normal_native_mode": 0,
+  "table_workload_calibrated_locally": false,
+  "whole_engine_benefit_measured": false,
+  "engine_loaded": false,
+  "hardware_used": false,
+  "wsl_used": false,
+  "requests_sent": 0,
+  "limits": [
+    "Fresh finite initializer/greedy consumer/table proof only; no transitive helper or runtime coverage claimed",
+    "Actual native banner, manifests and scoped counters must be checked during whole-engine comparison"
+  ],
+  "tables": [
+    {
+      "rva": "0x55a98",
+      "bytes": 516,
+      "sha256": "1083c4142e5a8d7040ffb553b5d1d02f8fd95f7d6f6fd534bbf430db6be88516",
+      "matches_old_exact_values": true
+    },
+    {
+      "rva": "0x55894",
+      "bytes": 516,
+      "sha256": "f006b8e91072cbc5b96c084f320bbf0ebb17506591c4b97592bd19619333ccaf",
+      "matches_old_exact_values": true
+    }
+  ],
+  "private_full_proof_sha256": "640514e767cf6e3e24f1ac2d8567e45a51f599bebc903669a713385e825067dd",
+  "captures": [
+    {
+      "name": "initializer.disasm.txt",
+      "bytes": 7961,
+      "sha256": "672e0c92ddad170304a12f55fd61082e9a3c3388d063ac98026f27e28bf0de02"
+    },
+    {
+      "name": "greedy-consumer.disasm.txt",
+      "bytes": 83165,
+      "sha256": "eed2242ee55099385077857f3c543c42c57a6265d3debd4ed393cb1349b68a65"
+    }
+  ]
+}

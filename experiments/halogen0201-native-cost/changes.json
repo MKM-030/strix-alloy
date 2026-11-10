@@ -1,0 +1,34 @@
+{
+  "schema": "halogen0201.native-cost-byte-patch.v1",
+  "baseline_source_manifest_sha256": "d238cf78549c0c2771fb436cbc4fab3d09e18c51004593e4d265c4727ba9ba76",
+  "candidate_source_manifest_sha256": "a3ad3a4165291831a7925c609d7f078d0c23bd2a384824d0e48dc5db4b5b6f7e",
+  "operations": [
+    {
+      "path": "scripts/speculation_policy.py",
+      "before_sha256": "29507ba0f28f7904e8a0fc54c22a422f040734a455b202f4864f53ae8760de4e",
+      "after_sha256": "89d1eb111799978f1e2d7efe1000f00d309daa82121415716ff9ac33df85e1be",
+      "offset": 768,
+      "remove_base64": "",
+      "insert_base64": "TVRQX0dBVEVfUlVMRSc6ICgnZ2F0ZScsICdjb3N0JyksDQogICAgJ0hBTE9HRU5f",
+      "before_bytes": 1934,
+      "after_bytes": 1982,
+      "before_CRLF": 50,
+      "after_CRLF": 51
+    },
+    {
+      "path": "scripts/service.py",
+      "before_sha256": "043cacacbc62da0803897e64278c2a4be447bec06854179668cf8f64e334c6f1",
+      "after_sha256": "c556b5a24fcee91a5d2cc579877ba20c1e97b474b34fe2d51df7a57621c4a2a1",
+      "offset": 22714,
+      "remove_base64": "",
+      "insert_base64": "cG9saWN5ID0gc3AudmFsaWRhdGUobS5nZXQoJ3NwZWN1bGF0aW9uX3BvbGljeScpIG9yIHt9KQ0KICAgIGV4cGVjdGVkID0ge2tleTogdmFsdWUgZm9yIGtleSwgdmFsdWUgaW4gcG9saWN5Lml0ZW1zKCkgaWYga2V5ID09ICdIQUxPR0VOX01UUF9HQVRFX1JVTEUnfQ0KICAgIGFjdHVhbCA9IHtrZXk6IHZhbHVlIGZvciBrZXksIHZhbHVlIGluIG1bJ2Vudmlyb25tZW50J10uaXRlbXMoKQ0KICAgICAgICAgICAgICBpZiBrZXkgaW4gKCdIQUxPR0VOX01UUF9HQVRFX1JVTEUnLCAnSEFMT0dFTl9NVFBfR0FURV9MSU5FJyl9DQogICAgaWYgYWN0dWFsICE9IGV4cGVjdGVkOg0KICAgICAgICByYWlzZSBWYWx1ZUVycm9yKCdOYXRpdmUgZ2F0ZSBydWxlIGVudmlyb25tZW50IGRpZmZlcnMgZnJvbSBpdHMgZGVjbGFyZWQgcG9saWN5JykNCiAgICA=",
+      "before_bytes": 52759,
+      "after_bytes": 53181,
+      "before_CRLF": 900,
+      "after_CRLF": 906
+    }
+  ],
+  "manifest_regeneration": "Update only the two changed source hashes; serialize json.dumps(indent=2) plus LF. No other manifest fields change.",
+  "default_off": true,
+  "runtime_qualified": false
+}

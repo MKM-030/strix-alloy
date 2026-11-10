@@ -84,8 +84,12 @@ necessary to change request headers for the version update. See the
 ## Remaining optimization work
 
 The acceleration objective remains unachieved. A separate default-off native
-cost-aware MTP candidate is being prepared at fixed Q4; it must preserve target
-outputs and improve a controlled whole-request comparison before deployment.
+[cost-aware MTP candidate](../../experiments/halogen0201-native-cost/README.md)
+is implemented as an inert source patch at fixed Q4, with twelve portable tests
+and independent finite native-source review. It must preserve target outputs
+and improve a controlled whole-request comparison before deployment. Its fresh
+RAW observer binding and version-specific campaign preparation remain separate
+from the completed API cohort above.
 Previous slower NPU consumers remain disabled. GPU kernel and alternative-draft
 ideas are prioritized with their transfer limits in the
 [current opportunity review](halogen0201-opportunities-20261110.md).

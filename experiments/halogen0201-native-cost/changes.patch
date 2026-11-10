@@ -1,0 +1,29 @@
+--- a/scripts/speculation_policy.py
++++ b/scripts/speculation_policy.py
+@@ -12,8 +12,9 @@
+ POLICIES = {
+     'HALOGEN_PLD': ('0', '3,3', '3,4'),
+     'HALOGEN_SPEC_ADAPT': ('0', '32,0.35,64'),
+     'HALOGEN_MTP_GATE_P': ('0', '0.90'),
++    'HALOGEN_MTP_GATE_RULE': ('gate', 'cost'),
+     'HALOGEN_GRAMMAR_DRAFT': ('0', '1'),
+     'HALOGEN_SAMPLED_GATE': ('0.95,0.98', '0.95'),
+ }
+ 
+--- a/scripts/service.py
++++ b/scripts/service.py
+@@ -421,8 +421,14 @@
+ 
+ 
+ def reject_unqualified_manifest_overrides(m):
+     cp.validate_manifest(m)
++    policy = sp.validate(m.get('speculation_policy') or {})
++    expected = {key: value for key, value in policy.items() if key == 'HALOGEN_MTP_GATE_RULE'}
++    actual = {key: value for key, value in m['environment'].items()
++              if key in ('HALOGEN_MTP_GATE_RULE', 'HALOGEN_MTP_GATE_LINE')}
++    if actual != expected:
++        raise ValueError('Native gate rule environment differs from its declared policy')
+     for key in ('private_hsa', 'matmul_tuning'):
+         if m.get(key) is not None:
+             raise ValueError('Private runtime override is not rebound to 0.20.1: '+key)
+     lookup.validate_manifest(m)
