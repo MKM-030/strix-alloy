@@ -125,11 +125,26 @@ The [V5 protocol](../benchmarks/halogen0201-mtp-cost-gate-plan-20261110-v5.json)
 declares this separation prospectively. Its [counter-scope note](halogen0201-counter-scopes-20261110.md)
 retains both original counters and the limitation, with no fixed correction or
 unproved cross-scope bound. All timing, output and resource checks remain required.
+V5 has now completed all six cohorts and restored the exact normal profile.
+At 8K, cost increases API head acceptance from 59.43% to 64.95%, while RAW
+decode falls to 42.54 tok/s against gate controls of 46.82 and 45.38.
+At 16K, cost reaches 44.19 tok/s against 42.71 and 39.09, with API head
+acceptance rising from 50.46% to 58.16%. Stock controls drift materially,
+and all phase rates include observer/trace overhead. The general serving
+profile retains the gate rule. Independent reconstruction of the full API
+accepted count remains open. [Complete results and restoration evidence](../benchmarks/halogen0201-mtp-cost-gate-20261110.md).
 Previous slower NPU consumers remain disabled. GPU kernel and alternative-draft
 ideas are prioritized with their transfer limits in the
 [current opportunity review](halogen0201-opportunities-20261110.md).
 
-The bounded official source check at **20:36:38 UTC** found Halogen 0.20.1,
-AMD 26.10.2 Optional / 26.10.1 Recommended and Ryzen AI 1.9 unchanged. Its next
-check is due no earlier than **22:36:38 UTC**. Listed releases are not claims
-that those host drivers were installed or qualified by this task.
+The bounded official source check at **22:46:24 UTC on 10 November** confirms
+Halogen 0.20.1 as latest. Both image tags resolve to the installed immutable
+digest. AMD still lists 26.10.2 Optional / 26.10.1 Recommended, and Ryzen AI
+remains 1.9. The next source check is due no earlier than **00:46:24 UTC on
+11 November**. The reviewed host driver installation remains recorded
+separately. [Official Halogen changelog](https://github.com/peonist-ai/halogen-flash-server/blob/d2f4286fc97fd1f75cd765714dbc50524004356f/CHANGELOG.md).
+
+After the completed comparison, fresh authenticated checks at **23:00 UTC**
+verify API and engine 0.20.1 and a successful `READY` chat response on port 8840.
+The normal persistent console remains open, with model alias `halogen-v2` and
+the existing ServiceNow credential.

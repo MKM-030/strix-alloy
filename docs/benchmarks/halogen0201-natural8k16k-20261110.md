@@ -33,3 +33,7 @@ Each case produced the same output hash across its warmup and all three measured
 Earlier releases and profiles retain their separate workload and clock qualifications. This record changes engine version from the historical 0.19.1 cohort; it does not claim a controlled cross-version gain. No NPU performance comparison or manufacturer-workload comparison was performed.
 
 The API endpoint remains `http://127.0.0.1:8840/v1`, public model `halogen-v2`. Use the existing protected ServiceNow credential. [ServiceNow integration](../integrations/halogen-servicenow.md).
+
+A subsequent complete six-cohort MTP study independently validates phase timing
+with RAW clock bracketing. Its instrumented controls and cost candidate retain
+their own clock scope and overhead. [Completed native MTP comparison](halogen0201-mtp-cost-gate-20261110.md).
