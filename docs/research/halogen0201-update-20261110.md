@@ -90,6 +90,16 @@ and independent finite native-source review. It must preserve target outputs
 and improve a controlled whole-request comparison before deployment. Its fresh
 RAW observer binding and version-specific campaign preparation remain separate
 from the completed API cohort above.
+The first prospective cost attempt stopped before its first cohort: an
+inherited observer could not forward a C++ clock call from the HIP preflight
+helper's local dependency scope. Cleanup and recovery passed, and the exact
+normal profile was restored and authenticated. It produced no cost-rule rates.
+An exact-image CPU regression reproduced the old failure and verified a repair
+that removes the observer only for that helper, retaining both memory bridges.
+The observer binary and its thirteen sources are unchanged. The corrected
+[v2 prospective plan](../benchmarks/halogen0201-mtp-cost-gate-plan-20261110-v2.json)
+is separately registered; fifty-six CPU checks cover its coordinator and
+restoration behavior. These checks establish no throughput improvement.
 Previous slower NPU consumers remain disabled. GPU kernel and alternative-draft
 ideas are prioritized with their transfer limits in the
 [current opportunity review](halogen0201-opportunities-20261110.md).

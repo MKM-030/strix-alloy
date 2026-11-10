@@ -1,0 +1,289 @@
+{
+  "schema": "halogen0201.mtp-cost-gate-plan.v2",
+  "experiment": "mtp_gate_cost",
+  "prospective": true,
+  "comparison_executed": false,
+  "full_goal_achieved": false,
+  "engine_version": "0.20.1",
+  "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:66dac8dac25bf15f2b63a684bbe3953036045172d881525600ea41d45e5acc73",
+  "normal_profile": {
+    "path": "server/.local/servicenow-sessions/86b9d6d5ef174a25949a5966e5f61c55.json",
+    "bytes": 3141,
+    "sha256": "06df227385b7f6de97d1de0123c08f70a544cad9396ab4aedbd6d2607598a128"
+  },
+  "arms": [
+    "before",
+    "candidate",
+    "after"
+  ],
+  "cases": [
+    {
+      "name": "natural8192",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "request": {
+        "path": "server/.local/halogen-update-20261107/primary0191/natural8192-prep/request-natural8192.json",
+        "bytes": 34927,
+        "sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d"
+      },
+      "route": "/v1/completions",
+      "request_fields_without_prompt": {
+        "cache_prompt": false,
+        "drafter": "mtp",
+        "max_tokens": 128,
+        "model": "halogen-v2",
+        "prompt_cache_policy": "no_store",
+        "seed": 1,
+        "stream": false,
+        "temperature": 0
+      }
+    },
+    {
+      "name": "natural16384",
+      "actual_input_tokens": 16384,
+      "actual_output_tokens": 128,
+      "request": {
+        "path": "server/.local/halogen-update-20261025/primary01816/measurement-20261026T1903Z/plain-packet/request-natural16k.json",
+        "bytes": 72848,
+        "sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d"
+      },
+      "route": "/v1/completions",
+      "request_fields_without_prompt": {
+        "cache_prompt": false,
+        "drafter": "mtp",
+        "max_tokens": 128,
+        "model": "halogen-v2",
+        "prompt_cache_policy": "no_store",
+        "seed": 1,
+        "stream": false,
+        "temperature": 0
+      }
+    }
+  ],
+  "native_environment_by_arm": {
+    "before": {
+      "HALOGEN_MTP_GATE_RULE": "gate",
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "HALOGEN_DRAFT_VOCAB_Q8": "0",
+      "HALOGEN_SERVE_TRACE": "1",
+      "HALOGEN_DECODE_PREFETCH": "0",
+      "HALOGEN_PLD": "3,3",
+      "HGN0201_RAW_ENABLE": "1"
+    },
+    "candidate": {
+      "HALOGEN_MTP_GATE_RULE": "cost",
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "HALOGEN_DRAFT_VOCAB_Q8": "0",
+      "HALOGEN_SERVE_TRACE": "1",
+      "HALOGEN_DECODE_PREFETCH": "0",
+      "HALOGEN_PLD": "3,3",
+      "HGN0201_RAW_ENABLE": "1"
+    },
+    "after": {
+      "HALOGEN_MTP_GATE_RULE": "gate",
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "HALOGEN_DRAFT_VOCAB_Q8": "0",
+      "HALOGEN_SERVE_TRACE": "1",
+      "HALOGEN_DECODE_PREFETCH": "0",
+      "HALOGEN_PLD": "3,3",
+      "HGN0201_RAW_ENABLE": "1"
+    }
+  },
+  "fixed_profile": {
+    "context": 32768,
+    "slots": 1,
+    "kv_pool_positions": 32768,
+    "concurrency": 1,
+    "prefill_chunk": 2048,
+    "max_prefill_tokens": 2048,
+    "prompt_cache": "Off",
+    "thinking": false,
+    "vision": false
+  },
+  "limits": {
+    "startup_physical_gib": 30,
+    "startup_commit_gib": 131,
+    "request_entry_physical_gib": 22,
+    "request_entry_commit_gib": 22,
+    "runtime_physical_gib": 18,
+    "runtime_commit_gib": 18
+  },
+  "cohort": {
+    "excluded_warmups": 1,
+    "measured_repetitions": 3,
+    "requests_per_case_arm": 4,
+    "total_comparison_requests": 24,
+    "inherited_correctness_requests_excluded": true
+  },
+  "comparison": {
+    "scope": "Within0201target-outputidentity; no cross-versionoutput oracle",
+    "requires_exact_output_bytes": true,
+    "requires_finish_and_output_cap_identity": true,
+    "requires_all_six_cohorts": true,
+    "requires_zero_lookup_and_grammar_activity": true,
+    "trace_aggregate_accepted": "Diagnostic only; API reconciles scoped accepted-token counters",
+    "reported_clocks": [
+      "RAWphaseboundsincludingobserveroverhead",
+      "WindowswholeHTTPQPC"
+    ],
+    "acceptance": "Poolednativeheadaccepted/drafted, separatelyfromthroughput",
+    "admission_notwaived": true
+  },
+  "executed_source_pins": {
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v2/root_campaign.py": {
+      "sha256": "68de309bee4c705a234e7c949323f28813d3636d929f25452024ed886509f8c4",
+      "bytes": 35180
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v2/prepare_integration.py": {
+      "sha256": "15aaa8fc5dc371a82ddfdc99d6be1d642166eebfe8042593920279db831a415c",
+      "bytes": 7653
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v2/mtp_cost_trace.py": {
+      "sha256": "b88df08b942b14b00a3a51b6f3876b1263948991d4494664913949997237ea1e",
+      "bytes": 3285
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v2/await_owned.py": {
+      "sha256": "031749f13c5a5ccee029f87f076f3c92203b6f50a76c6536f445dd58db563f8d",
+      "bytes": 6620
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v2/integration/root-bound/transition.json": {
+      "sha256": "fd2ec524d6230ae0c5f530faae54007ad461d1938792a3626c84eeaa28059a55",
+      "bytes": 21694
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/collector/collect_epoch.py": {
+      "sha256": "fc0adcdc6e6a424d3639424d14aa6c480902b13a55f26822c39da58b7ff2a034",
+      "bytes": 27508
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/collector/qpc_audit.py": {
+      "sha256": "385822cfb6baf97d216b2a72b97c6bbd084f8998abeaed1ed943524c05aa8698",
+      "bytes": 8154
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/integration/root-dso-pin.json": {
+      "sha256": "4d168a9e8185238293923d0474601a370dae369542536f32196858b609cedbb9",
+      "bytes": 1613
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-candidate/native-cost-proof.json": {
+      "sha256": "640514e767cf6e3e24f1ac2d8567e45a51f599bebc903669a713385e825067dd",
+      "bytes": 14265
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-candidate/transition.json": {
+      "sha256": "c3ab9049ea04fb28e1a47e144db31a8bfa81dbfacffb8bf8f88fb9d3c7f7f24b",
+      "bytes": 16332
+    },
+    "server/.local/halogen-update-20261110/primary0201/extracted/flash_serve": {
+      "sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+      "bytes": 34367712
+    },
+    "server/.local/halogen-update-20261110/primary0201/measure.py": {
+      "sha256": "a50e87602e90817c8244351d8ae23e877fcb0466d2065f0dc1a7f99faba6b94c",
+      "bytes": 16441
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/binding.json": {
+      "sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134",
+      "bytes": 39531
+    },
+    "server/.local/halogen-update-20261110/primary0201/cost-cohort-prep-v2/prepare_registration.py": {
+      "sha256": "a816e3899c41fb3cbea5b380a0e7d041455fbe83d7cb58cbe5d7edc633fa9d7d",
+      "bytes": 4641
+    },
+    "server/controller.py": {
+      "sha256": "114b38980bf1488b473df4de4c607b544b27a78315c5b9c0a76dc9266cd7fa85",
+      "bytes": 43652
+    },
+    "server/.local/halogen-update-20261017/root_ops.py": {
+      "sha256": "483e1481410742f4caac5ff7f6229d508993b2fece3cfd43a74f8c4b8c908770",
+      "bytes": 6451
+    },
+    "server/.local/halogen-update-20261017/lifecycle.py": {
+      "sha256": "91c97dfef4396946e5655ddb82b98310015fa12ba285bca6afdbf04f14477e6f",
+      "bytes": 7146
+    },
+    "server/.local/halogen-update-20261017/goal-next-20261017/primary0188/run_finite_update.py": {
+      "sha256": "01d3881559fe1a8e7147399e7d2946594979789b7e9266eb3ca2c7b169dca4f5",
+      "bytes": 19135
+    },
+    "server/.local/halogen-update-20261025/primary01815/run_measurement.py": {
+      "sha256": "c575b55e38af3be326baeb5e3636bd7c8bedc5c6bdafbad628af0cd17f70316b",
+      "bytes": 9685
+    },
+    "server/.local/halogen-update-20261101/primary01822/run_cache_followup_finite.py": {
+      "sha256": "49057d15e2e3860884441caec11e15f06c75c93400c6bec7b64afaabd9a34bd8",
+      "bytes": 13373
+    },
+    "server/.local/halogen-update-20261101/primary01822/resume_concurrency2_finite.py": {
+      "sha256": "373919c4a7d1d651df70e9eb968ac117fd33f76411229835aa366bad2be8e50c",
+      "bytes": 5606
+    },
+    "server/.local/halogen-update-20261017/goal-next-20261017/hipfire-mq2-memory/run_windows_trial_inline_q8_v1.py": {
+      "sha256": "311176e7b1fe61360bf32e8565517a0935e593e8cbf99ae3d938d9e50e72daa0",
+      "bytes": 32235
+    },
+    "server/.local/optimization9h-20261004/halogen0172-backend-preparation-20261008/halogen0180-adaptive-option-20261011/client/measure.py": {
+      "sha256": "ddfc64739e365dd0e25632019ac56c90dea6ec33596f0466c2bf6c8e563c8341",
+      "bytes": 26012
+    },
+    "backends/halogen-wsl2-0.18.1/scripts/host_frames.py": {
+      "sha256": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
+      "bytes": 1479
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/observer.c": {
+      "sha256": "0deca544b5094c6434e75eb23e5d0e8bfb0a728899012ffbda5bb5413ea5a3fb",
+      "bytes": 15567
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/entry.S": {
+      "sha256": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d",
+      "bytes": 394
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/observer.map": {
+      "sha256": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb",
+      "bytes": 84
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/capture_core.h": {
+      "sha256": "5032ef6ac99847aaa003c01f178075fe3c914e9dd0168af46036b3f0457777a8",
+      "bytes": 1593
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/pins.h": {
+      "sha256": "21265ccb3cadeffbe91d31965f4e3bc9bcb9ade69513d8e595309204292d0873",
+      "bytes": 3164
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/endpoint_pins.h": {
+      "sha256": "53721e68658ad8fc3c856c1f58127344933d16fbb9ac287be6101144c2fbe830",
+      "bytes": 195
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/sha256_core.h": {
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e",
+      "bytes": 3721
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/binding.json": {
+      "sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134",
+      "bytes": 39531
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/validate_capture.py": {
+      "sha256": "776fdb05f0ec9b883a5c1146d7af558fe686fd3051154130ac44e95169ceb476",
+      "bytes": 13219
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/validate_cohort.py": {
+      "sha256": "1f07aa5b16a03a2ce9f1c06226cc0b4498a1734b72f53817e219b223b172566f",
+      "bytes": 4288
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/producer_test.c": {
+      "sha256": "aefedd27a2172ea4ad22539c992b0693b5ac74d6d3777a3b7cc8963b96714213",
+      "bytes": 6810
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/test_validator.py": {
+      "sha256": "23a2ba5d32d7bcbc45e29da37bf92a0c68724f603e534529b63a8e9fb1d4afad",
+      "bytes": 13894
+    },
+    "server/.local/halogen-update-20261110/primary0201/raw-phase-prep-v2/observer/build-linux.sh": {
+      "sha256": "fba0ab8767e7bd764ed6355d2822f898f4dc899a074a6b6e7bb7e751831e4584",
+      "bytes": 566
+    }
+  },
+  "exporter_source_pin": {
+    "bytes": 22188,
+    "sha256": "b47ffd0079fd74ac342086285909bc6ec29e94b1bdbde55e634268cb5e4bc09c"
+  },
+  "source_binding": "Fresh0201finiteRAWobserverandnativecostproof; no oldRVA/DSOqualificationreuse",
+  "restoration": "Exactselectednormalprofile, ownoverlayrollback andauthenticatedonline endpoint required"
+}
