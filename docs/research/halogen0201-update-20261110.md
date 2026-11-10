@@ -1,0 +1,96 @@
+# Halogen 0.20.1: running and measured on 10 November 2026
+
+Halogen **0.20.1** is installed and serving through the existing authenticated
+ServiceNow endpoint on port **8840**. The API and native engine both report
+0.20.1 with version agreement. An authenticated chat request returned `READY`.
+The normal persistent console displays incoming requests and responses.
+
+## Release and local integration
+
+The [official pinned changelog](https://github.com/peonist-ai/halogen-flash-server/blob/d2f4286fc97fd1f75cd765714dbc50524004356f/CHANGELOG.md)
+describes reply-end prompt caching for faster follow-up turns. Flash weights,
+ROCm 10.1 runtime and GEMM tuning remain those of 0.20.0. This is not a claim
+of higher cold-request decode throughput.
+
+| Identity | Bound value |
+| --- | --- |
+| Public tag/main commit | `d2f4286fc97fd1f75cd765714dbc50524004356f` |
+| Immutable image digest | `sha256:66dac8dac25bf15f2b63a684bbe3953036045172d881525600ea41d45e5acc73` |
+| Image configuration digest | `sha256:b0973fd66e5aa886b54cfaf2e4ad976b8d56ad2a2640221beec8dc920ade6e37` |
+| Native engine SHA256 | `7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577` |
+| Image engine revision | `9f38fe7ba960` |
+
+The changed native demand function and patch site were independently checked
+against the fresh ELF. All 47 source members, four rebuilt local products,
+image providers and 153 headers were verified. Live process maps and file
+hashes confirm the actual HIP, crypto and C++ providers. The image SSL file
+hash was checked separately; it is not mapped by the native engine and no
+live SSL-provider binding is claimed. Static migration pins remain distinct
+from these runtime observations.
+
+Startup passed the unchanged **30 GiB physical / 131 GiB commit** admission.
+The controller keeps the **18/18 GiB** runtime reserve. Measurements retained
+**22/22 GiB** request-entry admission. No foreign program was stopped, driver
+installed, BIOS/voltage changed or global WSL setting changed for this update.
+
+## Current measurements
+
+Both workloads contain contiguous, non-repeated War and Peace text, with exact
+native input counts. Each size completed one excluded warmup and three measured
+requests, generating 128 tokens at temperature 0 / seed 1. Cache and Thinking
+were off. The profile uses v2, one 32K slot/pool, paired 2048-token prefill
+chunk/arena, MTP gate 0.90, PLD `3,3`, Vision Off and prefetch 0.
+
+| Actual input tokens | API-reported prefill tok/s | API-reported decode tok/s | Native MTP head accepted/drafted |
+| ---: | ---: | ---: | ---: |
+| 8192 | 1276.59 | 46.95 | 189/318 = 59.43% |
+| 16384 | 1103.35 | 40.02 | 165/327 = 50.46% |
+
+These phase clocks are **not independently RAW-qualified**. Complete HTTP
+responses were timed separately with Windows QPC; means were 9.208794 and
+18.110871 seconds. The [measurement report](../benchmarks/halogen0201-natural8k16k-20261110.md)
+and [numeric evidence](../benchmarks/halogen0201-natural8k16k-20261110.json)
+retain all eight samples, warmup labels, native counters and output hashes.
+The previous peaks have not been reproduced by this cohort. New-release
+outputs differ from older releases, so these observations alone do not isolate
+a causal engine-version regression. No NPU speed gain is claimed.
+
+## Start and follow-up option
+
+The normal measured configuration, using Windows PowerShell 5.1:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 1 -KvPoolPositions 32768 -Concurrency 1 -PrefillTokens 2048 -ConsoleTrace
+```
+
+The new opt-in profile enables Flexible caching with otherwise matching
+one-slot 32K / paired2048 text settings:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentCachedText32K -ConsoleTrace
+```
+
+The cached profile has **not** received a local performance comparison. Clients
+must preserve the previous answer exactly in conversation history to use the
+new reply-end reuse. Faster time to first token is separate from cold prefill
+or decode tok/s. The existing `FollowupText32K` profile retains its historical
+0.18.22 identity. Use the normal stop procedure before switching profiles.
+
+The public model remains `halogen-v2`, API base
+`http://127.0.0.1:8840/v1`, with the existing protected ServiceNow key. It is not
+necessary to change request headers for the version update. See the
+[integration guide](../integrations/halogen-servicenow.md).
+
+## Remaining optimization work
+
+The acceleration objective remains unachieved. A separate default-off native
+cost-aware MTP candidate is being prepared at fixed Q4; it must preserve target
+outputs and improve a controlled whole-request comparison before deployment.
+Previous slower NPU consumers remain disabled. GPU kernel and alternative-draft
+ideas are prioritized with their transfer limits in the
+[current opportunity review](halogen0201-opportunities-20261110.md).
+
+The bounded official source check at **20:36:38 UTC** found Halogen 0.20.1,
+AMD 26.10.2 Optional / 26.10.1 Recommended and Ryzen AI 1.9 unchanged. Its next
+check is due no earlier than **22:36:38 UTC**. Listed releases are not claims
+that those host drivers were installed or qualified by this task.
