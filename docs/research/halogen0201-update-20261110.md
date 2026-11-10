@@ -100,6 +100,14 @@ The observer binary and its thirteen sources are unchanged. The corrected
 [v2 prospective plan](../benchmarks/halogen0201-mtp-cost-gate-plan-20261110-v2.json)
 is separately registered; fifty-six CPU checks cover its coordinator and
 restoration behavior. These checks establish no throughput improvement.
+V2 then captured two valid 8K RAW responses (excluded warmup plus one measured
+request), but stopped before the next request when Windows reported 1% Copy
+activity for System PID 4. Ownership was not established. No complete cohort
+or cost comparison qualified; normal serving was restored again. The separate
+[v3 plan](../benchmarks/halogen0201-mtp-cost-gate-plan-20261110-v3.json) adds a
+bounded pre-request wait for two zero-GPU observations. It retains the zero-load
+threshold, immediate post-request rejection, all memory reserves and prior
+failure evidence. Waiting time is recorded separately from measured phases.
 Previous slower NPU consumers remain disabled. GPU kernel and alternative-draft
 ideas are prioritized with their transfer limits in the
 [current opportunity review](halogen0201-opportunities-20261110.md).
