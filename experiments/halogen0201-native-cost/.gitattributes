@@ -1,2 +1,4 @@
 # Preserve byte-patch metadata and mixed-newline review diffs exactly.
 * -text whitespace=cr-at-eol
+# Unified-diff blank context lines require their single leading space.
+changes.patch whitespace=cr-at-eol,-blank-at-eol
