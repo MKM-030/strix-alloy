@@ -108,6 +108,12 @@ or cost comparison qualified; normal serving was restored again. The separate
 bounded pre-request wait for two zero-GPU observations. It retains the zero-load
 threshold, immediate post-request rejection, all memory reserves and prior
 failure evidence. Waiting time is recorded separately from measured phases.
+V3 stopped during preflight, before stopping the server, because the new
+receipt writer lacked its parent directory. The narrowly corrected
+[v4 plan](../benchmarks/halogen0201-mtp-cost-gate-plan-20261110-v4.json) adds
+directory creation and a filesystem replay using the actual controller writer.
+Seventy CPU tests and independent full receipt replay pass; that CPU preflight
+now also runs before any server stop. Backend and observer bytes are unchanged.
 Previous slower NPU consumers remain disabled. GPU kernel and alternative-draft
 ideas are prioritized with their transfer limits in the
 [current opportunity review](halogen0201-opportunities-20261110.md).
