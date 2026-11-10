@@ -41,7 +41,7 @@ requests, generating 128 tokens at temperature 0 / seed 1. Cache and Thinking
 were off. The profile uses v2, one 32K slot/pool, paired 2048-token prefill
 chunk/arena, MTP gate 0.90, PLD `3,3`, Vision Off and prefetch 0.
 
-| Actual input tokens | API-reported prefill tok/s | API-reported decode tok/s | Native MTP head accepted/drafted |
+| Actual input tokens | API-reported prefill tok/s | API-reported decode tok/s | API-reported MTP head accepted/drafted |
 | ---: | ---: | ---: | ---: |
 | 8192 | 1276.59 | 46.95 | 189/318 = 59.43% |
 | 16384 | 1103.35 | 40.02 | 165/327 = 50.46% |
@@ -114,6 +114,17 @@ receipt writer lacked its parent directory. The narrowly corrected
 directory creation and a filesystem replay using the actual controller writer.
 Seventy CPU tests and independent full receipt replay pass; that CPU preflight
 now also runs before any server stop. Backend and observer bytes are unchanged.
+V4 completed the four-response 8K reference phase cohort, then rejected equality
+between native chain counters and API head counters. Fresh native source review
+shows they have different scopes: the API also counts single-step head drafts.
+Its drafted total is neural rounds minus chain rounds plus chain drafted.
+Full accepted totals additionally use a native field absent from the trace.
+No counter correction is applied. Subsequent work separates qualified phase
+throughput from the still unavailable independent full-acceptance reconstruction.
+The [V5 protocol](../benchmarks/halogen0201-mtp-cost-gate-plan-20261110-v5.json)
+declares this separation prospectively. Its [counter-scope note](halogen0201-counter-scopes-20261110.md)
+retains both original counters and the limitation, with no fixed correction or
+unproved cross-scope bound. All timing, output and resource checks remain required.
 Previous slower NPU consumers remain disabled. GPU kernel and alternative-draft
 ideas are prioritized with their transfer limits in the
 [current opportunity review](halogen0201-opportunities-20261110.md).

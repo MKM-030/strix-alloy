@@ -34,6 +34,8 @@ The exact engine SHA256 is `7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2
 
 ## Controlled runtime comparison remains separate
 
+The current [0.20.1 V5 protocol](../../docs/benchmarks/halogen0201-mtp-cost-gate-plan-20261110-v5.json) separates phase-throughput qualification from independent full-acceptance reconciliation. [Counter-scope evidence](../../docs/research/halogen0201-counter-scopes-20261110.md) explains why API all-neural head totals and the native chain subset must be retained separately. No fixed offset or unproved accepted-count bound is applied. The missing independent accepted reconstruction remains explicitly open.
+
 The [opportunity report](../../docs/research/halogen0201-opportunities-20261110.md) explains why acceptance alone is insufficient. The existing [prospective study](../../docs/benchmarks/halogen0191-mtp-cost-gate-plan-20261107-v2.md) supplies the comparison shape; its old engine identity must be replaced with fresh combined-source registration before execution.
 
 All projected arms explicitly set `HALOGEN_DRAFT_VOCAB_Q8=0`; this common Q4 declaration is separate from the sole across-arm rule change. Keep PLD `3,3`, positive gate `0.90`, one 32K slot/pool, paired 2048 prefill settings, Cache Off and Thinking Off. Use the frozen nonrepetitive 8192/16384-token inputs and exact 128-token outputs, with an excluded warmup and three measurements per size and arm. Reconcile native banner, request IDs and scoped neural-head counters separately from lookup/grammar counters. Preserve output bytes and finish semantics, and require useful-output throughput gains beyond observed bookend variability before adoption.
