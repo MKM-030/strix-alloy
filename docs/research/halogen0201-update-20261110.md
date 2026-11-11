@@ -206,3 +206,25 @@ authenticated chat request with `READY`. Port 8840, model alias `halogen-v2`,
 the existing ServiceNow credential and visible request/response console remain
 available. Current controller/backend runs are `02e38955abb44f40be18b878c6768a63`
 and `642221c86f6e4196b1f0ece635d80b59`; earlier run identities above are historical.
+
+## Current serving profile, 11 November 04:00 UTC
+
+The normal server now uses paired 8192 after the completed input-matched prefill
+comparison. Both prefill fields change together; the original 2048 profile is
+preserved for rollback. All 47 normal source members are restored, with no RAW
+observer, external oracle or NPU producer enabled. The persistent public server
+uses run `1c2b9c6595584f29a1001b3281b55b51`, context/pool 32768 and one slot.
+
+The independent normal-serving confirmation completed one excluded warmup and
+three measurements per size. At 8192 actual inputs it reports 1475.04 prefill,
+47.52 decode tok/s and 61.54% API neural-head acceptance; at 16384 it reports
+1447.23, 45.07 and 55.56%. These are reported API/native phase observations, with
+separate HTTP QPC evidence, not a new RAW or controlled gain claim.
+[Current numbers, limits and Windows PowerShell command](../benchmarks/halogen0201-normal8192-20261111.md).
+
+A separate exact-output oracle experiment reaches 65.43 RAW decode tok/s against
+46.46/43.82 stock controls. It supplies future exact target IDs and measures no
+real NPU prediction. Its 100% lookup acceptance is distinct from neural-head MTP
+acceptance. The mechanism motivates further asynchronous NPU proposer work and
+remains disabled in normal serving.
+[Complete consumer experiment](../benchmarks/halogen0201-external-oracle-20261111.md).
