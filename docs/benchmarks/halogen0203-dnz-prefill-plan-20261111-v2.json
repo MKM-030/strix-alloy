@@ -1,0 +1,43 @@
+{
+  "schema": "halogen0203.DNZ8K-prospective-protocol.v2",
+  "utc": "2026-11-11T18:59:56.268604+00:00",
+  "prior_terminal_result": {
+    "path": "docs\\benchmarks\\halogen0203-dnz-prefill-20261111.json",
+    "bytes": 2045,
+    "sha256": "d183bab32de7b397486fbfdbb9723dba8853f06a5db9ecadc20b45c8fe2feaa3"
+  },
+  "capacity8192_feasibility": {
+    "path": "server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\capacity8192-feasibility-v1\\assessment-v1.json",
+    "bytes": 9656,
+    "sha256": "9b3784f917e3b4ffd831ac78e41c2dcda44a18259d06a1c6d6301e69dd48cbef"
+  },
+  "actual_input_tokens": 2048,
+  "requested_output_tokens": 128,
+  "private_context": 8192,
+  "private_pool": 8192,
+  "normal_restored_context": 32768,
+  "prefill_chunk": 8192,
+  "max_prefill_tokens": 8192,
+  "DNZ_arms": [
+    0,
+    1,
+    0
+  ],
+  "warmup_excluded_per_arm": 1,
+  "measured_per_arm": 3,
+  "thresholds_GiB": {
+    "startup_physical": 30,
+    "startup_commit": 131,
+    "request_physical": 22,
+    "request_commit": 22,
+    "runtime_physical": 18,
+    "runtime_commit": 18
+  },
+  "source_implementation_ready": false,
+  "root_execution_seal_required": true,
+  "root_execution_seal_complete": false,
+  "standing_user_lifecycle_authorization": true,
+  "new_native_values": null,
+  "actual_Windows_memory_release_proved": false,
+  "NPU_enabled": false
+}
