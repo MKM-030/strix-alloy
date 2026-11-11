@@ -228,3 +228,26 @@ real NPU prediction. Its 100% lookup acceptance is distinct from neural-head MTP
 acceptance. The mechanism motivates further asynchronous NPU proposer work and
 remains disabled in normal serving.
 [Complete consumer experiment](../benchmarks/halogen0201-external-oracle-20261111.md).
+
+## Actual NPU component, 11 November
+
+The new growing-context FLM 1.0.7 component passes exact sequential-reference
+parity for all 32,001,030 BF16 values across 129 states. It seeds the last 512
+prompt IDs once and appends 128 authoritative target IDs through context 640.
+Offline next-ID agreement is 66/128 (51.56%), with a 425.10-ms seed and 22.39-ms
+mean authoritative append through owned logits. These are component operation
+times, including CPU copy/argmax; they are not measured Halogen tok/s or native
+MTP acceptance. Actual loaded DLLs match the selected providers, both helpers
+are closed, and the same GPU server remains online.
+[Result, limits and published source](../benchmarks/halogen0201-growing-npu-20261111.md).
+
+The existing future-trajectory oracle is unsuitable as an unchanged live
+count-one protocol. Real proposals need prefix-bound replacement, immediate
+fallback and demonstrated arrival before demand. The next independent candidate
+groups already queued authoritative tokens, followed by supported stateful
+lookahead if justified. No live NPU producer is enabled.
+
+The bounded official refresh completed at 04:57 UTC: Halogen 0.20.1, both image
+tags and the checked AMD/Ryzen-AI/XRT release identities are unchanged. Reddit
+returned older discussions, with no verified new actionable November material.
+The next full source check is due at 06:57 UTC; no driver was installed.

@@ -1,0 +1,135 @@
+{
+  "schema": "halogen0201.growing-NPU-component-public.v1",
+  "target_engine": "0.20.1",
+  "NPU_model": "Qwen3.5-0.8B-NPU2",
+  "FLM": "1.0.7",
+  "actual_GPU_teacher_input_tokens": 8192,
+  "NPU_seed_tail_tokens": 512,
+  "NPU_final_context": 640,
+  "authoritative_target_outputs": 128,
+  "compared_states": 129,
+  "compared_values": 32001030,
+  "exact_BF16_word_differences": 0,
+  "exact_sequential_row_parity": true,
+  "tolerance_relaxed": false,
+  "offline_exact_next_IDs": 66,
+  "offline_predictions": 128,
+  "offline_next_ID_agreement_fraction": 0.515625,
+  "native_MTP_acceptance": null,
+  "NPU_engine_prefill_tok_s": null,
+  "NPU_engine_decode_tok_s": null,
+  "full_engine_gain": null,
+  "arrival_before_target_need": null,
+  "live_producer_enabled": false,
+  "passes": {
+    "candidate": {
+      "seed512_to_owned_logits_ms": 425.0998,
+      "authoritative_append_to_owned_logits_mean_ms": 22.3903671875,
+      "authoritative_append_min_ms": 22.0177,
+      "authoritative_append_max_ms": 23.0147,
+      "authoritative_append_count": 128,
+      "QPC_frequency": 10000000,
+      "actual_report": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\growing-native-replay-v1\\candidate.json",
+        "bytes": 166951,
+        "sha256": "8836bdea5ff8f58632c8a54088ca39f4e44055bab470ab1199efdca11d58778a"
+      },
+      "process_exit_code": 0,
+      "elapsed_seconds": 6.031000000075437,
+      "loaded_modules": {
+        "qwen3_5vl_npu.dll": {
+          "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\qwen3_5vl_npu.dll",
+          "bytes": 2316288,
+          "sha256": "d77388dcd21fcd7422005d0f780a044142d525e3afaafef3bcb9e980b8c18501"
+        },
+        "q4_npu_eXpress.dll": {
+          "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\q4_npu_eXpress.dll",
+          "bytes": 1103872,
+          "sha256": "83c93470e56b14856ce38c8550b2e0595355d59c3153dd51326cfc2745d7b038"
+        },
+        "xrt_coreutil.dll": {
+          "path": "C:\\Windows\\System32\\xrt_coreutil.dll",
+          "bytes": 2010984,
+          "sha256": "d0dce13280a0d668b497d4fcabdcb43f1a7353e466af3acabd98c6df7607ed8e"
+        }
+      }
+    },
+    "reference": {
+      "seed512_to_owned_logits_ms": 427.6518,
+      "authoritative_append_to_owned_logits_mean_ms": 22.2825234375,
+      "authoritative_append_min_ms": 21.9673,
+      "authoritative_append_max_ms": 23.0012,
+      "authoritative_append_count": 128,
+      "QPC_frequency": 10000000,
+      "actual_report": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\growing-native-replay-v1\\reference.json",
+        "bytes": 101506,
+        "sha256": "5bbe544cb0ed247b1a665e7e9581d3acd10e611a7b75333c3287bf1e894eb42f"
+      },
+      "process_exit_code": 0,
+      "elapsed_seconds": 6.047000000020489,
+      "loaded_modules": {
+        "qwen3_5vl_npu.dll": {
+          "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\qwen3_5vl_npu.dll",
+          "bytes": 2316288,
+          "sha256": "d77388dcd21fcd7422005d0f780a044142d525e3afaafef3bcb9e980b8c18501"
+        },
+        "q4_npu_eXpress.dll": {
+          "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\q4_npu_eXpress.dll",
+          "bytes": 1103872,
+          "sha256": "83c93470e56b14856ce38c8550b2e0595355d59c3153dd51326cfc2745d7b038"
+        },
+        "xrt_coreutil.dll": {
+          "path": "C:\\Windows\\System32\\xrt_coreutil.dll",
+          "bytes": 2010984,
+          "sha256": "d0dce13280a0d668b497d4fcabdcb43f1a7353e466af3acabd98c6df7607ed8e"
+        }
+      }
+    }
+  },
+  "CPU_tests": 22,
+  "minimum_observed_physical_gib": 22.68239974975586,
+  "minimum_observed_commit_gib": 114.1357,
+  "GPU_server_unchanged": true,
+  "evidence": {
+    "comparison": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\growing-native-replay-v1\\comparison.json",
+      "bytes": 149714,
+      "sha256": "43f6e5e7565a4c28a30dcff2c7220f08ba27d812371fd994320cf7b1d7c270c9"
+    },
+    "audit": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\growing-native-replay-v1\\audit-terminal-v1.json",
+      "bytes": 113939,
+      "sha256": "4c7ec659e16b97e41f1709c72a641572e73ac86e9df92e9940dfe6958c38c255"
+    },
+    "handle": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\growing-native-replay-v1\\handle.json",
+      "bytes": 50574,
+      "sha256": "c7b058d3427e8ee442eade41a8c0fb7913666f5dd6d956c189bb5d25b4931f97"
+    },
+    "native_input": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\growing-native-replay-prep\\input-natural8192.json",
+      "bytes": 12524,
+      "sha256": "7ca5117fc7570b079fe2eba777220f1acc389601db2849233b7c67d22ae9a7dd"
+    },
+    "runtime_plan": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\growing-native-replay-prep\\preparation-v3.json",
+      "bytes": 13350,
+      "sha256": "d9093bdb8282427ab05ac9ad66283b1988c821967ed89dba9030a40129895056"
+    },
+    "PE_preflight": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\growing-native-build-v1\\pe-preflight-v2.json",
+      "bytes": 73209,
+      "sha256": "38a5726e30eaaa251203525d1726ea0115d1af12040e28c97cb73a6c36b03e9d"
+    }
+  },
+  "limits": [
+    "Single8192family and its512tail",
+    "Teacher from paired2048 captured target, not promoted8192 trajectory",
+    "Identical sequential reference, not full-prefill equivalence",
+    "Times include native library processing and CPU owned-logit copy/argmax; row writes excluded",
+    "No live IPC, WSL readiness or full-engine NPU-on/off measurement",
+    "One stale descriptive PE helper pin in duplicated plan metadata; effective source pins and actual PE report agree"
+  ],
+  "full_goal_achieved": false
+}
