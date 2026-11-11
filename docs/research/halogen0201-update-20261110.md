@@ -33,7 +33,7 @@ The controller keeps the **18/18 GiB** runtime reserve. Measurements retained
 **22/22 GiB** request-entry admission. No foreign program was stopped, driver
 installed, BIOS/voltage changed or global WSL setting changed for this update.
 
-## Current measurements
+## Baseline API observations
 
 Both workloads contain contiguous, non-repeated War and Peace text, with exact
 native input counts. Each size completed one excluded warmup and three measured
@@ -82,6 +82,16 @@ necessary to change request headers for the version update. See the
 [integration guide](../integrations/halogen-servicenow.md).
 
 ## Remaining optimization work
+
+The subsequent paired 2048 / 8192 / 2048 study completed all six RAW/QPC
+cohorts and restored the normal server. At paired 8192, actual 8192-token input
+achieved 1526.01 prefill tok/s, 43.99 observed decode tok/s and API head
+192/312 = 61.54%. Actual 16384-token input achieved 1380.48 prefill tok/s,
+45.18 observed decode tok/s and API head 180/324 = 55.56%. Prefill exceeds both
+controls by 17.95–26.22% at 8K and 4.58–13.17% at 16K. Changed output hashes
+leave causal decode comparisons open. The online profile uses paired 2048
+while development continues toward higher prefill and decode together.
+[Complete prefill study](../benchmarks/halogen0201-prefill8192-20261111.md).
 
 The acceleration objective remains unachieved. A separate default-off native
 [cost-aware MTP candidate](../../experiments/halogen0201-native-cost/README.md)

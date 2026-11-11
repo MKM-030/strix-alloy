@@ -1,6 +1,6 @@
 # Halogen 0.20.1: opportunities and next comparisons - 10 November 2026
 
-The official latest release is **0.20.1**, published on 9 November. It creates a useful follow-up latency candidate, while new open GPU kernels supply concrete source-study leads. No new local throughput, acceptance or NPU acceleration result is established by this research. The [0.20.0 installation record](halogen0200-update-20261108.md) remains a dated installation record, not proof of a running 0.20.1 server.
+The official latest release is **0.20.1**, published on 9 November. It creates a useful follow-up latency candidate, while new open GPU kernels supply concrete source-study leads. The completed native cost comparison adds workload-dependent throughput and API acceptance results. The 0.20.1 update records installation, serving verification and baseline measurements. [Update record](halogen0201-update-20261110.md).
 
 ## Verified release identity
 
@@ -20,11 +20,23 @@ Version 0.20.1 caches a completed reply's end so an unchanged conversation conti
 
 The local comparison should keep a separate Cache Off cold-input control, then compare complete identical multi-turn requests with cache enabled. Preserve the previous assistant reply exactly, count newly read and reused input tokens, and report full-request latency and time to first token alongside native phase rates. A reused prompt cannot be presented as a faster computation of every original input token. Recheck effective cache settings and reply-end reuse in native logs; a configured policy alone is insufficient.
 
-## Second candidate: price the native MTP round at fixed Q4
+The completed 0.18.22 Off/Flexible/Off study reused 8064 of 8121 follow-up input tokens. First-content latency averaged 0.324 seconds against controls of 4.211 and 4.335 seconds. Those requests replaced the final user question and omitted the previous assistant reply. The 0.20.1 proposal appends the exact captured assistant answer and the next user question, then freezes identical history across all arms. Its results should retain full, reused and newly processed input counts, first-content latency and whole-request time. This three-arm design measures the combined cache benefit, with the incremental reply-end contribution still unresolved. [Completed local cache study](../benchmarks/halogen01822-cache-followups-20261101.md), [immutable reply-end release notes](https://github.com/peonist-ai/halogen-flash-server/blob/d2f4286fc97fd1f75cd765714dbc50524004356f/CHANGELOG.md#0201).
 
-The existing [cost-rule prospective study](../benchmarks/halogen0191-mtp-cost-gate-plan-20261107-v2.md) already separates confidence from expected useful-prefix value. Its fixed-Q4 `gate / cost / gate` comparison should remain the next decode experiment after a normal latest-version baseline. Porting the old candidate requires fresh 0.20.1 source/ABI and counter verification; the old engine identity is not reusable evidence.
+## Completed native MTP cost comparison
 
-Retain natural 8192/16384-token inputs, paired 2048 prefill settings, exact 128-token outputs, warmup exclusion and three measured requests per size/arm. Report neural-head accepted/drafted counts separately from lookup counters and useful-output tok/s. Higher acceptance alone can lose speed if proposing and verifying its extra tokens costs more than it saves. Do not combine a Q8 vocabulary change with the first cost-rule comparison.
+V5 completed all six `gate / cost / gate` cohorts on natural 8192/16384-token inputs, with a Q4 draft vocabulary, paired 2048 prefill settings and exact 128-token outputs. Each cohort excluded one warmup and retained three measured requests. All 24 responses preserved their input size's exact output bytes. [Completed comparison](../benchmarks/halogen0201-mtp-cost-gate-20261110.md).
+
+At 8K, cost raised API head acceptance from 59.43% to 64.95%, while RAW decode fell to 42.54 tok/s against gate controls of 46.82 and 45.38. At 16K, cost reached 44.19 tok/s against 42.71 and 39.09, with acceptance rising from 50.46% to 58.16%. The stock controls drifted materially, and candidate prefill and whole-HTTP results lay between them. Cost remains default off, with general serving improvement unqualified and automatic promotion disabled. API acceptance remains explicitly reported with `acceptance_independently_reconciled=false`, and native chain counters retain their narrower scope. [Numeric evidence](../benchmarks/halogen0201-mtp-cost-gate-20261110.json), [counter derivation](halogen0201-counter-scopes-20261110.md).
+
+## Paired prefill arena comparison
+
+The V2 comparison completed all six paired 2048/8192/2048 cohorts with fixed natural inputs, weights and gate policy. Candidate prefill reached 1526.01 tok/s at 8K and 1380.48 at 16K, exceeding both controls by 17.95–26.22% and 4.58–13.17%. Candidate outputs differ from their controls, leaving causal decode comparisons open. The normal server uses paired 2048 while the next prefill setting is assessed. [Complete comparison](../benchmarks/halogen0201-prefill8192-20261111.md), [V2 plan](../benchmarks/halogen0201-prefill8192-plan-20261111-v2.json).
+
+## Manufacturer comparability
+
+The published v2 means of 66.80 tok/s on 0.18.16 and 66.97 on 0.20.0 cover ten short task shapes with a 256-token cap, greedy decoding and Thinking Off. The official `bench` sends HTTP chat requests and averages native/API ledger decode rates, with whole-request wall time reported separately. The reported machine has 128 GB and about 85 W sustained package power under native Linux. A latest-version replay should preserve the complete corpus and declare the local cache, capacity, arena and WSL differences. [Immutable performance tables](https://github.com/peonist-ai/halogen-flash-server/blob/d2f4286fc97fd1f75cd765714dbc50524004356f/docs/performance.md), [official runner](https://github.com/peonist-ai/halogen-flash-server/blob/d2f4286fc97fd1f75cd765714dbc50524004356f/tools/bench-serving.py).
+
+The exact runner and prompt file are unchanged from the retained 0.18.22 sources. The completed local 0.18.15 same-corpus replay reported 50.13 native decode tok/s and 48.62 output tokens per whole-HTTP QPC second. A new replay can answer the latest-version same-corpus question while preserving the separate natural 8K/16K benchmark. [Completed local replay](../benchmarks/halogen01815-comparison-20261025.md), [immutable prompt set](https://github.com/peonist-ai/halogen-flash-server/blob/d2f4286fc97fd1f75cd765714dbc50524004356f/tools/eval-prompts.json).
 
 ## Third candidate: study specific GPU kernels
 
@@ -48,9 +60,9 @@ Targeted Reddit searches again locate GPU/NPU prefill overlap projects. Their Li
 
 ## Execution order and evidence
 
-1. Root qualifies the installed latest engine through the normal authenticated lifecycle and preserves the public endpoint.
+1. Assess paired 4096 on the latest engine using the completed 2048/8192 comparison and preserve the public endpoint.
 2. Compare exact-history cached follow-ups with a separately reported cold-input control.
-3. Qualify the fixed-Q4 native cost-rule comparison on the new engine.
+3. Use the completed fixed-Q4 draft-vocabulary cost comparison as the reference for further decode work.
 4. Study one specific GPU hot path from the new open sources; only then admit a matched kernel experiment.
 5. Reopen NPU hardware work only for a new supported mechanism with measurable benefit potential.
 
