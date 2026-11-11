@@ -1,0 +1,74 @@
+{
+  "schema": "halogen0201.real-NPU-prospective-plan.v1",
+  "registered_utc": "2026-11-11T09:11:22.432317+00:00",
+  "bindings": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-live-prep\\cohort\\root-bindings-executed-v1.json",
+    "bytes": 16715,
+    "sha256": "1bab58059305c53caf769b60edc60ff4e520eb21b20ae33e6d407e9a4942502e"
+  },
+  "source_transition": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-live-prep\\consumer\\overlay-prep\\prepared-raw-reverse-v3\\transition.json",
+    "bytes": 21668,
+    "sha256": "815f2cd06e272b0cc8a600ec051dad1db034f61892620aafe44b9c975d7baa55"
+  },
+  "peer_reviews": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-live-prep\\raw-composition-prep\\overlay-independent-review-v2.json",
+      "bytes": 1928,
+      "sha256": "9a5980058cdc197e65321cb02eb4738fc0efabfbb45ae63ae0a50b3b62972a2c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-live-prep\\raw-composition-prep\\cohort-independent-review-v1.json",
+      "bytes": 2234,
+      "sha256": "94eb7fe7764bf3a5a493e2d9a2a133e66f171dfb375f6cee2c66df2682a0a5c3"
+    }
+  ],
+  "workload": {
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "warmups_excluded_per_arm": 1,
+    "measured_per_arm": 3,
+    "arms": [
+      "before",
+      "candidate",
+      "after"
+    ],
+    "stream_modes": [
+      0,
+      1,
+      0
+    ],
+    "private_gateway_port": 18840,
+    "normal_gateway_port": 8840,
+    "normal_visible_and_online_afterwards": true
+  },
+  "model": "Qwen3.8-Flash-Next v2 target; separate Qwen3.5-0.8B FLM1.0.12 NPU proposer",
+  "actual_input": "8192 exact native tokens; contiguous non-repeated War and Peace prefix",
+  "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+  "cache": "Off",
+  "thinking": "Off",
+  "temperature": 0,
+  "seed": 1,
+  "measurement": "Common unmodified CLOCK_MONOTONIC_RAW observer and complete HTTP Windows QPC; no clock corrections or overhead subtraction",
+  "acceptance": "API neural-head accepted/drafted retained separately; NPU HDO2 hits/proposals do not equal accepted count",
+  "qualification": [
+    "One excluded warmup and three measured requests per arm",
+    "Exact current BEFORE target IDs, text and finish reason must match every request",
+    "Excluded NPU warmup must show actual READY, native hits and proposals; stop and restore if none",
+    "Verify actual producer DLLs and request context release; close own producer before GPU stop",
+    "No recorded future target IDs supplied to producer",
+    "Keep original failed attempts and all samples",
+    "Restore b73/source47 exact normal paired8192 profile, authenticated public8840 and visible console"
+  ],
+  "reserves_GiB": {
+    "startup_physical": 30,
+    "startup_commit": 131,
+    "request_entry_physical_and_commit": 22,
+    "runtime_physical_and_commit": 18
+  },
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "native_NPU_acceptance": null,
+  "engine_benefit_qualified": false,
+  "output_directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v1"
+}
