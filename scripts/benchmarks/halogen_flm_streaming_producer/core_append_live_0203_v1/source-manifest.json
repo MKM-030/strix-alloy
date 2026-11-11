@@ -1,0 +1,591 @@
+{
+  "schema": "halogen0203.thin-default-off-source-delta.v1",
+  "utc": "2026-11-11T16:46:01.554599+00:00",
+  "source_only": true,
+  "default_enabled": false,
+  "standalone_installer": false,
+  "members": {
+    ".gitattributes": "9034c51a8dc48e10e0b0153d90a3b8d5f37202c36c4043d3c9b1e048bb9932be",
+    "README.md": "fc0677ec10ade928aa01ad7706fc22f6b09cc0aff0558446c184bf05776d270f",
+    "api/api_observation.py": "2e99a194f71e8bfbd762f2b2b74f6e3f868af5ec0f11e0d551fb74bf3066e47a",
+    "api/api_stream_feedback.py": "4c0ccf52f61da4ba5f86117ac2b75ff0d34f6e9a66745936532202cc1be9df44",
+    "api/native_api_fixture.py": "ebbd1f8e4599b8b57f65bf578a9aa4329c5c1169a808b7463898c76fbd661c5c",
+    "api/test_fresh_api.py": "21e7377b2342797ce622378c98c9e4ed55ddefa2c74d338e156c1d652c07d525",
+    "api/token_feedback.py": "c4a4d549c5de6322f2c99b9d8b8092ef159c7b0942e4d2d0e0114296c23e450f",
+    "cohort/cohort_campaign.py": "800782162ad0132c38be02ebbaa618cdefb564943e0aaaa8a0e6db342ec953ee",
+    "cohort/cohort_campaign_admission_v2.py": "ef17d80410ffd6b665b0bb04845d5ce82db25df20325bfedbe51710e98f7042e",
+    "cohort/evidence.py": "c3f76f4c9d38ac214a91a5239bdfaaa0fce5cda66a4ff06ec626639a93f2656a",
+    "cohort/owned_producer.py": "7bb8e6fc6d5d652a9de47b943692d10df263d74b56825cd06b6c1aa1212c2f25",
+    "cohort_campaign_core_append_v1.py": "831f9f7019974f6b16c67acb7b7b3ec65d2a8b3ed709d5d71e47180b6a1e9591",
+    "consumer-native/cold_addresses.h": "1b0f7ed4791ca2cc8ded12479b87f8c15c1b0741a2dc8cb57f1acc14d794b56e",
+    "consumer-native/cold_install.c": "ea6e59387efe3aef298c6d4d59109e90abaad58de10c2df0dc65bcc184ea7902",
+    "consumer-native/native-contract.json": "4a3cdaa929cf7f2693b6862cc5b160c2191ed1b6ff38db395e5c974dd2703af9",
+    "consumer-native/native_pins.h": "69d24e2c20aa702902960b03b831d49c2f821600afa66deae4d20a19bc3f3a06",
+    "consumer-native/stream_consumer.c": "3fb771e0df58e984af801eb7c55e73e80eb12a34d2e0196270e533eae367a629",
+    "consumer-native/stream_consumer.h": "64744c4859abb286566160e12edccb607ed5f1a53dd2c3dff96ae162d767bd01",
+    "consumer-native/stream_relay.S": "8c350a4a9c9a7b5a9938d5ff4a1a90a6eb4260e572516aded3f75d9f363813e5",
+    "consumer-native/test_cold_addresses.c": "713fe89f4e9d62984cf72273e94cf561e5040aaa5528c0f8b17d3bb36e0c0f6b",
+    "consumer-native/test_cold_addresses.py": "3ae06154389ba522a5bf47ef78a1ef26a7e4d9b4aeaf70828b4ccc5833814b02",
+    "consumer-native/test_stream_consumer.c": "8101dfee49aa14811b87ad81d0c2c4c56cf7b2a785a2c321d975df7b710c8d5b",
+    "consumer-native/test_stream_relay.S": "a28e88d079b4e996afeb2c14613b545b3c89e2adec4e78afa01af4b5db9bae61",
+    "consumer-native/test_stream_relay.c": "0ccff27f64edf7602c718471d39f441c54360882eebf302fe817b6fdfa9719ad",
+    "prepare_bindings.py": "a77a94adcc47b083602aefa9f78a87e176200b5f4ba3b315dee72e23bb41ba36",
+    "prepare_overlay.py": "dbdc10af9e398d2a477279cd51e0794369a0005a38caf097908107da30814444",
+    "producer/service.py": "dc4582f19238b492933c1bf66481dc3a54999ac3f5b6d62876d4058d9a8fee3a",
+    "producer/service_request_scoped_v4.py": "1cdc7535c30597b271bae603ab00f2ed354eeeb5b365ceae63302cc9652bd08e",
+    "producer/test_service_v4.py": "1d5f6c7222cdb3fdb0923a98150b0765ec86a3a74d698dda7dd6e1375feb3403",
+    "producer/test_target_identity.py": "6640b2def38e932ae4952e490bffc9f244f56004bca44cedcc81742416f94891",
+    "proof/independent-cohort-review-v1.json": "e318d691719c98ead55fd282be85c04cfce774760a6a9df7bb73ad96318a2073",
+    "proof/native-binary-review-v1.json": "31e6e7e8cc5b5ab164e6ef749c7c60cafc44fd323629d3143e83ed87190e312f",
+    "proof/root-cpu-build-plan-v1.json": "fa812c92d10df9bfae9776cda27e0990e6fc7d8d273345917ab79131f69220ff",
+    "proof/source-binding-v1.json": "109566e3959df1767c296bdb70b3bd55b82f5e1ad565847d26aae2f84fb9acf2",
+    "raw/binding.json": "eec9f9c1e8e4e4631220b138f05cfef952840268e0a2b411b3746bfc94918ab4",
+    "raw/collector/collect_epoch.py": "61cb7b1608abc038cf2c617a216a5aaa6534d768530deb3fdde1a4bd2db6a2de",
+    "raw/collector/qpc_audit.py": "597369fa13188e61cda123c6b1ac15928283c85e8a9798893e3dc3e614434326",
+    "raw/collector/test_collect_epoch.py": "918a972fe67fbd73ed36c58c25ba01a36b96a4668c5d7e977b834370d433f07b",
+    "raw/collector/test_migration_boundaries.py": "05ee754ab9843e437208909d0264271f74ffb1849f6547691dc748e5d96e7243",
+    "raw/collector/test_qpc_audit.py": "b92aaa416598bb4376993d02dddde16fbd774681b344661f32436dd1edbc87b7",
+    "raw/observer/build-linux.sh": "fa89f977730ed368805d667ba4356d5a68bc068c946a163ec9de2d36f6409261",
+    "raw/observer/endpoint_pins.h": "8c431e60a0e04b4640b04c2138624d785eec1610b6149531361a03e598892dd9",
+    "raw/observer/observer.c": "003b00b6646a2973505e809975e4171e35d048fefa4668698d6b482050a9808f",
+    "raw/observer/pins.h": "c0c03f0e61204078a8becd72ad724428e61f0b8a607404e934ee69f931b768b9",
+    "raw/observer/test_validator.py": "593cc66391824b638d01cfc19f7e4f0d053226bf438ffeb177f8354c06791486",
+    "raw/observer/validate_capture.py": "da1c08bb819f98bd93ccd825d531f05c7620ee257fed6d47cab5feeb412ca24e",
+    "raw/observer/validate_cohort.py": "8f836589385458bcd9495a9a6f046abc4fd744c0830836350e11f985b0bac5aa",
+    "test_framework_binding.py": "41bcc8530fd4ff6c30343f44116b8b8f45e7df0a3e9054b19f716039e273ae3c",
+    "test_live_core_adapter.py": "04a9e0ccd14563285eb5615f3b2b4292f723b92197689e13bbb1c64cb762ab21",
+    "verify_archive.py": "9823a7a66345171ef8f56385067942d645ea1b5514e9e278c8a2b07ad129aeec"
+  },
+  "referenced_unchanged_sources": [
+    {
+      "materialize_as": "measure_helpers.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/measure_helpers.py",
+      "bytes": 1329,
+      "sha256": "629cc1b91ba7e0be24f4ebec001c52c09399c1d798ce66d0eccfffb22977dbaa",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "api/reverse_stream_publisher_v2.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/api/reverse_stream_publisher_v2.py",
+      "bytes": 3943,
+      "sha256": "5f654bb348a0126e54198006652715241af07d1befbf79345a2ffc328b6ea9d3",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "api/stream_publisher_v2.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/api/stream_publisher_v2.py",
+      "bytes": 10873,
+      "sha256": "cb467822d7dd8b902feb99dcac61d41a64b15c74a71c1a868e4d9cb63c581790",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "api/wire.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/api/wire.py",
+      "bytes": 4100,
+      "sha256": "26b0d86910bbcbae5e283d1dafdb291836ea528f86d2ee101b13c72ed3516dc6",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "consumer-native/sha256_core.h",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/consumer-native/sha256_core.h",
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "raw/observer/capture_core.h",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/raw/observer/capture_core.h",
+      "bytes": 1593,
+      "sha256": "5032ef6ac99847aaa003c01f178075fe3c914e9dd0168af46036b3f0457777a8",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "raw/observer/entry.S",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/raw/observer/entry.S",
+      "bytes": 394,
+      "sha256": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "raw/observer/observer.map",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/raw/observer/observer.map",
+      "bytes": 84,
+      "sha256": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "raw/observer/producer_test.c",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/raw/observer/producer_test.c",
+      "bytes": 6810,
+      "sha256": "aefedd27a2172ea4ad22539c992b0693b5ac74d6d3777a3b7cc8963b96714213",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "raw/observer/sha256_core.h",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/raw/observer/sha256_core.h",
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e",
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "producer/actor.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/actor.py",
+      "bytes": 11405,
+      "sha256": "60e78c82312b66f87b4f5490b91ba1882ad32c566b6e922061538d9d7d64bde0",
+      "copy_into_new_public_archive": false,
+      "source_lineage_manifest": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/source-manifest.json"
+    },
+    {
+      "materialize_as": "producer/native_backend.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/native_backend.py",
+      "bytes": 9548,
+      "sha256": "f9327bbc4e005e8adf6089be1f7a6e8123e7bd9807186cb0ff6a9ca2d9a406bf",
+      "copy_into_new_public_archive": false,
+      "source_lineage_manifest": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/source-manifest.json"
+    },
+    {
+      "materialize_as": "producer/request_scoped_backend.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/request_scoped_backend.py",
+      "bytes": 4435,
+      "sha256": "6ecf73a2fcddc24270bf84b769d9d7da74ceca9eee442b5b75cce4b704de06a0",
+      "copy_into_new_public_archive": false,
+      "source_lineage_manifest": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/source-manifest.json"
+    },
+    {
+      "materialize_as": "producer/native_backend.cpp",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/native_backend.cpp",
+      "bytes": 15228,
+      "sha256": "5fecfd2d199aab27d217ed6be78598ca7807c97c2a642fe0da4d9e9dd392f8be",
+      "copy_into_new_public_archive": false,
+      "source_lineage_manifest": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/source-manifest.json"
+    },
+    {
+      "materialize_as": "producer/append_head_scope.hpp",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/append_head_scope.hpp",
+      "bytes": 4663,
+      "sha256": "109340b3357e808d02a71d1a1fa447cc7e6a22f902993a117f40fe9d1f36ad39",
+      "copy_into_new_public_archive": false,
+      "source_lineage_manifest": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/source-manifest.json"
+    },
+    {
+      "materialize_as": "raw/observer/binding.json",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0203_v1/raw/binding.json",
+      "bytes": 57098,
+      "sha256": "eec9f9c1e8e4e4631220b138f05cfef952840268e0a2b411b3746bfc94918ab4",
+      "copy_into_new_public_archive": false
+    }
+  ],
+  "original_private_materialization": [
+    {
+      "materialize_as": "cohort_campaign_core_append_v1.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/cohort_campaign_core_append_v1.py",
+      "bytes": 15050,
+      "sha256": "831f9f7019974f6b16c67acb7b7b3ec65d2a8b3ed709d5d71e47180b6a1e9591"
+    },
+    {
+      "materialize_as": "measure_helpers.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/measure_helpers.py",
+      "bytes": 1329,
+      "sha256": "629cc1b91ba7e0be24f4ebec001c52c09399c1d798ce66d0eccfffb22977dbaa"
+    },
+    {
+      "materialize_as": "prepare_overlay.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/prepare_overlay.py",
+      "bytes": 11248,
+      "sha256": "dbdc10af9e398d2a477279cd51e0794369a0005a38caf097908107da30814444"
+    },
+    {
+      "materialize_as": "prepare_bindings.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/prepare_bindings.py",
+      "bytes": 6474,
+      "sha256": "a77a94adcc47b083602aefa9f78a87e176200b5f4ba3b315dee72e23bb41ba36"
+    },
+    {
+      "materialize_as": "test_framework_binding.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/test_framework_binding.py",
+      "bytes": 1934,
+      "sha256": "41bcc8530fd4ff6c30343f44116b8b8f45e7df0a3e9054b19f716039e273ae3c"
+    },
+    {
+      "materialize_as": "test_live_core_adapter.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/test_live_core_adapter.py",
+      "bytes": 8034,
+      "sha256": "04a9e0ccd14563285eb5615f3b2b4292f723b92197689e13bbb1c64cb762ab21"
+    },
+    {
+      "materialize_as": "cohort/cohort_campaign.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/cohort/cohort_campaign.py",
+      "bytes": 19671,
+      "sha256": "800782162ad0132c38be02ebbaa618cdefb564943e0aaaa8a0e6db342ec953ee"
+    },
+    {
+      "materialize_as": "cohort/cohort_campaign_admission_v2.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/cohort/cohort_campaign_admission_v2.py",
+      "bytes": 8049,
+      "sha256": "ef17d80410ffd6b665b0bb04845d5ce82db25df20325bfedbe51710e98f7042e"
+    },
+    {
+      "materialize_as": "cohort/evidence.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/cohort/evidence.py",
+      "bytes": 5570,
+      "sha256": "c3f76f4c9d38ac214a91a5239bdfaaa0fce5cda66a4ff06ec626639a93f2656a"
+    },
+    {
+      "materialize_as": "cohort/owned_producer.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/cohort/owned_producer.py",
+      "bytes": 7537,
+      "sha256": "7bb8e6fc6d5d652a9de47b943692d10df263d74b56825cd06b6c1aa1212c2f25"
+    },
+    {
+      "materialize_as": "api/api_observation.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/api/api_observation.py",
+      "bytes": 3126,
+      "sha256": "2e99a194f71e8bfbd762f2b2b74f6e3f868af5ec0f11e0d551fb74bf3066e47a"
+    },
+    {
+      "materialize_as": "api/api_stream_feedback.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/api/api_stream_feedback.py",
+      "bytes": 11622,
+      "sha256": "4c0ccf52f61da4ba5f86117ac2b75ff0d34f6e9a66745936532202cc1be9df44"
+    },
+    {
+      "materialize_as": "api/native_api_fixture.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/api/native_api_fixture.py",
+      "bytes": 3393,
+      "sha256": "ebbd1f8e4599b8b57f65bf578a9aa4329c5c1169a808b7463898c76fbd661c5c"
+    },
+    {
+      "materialize_as": "api/reverse_stream_publisher_v2.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/api/reverse_stream_publisher_v2.py",
+      "bytes": 3943,
+      "sha256": "5f654bb348a0126e54198006652715241af07d1befbf79345a2ffc328b6ea9d3"
+    },
+    {
+      "materialize_as": "api/stream_publisher_v2.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/api/stream_publisher_v2.py",
+      "bytes": 10873,
+      "sha256": "cb467822d7dd8b902feb99dcac61d41a64b15c74a71c1a868e4d9cb63c581790"
+    },
+    {
+      "materialize_as": "api/test_fresh_api.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/api/test_fresh_api.py",
+      "bytes": 5571,
+      "sha256": "21e7377b2342797ce622378c98c9e4ed55ddefa2c74d338e156c1d652c07d525"
+    },
+    {
+      "materialize_as": "api/token_feedback.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/api/token_feedback.py",
+      "bytes": 5756,
+      "sha256": "c4a4d549c5de6322f2c99b9d8b8092ef159c7b0942e4d2d0e0114296c23e450f"
+    },
+    {
+      "materialize_as": "api/wire.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/api/wire.py",
+      "bytes": 4100,
+      "sha256": "26b0d86910bbcbae5e283d1dafdb291836ea528f86d2ee101b13c72ed3516dc6"
+    },
+    {
+      "materialize_as": "producer/service.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/producer/service.py",
+      "bytes": 12650,
+      "sha256": "dc4582f19238b492933c1bf66481dc3a54999ac3f5b6d62876d4058d9a8fee3a"
+    },
+    {
+      "materialize_as": "producer/service_request_scoped_v4.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/producer/service_request_scoped_v4.py",
+      "bytes": 15139,
+      "sha256": "1cdc7535c30597b271bae603ab00f2ed354eeeb5b365ceae63302cc9652bd08e"
+    },
+    {
+      "materialize_as": "producer/test_service_v4.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/producer/test_service_v4.py",
+      "bytes": 11860,
+      "sha256": "1d5f6c7222cdb3fdb0923a98150b0765ec86a3a74d698dda7dd6e1375feb3403"
+    },
+    {
+      "materialize_as": "producer/test_target_identity.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/producer/test_target_identity.py",
+      "bytes": 1570,
+      "sha256": "6640b2def38e932ae4952e490bffc9f244f56004bca44cedcc81742416f94891"
+    },
+    {
+      "materialize_as": "consumer-native/cold_addresses.h",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/cold_addresses.h",
+      "bytes": 861,
+      "sha256": "1b0f7ed4791ca2cc8ded12479b87f8c15c1b0741a2dc8cb57f1acc14d794b56e"
+    },
+    {
+      "materialize_as": "consumer-native/cold_install.c",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/cold_install.c",
+      "bytes": 7892,
+      "sha256": "ea6e59387efe3aef298c6d4d59109e90abaad58de10c2df0dc65bcc184ea7902"
+    },
+    {
+      "materialize_as": "consumer-native/native_pins.h",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/native_pins.h",
+      "bytes": 867,
+      "sha256": "69d24e2c20aa702902960b03b831d49c2f821600afa66deae4d20a19bc3f3a06"
+    },
+    {
+      "materialize_as": "consumer-native/sha256_core.h",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/sha256_core.h",
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+    },
+    {
+      "materialize_as": "consumer-native/stream_consumer.c",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/stream_consumer.c",
+      "bytes": 11738,
+      "sha256": "3fb771e0df58e984af801eb7c55e73e80eb12a34d2e0196270e533eae367a629"
+    },
+    {
+      "materialize_as": "consumer-native/stream_consumer.h",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/stream_consumer.h",
+      "bytes": 2961,
+      "sha256": "64744c4859abb286566160e12edccb607ed5f1a53dd2c3dff96ae162d767bd01"
+    },
+    {
+      "materialize_as": "consumer-native/stream_relay.S",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/stream_relay.S",
+      "bytes": 1412,
+      "sha256": "8c350a4a9c9a7b5a9938d5ff4a1a90a6eb4260e572516aded3f75d9f363813e5"
+    },
+    {
+      "materialize_as": "consumer-native/test_cold_addresses.c",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/test_cold_addresses.c",
+      "bytes": 2453,
+      "sha256": "713fe89f4e9d62984cf72273e94cf561e5040aaa5528c0f8b17d3bb36e0c0f6b"
+    },
+    {
+      "materialize_as": "consumer-native/test_cold_addresses.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/test_cold_addresses.py",
+      "bytes": 2430,
+      "sha256": "3ae06154389ba522a5bf47ef78a1ef26a7e4d9b4aeaf70828b4ccc5833814b02"
+    },
+    {
+      "materialize_as": "consumer-native/test_stream_consumer.c",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/test_stream_consumer.c",
+      "bytes": 5325,
+      "sha256": "8101dfee49aa14811b87ad81d0c2c4c56cf7b2a785a2c321d975df7b710c8d5b"
+    },
+    {
+      "materialize_as": "consumer-native/test_stream_relay.c",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/test_stream_relay.c",
+      "bytes": 3267,
+      "sha256": "0ccff27f64edf7602c718471d39f441c54360882eebf302fe817b6fdfa9719ad"
+    },
+    {
+      "materialize_as": "consumer-native/test_stream_relay.S",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/test_stream_relay.S",
+      "bytes": 1843,
+      "sha256": "a28e88d079b4e996afeb2c14613b545b3c89e2adec4e78afa01af4b5db9bae61"
+    },
+    {
+      "materialize_as": "raw/observer/build-linux.sh",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/build-linux.sh",
+      "bytes": 621,
+      "sha256": "fa89f977730ed368805d667ba4356d5a68bc068c946a163ec9de2d36f6409261"
+    },
+    {
+      "materialize_as": "raw/observer/capture_core.h",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/capture_core.h",
+      "bytes": 1593,
+      "sha256": "5032ef6ac99847aaa003c01f178075fe3c914e9dd0168af46036b3f0457777a8"
+    },
+    {
+      "materialize_as": "raw/observer/endpoint_pins.h",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/endpoint_pins.h",
+      "bytes": 211,
+      "sha256": "8c431e60a0e04b4640b04c2138624d785eec1610b6149531361a03e598892dd9"
+    },
+    {
+      "materialize_as": "raw/observer/entry.S",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/entry.S",
+      "bytes": 394,
+      "sha256": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d"
+    },
+    {
+      "materialize_as": "raw/observer/observer.c",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/observer.c",
+      "bytes": 15567,
+      "sha256": "003b00b6646a2973505e809975e4171e35d048fefa4668698d6b482050a9808f"
+    },
+    {
+      "materialize_as": "raw/observer/observer.map",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/observer.map",
+      "bytes": 84,
+      "sha256": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb"
+    },
+    {
+      "materialize_as": "raw/observer/pins.h",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/pins.h",
+      "bytes": 3161,
+      "sha256": "c0c03f0e61204078a8becd72ad724428e61f0b8a607404e934ee69f931b768b9"
+    },
+    {
+      "materialize_as": "raw/observer/producer_test.c",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/producer_test.c",
+      "bytes": 6810,
+      "sha256": "aefedd27a2172ea4ad22539c992b0693b5ac74d6d3777a3b7cc8963b96714213"
+    },
+    {
+      "materialize_as": "raw/observer/sha256_core.h",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/sha256_core.h",
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+    },
+    {
+      "materialize_as": "raw/observer/test_validator.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/test_validator.py",
+      "bytes": 13894,
+      "sha256": "593cc66391824b638d01cfc19f7e4f0d053226bf438ffeb177f8354c06791486"
+    },
+    {
+      "materialize_as": "raw/observer/validate_capture.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/validate_capture.py",
+      "bytes": 13219,
+      "sha256": "da1c08bb819f98bd93ccd825d531f05c7620ee257fed6d47cab5feeb412ca24e"
+    },
+    {
+      "materialize_as": "raw/observer/validate_cohort.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/validate_cohort.py",
+      "bytes": 4288,
+      "sha256": "8f836589385458bcd9495a9a6f046abc4fd744c0830836350e11f985b0bac5aa"
+    },
+    {
+      "materialize_as": "raw/collector/collect_epoch.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/collector/collect_epoch.py",
+      "bytes": 27607,
+      "sha256": "61cb7b1608abc038cf2c617a216a5aaa6534d768530deb3fdde1a4bd2db6a2de"
+    },
+    {
+      "materialize_as": "raw/collector/qpc_audit.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/collector/qpc_audit.py",
+      "bytes": 8154,
+      "sha256": "597369fa13188e61cda123c6b1ac15928283c85e8a9798893e3dc3e614434326"
+    },
+    {
+      "materialize_as": "raw/collector/test_collect_epoch.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/collector/test_collect_epoch.py",
+      "bytes": 23391,
+      "sha256": "918a972fe67fbd73ed36c58c25ba01a36b96a4668c5d7e977b834370d433f07b"
+    },
+    {
+      "materialize_as": "raw/collector/test_migration_boundaries.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/collector/test_migration_boundaries.py",
+      "bytes": 4839,
+      "sha256": "05ee754ab9843e437208909d0264271f74ffb1849f6547691dc748e5d96e7243"
+    },
+    {
+      "materialize_as": "raw/collector/test_qpc_audit.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/collector/test_qpc_audit.py",
+      "bytes": 10611,
+      "sha256": "b92aaa416598bb4376993d02dddde16fbd774681b344661f32436dd1edbc87b7"
+    },
+    {
+      "materialize_as": "raw/binding.json",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/binding.json",
+      "bytes": 57098,
+      "sha256": "eec9f9c1e8e4e4631220b138f05cfef952840268e0a2b411b3746bfc94918ab4"
+    },
+    {
+      "materialize_as": "consumer-native/native-contract.json",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/consumer-native/native-contract.json",
+      "bytes": 55389,
+      "sha256": "4a3cdaa929cf7f2693b6862cc5b160c2191ed1b6ff38db395e5c974dd2703af9"
+    },
+    {
+      "materialize_as": "proof/source-binding-v1.json",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/source-binding-v1.json",
+      "bytes": 42922,
+      "sha256": "109566e3959df1767c296bdb70b3bd55b82f5e1ad565847d26aae2f84fb9acf2"
+    },
+    {
+      "materialize_as": "proof/root-cpu-build-plan-v1.json",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/root-cpu-build-plan-v1.json",
+      "bytes": 19561,
+      "sha256": "fa812c92d10df9bfae9776cda27e0990e6fc7d8d273345917ab79131f69220ff"
+    },
+    {
+      "materialize_as": "proof/native-binary-review-v1.json",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/native-binary-review-v1.json",
+      "bytes": 16058,
+      "sha256": "31e6e7e8cc5b5ab164e6ef749c7c60cafc44fd323629d3143e83ed87190e312f"
+    },
+    {
+      "materialize_as": "proof/independent-cohort-review-v1.json",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/independent-cohort-review-v1.json",
+      "bytes": 1871,
+      "sha256": "e318d691719c98ead55fd282be85c04cfce774760a6a9df7bb73ad96318a2073"
+    },
+    {
+      "materialize_as": "producer/actor.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/producer/actor.py",
+      "bytes": 11405,
+      "sha256": "60e78c82312b66f87b4f5490b91ba1882ad32c566b6e922061538d9d7d64bde0"
+    },
+    {
+      "materialize_as": "producer/native_backend.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/producer/native_backend.py",
+      "bytes": 9548,
+      "sha256": "f9327bbc4e005e8adf6089be1f7a6e8123e7bd9807186cb0ff6a9ca2d9a406bf"
+    },
+    {
+      "materialize_as": "producer/request_scoped_backend.py",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/producer/request_scoped_backend.py",
+      "bytes": 4435,
+      "sha256": "6ecf73a2fcddc24270bf84b769d9d7da74ceca9eee442b5b75cce4b704de06a0"
+    },
+    {
+      "materialize_as": "producer/native_backend.cpp",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/producer/native_backend.cpp",
+      "bytes": 15228,
+      "sha256": "5fecfd2d199aab27d217ed6be78598ca7807c97c2a642fe0da4d9e9dd392f8be"
+    },
+    {
+      "materialize_as": "producer/append_head_scope.hpp",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/producer/append_head_scope.hpp",
+      "bytes": 4663,
+      "sha256": "109340b3357e808d02a71d1a1fa447cc7e6a22f902993a117f40fe9d1f36ad39"
+    },
+    {
+      "materialize_as": "raw/observer/binding.json",
+      "original_private_source": "server/.local/halogen-update-20261111/primary0203/real-npu-v4-prep/raw/observer/binding.json",
+      "bytes": 57098,
+      "sha256": "eec9f9c1e8e4e4631220b138f05cfef952840268e0a2b411b3746bfc94918ab4"
+    }
+  ],
+  "prior_source_manifest": {
+    "path": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/source-manifest.json",
+    "bytes": 26975,
+    "sha256": "f592a5953fba759110f84941b75c479cc1f13ba489e61db332e0792610d4c50f"
+  },
+  "actual_cohort": {
+    "terminal": true,
+    "completed": false,
+    "restored_normal": true,
+    "excluded_stock_warmups": 1,
+    "measured_requests": 0,
+    "NPU_helper_started": false,
+    "qualified_NPU_on_off_comparison": false,
+    "NPU_prefill_tok_s": null,
+    "NPU_decode_tok_s": null,
+    "NPU_acceptance": null,
+    "reason": "Unchanged22-GiB request-entry reserve not reached after stock warmup",
+    "report": "docs/benchmarks/halogen0203-real-npu-core-append-20261111.md"
+  },
+  "actual_whole_file_identity": {
+    "Flash_ELF_SHA256": "bf84053705d1e89c214ff64c79ad1276c5fe353d80a9bb0f38ef3bac6645b97c",
+    "API_SHA256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4",
+    "ELF_API_and_four_providers_byte_identical_to0202": true
+  },
+  "fresh_Root_CPU_commands_exit0": 21,
+  "consumer_SHA256_reference_only": "7651c88ad160a256c3659e7900559dbdf4ba7e443283348b0a82697e02e101f4",
+  "RAW_SHA256_reference_only": "cc898ddb875402902e52b401416f61b9b8c662a54f540ca871047fd970cdca8f",
+  "no_binaries_models_SDK_credentials_runtime_profiles_executed_bindings_live_handles_or_logs": true,
+  "source_proof_references_are_not_redistributed_payloads": true,
+  "copied_source_bytes": 520895,
+  "duplicate_bytes_avoided": 138945,
+  "verification": "python -B verify_archive.py --verify --output verification-result.json",
+  "archive_byte_preservation_rule": "Local .gitattributes: * -text whitespace=cr-at-eol"
+}

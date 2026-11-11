@@ -1,0 +1,635 @@
+{
+  "schema": "halogen0203.fresh-native-binary-review.v1",
+  "utc": "2026-11-11T16:22:35.943632+00:00",
+  "Root_build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\root-cpu-build-v1\\handle.json",
+    "bytes": 16525,
+    "sha256": "d4995bf8a164021c314f260bd74f75ad7d5724e0096602605a05ee9ff8ff1b7e"
+  },
+  "source_build_plan": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\root-cpu-build-plan-v1.json",
+    "bytes": 19561,
+    "sha256": "fa812c92d10df9bfae9776cda27e0990e6fc7d8d273345917ab79131f69220ff"
+  },
+  "all21Root_commands_exit0": true,
+  "source_pins_unchanged": true,
+  "consumer_DSO": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\root-cpu-build-v1\\libhgn0203-stream.so",
+    "bytes": 21520,
+    "sha256": "7651c88ad160a256c3659e7900559dbdf4ba7e443283348b0a82697e02e101f4"
+  },
+  "RAW_DSO": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\libhgn0203_raw_side.so",
+    "bytes": 21432,
+    "sha256": "cc898ddb875402902e52b401416f61b9b8c662a54f540ca871047fd970cdca8f"
+  },
+  "consumer_core": {
+    "object": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\root-cpu-build-v1\\core.o",
+      "bytes": 7456,
+      "sha256": "1e562e86175f81eeca3d186dc15ee9da3593a1c09d47617ffe94cb05d2afa9e6"
+    },
+    "capture": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\root-cpu-build-v1\\core-disassembly.stdout",
+      "bytes": 43452,
+      "sha256": "47a9c0f479e0e93125da48cf8d76e0b7c2a95ccc1cc887d6a7814c9d7775ee7a"
+    },
+    "complete_executable_section_byte_coverage": {
+      ".text": 3035
+    },
+    "SIMD_x87_MMX_opmask_dependencies": false,
+    "undefined_symbols": [],
+    "direct_calls": [
+      {
+        "section": ".text",
+        "pc": "0x174",
+        "direct": true,
+        "target": "0x0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x198",
+        "direct": true,
+        "target": "0x0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x1b4",
+        "direct": true,
+        "target": "0x0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x1c0",
+        "direct": true,
+        "target": "0x0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x3bc",
+        "direct": true,
+        "target": "0x10",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x63d",
+        "direct": true,
+        "target": "0x60",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x748",
+        "direct": true,
+        "target": "0xa0",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "hgn0203_stream_decode",
+            "index": 1,
+            "value": 160,
+            "size": 699
+          }
+        }
+      },
+      {
+        "section": ".text",
+        "pc": "0x795",
+        "direct": true,
+        "target": "0x10",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x973",
+        "direct": true,
+        "target": "0x360",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "hgn0203_stream_select",
+            "index": 1,
+            "value": 864,
+            "size": 300
+          }
+        }
+      }
+    ],
+    "indirect_call_count": 0
+  },
+  "RAW_observer": {
+    "object": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\root-cpu-build-v1\\raw-observer.o",
+      "bytes": 16440,
+      "sha256": "eb13b295e566f36dd50a4734494fffcb2ca1d7e6adf332f3adecfe13f0462a95"
+    },
+    "capture": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\root-cpu-build-v1\\raw-object-disassembly.stdout",
+      "bytes": 74181,
+      "sha256": "4db89c281bc15fe2ed4cb9af90e0d9ae28821f9af2f6d52abea54319226c0457"
+    },
+    "complete_executable_section_byte_coverage": {
+      ".text": 3575,
+      ".text.startup": 2205
+    },
+    "SIMD_x87_MMX_opmask_dependencies": false,
+    "undefined_symbols": [
+      "dl_iterate_phdr",
+      "dladdr",
+      "dlvsym",
+      "getenv",
+      "memset"
+    ],
+    "direct_calls": [
+      {
+        "section": ".text",
+        "pc": "0x489",
+        "direct": true,
+        "target": "0x48e",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "dlvsym",
+            "index": 0,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text",
+        "pc": "0x4a7",
+        "direct": true,
+        "target": "0x2b0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x4cb",
+        "direct": true,
+        "target": "0x1e0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x525",
+        "direct": true,
+        "target": "0x2b0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x557",
+        "direct": true,
+        "target": "0x90",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x5d5",
+        "direct": true,
+        "target": "0x1e0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x6b6",
+        "direct": true,
+        "target": "0x2b0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x6f0",
+        "direct": true,
+        "target": "0x6f5",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "memset",
+            "index": 0,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text",
+        "pc": "0x7b2",
+        "direct": true,
+        "target": "0x2b0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x7c3",
+        "direct": true,
+        "target": "0x4b0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x7f4",
+        "direct": true,
+        "target": "0x7f9",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "memset",
+            "index": 0,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text",
+        "pc": "0x843",
+        "direct": true,
+        "target": "0x2b0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x84f",
+        "direct": true,
+        "target": "0x2b0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0x85b",
+        "direct": true,
+        "target": "0x2b0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0xa39",
+        "direct": true,
+        "target": "0x0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0xa54",
+        "direct": true,
+        "target": "0x460",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0xa6b",
+        "direct": true,
+        "target": "0x0",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0xbdd",
+        "direct": true,
+        "target": "0x530",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0xd9c",
+        "direct": true,
+        "target": "0x90",
+        "relocation": null
+      },
+      {
+        "section": ".text",
+        "pc": "0xdbc",
+        "direct": true,
+        "target": "0x4b0",
+        "relocation": null
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x37a",
+        "direct": true,
+        "target": "0x0",
+        "relocation": null
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x46b",
+        "direct": true,
+        "target": "0x0",
+        "relocation": null
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x553",
+        "direct": true,
+        "target": "0x0",
+        "relocation": null
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x58c",
+        "direct": true,
+        "target": "0x591",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "getenv",
+            "index": 0,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x676",
+        "direct": true,
+        "target": "0x67b",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "dlvsym",
+            "index": 0,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x69a",
+        "direct": true,
+        "target": "0x230",
+        "relocation": null
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x6b0",
+        "direct": true,
+        "target": "0x6b5",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "dl_iterate_phdr",
+            "index": 0,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x6cf",
+        "direct": true,
+        "target": "0x6d4",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "dladdr",
+            "index": 0,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x727",
+        "direct": true,
+        "target": "0x72c",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x738",
+        "direct": true,
+        "target": "0x230",
+        "relocation": null
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x746",
+        "direct": true,
+        "target": "0x74b",
+        "relocation": {
+          "kind": 2,
+          "addend": -4,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x75a",
+        "direct": true,
+        "target": "0x75f",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "getenv",
+            "index": 0,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x7ac",
+        "direct": true,
+        "target": "0x7b1",
+        "relocation": {
+          "kind": 4,
+          "addend": -4,
+          "symbol": {
+            "name": "getenv",
+            "index": 0,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x822",
+        "direct": true,
+        "target": "0x827",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x82e",
+        "direct": true,
+        "target": "0x833",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x83a",
+        "direct": true,
+        "target": "0x83f",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x846",
+        "direct": true,
+        "target": "0x84b",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x852",
+        "direct": true,
+        "target": "0x857",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x85e",
+        "direct": true,
+        "target": "0x863",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x874",
+        "direct": true,
+        "target": "0x879",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x880",
+        "direct": true,
+        "target": "0x885",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      },
+      {
+        "section": ".text.startup",
+        "pc": "0x898",
+        "direct": true,
+        "target": "0x89d",
+        "relocation": {
+          "kind": 2,
+          "addend": 684,
+          "symbol": {
+            "name": "",
+            "index": 1,
+            "value": 0,
+            "size": 0
+          }
+        }
+      }
+    ],
+    "indirect_call_count": "Original chrono forwarding is intentionally indirect; not a GPR-only detour callback."
+  },
+  "RAW_external_calls_scope": "Loader/identity getenv/dl* and generated memset remain ordinary native chrono-call ABI. No claim of transitive SIMD closure for libc or original chrono.",
+  "constructor_actual_ELF_fixture_exit0": true,
+  "all_integer_compiler_flags_preserved": true,
+  "hardware_or_API_or_compiler_run_by_reviewer": false,
+  "activated": false,
+  "cleared_for_one_Root_owned_fresh_cohort_source_binding": true,
+  "limitations": "Binary/source qualification only; genuine positive NPU hits, exact native-T output parity, RAW identities and full normal restoration remain actual-cohort requirements."
+}

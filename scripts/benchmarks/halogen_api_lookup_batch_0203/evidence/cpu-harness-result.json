@@ -1,0 +1,271 @@
+{
+  "schema": "halogen0203.cpu-lookup-batch-harness.v1",
+  "utc": "2026-11-11T16:23:02.319116+00:00",
+  "api_source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\serve_api.py",
+    "bytes": 338407,
+    "sha256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4"
+  },
+  "candidate_api_sha256": "f03209a3217719044e79c05c36adf567b003192791d276c72e389b1067a42242",
+  "adapter": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\cpu_lookup_batch_adapter.py",
+    "bytes": 4879,
+    "sha256": "720c1f8c71e67b6058a2248f07218bd690e39da026d6c2fcaf49ce274fc82887"
+  },
+  "tokenizer": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\article0162-20261003\\tokenizer.json",
+    "bytes": 12809320,
+    "sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3"
+  },
+  "tokenizers_version": "0.23.2",
+  "tokenizer_backend_files": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\article0162-20261003\\vendor\\tokenizers\\tokenizers.pyd",
+      "bytes": 7847936,
+      "sha256": "05848a2a85e1466d19242499ed6b8c016a886db79aca020792aa5598ded77ef9"
+    }
+  ],
+  "interface": "Actual existing tokenizers backend via the API callable/decode facade; full Transformers wrapper not loaded.",
+  "tool_boundary_ids": {
+    "open": 248066,
+    "close": 248067
+  },
+  "cases": [
+    {
+      "name": "no-tool-block",
+      "owned_synthetic_tool_fixture": true,
+      "body_utf8_sha256": "bfd9da98d478a35d423af40e78ef7ce8b55f9f85f95457abfc51c772270d62ec",
+      "actual_input_ids": 2,
+      "input_ids_sha256": "05963ec5d8e38f7ff0900d15ef1b72d96655f58d06ed18f97349a43fed226ed4",
+      "repetitions": 1,
+      "stock_calls": {
+        "scalar_encode": 0,
+        "batch_encode": 0,
+        "total_encode": 0,
+        "decode": 0
+      },
+      "candidate_calls": {
+        "scalar_encode": 0,
+        "batch_encode": 0,
+        "total_encode": 0,
+        "decode": 0
+      },
+      "outputs": [
+        {
+          "LOOK_count": 0,
+          "LOOK_ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "exact_LOOK_ID_and_cache_state_parity": true
+    },
+    {
+      "name": "unrecognized-tool-text",
+      "owned_synthetic_tool_fixture": true,
+      "body_utf8_sha256": "0e8cf09aa9a807d4147a5c129575d2667a0ef5cbca57a5cf29c07341f958d40f",
+      "actual_input_ids": 8,
+      "input_ids_sha256": "7e0998d221c50240a0ee0ab01ade668d54603cfc6a16711877febad24d3e686f",
+      "repetitions": 1,
+      "stock_calls": {
+        "scalar_encode": 0,
+        "batch_encode": 0,
+        "total_encode": 0,
+        "decode": 1
+      },
+      "candidate_calls": {
+        "scalar_encode": 0,
+        "batch_encode": 0,
+        "total_encode": 0,
+        "decode": 1
+      },
+      "outputs": [
+        {
+          "LOOK_count": 0,
+          "LOOK_ids_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "exact_LOOK_ID_and_cache_state_parity": true
+    },
+    {
+      "name": "one-json-output",
+      "owned_synthetic_tool_fixture": true,
+      "body_utf8_sha256": "e201d979fa01d6c4141aeaad95ef0e62f73d6a1d21557376cfb018e756506320",
+      "actual_input_ids": 63,
+      "input_ids_sha256": "e5c1ddd59d501bba4e5cc7c0675a256e81046e89cdd9f7b9db50723643ea4519",
+      "repetitions": 1,
+      "stock_calls": {
+        "scalar_encode": 1,
+        "batch_encode": 0,
+        "total_encode": 1,
+        "decode": 1
+      },
+      "candidate_calls": {
+        "scalar_encode": 1,
+        "batch_encode": 0,
+        "total_encode": 1,
+        "decode": 1
+      },
+      "outputs": [
+        {
+          "LOOK_count": 16,
+          "LOOK_ids_sha256": "83171ad3ddf1345c7adbbc4bffcfa595be52986999d122fffa1a94ea808c137b"
+        }
+      ],
+      "exact_LOOK_ID_and_cache_state_parity": true
+    },
+    {
+      "name": "four-numbered-segments",
+      "owned_synthetic_tool_fixture": true,
+      "body_utf8_sha256": "4f072bea638ac7ff39b708159315505cefcae16f00a1273754f60fbb43ab638c",
+      "actual_input_ids": 192,
+      "input_ids_sha256": "ac8c5f94658b2856471e44e179a895b1ebc43f34e397c5cccbbb3fad9b7102bb",
+      "repetitions": 1,
+      "stock_calls": {
+        "scalar_encode": 4,
+        "batch_encode": 0,
+        "total_encode": 4,
+        "decode": 1
+      },
+      "candidate_calls": {
+        "scalar_encode": 0,
+        "batch_encode": 1,
+        "total_encode": 1,
+        "decode": 1
+      },
+      "outputs": [
+        {
+          "LOOK_count": 151,
+          "LOOK_ids_sha256": "a73d174828b880a97f7083242ad129467f8ca0566497e3881ba437afcd8e7702"
+        }
+      ],
+      "exact_LOOK_ID_and_cache_state_parity": true
+    },
+    {
+      "name": "twelve-numbered-segments",
+      "owned_synthetic_tool_fixture": true,
+      "body_utf8_sha256": "29a80c7e2f5f40f835c9af148beb0fd6e4a7fe1a9a9bb2c0e0cac8633ca1c871",
+      "actual_input_ids": 604,
+      "input_ids_sha256": "c3de2a6e5bd7d4641246866eb80d1ea92b3eb196e555b559532a4ae57e961dc8",
+      "repetitions": 1,
+      "stock_calls": {
+        "scalar_encode": 12,
+        "batch_encode": 0,
+        "total_encode": 12,
+        "decode": 1
+      },
+      "candidate_calls": {
+        "scalar_encode": 0,
+        "batch_encode": 1,
+        "total_encode": 1,
+        "decode": 1
+      },
+      "outputs": [
+        {
+          "LOOK_count": 461,
+          "LOOK_ids_sha256": "356ca6c85b95d6957740803c074f6df3f6f70a25b67aef272f1d9670990353c0"
+        }
+      ],
+      "exact_LOOK_ID_and_cache_state_parity": true
+    },
+    {
+      "name": "fortyeight-numbered-segments",
+      "owned_synthetic_tool_fixture": true,
+      "body_utf8_sha256": "071029235ff23ff10502fc1c812a7cabe8896292d80b40d3869a2018a649cc25",
+      "actual_input_ids": 2620,
+      "input_ids_sha256": "ab44df87bf23e925945b783536585d484bdbfdb863f697d7808294d57687508d",
+      "repetitions": 1,
+      "stock_calls": {
+        "scalar_encode": 48,
+        "batch_encode": 0,
+        "total_encode": 48,
+        "decode": 1
+      },
+      "candidate_calls": {
+        "scalar_encode": 0,
+        "batch_encode": 1,
+        "total_encode": 1,
+        "decode": 1
+      },
+      "outputs": [
+        {
+          "LOOK_count": 1937,
+          "LOOK_ids_sha256": "41cf0c58b56c8277fd29d0de143845b3d8b5ae4f0c4c6beb2ed4bf3b40bdd085"
+        }
+      ],
+      "exact_LOOK_ID_and_cache_state_parity": true
+    },
+    {
+      "name": "warm-view-cache",
+      "owned_synthetic_tool_fixture": true,
+      "body_utf8_sha256": "29a80c7e2f5f40f835c9af148beb0fd6e4a7fe1a9a9bb2c0e0cac8633ca1c871",
+      "actual_input_ids": 604,
+      "input_ids_sha256": "c3de2a6e5bd7d4641246866eb80d1ea92b3eb196e555b559532a4ae57e961dc8",
+      "repetitions": 3,
+      "stock_calls": {
+        "scalar_encode": 12,
+        "batch_encode": 0,
+        "total_encode": 12,
+        "decode": 1
+      },
+      "candidate_calls": {
+        "scalar_encode": 0,
+        "batch_encode": 1,
+        "total_encode": 1,
+        "decode": 1
+      },
+      "outputs": [
+        {
+          "LOOK_count": 461,
+          "LOOK_ids_sha256": "356ca6c85b95d6957740803c074f6df3f6f70a25b67aef272f1d9670990353c0"
+        },
+        {
+          "LOOK_count": 461,
+          "LOOK_ids_sha256": "356ca6c85b95d6957740803c074f6df3f6f70a25b67aef272f1d9670990353c0"
+        },
+        {
+          "LOOK_count": 461,
+          "LOOK_ids_sha256": "356ca6c85b95d6957740803c074f6df3f6f70a25b67aef272f1d9670990353c0"
+        }
+      ],
+      "exact_LOOK_ID_and_cache_state_parity": true
+    },
+    {
+      "name": "json-numbered-segments",
+      "owned_synthetic_tool_fixture": true,
+      "body_utf8_sha256": "01b92f664699bf09a7c2ca6425e9ccbfcbf14aabfee0b525d4aa592760045add",
+      "actual_input_ids": 467,
+      "input_ids_sha256": "5ae69d0d41fb6061bf222e1c596f3a775e8ad62858e150aa7b8ee09f856438f1",
+      "repetitions": 1,
+      "stock_calls": {
+        "scalar_encode": 8,
+        "batch_encode": 0,
+        "total_encode": 8,
+        "decode": 1
+      },
+      "candidate_calls": {
+        "scalar_encode": 0,
+        "batch_encode": 1,
+        "total_encode": 1,
+        "decode": 1
+      },
+      "outputs": [
+        {
+          "LOOK_count": 303,
+          "LOOK_ids_sha256": "d534bbd945bd9611627fc2717d07b908483ae8462e0c6de89cbbbea369254314"
+        }
+      ],
+      "exact_LOOK_ID_and_cache_state_parity": true
+    }
+  ],
+  "total_actual_encode_calls": {
+    "stock": 85,
+    "candidate": 6
+  },
+  "actual_encode_call_reduction_percent": 92.94117647058823,
+  "all_exact_LOOK_ID_and_cache_state_parity": true,
+  "latency_measured": false,
+  "latency_or_tok_s_estimate": null,
+  "GPU_NPU_HTTP_engine_calls": false,
+  "installed_backend_changed": false,
+  "NPU_cohort_changed": false,
+  "prefill_decode_acceptance_gain_qualified": false
+}

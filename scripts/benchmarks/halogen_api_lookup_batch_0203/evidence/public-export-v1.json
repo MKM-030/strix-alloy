@@ -1,0 +1,118 @@
+{
+  "schema": "halogen0203.cpu-lookup-batch-public-export.v1",
+  "utc": "2026-11-11T16:40:11.846347+00:00",
+  "upstream_api_sha256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4",
+  "explicit_inputs": true,
+  "private_input_path_defaults": false,
+  "unchanged_helper_and_transform_literals": true,
+  "unchanged_17_test_method_ASTs": true,
+  "unchanged_real_tokenizer_facade_AST": true,
+  "unchanged_synthetic_fixture_generator_AST": true,
+  "raw_eight_case_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\evidence\\cpu-harness-result.json",
+    "bytes": 9119,
+    "sha256": "285ad91accdd755629dd0989c4f7e9681a6c7181652d7ed3e76c4f9a26ae756b"
+  },
+  "real_tokenizer_harness_rerun": false,
+  "previously_measured_actual_encode_calls": {
+    "stock": 85,
+    "candidate": 6
+  },
+  "performance_scope": "Actual call counts only; no latency/tok/s/acceptance/NPU gain measured.",
+  "full_Transformers_wrapper_qualified": false,
+  "public_CPU_unit_tests": {
+    "count": 17,
+    "passed": true
+  },
+  "import_and_default_inert": {
+    "passed": true,
+    "API_tokenizer_file_reads": false,
+    "tokenizers_imported": false,
+    "plans": [
+      {
+        "source_only": true,
+        "executed": false,
+        "version": "0.20.3",
+        "upstream_api_sha256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4",
+        "installed_backend_changed": false,
+        "GPU_NPU_HTTP_engine_calls": false
+      },
+      {
+        "CPU_source_only": true,
+        "executed": false
+      }
+    ]
+  },
+  "active_backend_source_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\profiles\\sources.json",
+    "bytes": 5084,
+    "sha256": "c32138235c3847dfe29576d9ed634e4686f2ddc203ac718395444b7784804492"
+  },
+  "active_source_members_verified_unchanged": 47,
+  "NPU_cohort_changed": false,
+  "HTTP_WSL_engine_GPU_NPU_calls": false,
+  "dependencies_installed": false,
+  "complete_vendor_API_models_binaries_or_wheels_in_export": false,
+  "files": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\__init__.py",
+      "bytes": 73,
+      "sha256": "eed1c5e6fb9caa2b2b275b1904c15f0a5d52da37f82d857b33591a66cd913eea"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\adapter.py",
+      "bytes": 5458,
+      "sha256": "c262083f18eea8df0e5cf5e03bc710a721ddc0f7882f95333979265fae6d0e18"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\evidence\\cpu-harness-result.json",
+      "bytes": 9119,
+      "sha256": "285ad91accdd755629dd0989c4f7e9681a6c7181652d7ed3e76c4f9a26ae756b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\evidence\\private-independent-review-v1.json",
+      "bytes": 1287,
+      "sha256": "f51f298a46ad7f18c216a19692da464284913d901950b2b3ac35e9a08489deef"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\evidence\\private-source-preparation-v1.json",
+      "bytes": 5163,
+      "sha256": "d435564bb9a62f0ba374dccb78480c60fbeabf9e0d70d3084d6c20c7b44388d4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\evidence\\private-tests-green-v1.log",
+      "bytes": 2779,
+      "sha256": "01bb23271b7a63b0084a1d714ddbcf8690ecc9e60a77b7f507b280cca57b4291"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\evidence\\private-tests-red-v1.log",
+      "bytes": 33769,
+      "sha256": "aaf2615a6847169a066d3c93e8661c7b43bd58ced38ddfbc316563182797e073"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\evidence\\public-tests-green-v1.log",
+      "bytes": 2779,
+      "sha256": "f92d75f6f005cf524caf32b433d1ea8811c5dbbbdb97fbd6fb6807d8f8b0025d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\lookup-segment-batch.patch",
+      "bytes": 1711,
+      "sha256": "a132e889a4ffa916eb72432354a1483a7de74c1454aad621a5cefa7fbecd8031"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\README.md",
+      "bytes": 4737,
+      "sha256": "759e8d270c3c96482dcc98c79cb061fa0b4811e6df7130e7dc8b11911f0b4c72"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\real_tokenizer_harness.py",
+      "bytes": 8239,
+      "sha256": "2e4e334a21e48eb1c4f6d011f072bf774ef95673e38ffed773f22cf188a3e15c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\test_lookup_batch.py",
+      "bytes": 9653,
+      "sha256": "58077c6255a5ea834d336d967644c8e5aab599c9a69f103583d3397a030df7a3"
+    }
+  ]
+}

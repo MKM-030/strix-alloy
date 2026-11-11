@@ -1,0 +1,375 @@
+test_batch_exception_falls_back_to_original_scalar_calls (test_lookup_batch.LookupBatchTests.test_batch_exception_falls_back_to_original_scalar_calls) ... 
+  test_batch_exception_falls_back_to_original_scalar_calls (test_lookup_batch.LookupBatchTests.test_batch_exception_falls_back_to_original_scalar_calls) (error='TypeError') ... FAIL
+  test_batch_exception_falls_back_to_original_scalar_calls (test_lookup_batch.LookupBatchTests.test_batch_exception_falls_back_to_original_scalar_calls) (error='ValueError') ... FAIL
+  test_batch_exception_falls_back_to_original_scalar_calls (test_lookup_batch.LookupBatchTests.test_batch_exception_falls_back_to_original_scalar_calls) (error='RuntimeError') ... FAIL
+test_control_flow_exceptions_are_not_swallowed (test_lookup_batch.LookupBatchTests.test_control_flow_exceptions_are_not_swallowed) ... FAIL
+test_decode_error_is_unchanged_and_does_not_call_tokenizer (test_lookup_batch.LookupBatchTests.test_decode_error_is_unchanged_and_does_not_call_tokenizer) ... FAIL
+test_default_source_module_and_plan_import_are_inert (test_lookup_batch.LookupBatchTests.test_default_source_module_and_plan_import_are_inert) ... FAIL
+test_empty_segment_separator_behavior_is_exact (test_lookup_batch.LookupBatchTests.test_empty_segment_separator_behavior_is_exact) ... FAIL
+test_empty_unrecognized_tool_text_preserves_empty_cache_entry (test_lookup_batch.LookupBatchTests.test_empty_unrecognized_tool_text_preserves_empty_cache_entry) ... FAIL
+test_exact_upstream_pin_and_source_transform_are_required (test_lookup_batch.LookupBatchTests.test_exact_upstream_pin_and_source_transform_are_required) ... FAIL
+test_fallback_preserves_original_scalar_error_and_cache_failure_state (test_lookup_batch.LookupBatchTests.test_fallback_preserves_original_scalar_error_and_cache_failure_state) ... FAIL
+test_malformed_batch_shape_or_type_falls_back (test_lookup_batch.LookupBatchTests.test_malformed_batch_shape_or_type_falls_back) ... 
+  test_malformed_batch_shape_or_type_falls_back (test_lookup_batch.LookupBatchTests.test_malformed_batch_shape_or_type_falls_back) (malformed={}) ... FAIL
+  test_malformed_batch_shape_or_type_falls_back (test_lookup_batch.LookupBatchTests.test_malformed_batch_shape_or_type_falls_back) (malformed={'input_ids': [1, 2, 3]}) ... FAIL
+  test_malformed_batch_shape_or_type_falls_back (test_lookup_batch.LookupBatchTests.test_malformed_batch_shape_or_type_falls_back) (malformed={'input_ids': [[1]]}) ... FAIL
+  test_malformed_batch_shape_or_type_falls_back (test_lookup_batch.LookupBatchTests.test_malformed_batch_shape_or_type_falls_back) (malformed={'input_ids': [['x'], [], []]}) ... FAIL
+test_multiple_tool_blocks_preserve_look_separators_and_cache_order (test_lookup_batch.LookupBatchTests.test_multiple_tool_blocks_preserve_look_separators_and_cache_order) ... FAIL
+test_multiple_whole_segments_are_batched_with_exact_ids (test_lookup_batch.LookupBatchTests.test_multiple_whole_segments_are_batched_with_exact_ids) ... FAIL
+test_no_tool_response_has_no_tokenizer_calls (test_lookup_batch.LookupBatchTests.test_no_tool_response_has_no_tokenizer_calls) ... FAIL
+test_one_json_output_segment_keeps_scalar_behavior (test_lookup_batch.LookupBatchTests.test_one_json_output_segment_keeps_scalar_behavior) ... FAIL
+test_repeated_tool_response_hits_same_cache_without_extra_batch (test_lookup_batch.LookupBatchTests.test_repeated_tool_response_hits_same_cache_without_extra_batch) ... FAIL
+test_tabs_arrows_bars_and_unicode_preserve_segment_boundaries (test_lookup_batch.LookupBatchTests.test_tabs_arrows_bars_and_unicode_preserve_segment_boundaries) ... FAIL
+test_unclosed_tool_response_preserves_end_of_input_behavior (test_lookup_batch.LookupBatchTests.test_unclosed_tool_response_preserves_end_of_input_behavior) ... FAIL
+test_view_budget_and_strict_output_limit_unchanged (test_lookup_batch.LookupBatchTests.test_view_budget_and_strict_output_limit_unchanged) ... FAIL
+
+======================================================================
+FAIL: test_batch_exception_falls_back_to_original_scalar_calls (test_lookup_batch.LookupBatchTests.test_batch_exception_falls_back_to_original_scalar_calls) (error='TypeError')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 144, in test_batch_exception_falls_back_to_original_scalar_calls
+    left, right, *_ = self.compare(numbered(3), factory=lambda: InterfaceTokenizer(numbered(3), batch_error=error))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_batch_exception_falls_back_to_original_scalar_calls (test_lookup_batch.LookupBatchTests.test_batch_exception_falls_back_to_original_scalar_calls) (error='ValueError')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 144, in test_batch_exception_falls_back_to_original_scalar_calls
+    left, right, *_ = self.compare(numbered(3), factory=lambda: InterfaceTokenizer(numbered(3), batch_error=error))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_batch_exception_falls_back_to_original_scalar_calls (test_lookup_batch.LookupBatchTests.test_batch_exception_falls_back_to_original_scalar_calls) (error='RuntimeError')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 144, in test_batch_exception_falls_back_to_original_scalar_calls
+    left, right, *_ = self.compare(numbered(3), factory=lambda: InterfaceTokenizer(numbered(3), batch_error=error))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_control_flow_exceptions_are_not_swallowed (test_lookup_batch.LookupBatchTests.test_control_flow_exceptions_are_not_swallowed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 179, in test_control_flow_exceptions_are_not_swallowed
+    _, _, candidate = self.namespaces()
+                      ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_decode_error_is_unchanged_and_does_not_call_tokenizer (test_lookup_batch.LookupBatchTests.test_decode_error_is_unchanged_and_does_not_call_tokenizer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 168, in test_decode_error_is_unchanged_and_does_not_call_tokenizer
+    _, stock, candidate = self.namespaces()
+                          ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_default_source_module_and_plan_import_are_inert (test_lookup_batch.LookupBatchTests.test_default_source_module_and_plan_import_are_inert)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 92, in test_default_source_module_and_plan_import_are_inert
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_empty_segment_separator_behavior_is_exact (test_lookup_batch.LookupBatchTests.test_empty_segment_separator_behavior_is_exact)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 185, in test_empty_segment_separator_behavior_is_exact
+    _, stock, candidate = self.namespaces()
+                          ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_empty_unrecognized_tool_text_preserves_empty_cache_entry (test_lookup_batch.LookupBatchTests.test_empty_unrecognized_tool_text_preserves_empty_cache_entry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 109, in test_empty_unrecognized_tool_text_preserves_empty_cache_entry
+    left, right, *_ = self.compare('ordinary text without numbered runs')
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_exact_upstream_pin_and_source_transform_are_required (test_lookup_batch.LookupBatchTests.test_exact_upstream_pin_and_source_transform_are_required)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 96, in test_exact_upstream_pin_and_source_transform_are_required
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_fallback_preserves_original_scalar_error_and_cache_failure_state (test_lookup_batch.LookupBatchTests.test_fallback_preserves_original_scalar_error_and_cache_failure_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 154, in test_fallback_preserves_original_scalar_error_and_cache_failure_state
+    _, stock, candidate = self.namespaces()
+                          ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_malformed_batch_shape_or_type_falls_back (test_lookup_batch.LookupBatchTests.test_malformed_batch_shape_or_type_falls_back) (malformed={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 150, in test_malformed_batch_shape_or_type_falls_back
+    left, right, *_ = self.compare(numbered(3), factory=lambda: InterfaceTokenizer(numbered(3), malformed=malformed))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_malformed_batch_shape_or_type_falls_back (test_lookup_batch.LookupBatchTests.test_malformed_batch_shape_or_type_falls_back) (malformed={'input_ids': [1, 2, 3]})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 150, in test_malformed_batch_shape_or_type_falls_back
+    left, right, *_ = self.compare(numbered(3), factory=lambda: InterfaceTokenizer(numbered(3), malformed=malformed))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_malformed_batch_shape_or_type_falls_back (test_lookup_batch.LookupBatchTests.test_malformed_batch_shape_or_type_falls_back) (malformed={'input_ids': [[1]]})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 150, in test_malformed_batch_shape_or_type_falls_back
+    left, right, *_ = self.compare(numbered(3), factory=lambda: InterfaceTokenizer(numbered(3), malformed=malformed))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_malformed_batch_shape_or_type_falls_back (test_lookup_batch.LookupBatchTests.test_malformed_batch_shape_or_type_falls_back) (malformed={'input_ids': [['x'], [], []]})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 150, in test_malformed_batch_shape_or_type_falls_back
+    left, right, *_ = self.compare(numbered(3), factory=lambda: InterfaceTokenizer(numbered(3), malformed=malformed))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_multiple_tool_blocks_preserve_look_separators_and_cache_order (test_lookup_batch.LookupBatchTests.test_multiple_tool_blocks_preserve_look_separators_and_cache_order)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 133, in test_multiple_tool_blocks_preserve_look_separators_and_cache_order
+    self.compare(numbered(3), ids=[OPEN, 1, CLOSE, 6, OPEN, 2, CLOSE])
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_multiple_whole_segments_are_batched_with_exact_ids (test_lookup_batch.LookupBatchTests.test_multiple_whole_segments_are_batched_with_exact_ids)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 117, in test_multiple_whole_segments_are_batched_with_exact_ids
+    left, right, *_ = self.compare(numbered(8))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_no_tool_response_has_no_tokenizer_calls (test_lookup_batch.LookupBatchTests.test_no_tool_response_has_no_tokenizer_calls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 105, in test_no_tool_response_has_no_tokenizer_calls
+    left, right, *_ = self.compare(numbered(), ids=[1, 2, 3])
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_one_json_output_segment_keeps_scalar_behavior (test_lookup_batch.LookupBatchTests.test_one_json_output_segment_keeps_scalar_behavior)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 113, in test_one_json_output_segment_keeps_scalar_behavior
+    left, right, *_ = self.compare(json.dumps({'output': '� \u4eca\u65e5\u306f \U0001f469\U0001f3fd\u200d\U0001f4bb\n<tool_response> code'}))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_repeated_tool_response_hits_same_cache_without_extra_batch (test_lookup_batch.LookupBatchTests.test_repeated_tool_response_hits_same_cache_without_extra_batch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 128, in test_repeated_tool_response_hits_same_cache_without_extra_batch
+    left, right, *_ = self.compare(numbered(4), repeats=3)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_tabs_arrows_bars_and_unicode_preserve_segment_boundaries (test_lookup_batch.LookupBatchTests.test_tabs_arrows_bars_and_unicode_preserve_segment_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 122, in test_tabs_arrows_bars_and_unicode_preserve_segment_boundaries
+    self.compare(text)
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_unclosed_tool_response_preserves_end_of_input_behavior (test_lookup_batch.LookupBatchTests.test_unclosed_tool_response_preserves_end_of_input_behavior)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 125, in test_unclosed_tool_response_preserves_end_of_input_behavior
+    self.compare(numbered(3), ids=[OPEN, 71, 72])
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+======================================================================
+FAIL: test_view_budget_and_strict_output_limit_unchanged (test_lookup_batch.LookupBatchTests.test_view_budget_and_strict_output_limit_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 139, in test_view_budget_and_strict_output_limit_unchanged
+    self.compare(numbered(4), ids=[OPEN, 1, CLOSE, OPEN, 2, CLOSE], configure=configure)
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 75, in compare
+    module, stock, candidate = self.namespaces()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 69, in namespaces
+    module = subject()
+             ^^^^^^^^^
+  File "C:\Projects\strix-alloy-clean\server\.local\halogen-update-20261111\primary0203\cpu-lookup-batch-v1\test_lookup_batch.py", line 16, in subject
+    raise AssertionError('The inactive batch adapter is not implemented yet')
+AssertionError: The inactive batch adapter is not implemented yet
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.009s
+
+FAILED (failures=22)

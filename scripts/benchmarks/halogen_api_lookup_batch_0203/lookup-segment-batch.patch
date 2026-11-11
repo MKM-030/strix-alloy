@@ -1,0 +1,40 @@
+--- a/serve_api.py
++++ b/serve_api.py
+@@ -2887,6 +2887,24 @@
+         segs.append(body)
+     return segs
+ 
++def _lookup_encode_segments(tok, segments):
++    if len(segments) >= 2:
++        try:
++            groups = tok(segments, add_special_tokens=False)["input_ids"]
++            if (not isinstance(groups, (list, tuple)) or len(groups) != len(segments)
++                    or any(not isinstance(group, (list, tuple))
++                           or any(type(token) is not int for token in group)
++                           for group in groups)):
++                raise ValueError("unsupported batch token IDs")
++            return groups
++        except Exception:
++            # Preserve the original scalar path and its errors on unsupported
++            # batches. A partial view is never published to the view cache.
++            pass
++    return (tok(segment, add_special_tokens=False)["input_ids"]
++            for segment in segments)
++
++
+ def lookup_view(tok, ids, open_id, close_id):
+     out, i, n = [], 0, len(ids)
+     while i < n:
+@@ -2903,10 +2921,10 @@
+         if got is None:
+             text = tok.decode(ids[i + 1:j], skip_special_tokens=False, clean_up_tokenization_spaces=False)
+             parts = []
+-            for seg in view_segments(text):
++            for encoded_ids in _lookup_encode_segments(tok, view_segments(text)):
+                 if parts:
+                     parts.append(-1)
+-                parts.extend(tok(seg, add_special_tokens=False)["input_ids"])
++                parts.extend(encoded_ids)
+             got = array.array("i", parts)
+             _VIEW_CACHE[key] = got
+             _VIEW_CACHE_IDS[0] += len(got) + 1

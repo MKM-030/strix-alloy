@@ -3,7 +3,7 @@
 **0.20.3 is installed and left online.** API and engine both report 0.20.3,
 with version agreement. Authenticated chat returned HTTP 200 and **`READY`**
 at **16:04:57 UTC** on 11 November using the existing endpoint
-`http://127.0.0.1:8840/v1` and public model alias `halogen-v2`. The single
+`http://127.0.0.1:8840/v1` and public model alias `halogen-v2`. The initial
 normal lifecycle completed successfully and retained the running server.
 The Windows PowerShell 5.1 launcher remains active, with a verified visible
 window titled `STRIX ALLOY - Halogen 0.20.3`. The ServiceNow credential remains
@@ -98,10 +98,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-
 Use that command after stopping an existing managed session through its normal
 controls when a new session is needed. The server is already running.
 
-The release-specific **0.20.2 experimental NPU hooks have not been transferred
-to 0.20.3**. Its previous component gains and partial live attempt do not qualify
-hooks for a different executable. Normal serving keeps experimental NPU hooks
-disabled unless a separately qualified implementation is explicitly selected.
+A separate private 0.20.3 RAW/NPU integration was subsequently rebound to the
+verified executable/API identities and freshly built consumer/observer products.
+Its [actual partial attempt](../benchmarks/halogen0203-real-npu-core-append-20261111.md)
+did not reach NPU execution. Normal serving was restored with experimental hooks
+disabled; the private preparation does not establish a live speed gain.
 
 ## Performance status
 
@@ -117,5 +118,23 @@ and exact workload identities. Those figures remain 0.20.2 observations. The
 [partial 0.20.2 real-NPU attempt](../benchmarks/halogen0202-real-npu-core-append-20261111.md)
 retain their own outcomes. No historical value or component duration is
 relabelled as a 0.20.3 result or a measured NPU engine-speed gain.
+
+## Subsequent private attempt: no qualified NPU measurement
+
+The [independently checked terminal report](../benchmarks/halogen0203-real-npu-core-append-20261111.md)
+and [numeric evidence](../benchmarks/halogen0203-real-npu-core-append-20261111.json)
+record **one excluded stock warmup, zero measured requests and no NPU producer
+start**. The successful entry checks occurred before that warmup. The following
+120-second wait before the first measured request retained **470 samples with
+zero eligible frames**: physical reserve ranged from **21.492 to 21.722 GiB**,
+below the unchanged **22 GiB** entry requirement. This is an admission failure,
+not a measured NPU slowdown or a token-rate result.
+
+The coordinator exited and normal 0.20.3 serving was verified ready on port 8840
+at **16:39:02 UTC**, with all **47 normal source hashes restored**. The complete
+export was reconstructed independently, including the excluded warmup's raw
+journal, native token IDs and whole-request clock evidence; seven offline tests
+passed. No warmup value is promoted to a benchmark headline, and the unchanged
+cohort is not repeated.
 
 The wider prefill/decode acceleration goal remains unachieved.

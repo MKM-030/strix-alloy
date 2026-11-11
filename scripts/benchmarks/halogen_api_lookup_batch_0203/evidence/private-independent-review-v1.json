@@ -1,0 +1,25 @@
+{
+  "schema": "halogen0203.cpu-lookup-batch-independent-review.v1",
+  "reviewer": "/root/source0201",
+  "verdict": "CLEAR as an inactive prototype only",
+  "adapter": {
+    "sha256": "720c1f8c71e67b6058a2248f07218bd690e39da026d6c2fcaf49ce274fc82887",
+    "path": "cpu_lookup_batch_adapter.py"
+  },
+  "source_preparation_sha256": "d435564bb9a62f0ba374dccb78480c60fbeabf9e0d70d3084d6c20c7b44388d4",
+  "review_method": "Read-only source review; no tests, tokenization or hardware invoked by reviewer",
+  "findings": [
+    "Only one pinned lookup_view loop changes; actual view_segments returns a list.",
+    "Separator, cache, LRU and LOOK limits retained.",
+    "Batch shape/int validation completes before publication; failed batch falls back to original scalar path and original scalar errors.",
+    "No concrete correctness defect found."
+  ],
+  "limitations": [
+    "Shape validation alone cannot prove ID parity of an arbitrary Hugging Face wrapper.",
+    "Actual complete Transformers-wrapper/tokenizer qualification remains required before activation.",
+    "85 to6 actual encode calls is not a latency or engine throughput measurement."
+  ],
+  "adapter_active": false,
+  "root_hardware_campaign_isolated": true,
+  "further_CPU_performance_work_paused_during_Root_campaign": true
+}

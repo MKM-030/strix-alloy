@@ -1,0 +1,974 @@
+{
+  "schema": "halogen0203.native-whole-file-rebinding-proof.v1",
+  "created_utc": "2026-11-11T16:16:43.312236+00:00",
+  "actual_whole_file_identities": {
+    "flash_serve": {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\flash_serve",
+        "bytes": 35410384,
+        "sha256": "bf84053705d1e89c214ff64c79ad1276c5fe353d80a9bb0f38ef3bac6645b97c"
+      },
+      "current": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\flash_serve",
+        "bytes": 35410384,
+        "sha256": "bf84053705d1e89c214ff64c79ad1276c5fe353d80a9bb0f38ef3bac6645b97c"
+      },
+      "whole_file_byte_equal": true
+    },
+    "serve_api.py": {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\serve_api.py",
+        "bytes": 338407,
+        "sha256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4"
+      },
+      "current": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\serve_api.py",
+        "bytes": 338407,
+        "sha256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4"
+      },
+      "whole_file_byte_equal": true
+    },
+    "chrono_provider": {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\cpu-provider\\files\\stdcpp-libstdc++.so.6.0.33",
+        "bytes": 2497768,
+        "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00"
+      },
+      "current": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\cpu-provider\\files\\stdcpp-libstdc++.so.6.0.33",
+        "bytes": 2497768,
+        "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00"
+      },
+      "whole_file_byte_equal": true
+    }
+  },
+  "prior_native_contract": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\native-contract.json",
+    "bytes": 38154,
+    "sha256": "32f8ac8920ff486eaa1606bbfa6b7a17d9019479edfac06e12ed4b7428aae462"
+  },
+  "prior_RAW_binding": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\raw-binding.json",
+    "bytes": 39660,
+    "sha256": "b842c1f407a92e3b325b989ebd4692076cfa9e760a340a19f4110a956e1300b9"
+  },
+  "actual_extraction_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\handle.json",
+    "bytes": 20556,
+    "sha256": "e5fe18ef499d9f7f60d99983969697d2baaba7222217877160e92808c88335f0"
+  },
+  "actual_provider_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\cpu-provider\\receipt.json",
+    "bytes": 37854,
+    "sha256": "0f287655fae7e5f5b537980bf639024428ec50540faf765960afecc204d6840d"
+  },
+  "full_generation_FDE_and_CFI_rechecked": true,
+  "full_RAW_containing_FDEs_and_CFI_rechecked": true,
+  "checked_HDO2_pin_rows": [
+    {
+      "rva": "0x1f96dc6",
+      "bytes": 7,
+      "signature_hex": "498dbd68020000",
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "rva": "0x1f96dcd",
+      "bytes": 12,
+      "signature_hex": "84c00f846b050000418b85b8",
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "rva": "0x1f9734d",
+      "bytes": 12,
+      "signature_hex": "89c585c00f8e75f6ffff498b",
+      "current_actual_ELF_bytes_verified": true
+    }
+  ],
+  "checked_RAW_windows": [
+    {
+      "name": "prefill_begin_timestamp_store",
+      "rva": "0x1f810a1",
+      "end_rva": "0x1f810b4",
+      "bytes": 19,
+      "instruction_bytes_hex": "4189d44989f74889fbe891db23004889442418",
+      "sha256": "f560762735b737cbf47aaace964b7308cec6ab75f0e8f336e8430fae6fc3f4b7",
+      "instructions": [
+        {
+          "rva": "0x1f810a1",
+          "mnemonic": "mov",
+          "operand": "r12d, edx"
+        },
+        {
+          "rva": "0x1f810a4",
+          "mnemonic": "mov",
+          "operand": "r15, rsi"
+        },
+        {
+          "rva": "0x1f810a7",
+          "mnemonic": "mov",
+          "operand": "rbx, rdi"
+        },
+        {
+          "rva": "0x1f810aa",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1f810af",
+          "mnemonic": "mov",
+          "operand": "qword ptr [rsp + 0x18], rax"
+        }
+      ],
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "name": "prefill_end_accumulation",
+      "rva": "0x1f818cd",
+      "end_rva": "0x1f818fc",
+      "bytes": 47,
+      "instruction_bytes_hex": "4531e4e86bd32300482b4424180f57c0f2480f2ac0f20f5e059e5c09fef2410f588728050000f2410f118728050000",
+      "sha256": "199a5720f25af6b7bb9dbd4709423da3d3ea1f50548c8d41e7897ee96cc2b4e0",
+      "instructions": [
+        {
+          "rva": "0x1f818cd",
+          "mnemonic": "xor",
+          "operand": "r12d, r12d"
+        },
+        {
+          "rva": "0x1f818d0",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1f818d5",
+          "mnemonic": "sub",
+          "operand": "rax, qword ptr [rsp + 0x18]"
+        },
+        {
+          "rva": "0x1f818da",
+          "mnemonic": "xorps",
+          "operand": "xmm0, xmm0"
+        },
+        {
+          "rva": "0x1f818dd",
+          "mnemonic": "cvtsi2sd",
+          "operand": "xmm0, rax"
+        },
+        {
+          "rva": "0x1f818e2",
+          "mnemonic": "divsd",
+          "operand": "xmm0, qword ptr [rip - 0x1f6a362] # 0x17588"
+        },
+        {
+          "rva": "0x1f818ea",
+          "mnemonic": "addsd",
+          "operand": "xmm0, qword ptr [r15 + 0x528]"
+        },
+        {
+          "rva": "0x1f818f3",
+          "mnemonic": "movsd",
+          "operand": "qword ptr [r15 + 0x528], xmm0"
+        }
+      ],
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "name": "decode_begin_count_start",
+      "rva": "0x1f83c02",
+      "end_rva": "0x1f83c21",
+      "bytes": 31,
+      "instruction_bytes_hex": "418b465c4189868402000041c7466001000000e826b0230049898690020000",
+      "sha256": "5f5a6a64bc3e5e08e5f24063b42e3bab43bb1a1f331d9be6ac1ecc39ccce19b2",
+      "instructions": [
+        {
+          "rva": "0x1f83c02",
+          "mnemonic": "mov",
+          "operand": "eax, dword ptr [r14 + 0x5c]"
+        },
+        {
+          "rva": "0x1f83c06",
+          "mnemonic": "mov",
+          "operand": "dword ptr [r14 + 0x284], eax"
+        },
+        {
+          "rva": "0x1f83c0d",
+          "mnemonic": "mov",
+          "operand": "dword ptr [r14 + 0x60], 0x1"
+        },
+        {
+          "rva": "0x1f83c15",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1f83c1a",
+          "mnemonic": "mov",
+          "operand": "qword ptr [r14 + 0x290], rax"
+        }
+      ],
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "name": "decode_end_start_subtract",
+      "rva": "0x1fa1130",
+      "end_rva": "0x1fa1172",
+      "bytes": 66,
+      "instruction_bytes_hex": "83f8027c3d498b9e900200004589cf4989ccf20f11842490000000e8f0da2100f20f108424900000004c89e14589f94829d80f57c9f2480f2ac8f20f5e0d166407fe",
+      "sha256": "c21233affdcc06972650b9a48f47fe80f43ab6f6e90ef4a4157a57e9a2e8c119",
+      "instructions": [
+        {
+          "rva": "0x1fa1130",
+          "mnemonic": "cmp",
+          "operand": "eax, 0x2"
+        },
+        {
+          "rva": "0x1fa1133",
+          "mnemonic": "jl",
+          "operand": "0x1fa1172 <.text+0x36d52>"
+        },
+        {
+          "rva": "0x1fa1135",
+          "mnemonic": "mov",
+          "operand": "rbx, qword ptr [r14 + 0x290]"
+        },
+        {
+          "rva": "0x1fa113c",
+          "mnemonic": "mov",
+          "operand": "r15d, r9d"
+        },
+        {
+          "rva": "0x1fa113f",
+          "mnemonic": "mov",
+          "operand": "r12, rcx"
+        },
+        {
+          "rva": "0x1fa1142",
+          "mnemonic": "movsd",
+          "operand": "qword ptr [rsp + 0x90], xmm0"
+        },
+        {
+          "rva": "0x1fa114b",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1fa1150",
+          "mnemonic": "movsd",
+          "operand": "xmm0, qword ptr [rsp + 0x90]"
+        },
+        {
+          "rva": "0x1fa1159",
+          "mnemonic": "mov",
+          "operand": "rcx, r12"
+        },
+        {
+          "rva": "0x1fa115c",
+          "mnemonic": "mov",
+          "operand": "r9d, r15d"
+        },
+        {
+          "rva": "0x1fa115f",
+          "mnemonic": "sub",
+          "operand": "rax, rbx"
+        },
+        {
+          "rva": "0x1fa1162",
+          "mnemonic": "xorps",
+          "operand": "xmm1, xmm1"
+        },
+        {
+          "rva": "0x1fa1165",
+          "mnemonic": "cvtsi2sd",
+          "operand": "xmm1, rax"
+        },
+        {
+          "rva": "0x1fa116a",
+          "mnemonic": "divsd",
+          "operand": "xmm1, qword ptr [rip - 0x1f89bea] # 0x17588"
+        }
+      ],
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "name": "prefill_accumulator_zero",
+      "rva": "0x1f76eb7",
+      "end_rva": "0x1f76ee2",
+      "bytes": 43,
+      "instruction_bytes_hex": "f30f7f800405000048c7801105000000000000f30f7f8042050000f30f7f8038050000f30f7f8028050000",
+      "sha256": "c67fc074b817e7a6a4d69a398aa50ac359372dc001d583ad37f1df7f6af68c9d",
+      "instructions": [
+        {
+          "rva": "0x1f76eb7",
+          "mnemonic": "movdqu",
+          "operand": "xmmword ptr [rax + 0x504], xmm0"
+        },
+        {
+          "rva": "0x1f76ebf",
+          "mnemonic": "mov",
+          "operand": "qword ptr [rax + 0x511], 0x0"
+        },
+        {
+          "rva": "0x1f76eca",
+          "mnemonic": "movdqu",
+          "operand": "xmmword ptr [rax + 0x542], xmm0"
+        },
+        {
+          "rva": "0x1f76ed2",
+          "mnemonic": "movdqu",
+          "operand": "xmmword ptr [rax + 0x538], xmm0"
+        },
+        {
+          "rva": "0x1f76eda",
+          "mnemonic": "movdqu",
+          "operand": "xmmword ptr [rax + 0x528], xmm0"
+        }
+      ],
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "name": "prefill_to_request_transfer",
+      "rva": "0x1fa03f1",
+      "end_rva": "0x1fa0410",
+      "bytes": 31,
+      "instruction_bytes_hex": "4889dfe837b1fdff4d8b742410f2410f108628050000f2410f118688020000",
+      "sha256": "afbf4158b5480874858eb59d8e429d19d3b68e25cd641e32cbda863315f051c8",
+      "instructions": [
+        {
+          "rva": "0x1fa03f1",
+          "mnemonic": "mov",
+          "operand": "rdi, rbx"
+        },
+        {
+          "rva": "0x1fa03f4",
+          "mnemonic": "call",
+          "operand": "0x1f7b530 <.text+0x11110>"
+        },
+        {
+          "rva": "0x1fa03f9",
+          "mnemonic": "mov",
+          "operand": "r14, qword ptr [r12 + 0x10]"
+        },
+        {
+          "rva": "0x1fa03fe",
+          "mnemonic": "movsd",
+          "operand": "xmm0, qword ptr [r14 + 0x528]"
+        },
+        {
+          "rva": "0x1fa0407",
+          "mnemonic": "movsd",
+          "operand": "qword ptr [r14 + 0x288], xmm0"
+        }
+      ],
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "name": "prefill_identity_slot_trace",
+      "rva": "0x1f81b63",
+      "end_rva": "0x1f81b92",
+      "bytes": 47,
+      "instruction_bytes_hex": "498b07488944240831c048837b08000f94c0c1e008418bac0720040000458b6f5c458b7f08e8b3d02300482b442418",
+      "sha256": "dafef7c49008c7844db11ec12b138b8eb28505612615e5de37d8d90dd53b59c4",
+      "instructions": [
+        {
+          "rva": "0x1f81b63",
+          "mnemonic": "mov",
+          "operand": "rax, qword ptr [r15]"
+        },
+        {
+          "rva": "0x1f81b66",
+          "mnemonic": "mov",
+          "operand": "qword ptr [rsp + 0x8], rax"
+        },
+        {
+          "rva": "0x1f81b6b",
+          "mnemonic": "xor",
+          "operand": "eax, eax"
+        },
+        {
+          "rva": "0x1f81b6d",
+          "mnemonic": "cmp",
+          "operand": "qword ptr [rbx + 0x8], 0x0"
+        },
+        {
+          "rva": "0x1f81b72",
+          "mnemonic": "sete",
+          "operand": "al"
+        },
+        {
+          "rva": "0x1f81b75",
+          "mnemonic": "shl",
+          "operand": "eax, 0x8"
+        },
+        {
+          "rva": "0x1f81b78",
+          "mnemonic": "mov",
+          "operand": "ebp, dword ptr [r15 + rax + 0x420]"
+        },
+        {
+          "rva": "0x1f81b80",
+          "mnemonic": "mov",
+          "operand": "r13d, dword ptr [r15 + 0x5c]"
+        },
+        {
+          "rva": "0x1f81b84",
+          "mnemonic": "mov",
+          "operand": "r15d, dword ptr [r15 + 0x8]"
+        },
+        {
+          "rva": "0x1f81b88",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1f81b8d",
+          "mnemonic": "sub",
+          "operand": "rax, qword ptr [rsp + 0x18]"
+        }
+      ],
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "name": "decode_request_slot_argument",
+      "rva": "0x1f82ca1",
+      "end_rva": "0x1f82cb5",
+      "bytes": 20,
+      "instruction_bytes_hex": "4989d64989f54989fc488b3f8b7208e8fb6e1200",
+      "sha256": "44b047ca0b0ae125530d56d3c7913e4ed73a3dca35689e50c203dc802b5e3b5c",
+      "instructions": [
+        {
+          "rva": "0x1f82ca1",
+          "mnemonic": "mov",
+          "operand": "r14, rdx"
+        },
+        {
+          "rva": "0x1f82ca4",
+          "mnemonic": "mov",
+          "operand": "r13, rsi"
+        },
+        {
+          "rva": "0x1f82ca7",
+          "mnemonic": "mov",
+          "operand": "r12, rdi"
+        },
+        {
+          "rva": "0x1f82caa",
+          "mnemonic": "mov",
+          "operand": "rdi, qword ptr [rdi]"
+        },
+        {
+          "rva": "0x1f82cad",
+          "mnemonic": "mov",
+          "operand": "esi, dword ptr [rdx + 0x8]"
+        },
+        {
+          "rva": "0x1f82cb0",
+          "mnemonic": "call",
+          "operand": "0x20a9bb0 <_ZSt17__rotate_adaptiveIN9__gnu_cxx17__normal_iteratorIPmSt6vectorImSaImEEEES2_lET_S7_S7_S7_T1_S8_T0_S8_+0xada10>"
+        }
+      ],
+      "current_actual_ELF_bytes_verified": true
+    },
+    {
+      "name": "decode_completion_identity_fields",
+      "rva": "0x1fa1110",
+      "end_rva": "0x1fa1124",
+      "bytes": 20,
+      "instruction_bytes_hex": "498b0e458b4e5c418b4660f2410f108688020000",
+      "sha256": "2c953a92e756de1192c2e7f8e17ecef38c4cd21f16612a0562c75d0b85caae07",
+      "instructions": [
+        {
+          "rva": "0x1fa1110",
+          "mnemonic": "mov",
+          "operand": "rcx, qword ptr [r14]"
+        },
+        {
+          "rva": "0x1fa1113",
+          "mnemonic": "mov",
+          "operand": "r9d, dword ptr [r14 + 0x5c]"
+        },
+        {
+          "rva": "0x1fa1117",
+          "mnemonic": "mov",
+          "operand": "eax, dword ptr [r14 + 0x60]"
+        },
+        {
+          "rva": "0x1fa111b",
+          "mnemonic": "movsd",
+          "operand": "xmm0, qword ptr [r14 + 0x288]"
+        }
+      ],
+      "current_actual_ELF_bytes_verified": true
+    }
+  ],
+  "chrono_provider_code_rechecked": true,
+  "chrono_relocation_rechecked": true,
+  "prior_inspector_evidence_reused_only_through_complete_file_identity": true,
+  "disassembler_compiler_engine_WSL_Docker_API_or_hardware_called": false,
+  "binary_products_copied_or_loaded": false,
+  "runtime_or_speedup_qualified": false,
+  "source_lineage": [
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\cold_addresses.h",
+        "bytes": 861,
+        "sha256": "35f528b6146f083faf7a6faaf30888c267b4705794a294a70fe423c0ecdc28b9"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\cold_addresses.h",
+        "bytes": 861,
+        "sha256": "1b0f7ed4791ca2cc8ded12479b87f8c15c1b0741a2dc8cb57f1acc14d794b56e"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\cold_install.c",
+        "bytes": 7892,
+        "sha256": "3eddd05a65c71a86aae4451160fe8ac4c8873c5254c6aa99aa0d9a525546770f"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\cold_install.c",
+        "bytes": 7892,
+        "sha256": "ea6e59387efe3aef298c6d4d59109e90abaad58de10c2df0dc65bcc184ea7902"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\native_pins.h",
+        "bytes": 867,
+        "sha256": "4f09998beca1533536e9d69aad3a060ec02c44eed078b7afb2835e52d4c80ede"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\native_pins.h",
+        "bytes": 867,
+        "sha256": "69d24e2c20aa702902960b03b831d49c2f821600afa66deae4d20a19bc3f3a06"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\sha256_core.h",
+        "bytes": 3721,
+        "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\sha256_core.h",
+        "bytes": 3721,
+        "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\stream_consumer.c",
+        "bytes": 11738,
+        "sha256": "f6266054bec8d9270e8e416f6fd30d4249fcc07c8e64ab55f4bbc90a4243e0f2"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\stream_consumer.c",
+        "bytes": 11738,
+        "sha256": "3fb771e0df58e984af801eb7c55e73e80eb12a34d2e0196270e533eae367a629"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\stream_consumer.h",
+        "bytes": 2961,
+        "sha256": "c0ec1210709ea573f8ed01906a4720c278c53c972d8372ba41d3363f364e776e"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\stream_consumer.h",
+        "bytes": 2961,
+        "sha256": "64744c4859abb286566160e12edccb607ed5f1a53dd2c3dff96ae162d767bd01"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\stream_relay.S",
+        "bytes": 1412,
+        "sha256": "f8f0673c570c8f86d0ab860a4e3cb888e3c21e96b0f922e412ccc8d06f266601"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\stream_relay.S",
+        "bytes": 1412,
+        "sha256": "8c350a4a9c9a7b5a9938d5ff4a1a90a6eb4260e572516aded3f75d9f363813e5"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_cold_addresses.c",
+        "bytes": 2453,
+        "sha256": "0768f7229e19cdcab171b752f33c61b8997774133df1404e35ade55ed0ed6910"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_cold_addresses.c",
+        "bytes": 2453,
+        "sha256": "713fe89f4e9d62984cf72273e94cf561e5040aaa5528c0f8b17d3bb36e0c0f6b"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_cold_addresses.py",
+        "bytes": 2454,
+        "sha256": "046cdf5b536fcff413773e111785a2a70cf86934febcbf6d6987f82f7b94d4a6"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_cold_addresses.py",
+        "bytes": 2430,
+        "sha256": "3ae06154389ba522a5bf47ef78a1ef26a7e4d9b4aeaf70828b4ccc5833814b02"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_stream_consumer.c",
+        "bytes": 5325,
+        "sha256": "0d55478962e9fb4539afdfdbe6050dab7d1b4ebc560315ca416474dc78f74214"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_stream_consumer.c",
+        "bytes": 5325,
+        "sha256": "8101dfee49aa14811b87ad81d0c2c4c56cf7b2a785a2c321d975df7b710c8d5b"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_stream_relay.c",
+        "bytes": 3267,
+        "sha256": "8c2730578c85b188629165fc5dcf1331f04a42c326371137a8bb3429e6b3f322"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_stream_relay.c",
+        "bytes": 3267,
+        "sha256": "0ccff27f64edf7602c718471d39f441c54360882eebf302fe817b6fdfa9719ad"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_stream_relay.S",
+        "bytes": 1843,
+        "sha256": "5cefcbb4bb3dab63f4b06fe61907b3613de0c26a8146dc26d299752a62349491"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_stream_relay.S",
+        "bytes": 1843,
+        "sha256": "a28e88d079b4e996afeb2c14613b545b3c89e2adec4e78afa01af4b5db9bae61"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\build-linux.sh",
+        "bytes": 566,
+        "sha256": "a67aaa109df7297344a079f68b4ab0b640375b73917362da7d78dc1b5fee8843"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\build-linux.sh",
+        "bytes": 621,
+        "sha256": "fa89f977730ed368805d667ba4356d5a68bc068c946a163ec9de2d36f6409261"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\capture_core.h",
+        "bytes": 1593,
+        "sha256": "5032ef6ac99847aaa003c01f178075fe3c914e9dd0168af46036b3f0457777a8"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\capture_core.h",
+        "bytes": 1593,
+        "sha256": "5032ef6ac99847aaa003c01f178075fe3c914e9dd0168af46036b3f0457777a8"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\endpoint_pins.h",
+        "bytes": 211,
+        "sha256": "ce50bda6261c0649e96833d5fea55a7996e16d091c18c67e1d032eba8a73a84f"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\endpoint_pins.h",
+        "bytes": 211,
+        "sha256": "8c431e60a0e04b4640b04c2138624d785eec1610b6149531361a03e598892dd9"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\entry.S",
+        "bytes": 394,
+        "sha256": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\entry.S",
+        "bytes": 394,
+        "sha256": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\observer.c",
+        "bytes": 15567,
+        "sha256": "92dab8678cc1366fe24839643f9a4f603ff2596d67a01f46e450f869df1209bc"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\observer.c",
+        "bytes": 15567,
+        "sha256": "003b00b6646a2973505e809975e4171e35d048fefa4668698d6b482050a9808f"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\observer.map",
+        "bytes": 84,
+        "sha256": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\observer.map",
+        "bytes": 84,
+        "sha256": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\pins.h",
+        "bytes": 3161,
+        "sha256": "a4d7d2ac60645feec35a95598d2af99114e69ce07ebcfd6e712cec2a8fb4f40e"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\pins.h",
+        "bytes": 3161,
+        "sha256": "c0c03f0e61204078a8becd72ad724428e61f0b8a607404e934ee69f931b768b9"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\producer_test.c",
+        "bytes": 6810,
+        "sha256": "aefedd27a2172ea4ad22539c992b0693b5ac74d6d3777a3b7cc8963b96714213"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\producer_test.c",
+        "bytes": 6810,
+        "sha256": "aefedd27a2172ea4ad22539c992b0693b5ac74d6d3777a3b7cc8963b96714213"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\sha256_core.h",
+        "bytes": 3721,
+        "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\sha256_core.h",
+        "bytes": 3721,
+        "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\test_validator.py",
+        "bytes": 13894,
+        "sha256": "60307095a5527076bd693bdb76c1d442aabc8f2be8794582a2ec35bbcc607c38"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\test_validator.py",
+        "bytes": 13894,
+        "sha256": "593cc66391824b638d01cfc19f7e4f0d053226bf438ffeb177f8354c06791486"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\validate_capture.py",
+        "bytes": 13219,
+        "sha256": "105684845756a7aa7cba9e6d55a659ccca8581973f1b14681d354cb3451fd7e8"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\validate_capture.py",
+        "bytes": 13219,
+        "sha256": "da1c08bb819f98bd93ccd825d531f05c7620ee257fed6d47cab5feeb412ca24e"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    },
+    {
+      "previous": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\validate_cohort.py",
+        "bytes": 4288,
+        "sha256": "3bcd3604eeb0834679283c3de95029b716884ab285270254fb0c87df77918f30"
+      },
+      "prepared": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\validate_cohort.py",
+        "bytes": 4288,
+        "sha256": "8f836589385458bcd9495a9a6f046abc4fd744c0830836350e11f985b0bac5aa"
+      },
+      "changes": "0.20.3 protocol/symbol/source labels only; constructor test uses local fresh contract; RAW build retains integer-only observer flags."
+    }
+  ],
+  "prepared_sources": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\cold_addresses.h",
+      "bytes": 861,
+      "sha256": "1b0f7ed4791ca2cc8ded12479b87f8c15c1b0741a2dc8cb57f1acc14d794b56e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\cold_install.c",
+      "bytes": 7892,
+      "sha256": "ea6e59387efe3aef298c6d4d59109e90abaad58de10c2df0dc65bcc184ea7902"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\native-contract.json",
+      "bytes": 55389,
+      "sha256": "4a3cdaa929cf7f2693b6862cc5b160c2191ed1b6ff38db395e5c974dd2703af9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\native_pins.h",
+      "bytes": 867,
+      "sha256": "69d24e2c20aa702902960b03b831d49c2f821600afa66deae4d20a19bc3f3a06"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\sha256_core.h",
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\stream_consumer.c",
+      "bytes": 11738,
+      "sha256": "3fb771e0df58e984af801eb7c55e73e80eb12a34d2e0196270e533eae367a629"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\stream_consumer.h",
+      "bytes": 2961,
+      "sha256": "64744c4859abb286566160e12edccb607ed5f1a53dd2c3dff96ae162d767bd01"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\stream_relay.S",
+      "bytes": 1412,
+      "sha256": "8c350a4a9c9a7b5a9938d5ff4a1a90a6eb4260e572516aded3f75d9f363813e5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_cold_addresses.c",
+      "bytes": 2453,
+      "sha256": "713fe89f4e9d62984cf72273e94cf561e5040aaa5528c0f8b17d3bb36e0c0f6b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_cold_addresses.py",
+      "bytes": 2430,
+      "sha256": "3ae06154389ba522a5bf47ef78a1ef26a7e4d9b4aeaf70828b4ccc5833814b02"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_stream_consumer.c",
+      "bytes": 5325,
+      "sha256": "8101dfee49aa14811b87ad81d0c2c4c56cf7b2a785a2c321d975df7b710c8d5b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_stream_relay.c",
+      "bytes": 3267,
+      "sha256": "0ccff27f64edf7602c718471d39f441c54360882eebf302fe817b6fdfa9719ad"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\test_stream_relay.S",
+      "bytes": 1843,
+      "sha256": "a28e88d079b4e996afeb2c14613b545b3c89e2adec4e78afa01af4b5db9bae61"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\binding.json",
+      "bytes": 57098,
+      "sha256": "eec9f9c1e8e4e4631220b138f05cfef952840268e0a2b411b3746bfc94918ab4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\build-linux.sh",
+      "bytes": 621,
+      "sha256": "fa89f977730ed368805d667ba4356d5a68bc068c946a163ec9de2d36f6409261"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\capture_core.h",
+      "bytes": 1593,
+      "sha256": "5032ef6ac99847aaa003c01f178075fe3c914e9dd0168af46036b3f0457777a8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\endpoint_pins.h",
+      "bytes": 211,
+      "sha256": "8c431e60a0e04b4640b04c2138624d785eec1610b6149531361a03e598892dd9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\entry.S",
+      "bytes": 394,
+      "sha256": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\observer.c",
+      "bytes": 15567,
+      "sha256": "003b00b6646a2973505e809975e4171e35d048fefa4668698d6b482050a9808f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\observer.map",
+      "bytes": 84,
+      "sha256": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\pins.h",
+      "bytes": 3161,
+      "sha256": "c0c03f0e61204078a8becd72ad724428e61f0b8a607404e934ee69f931b768b9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\producer_test.c",
+      "bytes": 6810,
+      "sha256": "aefedd27a2172ea4ad22539c992b0693b5ac74d6d3777a3b7cc8963b96714213"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\sha256_core.h",
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\test_validator.py",
+      "bytes": 13894,
+      "sha256": "593cc66391824b638d01cfc19f7e4f0d053226bf438ffeb177f8354c06791486"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\validate_capture.py",
+      "bytes": 13219,
+      "sha256": "da1c08bb819f98bd93ccd825d531f05c7620ee257fed6d47cab5feeb412ca24e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\validate_cohort.py",
+      "bytes": 4288,
+      "sha256": "8f836589385458bcd9495a9a6f046abc4fd744c0830836350e11f985b0bac5aa"
+    }
+  ],
+  "consumer_contract": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\consumer-native\\native-contract.json",
+    "bytes": 55389,
+    "sha256": "4a3cdaa929cf7f2693b6862cc5b160c2191ed1b6ff38db395e5c974dd2703af9"
+  },
+  "RAW_observer_binding": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-v4-prep\\raw\\observer\\binding.json",
+    "bytes": 57098,
+    "sha256": "eec9f9c1e8e4e4631220b138f05cfef952840268e0a2b411b3746bfc94918ab4"
+  },
+  "required_integer_flags": [
+    "-fno-builtin",
+    "-fno-stack-protector",
+    "-fno-tree-loop-distribute-patterns",
+    "-mgeneral-regs-only"
+  ],
+  "corrected_constructor_addresses_derive_from_same_validated_pin_rows": true,
+  "current_normal_package_changed": false,
+  "old_experimental_DSO_reuse_allowed": false
+}

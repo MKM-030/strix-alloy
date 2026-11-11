@@ -156,5 +156,64 @@
       "bytes": 405,
       "sha256": "cb8ef8271719f6a6a354d4677d5ee2396de5050491365a0a962fbf712eaa79db"
     }
+  },
+  "initial_online_snapshot_utc": "2026-11-11T16:05:11.567088+00:00",
+  "subsequent_real_NPU_attempt": {
+    "terminal_utc": "2026-11-11T16:39:02.506824+00:00",
+    "status": "stopped_after_excluded_stock_warmup_before_first_measured_request",
+    "benchmark_markdown": "../benchmarks/halogen0203-real-npu-core-append-20261111.md",
+    "benchmark_json": {
+      "path": "../benchmarks/halogen0203-real-npu-core-append-20261111.json",
+      "bytes": 87937,
+      "sha256": "96153fc4e2d1cd6e09915b5faaf6f3f849bdf27b2bb1b443f35f458274a45a66"
+    },
+    "session_id": 30781,
+    "exit_code": 1,
+    "excluded_stock_warmups": 1,
+    "measured_requests": 0,
+    "NPU_helper_started": false,
+    "qualified_NPU_on_off_comparison": false,
+    "NPU_prefill_tok_s": null,
+    "NPU_decode_tok_s": null,
+    "NPU_acceptance": null,
+    "entry_floor_GiB": 22,
+    "failed_entry": {
+      "samples": 470,
+      "min_GiB": 21.49215316772461,
+      "max_GiB": 21.722026824951172,
+      "eligible": 0,
+      "seconds": 120
+    },
+    "normal_source47_restored": true,
+    "normal_ready_snapshot": {
+      "utc": "2026-11-11T16:39:02.501824+00:00",
+      "identities": {
+        "controller": {
+          "pid": 31080,
+          "creation_time_100ns": 134388883138415379,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        },
+        "backend": {
+          "pid": 19912,
+          "creation_time_100ns": 134388883243242337,
+          "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        }
+      },
+      "controller_run_id": "8859d4b60e494dcb8cf606894d9c39d2",
+      "backend_run_id": "c052c80680ad4bd0b7556d2bf6b1b0cb",
+      "version": {
+        "api": "0.20.3",
+        "engine": "0.20.3",
+        "match": true
+      },
+      "port": 8840,
+      "NPU_enabled": false
+    },
+    "terminal_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\real-npu-core-append-live-v1\\Root-terminal-normal-online.json",
+      "bytes": 18114,
+      "sha256": "46feb14acffca02b2ad596d19aa0d0a05e4072baa820baf0eb075c874bbd3ee8"
+    },
+    "unchanged_retry_authorized_by_result": false
   }
 }

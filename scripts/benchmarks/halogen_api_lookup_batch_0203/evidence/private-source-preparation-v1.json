@@ -1,0 +1,110 @@
+{
+  "schema": "halogen0203.cpu-lookup-batch-source.v1",
+  "utc": "2026-11-11T16:25:22.663602+00:00",
+  "files": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\cpu-harness-result.json",
+      "bytes": 9119,
+      "sha256": "285ad91accdd755629dd0989c4f7e9681a6c7181652d7ed3e76c4f9a26ae756b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\cpu_lookup_batch_adapter.py",
+      "bytes": 4879,
+      "sha256": "720c1f8c71e67b6058a2248f07218bd690e39da026d6c2fcaf49ce274fc82887"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\generated\\lookup-segment-batch.patch",
+      "bytes": 1711,
+      "sha256": "a132e889a4ffa916eb72432354a1483a7de74c1454aad621a5cefa7fbecd8031"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\generated\\serve_api.candidate.py",
+      "bytes": 339234,
+      "sha256": "f03209a3217719044e79c05c36adf567b003192791d276c72e389b1067a42242"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\generated\\source-export.json",
+      "bytes": 516,
+      "sha256": "e19fb98e46d71a6b5bc18cad3a2f4173e62b50b047cc096e81b076db570a220b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\README.md",
+      "bytes": 3864,
+      "sha256": "61dcb40498b41233cf037b06cd6319a28e5ab44072c4e09cf25bc3bc57819070"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\real_tokenizer_harness.py",
+      "bytes": 7478,
+      "sha256": "ad4aab947ba3ea8eea388696dec5188fd39b1ca99aee16b756881ee65303cdf4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\test_lookup_batch.py",
+      "bytes": 9286,
+      "sha256": "a8f5e8e13e4bad8e847e5e7411d35ab3fb250040920e78648c6146104cc770cc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\tests-green-v1.log",
+      "bytes": 2779,
+      "sha256": "01bb23271b7a63b0084a1d714ddbcf8690ecc9e60a77b7f507b280cca57b4291"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\tests-red-v1.log",
+      "bytes": 33769,
+      "sha256": "aaf2615a6847169a066d3c93e8661c7b43bd58ced38ddfbc316563182797e073"
+    }
+  ],
+  "upstream_api": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\serve_api.py",
+    "bytes": 338407,
+    "sha256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4"
+  },
+  "candidate_api_sha256": "f03209a3217719044e79c05c36adf567b003192791d276c72e389b1067a42242",
+  "unit_tests": {
+    "count": 17,
+    "passed": true,
+    "Python": "3.12",
+    "red_before_implementation": true
+  },
+  "actual_CPU_tokenizer_harness": {
+    "case_count": 8,
+    "tokenizers": "0.23.2",
+    "full_Transformers_wrapper_loaded": false,
+    "exact_LOOK_ID_and_cache_state_parity": true,
+    "total_actual_encode_calls": {
+      "stock": 85,
+      "candidate": 6
+    },
+    "encode_call_reduction_percent": 92.94117647058823,
+    "latency_measured": false
+  },
+  "active_backend_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\profiles\\sources.json",
+    "bytes": 5084,
+    "sha256": "c32138235c3847dfe29576d9ed634e4686f2ddc203ac718395444b7784804492"
+  },
+  "active_backend_source_members_verified_unchanged": 47,
+  "standalone_diff": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-batch-v1\\generated\\lookup-segment-batch.patch",
+    "bytes": 1711,
+    "sha256": "a132e889a4ffa916eb72432354a1483a7de74c1454aad621a5cefa7fbecd8031"
+  },
+  "source_only": true,
+  "adapter_enabled": false,
+  "installed_backend_changed": false,
+  "NPU_cohort_changed": false,
+  "HTTP_WSL_engine_GPU_NPU_calls": false,
+  "models_loaded": false,
+  "existing_CPU_Rust_tokenizer_loaded": true,
+  "dependency_installation": false,
+  "canonical_or_public_files_changed": false,
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "acceptance": null,
+  "qualified_engine_gain": false,
+  "limitations": [
+    "Tokenizer backend is real, but the complete Transformers wrapper has not been exercised.",
+    "Encode calls are counted; no component latency or whole-request gain has been measured.",
+    "The target is multiple cold tool-response sections; plain novel requests and warm cache hits do not establish corresponding opportunity."
+  ],
+  "independent_review": "Requested from Source; pending at receipt creation."
+}
