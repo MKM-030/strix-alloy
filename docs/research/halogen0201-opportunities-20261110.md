@@ -30,7 +30,9 @@ At 8K, cost raised API head acceptance from 59.43% to 64.95%, while RAW decode f
 
 ## Paired prefill arena comparison
 
-The V2 comparison completed all six paired 2048/8192/2048 cohorts with fixed natural inputs, weights and gate policy. Candidate prefill reached 1526.01 tok/s at 8K and 1380.48 at 16K, exceeding both controls by 17.95–26.22% and 4.58–13.17%. Candidate outputs differ from their controls, leaving causal decode comparisons open. The normal server uses paired 2048 while the next prefill setting is assessed. [Complete comparison](../benchmarks/halogen0201-prefill8192-20261111.md), [V2 plan](../benchmarks/halogen0201-prefill8192-plan-20261111-v2.json).
+The V2 comparison completed all six paired 2048/8192/2048 cohorts with fixed natural inputs, weights and gate policy. Candidate prefill reached 1526.01 tok/s at 8K and 1380.48 at 16K, exceeding both controls by 17.95–26.22% and 4.58–13.17%. Candidate outputs differ from their controls, leaving causal decode comparisons open. [Complete comparison](../benchmarks/halogen0201-prefill8192-20261111.md), [V2 plan](../benchmarks/halogen0201-prefill8192-plan-20261111-v2.json).
+
+The subsequent paired 2048/4096/2048 comparison also completed all six cohorts. Prefill reached 1314.53 tok/s at 8K and 1368.08 at 16K, exceeding both controls by 11.94–13.91% and 9.82–12.00%. Observed decode was 42.90 and 41.98 tok/s. Changed output hashes again leave causal decode comparisons open. The authenticated online server uses paired 2048 and matching API/engine 0.20.1, with the persistent console open. [4096 comparison](../benchmarks/halogen0201-prefill4096-20261111.md).
 
 ## Manufacturer comparability
 

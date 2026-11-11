@@ -1,0 +1,4559 @@
+{
+  "schema": "halogen0201.prefill4096-comparison.public.v1",
+  "version": "0.20.1",
+  "terminal": true,
+  "restored": true,
+  "campaign_completed": true,
+  "prefill_comparison_qualified": true,
+  "decode_comparison_qualified": false,
+  "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+  "acceptance_independently_reconciled": false,
+  "accepted_independent_trace_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:66dac8dac25bf15f2b63a684bbe3953036045172d881525600ea41d45e5acc73",
+  "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+  "weights_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+  "source_registration": {
+    "plan_path": "docs/benchmarks/halogen0201-prefill4096-plan-20261111-v1.json",
+    "plan_sha256": "0f2ca33fdb152f2867cc7c57248d2f41738868aa76032ca992f4eb22351c4d7a",
+    "commit": "704c2e5742faa80899f5e65059ef0fc117915038"
+  },
+  "source_handle_sha256": "af8f54cb364ee11366e2ad76e04ed365938e55c40271d8b426d37a3b887b83a9",
+  "normal_profile_sha256": "06df227385b7f6de97d1de0123c08f70a544cad9396ab4aedbd6d2607598a128",
+  "phase_eligibility": {
+    "schema": "halogen0201.prefill4096-comparability.v1",
+    "all_six_cohorts_complete": true,
+    "eight_unique_request_ids_per_arm": true,
+    "headline_prefill_comparison_qualified": true,
+    "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+    "acceptance_independently_reconciled": false,
+    "native_trace_chain_kept_separate": true,
+    "cases": {
+      "natural8192": {
+        "prefill_comparison_qualified": true,
+        "decode_comparison_qualified": false,
+        "cross_arena_output_difference": true,
+        "output_sha256_by_arm": {
+          "before": [
+            "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc"
+          ],
+          "candidate": [
+            "7c84454900ec89f8ee2fc50cce38795c99a045f9f10a997a87026ccce1df17eb"
+          ],
+          "after": [
+            "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc"
+          ]
+        }
+      },
+      "natural16384": {
+        "prefill_comparison_qualified": true,
+        "decode_comparison_qualified": false,
+        "cross_arena_output_difference": true,
+        "output_sha256_by_arm": {
+          "before": [
+            "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0"
+          ],
+          "candidate": [
+            "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+          ],
+          "after": [
+            "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0"
+          ]
+        }
+      }
+    },
+    "headline_speed_gain_computed": false,
+    "best_individual_run_selected": false
+  },
+  "comparisons": {
+    "natural8192": {
+      "qualified": true,
+      "prefill_comparison_qualified": true,
+      "decode_comparison_qualified": false,
+      "cross_arena_output_difference": true,
+      "output_sha256_by_arm": {
+        "before": [
+          "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc"
+        ],
+        "candidate": [
+          "7c84454900ec89f8ee2fc50cce38795c99a045f9f10a997a87026ccce1df17eb"
+        ],
+        "after": [
+          "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc"
+        ]
+      },
+      "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+      "acceptance_independently_reconciled": false,
+      "prefill_delta_vs_bookends_percent": {
+        "before": 11.941005201080035,
+        "after": 13.907114579546253
+      },
+      "decode_delta_vs_bookends_percent": null
+    },
+    "natural16384": {
+      "qualified": true,
+      "prefill_comparison_qualified": true,
+      "decode_comparison_qualified": false,
+      "cross_arena_output_difference": true,
+      "output_sha256_by_arm": {
+        "before": [
+          "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0"
+        ],
+        "candidate": [
+          "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+        ],
+        "after": [
+          "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0"
+        ]
+      },
+      "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+      "acceptance_independently_reconciled": false,
+      "prefill_delta_vs_bookends_percent": {
+        "before": 11.998715712781971,
+        "after": 9.823165853353855
+      },
+      "decode_delta_vs_bookends_percent": null
+    }
+  },
+  "arms": {
+    "before": {
+      "natural8192": {
+        "status": "complete",
+        "complete_cohort": true,
+        "phase_measurement_qualified": true,
+        "included_in_prefill_comparison": true,
+        "included_in_decode_comparison": false,
+        "epoch_nonce": "0201000000000001",
+        "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+        "profile_sha256": "3cb1845494facff04d2b905b8d0db73fdcaadcf336048180a1aba564d5292c4f",
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "native_request_id": 4,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+            "response_sha256": "12eefa43aacaa908d922d59a7fce7e7927993cb2e5feebf859c8c5ae458e1fa3",
+            "journal_sha256": "df6e5b9f989c9f0338b5266174c7e4b9a75793cc01a10da7c36724b73fc7df03",
+            "http_qpc_seconds": 13.0792599,
+            "scoped": {
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 9455.7,
+              "predicted_ms": 3495.9,
+              "prompt_per_second": 866.356,
+              "predicted_per_second": 36.614,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 9455743317,
+            "prefill_raw_lower_ns": 9455706266,
+            "prefill_raw_upper_ns": 9455711086,
+            "prefill_native_tps": 866.3517742991204,
+            "prefill_raw_tps_lower": 866.3547273698924,
+            "prefill_raw_tps_upper": 866.3551689899755,
+            "prefill_raw_tps_mid": 866.3549481798777,
+            "decode_native_ns": 3495861990,
+            "decode_raw_lower_ns": 3495847356,
+            "decode_raw_upper_ns": 3495850078,
+            "decode_native_tps": 36.61471773375127,
+            "decode_raw_tps_lower": 36.614842497258834,
+            "decode_raw_tps_upper": 36.61487100697082,
+            "decode_raw_tps_mid": 36.614856752109276
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "native_request_id": 5,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+            "response_sha256": "fdfa3b9521c05a77803258eaa52662c0af335671ac14836c7b2e7856c90f99b2",
+            "journal_sha256": "11a68b39e5c111b9403f18739f2efee77122b8e733e17c4afac1d02cb1d4cadb",
+            "http_qpc_seconds": 9.1794261,
+            "scoped": {
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 6401.7,
+              "predicted_ms": 2746.3,
+              "prompt_per_second": 1279.66,
+              "predicted_per_second": 46.608,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 6401693928,
+            "prefill_raw_lower_ns": 6401668254,
+            "prefill_raw_upper_ns": 6401670634,
+            "prefill_native_tps": 1279.6613040447753,
+            "prefill_raw_tps_lower": 1279.6659603965497,
+            "prefill_raw_tps_upper": 1279.6664361483172,
+            "prefill_raw_tps_mid": 1279.6661982723892,
+            "decode_native_ns": 2746252872,
+            "decode_raw_lower_ns": 2746240164,
+            "decode_raw_upper_ns": 2746243974,
+            "decode_native_tps": 46.60896354631104,
+            "decode_raw_tps_lower": 46.609114562230076,
+            "decode_raw_tps_upper": 46.60917922544811,
+            "decode_raw_tps_mid": 46.609146893816664
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "native_request_id": 6,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+            "response_sha256": "8b5ba82c1c38ef8d84e5ea3b9fab5794b50320a8b8e41042d6b04b36b53e044d",
+            "journal_sha256": "276cea0706642d74ba83e581293a385d68a52619b04f59e48561301c6ab0ef69",
+            "http_qpc_seconds": 10.8289711,
+            "scoped": {
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 7942.6,
+              "predicted_ms": 2855.0,
+              "prompt_per_second": 1031.4,
+              "predicted_per_second": 44.834,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 7942578153,
+            "prefill_raw_lower_ns": 7942546802,
+            "prefill_raw_upper_ns": 7942548962,
+            "prefill_native_tps": 1031.4031341203474,
+            "prefill_raw_tps_lower": 1031.4069248037958,
+            "prefill_raw_tps_upper": 1031.407205298077,
+            "prefill_raw_tps_mid": 1031.4070650509175,
+            "decode_native_ns": 2854985802,
+            "decode_raw_lower_ns": 2854972334,
+            "decode_raw_upper_ns": 2854976394,
+            "decode_native_tps": 44.83384817897599,
+            "decode_raw_tps_lower": 44.83399591989761,
+            "decode_raw_tps_upper": 44.834059677441346,
+            "decode_raw_tps_mid": 44.83402779864681
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "native_request_id": 7,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+            "response_sha256": "e91ab002d6f890649eaad65d656b4c644cb7cb17e40aa1f5aa22a48abd5b06f2",
+            "journal_sha256": "eabe1d02ccadb95e1c5481a91850167f0d1f3790772eb5546a2330f40d3cc0ea",
+            "http_qpc_seconds": 9.5440796,
+            "scoped": {
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 6760.0,
+              "predicted_ms": 2748.1,
+              "prompt_per_second": 1211.834,
+              "predicted_per_second": 46.578,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 6759976547,
+            "prefill_raw_lower_ns": 6759949704,
+            "prefill_raw_upper_ns": 6759951834,
+            "prefill_native_tps": 1211.8385238533876,
+            "prefill_raw_tps_lower": 1211.8429540869417,
+            "prefill_raw_tps_upper": 1211.8433359278733,
+            "prefill_raw_tps_mid": 1211.8431450073774,
+            "decode_native_ns": 2748131813,
+            "decode_raw_lower_ns": 2748119857,
+            "decode_raw_upper_ns": 2748122777,
+            "decode_native_tps": 46.57709626390472,
+            "decode_raw_tps_lower": 46.57724941231765,
+            "decode_raw_tps_upper": 46.57729890272395,
+            "decode_raw_tps_mid": 46.57727415750765
+          }
+        ],
+        "summary": {
+          "excluded_warmups": 1,
+          "measured_repetitions": 3,
+          "mean_raw_tps": {
+            "prefill": {
+              "lower": 1174.305279762429,
+              "mid": 1174.3054694435614,
+              "upper": 1174.305659124756
+            },
+            "decode": {
+              "lower": 46.00678663148178,
+              "mid": 46.00681628332371,
+              "upper": 46.00684593520447
+            }
+          },
+          "native_clock_observations": {
+            "prefill_mean_tps": 1174.3009873395035,
+            "decode_mean_tps": 46.00663599639725
+          },
+          "api_reported_observations": {
+            "prefill_mean_tps": 1174.298,
+            "decode_mean_tps": 46.00666666666667
+          },
+          "actual_input_tokens": [
+            8192,
+            8192,
+            8192
+          ],
+          "actual_output_tokens": [
+            128,
+            128,
+            128
+          ],
+          "output_caps": [
+            128,
+            128,
+            128
+          ],
+          "mean_http_qpc_seconds": 9.8508256,
+          "pooled_scoped_counters": {
+            "head": {
+              "rounds": 192,
+              "drafted": 318,
+              "accepted": 189,
+              "acceptance_fraction": 0.5943396226415094
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "acceptance_independently_reconciled": false,
+          "api_phase_clock_qualified": false,
+          "pooled_native_chain_counters": {
+            "rounds": 189,
+            "drafted": 315,
+            "accepted": 186,
+            "acceptance_fraction": 0.5904761904761905
+          },
+          "whole_http_output_tps": 12.993834750256871
+        },
+        "output_sha256_values": [
+          "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc"
+        ],
+        "within_cohort_output_variation": false,
+        "evidence": {
+          "collector_handle_sha256": "0dd3fc06fb487b294117657d77231f77bdfbaa5344cba2a6cc6b363085b5b166",
+          "raw_report_sha256": "9c0fd6729086881b2fa16ed89414e2a700f4e6903a93923958fc1914e6cbefe6",
+          "qpc_audit_sha256": "d306494a6debbe80c60e7df89fcf0b79c25c476eaea5dc956fbed677995170bc",
+          "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+          "binding_sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+        },
+        "mtp_cost_trace": {
+          "schema": "halogen0201.native-prefill-trace.v1",
+          "expected_rule": "gate",
+          "startup_banner": {
+            "marker": "confidence gate",
+            "count": 1
+          },
+          "samples": [
+            {
+              "id": 4,
+              "native_trace": {
+                "id": 4,
+                "neural_rounds": 64,
+                "legacy_accepted": 42,
+                "chain_rounds": 63,
+                "chain_drafted": 105,
+                "chain_accepted": 62,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 4
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 64,
+                "head": {
+                  "rounds": 64,
+                  "drafted": 106,
+                  "accepted": 63
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 64,
+              "mapped_head_drafted": 106,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 63,
+                "native_chain_accepted": 62,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 5,
+              "native_trace": {
+                "id": 5,
+                "neural_rounds": 64,
+                "legacy_accepted": 42,
+                "chain_rounds": 63,
+                "chain_drafted": 105,
+                "chain_accepted": 62,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 4
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 64,
+                "head": {
+                  "rounds": 64,
+                  "drafted": 106,
+                  "accepted": 63
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 64,
+              "mapped_head_drafted": 106,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 63,
+                "native_chain_accepted": 62,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 6,
+              "native_trace": {
+                "id": 6,
+                "neural_rounds": 64,
+                "legacy_accepted": 42,
+                "chain_rounds": 63,
+                "chain_drafted": 105,
+                "chain_accepted": 62,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 4
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 64,
+                "head": {
+                  "rounds": 64,
+                  "drafted": 106,
+                  "accepted": 63
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 64,
+              "mapped_head_drafted": 106,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 63,
+                "native_chain_accepted": 62,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 7,
+              "native_trace": {
+                "id": 7,
+                "neural_rounds": 64,
+                "legacy_accepted": 42,
+                "chain_rounds": 63,
+                "chain_drafted": 105,
+                "chain_accepted": 62,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 4
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 64,
+                "head": {
+                  "rounds": 64,
+                  "drafted": 106,
+                  "accepted": 63
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 64,
+              "mapped_head_drafted": 106,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 63,
+                "native_chain_accepted": 62,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            }
+          ],
+          "native_rule_activation_observed": true,
+          "per_decision_policy_observed": false,
+          "exact_mapped_rounds_and_drafted_verified": true,
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "accepted_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+          "acceptance_independently_reconciled": false,
+          "exact_independent_full_accepted_counter_proof": false,
+          "qualification_scope": "Native startup rule and exact mapped rounds/drafted plus lookup/grammar counters, with API all-neural acceptance and separately retained native chain acceptance"
+        },
+        "GPU_admission": {
+          "schema": "halogen0201.prefill4096-gpu-evidence.v1",
+          "receipts": [
+            {
+              "ordinal": 0,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.9070000000065193,
+              "elapsed_seconds": 1.9070000000065193,
+              "sha256": "19c40518ba00fcf70270bff25fbe6bfb25049b0da64a9fed9307f0cafaacd68e"
+            },
+            {
+              "ordinal": 0,
+              "stage": "after",
+              "observations": 4,
+              "nonzero_observations": 1,
+              "admission_decision_seconds": 4.25,
+              "elapsed_seconds": 4.25,
+              "sha256": "95b8e718bbd995c3622d663a5f8bb050f6dc354c1b4293cb69f70b24ccef5cab"
+            },
+            {
+              "ordinal": 1,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.797000000020489,
+              "elapsed_seconds": 1.797000000020489,
+              "sha256": "6cfd9925c62e536125ab2aea64c2f38c7e25c9f4f60ae75b4442f2b4b1f5b87a"
+            },
+            {
+              "ordinal": 1,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.890999999945052,
+              "elapsed_seconds": 1.890999999945052,
+              "sha256": "5f15e7bb3602e993dbd03f328bbd9ab8ddccb5803a9852b52c5a7e3cdd38ab4c"
+            },
+            {
+              "ordinal": 2,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.827999999979511,
+              "elapsed_seconds": 1.827999999979511,
+              "sha256": "1afd9c63f4e8ba15190c973cb4d9dc0c08d886f9736c65593b7f6da7931f3106"
+            },
+            {
+              "ordinal": 2,
+              "stage": "after",
+              "observations": 4,
+              "nonzero_observations": 1,
+              "admission_decision_seconds": 4.468999999924563,
+              "elapsed_seconds": 4.468999999924563,
+              "sha256": "c210f1beb0b8f764a3ba6a8afcfb6265659b3f9ae482c9c92fda42401b4755f7"
+            },
+            {
+              "ordinal": 3,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.9530000000959262,
+              "elapsed_seconds": 1.9530000000959262,
+              "sha256": "5b820f52fe396f588797a15924eebf4524ebbff616699163faf042bdb3df3449"
+            },
+            {
+              "ordinal": 3,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.827999999979511,
+              "elapsed_seconds": 1.827999999979511,
+              "sha256": "1fee0b6b99186d9ee4348ed1e704f17b87162ece3716ea7947c82dddb9d351cf"
+            }
+          ],
+          "all_pre_entry_and_post_checks_qualified": true,
+          "pre_request_wait_seconds_total": 7.4850000001024455,
+          "post_request_wait_seconds_total": 12.437999999849126,
+          "PID_exemptions": [],
+          "ownership_attribution_claimed": false,
+          "included_in_HTTP_QPC_seconds": false,
+          "included_in_RAW_phase_seconds": false
+        },
+        "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+        "weights_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+        "weights_identity": {
+          "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+          "identity": {
+            "size": 66687678432,
+            "device": 2096,
+            "inode": 616828,
+            "mtime_ns": 1790979071648131939,
+            "ctime_ns": 1790979072020131920
+          },
+          "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+          "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+          "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+          "current_file_identity_matched": true,
+          "established_complete_file_receipt_reused": true,
+          "new_complete_file_rehash_claimed": false
+        },
+        "profile": {
+          "schema": 1,
+          "minimum_reserve_gib": 18,
+          "token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+          "backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\.local\\api-token.txt",
+          "concurrency": 1,
+          "body_bytes": 16777216,
+          "request_seconds": 1800,
+          "backend": {
+            "identifier": "halogen-v2",
+            "upstream": "http://127.0.0.1:8731",
+            "model": "halogen-qwen3.8-flash-next",
+            "checkpoint": "v2",
+            "context": 32768,
+            "expected": {
+              "status": "ok",
+              "version.api": "0.20.1",
+              "version.engine": "0.20.1",
+              "version.match": true,
+              "context": 32768,
+              "slot_ctx": 32768,
+              "kv_pool_positions": 32768,
+              "slots": 1,
+              "capability_probe": "ok",
+              "vision.enabled": false
+            },
+            "routes": [
+              "/v1/chat/completions",
+              "/v1/completions",
+              "/v1/responses",
+              "/v1/messages",
+              "/v1/messages/count_tokens"
+            ]
+          },
+          "engine": {
+            "kind": "halogen",
+            "directory": "backends/halogen-wsl2-0.20.1",
+            "checkpoint": "v2",
+            "context": 32768,
+            "prompt_cache": "Off",
+            "powershell": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "slots": 1,
+            "kv_pool_positions": 32768,
+            "launcher": "python",
+            "python_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+            "speculation_policy": {
+              "HALOGEN_PLD": "3,3",
+              "HALOGEN_MTP_GATE_P": "0.90"
+            },
+            "prefill_chunk": 2048,
+            "max_prefill_tokens": 2048,
+            "api_defaults": {
+              "enable_thinking": false,
+              "reasoning_effort": "low",
+              "max_thinking_tokens": 2048
+            },
+            "disable_vision": true,
+            "kernel_controls": {
+              "HALOGEN_DECODE_PREFETCH": 0,
+              "HALOGEN_PHASE_RAW": 1,
+              "HALOGEN_SERVE_TRACE": 1,
+              "HALOGEN_DRAFT_VOCAB_Q8": 0
+            }
+          },
+          "console_trace": true
+        },
+        "source_binding_verified": true,
+        "gpu_and_memory_quality_verified": true,
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "acceptance_independently_reconciled": false,
+        "native_trace_chain_kept_separate": true
+      },
+      "natural16384": {
+        "status": "complete",
+        "complete_cohort": true,
+        "phase_measurement_qualified": true,
+        "included_in_prefill_comparison": true,
+        "included_in_decode_comparison": false,
+        "epoch_nonce": "0201000000000002",
+        "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+        "profile_sha256": "3cb1845494facff04d2b905b8d0db73fdcaadcf336048180a1aba564d5292c4f",
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "native_request_id": 8,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0",
+            "response_sha256": "608ee87c4b408a5f1d84167cd3ddcc26a88b8e461cec824ff446fc5bf715f485",
+            "journal_sha256": "4472712d5bdfe336881a7b2d4592f5664b8e2abe153ce4b378a7757e7b55281e",
+            "http_qpc_seconds": 18.6480431,
+            "scoped": {
+              "head": {
+                "rounds": 71,
+                "drafted": 109,
+                "accepted": 55
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 14897.8,
+              "predicted_ms": 3979.9,
+              "prompt_per_second": 1099.76,
+              "predicted_per_second": 32.162,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 14897788736,
+            "prefill_raw_lower_ns": 14897731197,
+            "prefill_raw_upper_ns": 14897734527,
+            "prefill_native_tps": 1099.7605275747146,
+            "prefill_raw_tps_lower": 1099.764529318626,
+            "prefill_raw_tps_upper": 1099.7647751423583,
+            "prefill_raw_tps_mid": 1099.7646522304785,
+            "decode_native_ns": 3979929273,
+            "decode_raw_lower_ns": 3689258804,
+            "decode_raw_upper_ns": 3689261374,
+            "decode_native_tps": 32.16137554713777,
+            "decode_raw_tps_lower": 34.695291827810735,
+            "decode_raw_tps_upper": 34.69531599713708,
+            "decode_raw_tps_mid": 34.6953039124697
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "native_request_id": 9,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0",
+            "response_sha256": "b2f375b2e38e67dd56e801e2068578b38bfccdb35086772082201abfe60fc1ad",
+            "journal_sha256": "3b16567be6f2fed084c592db127e26fb35a98d55023f0d8ce13a414d56ee5107",
+            "http_qpc_seconds": 17.2495767,
+            "scoped": {
+              "head": {
+                "rounds": 71,
+                "drafted": 109,
+                "accepted": 55
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 14981.7,
+              "predicted_ms": 3285.8,
+              "prompt_per_second": 1093.601,
+              "predicted_per_second": 38.956,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 14981695332,
+            "prefill_raw_lower_ns": 13829203917,
+            "prefill_raw_upper_ns": 13829206907,
+            "prefill_native_tps": 1093.6012004599213,
+            "prefill_raw_tps_lower": 1184.7389449142472,
+            "prefill_raw_tps_upper": 1184.739201065611,
+            "prefill_raw_tps_mid": 1184.7390729899153,
+            "decode_native_ns": 3285822803,
+            "decode_raw_lower_ns": 3033054185,
+            "decode_raw_upper_ns": 3033057305,
+            "decode_native_tps": 38.95523516457865,
+            "decode_raw_tps_lower": 42.201642477704524,
+            "decode_raw_tps_upper": 42.20168588910323,
+            "decode_raw_tps_mid": 42.201664183392715
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "native_request_id": 10,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0",
+            "response_sha256": "67783a5f652448ae2bf2c1e88bf5be39cc88922ec863e673bcf27c0f3dfd20cb",
+            "journal_sha256": "9b02efcaf48be13f453a0aef518c84bfe5571f5e0caeed02c39a0fd1569599c2",
+            "http_qpc_seconds": 16.1187106,
+            "scoped": {
+              "head": {
+                "rounds": 71,
+                "drafted": 109,
+                "accepted": 55
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 13702.9,
+              "predicted_ms": 3079.2,
+              "prompt_per_second": 1195.659,
+              "predicted_per_second": 41.569,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 13702910813,
+            "prefill_raw_lower_ns": 13004514146,
+            "prefill_raw_upper_ns": 13004516236,
+            "prefill_native_tps": 1195.6583694944902,
+            "prefill_raw_tps_lower": 1259.8700099773553,
+            "prefill_raw_tps_upper": 1259.8702124553788,
+            "prefill_raw_tps_mid": 1259.870111216359,
+            "decode_native_ns": 3079163665,
+            "decode_raw_lower_ns": 3079150972,
+            "decode_raw_upper_ns": 3079153373,
+            "decode_native_tps": 41.56972929206087,
+            "decode_raw_tps_lower": 41.56986823793399,
+            "decode_raw_tps_upper": 41.569900652471155,
+            "decode_raw_tps_mid": 41.56988444519625
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "native_request_id": 11,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0",
+            "response_sha256": "77619bdad7b4b774bba391f930e184443ab62f328ef5ebdf189fbdd90b25e67e",
+            "journal_sha256": "4730b371114cd58d2c190933ca6c9bb441fa68eba4b7cb9e86e2f4dc4637630a",
+            "http_qpc_seconds": 16.6511722,
+            "scoped": {
+              "head": {
+                "rounds": 71,
+                "drafted": 109,
+                "accepted": 55
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 13430.4,
+              "predicted_ms": 3187.7,
+              "prompt_per_second": 1219.919,
+              "predicted_per_second": 40.154,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 13430393446,
+            "prefill_raw_lower_ns": 13430341718,
+            "prefill_raw_upper_ns": 13430343498,
+            "prefill_native_tps": 1219.919585072147,
+            "prefill_raw_tps_lower": 1219.9241220032718,
+            "prefill_raw_tps_upper": 1219.9242836867927,
+            "prefill_raw_tps_mid": 1219.924202845027,
+            "decode_native_ns": 3187697632,
+            "decode_raw_lower_ns": 3187684211,
+            "decode_raw_upper_ns": 3187686621,
+            "decode_native_tps": 40.15437308578457,
+            "decode_raw_tps_lower": 40.154511788189986,
+            "decode_raw_tps_upper": 40.15454214639582,
+            "decode_raw_tps_mid": 40.15452696728716
+          }
+        ],
+        "summary": {
+          "excluded_warmups": 1,
+          "measured_repetitions": 3,
+          "mean_raw_tps": {
+            "prefill": {
+              "lower": 1221.5110256316248,
+              "mid": 1221.5111290171003,
+              "upper": 1221.5112324025943
+            },
+            "decode": {
+              "lower": 41.30867416794283,
+              "mid": 41.30869186529204,
+              "upper": 41.30870956265674
+            }
+          },
+          "native_clock_observations": {
+            "prefill_mean_tps": 1169.7263850088527,
+            "decode_mean_tps": 40.2264458474747
+          },
+          "api_reported_observations": {
+            "prefill_mean_tps": 1169.7263333333335,
+            "decode_mean_tps": 40.226333333333336
+          },
+          "actual_input_tokens": [
+            16384,
+            16384,
+            16384
+          ],
+          "actual_output_tokens": [
+            128,
+            128,
+            128
+          ],
+          "output_caps": [
+            128,
+            128,
+            128
+          ],
+          "mean_http_qpc_seconds": 16.673153166666665,
+          "pooled_scoped_counters": {
+            "head": {
+              "rounds": 213,
+              "drafted": 327,
+              "accepted": 165,
+              "acceptance_fraction": 0.5045871559633027
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "acceptance_independently_reconciled": false,
+          "api_phase_clock_qualified": false,
+          "pooled_native_chain_counters": {
+            "rounds": 213,
+            "drafted": 327,
+            "accepted": 165,
+            "acceptance_fraction": 0.5045871559633027
+          },
+          "whole_http_output_tps": 7.677012183628254
+        },
+        "output_sha256_values": [
+          "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0"
+        ],
+        "within_cohort_output_variation": false,
+        "evidence": {
+          "collector_handle_sha256": "28b4e241ca54d36ae46a90fe599d3bdbdcc790a4ab020416e4ca1d64d52b6c8a",
+          "raw_report_sha256": "595152a86ac7f02989fa608ea79b84e5dc5147e3ce3cdd933c3dd54dd1294827",
+          "qpc_audit_sha256": "0a77a8cf1d5849a05e5acb721f33e6c5fae9c97b55d23282a12066231824329d",
+          "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+          "binding_sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+        },
+        "mtp_cost_trace": {
+          "schema": "halogen0201.native-prefill-trace.v1",
+          "expected_rule": "gate",
+          "startup_banner": {
+            "marker": "confidence gate",
+            "count": 1
+          },
+          "samples": [
+            {
+              "id": 8,
+              "native_trace": {
+                "id": 8,
+                "neural_rounds": 71,
+                "legacy_accepted": 40,
+                "chain_rounds": 71,
+                "chain_drafted": 109,
+                "chain_accepted": 55,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 71,
+                "head": {
+                  "rounds": 71,
+                  "drafted": 109,
+                  "accepted": 55
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 71,
+              "mapped_head_drafted": 109,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 55,
+                "native_chain_accepted": 55,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 9,
+              "native_trace": {
+                "id": 9,
+                "neural_rounds": 71,
+                "legacy_accepted": 40,
+                "chain_rounds": 71,
+                "chain_drafted": 109,
+                "chain_accepted": 55,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 71,
+                "head": {
+                  "rounds": 71,
+                  "drafted": 109,
+                  "accepted": 55
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 71,
+              "mapped_head_drafted": 109,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 55,
+                "native_chain_accepted": 55,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 10,
+              "native_trace": {
+                "id": 10,
+                "neural_rounds": 71,
+                "legacy_accepted": 40,
+                "chain_rounds": 71,
+                "chain_drafted": 109,
+                "chain_accepted": 55,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 71,
+                "head": {
+                  "rounds": 71,
+                  "drafted": 109,
+                  "accepted": 55
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 71,
+              "mapped_head_drafted": 109,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 55,
+                "native_chain_accepted": 55,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 11,
+              "native_trace": {
+                "id": 11,
+                "neural_rounds": 71,
+                "legacy_accepted": 40,
+                "chain_rounds": 71,
+                "chain_drafted": 109,
+                "chain_accepted": 55,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 71,
+                "head": {
+                  "rounds": 71,
+                  "drafted": 109,
+                  "accepted": 55
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 71,
+              "mapped_head_drafted": 109,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 55,
+                "native_chain_accepted": 55,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            }
+          ],
+          "native_rule_activation_observed": true,
+          "per_decision_policy_observed": false,
+          "exact_mapped_rounds_and_drafted_verified": true,
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "accepted_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+          "acceptance_independently_reconciled": false,
+          "exact_independent_full_accepted_counter_proof": false,
+          "qualification_scope": "Native startup rule and exact mapped rounds/drafted plus lookup/grammar counters, with API all-neural acceptance and separately retained native chain acceptance"
+        },
+        "GPU_admission": {
+          "schema": "halogen0201.prefill4096-gpu-evidence.v1",
+          "receipts": [
+            {
+              "ordinal": 0,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.797000000020489,
+              "elapsed_seconds": 1.797000000020489,
+              "sha256": "216a8245e22b1950093327a7ba7fe9ad1f7ac2a1f7d36c93d56e7cc6b80f9754"
+            },
+            {
+              "ordinal": 0,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.8440000000409782,
+              "elapsed_seconds": 1.8440000000409782,
+              "sha256": "4a2ba83798e92494e723a3f7cdd7356de6240f17de719434c6c8d9e72f3ce83b"
+            },
+            {
+              "ordinal": 1,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.812000000034459,
+              "elapsed_seconds": 1.812000000034459,
+              "sha256": "9617fdb5166b2b11bc5005430ac80ab1ba7263443577b48e4893ece50679dd3a"
+            },
+            {
+              "ordinal": 1,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.8439999999245629,
+              "elapsed_seconds": 1.8439999999245629,
+              "sha256": "f08161649f58a1d157d952d96af28351d178f0d13ba94d9be17f2a1b2802a609"
+            },
+            {
+              "ordinal": 2,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.859000000054948,
+              "elapsed_seconds": 1.859000000054948,
+              "sha256": "afee874324d388a045ef90692ddf6437ba4999ad5d8e4a6204362a3de6694570"
+            },
+            {
+              "ordinal": 2,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.8440000000409782,
+              "elapsed_seconds": 1.8440000000409782,
+              "sha256": "afc9f68094b4f0835f2fc53271f8de52b56cd81ef8eb460ec01d9a9b4a5d97dc"
+            },
+            {
+              "ordinal": 3,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.797000000020489,
+              "elapsed_seconds": 1.797000000020489,
+              "sha256": "a126ee5fffaec9bd49489d0085cb53aca129221d5b793c38c2ce22dc0e231dfe"
+            },
+            {
+              "ordinal": 3,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.952999999979511,
+              "elapsed_seconds": 1.952999999979511,
+              "sha256": "a1b5b6e9b939be98c5ed560c57ccb0280ea6524fffbecdcdaf4ddf7e36500954"
+            }
+          ],
+          "all_pre_entry_and_post_checks_qualified": true,
+          "pre_request_wait_seconds_total": 7.265000000130385,
+          "post_request_wait_seconds_total": 7.48499999998603,
+          "PID_exemptions": [],
+          "ownership_attribution_claimed": false,
+          "included_in_HTTP_QPC_seconds": false,
+          "included_in_RAW_phase_seconds": false
+        },
+        "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+        "weights_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+        "weights_identity": {
+          "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+          "identity": {
+            "size": 66687678432,
+            "device": 2096,
+            "inode": 616828,
+            "mtime_ns": 1790979071648131939,
+            "ctime_ns": 1790979072020131920
+          },
+          "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+          "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+          "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+          "current_file_identity_matched": true,
+          "established_complete_file_receipt_reused": true,
+          "new_complete_file_rehash_claimed": false
+        },
+        "profile": {
+          "schema": 1,
+          "minimum_reserve_gib": 18,
+          "token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+          "backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\.local\\api-token.txt",
+          "concurrency": 1,
+          "body_bytes": 16777216,
+          "request_seconds": 1800,
+          "backend": {
+            "identifier": "halogen-v2",
+            "upstream": "http://127.0.0.1:8731",
+            "model": "halogen-qwen3.8-flash-next",
+            "checkpoint": "v2",
+            "context": 32768,
+            "expected": {
+              "status": "ok",
+              "version.api": "0.20.1",
+              "version.engine": "0.20.1",
+              "version.match": true,
+              "context": 32768,
+              "slot_ctx": 32768,
+              "kv_pool_positions": 32768,
+              "slots": 1,
+              "capability_probe": "ok",
+              "vision.enabled": false
+            },
+            "routes": [
+              "/v1/chat/completions",
+              "/v1/completions",
+              "/v1/responses",
+              "/v1/messages",
+              "/v1/messages/count_tokens"
+            ]
+          },
+          "engine": {
+            "kind": "halogen",
+            "directory": "backends/halogen-wsl2-0.20.1",
+            "checkpoint": "v2",
+            "context": 32768,
+            "prompt_cache": "Off",
+            "powershell": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "slots": 1,
+            "kv_pool_positions": 32768,
+            "launcher": "python",
+            "python_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+            "speculation_policy": {
+              "HALOGEN_PLD": "3,3",
+              "HALOGEN_MTP_GATE_P": "0.90"
+            },
+            "prefill_chunk": 2048,
+            "max_prefill_tokens": 2048,
+            "api_defaults": {
+              "enable_thinking": false,
+              "reasoning_effort": "low",
+              "max_thinking_tokens": 2048
+            },
+            "disable_vision": true,
+            "kernel_controls": {
+              "HALOGEN_DECODE_PREFETCH": 0,
+              "HALOGEN_PHASE_RAW": 1,
+              "HALOGEN_SERVE_TRACE": 1,
+              "HALOGEN_DRAFT_VOCAB_Q8": 0
+            }
+          },
+          "console_trace": true
+        },
+        "source_binding_verified": true,
+        "gpu_and_memory_quality_verified": true,
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "acceptance_independently_reconciled": false,
+        "native_trace_chain_kept_separate": true
+      }
+    },
+    "candidate": {
+      "natural8192": {
+        "status": "complete",
+        "complete_cohort": true,
+        "phase_measurement_qualified": true,
+        "included_in_prefill_comparison": true,
+        "included_in_decode_comparison": false,
+        "epoch_nonce": "0201000000000001",
+        "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+        "profile_sha256": "930c62f1c517238c3c0e25d3ee2604c88dad357fb1cd04611dd77883e9ea07de",
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "native_request_id": 4,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "7c84454900ec89f8ee2fc50cce38795c99a045f9f10a997a87026ccce1df17eb",
+            "response_sha256": "a0efa1217ea7ff471ba612492a2c092ff890578ead44bdf79f76b060c4abcd1b",
+            "journal_sha256": "2b1dca6f635714f61052607ee8b6ef33634131b536530b87b23d831621534c6d",
+            "http_qpc_seconds": 13.6342186,
+            "scoped": {
+              "head": {
+                "rounds": 68,
+                "drafted": 110,
+                "accepted": 58
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 8779.0,
+              "predicted_ms": 4740.3,
+              "prompt_per_second": 933.136,
+              "predicted_per_second": 27.003,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 8778954496,
+            "prefill_raw_lower_ns": 8778919524,
+            "prefill_raw_upper_ns": 8778925204,
+            "prefill_native_tps": 933.1407291987404,
+            "prefill_raw_tps_lower": 933.1438427414126,
+            "prefill_raw_tps_upper": 933.1444464896316,
+            "prefill_raw_tps_mid": 933.1441446154245,
+            "decode_native_ns": 4740263231,
+            "decode_raw_lower_ns": 4740244018,
+            "decode_raw_upper_ns": 4740246408,
+            "decode_native_tps": 27.002719841150526,
+            "decode_raw_tps_lower": 27.002815673037055,
+            "decode_raw_tps_upper": 27.002829287679933,
+            "decode_raw_tps_mid": 27.002822480356777
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "native_request_id": 5,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "7c84454900ec89f8ee2fc50cce38795c99a045f9f10a997a87026ccce1df17eb",
+            "response_sha256": "faccd1d9304e74b73b4a825f9f05b15b2fe99ef78d20d8accc5431a8535fe61d",
+            "journal_sha256": "e5052c8c9b9d73077bafb1c4754aeae505781a11a15137aebf26ae7aec5ef870",
+            "http_qpc_seconds": 9.3673685,
+            "scoped": {
+              "head": {
+                "rounds": 68,
+                "drafted": 110,
+                "accepted": 58
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 6346.1,
+              "predicted_ms": 2991.6,
+              "prompt_per_second": 1290.872,
+              "predicted_per_second": 42.786,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 6346062511,
+            "prefill_raw_lower_ns": 6346037158,
+            "prefill_raw_upper_ns": 6346039359,
+            "prefill_native_tps": 1290.879184659831,
+            "prefill_raw_tps_lower": 1290.8838941224096,
+            "prefill_raw_tps_upper": 1290.8843418404706,
+            "prefill_raw_tps_mid": 1290.8841179814012,
+            "decode_native_ns": 2991594118,
+            "decode_raw_lower_ns": 2991581624,
+            "decode_raw_upper_ns": 2991584315,
+            "decode_native_tps": 42.786552904968644,
+            "decode_raw_tps_lower": 42.78669311046979,
+            "decode_raw_tps_upper": 42.78673159813473,
+            "decode_raw_tps_mid": 42.786712354293606
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "native_request_id": 6,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "7c84454900ec89f8ee2fc50cce38795c99a045f9f10a997a87026ccce1df17eb",
+            "response_sha256": "cf5157bde9a61700f88783b88c44f2e471dc729c7a41dadb75b7d6ea2f28e4dd",
+            "journal_sha256": "8fe79b2cff5be5b71781cd7164e380e4fc466943a52aebaba581d7fbd6737fd4",
+            "http_qpc_seconds": 9.2087893,
+            "scoped": {
+              "head": {
+                "rounds": 68,
+                "drafted": 110,
+                "accepted": 58
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 6143.2,
+              "predicted_ms": 3040.5,
+              "prompt_per_second": 1333.507,
+              "predicted_per_second": 42.098,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 6143166824,
+            "prefill_raw_lower_ns": 6143141495,
+            "prefill_raw_upper_ns": 6143144426,
+            "prefill_native_tps": 1333.514168619947,
+            "prefill_raw_tps_lower": 1333.5190306333195,
+            "prefill_raw_tps_upper": 1333.519666878518,
+            "prefill_raw_tps_mid": 1333.5193487558429,
+            "decode_native_ns": 3040462726,
+            "decode_raw_lower_ns": 3040449389,
+            "decode_raw_upper_ns": 3040452339,
+            "decode_native_tps": 42.09885518589975,
+            "decode_raw_tps_lower": 42.098999006871125,
+            "decode_raw_tps_upper": 42.09903985348003,
+            "decode_raw_tps_mid": 42.09901943016567
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "native_request_id": 7,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "7c84454900ec89f8ee2fc50cce38795c99a045f9f10a997a87026ccce1df17eb",
+            "response_sha256": "133cbabdfd800fe46e5d752a9cfa7dc0fb6c380a347563ca2cc7566ab310c852",
+            "journal_sha256": "4f5f7ccb38a5ecb8ccc664fecbbd77a2d56820291cb4027fa4f1a9fbb2518fc2",
+            "http_qpc_seconds": 9.1658768,
+            "scoped": {
+              "head": {
+                "rounds": 68,
+                "drafted": 110,
+                "accepted": 58
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 6209.9,
+              "predicted_ms": 2920.4,
+              "prompt_per_second": 1319.184,
+              "predicted_per_second": 43.83,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 6209920315,
+            "prefill_raw_lower_ns": 6209895745,
+            "prefill_raw_upper_ns": 6209897765,
+            "prefill_native_tps": 1319.1795682486145,
+            "prefill_raw_tps_lower": 1319.184358585008,
+            "prefill_raw_tps_upper": 1319.1847876988795,
+            "prefill_raw_tps_mid": 1319.184573141909,
+            "decode_native_ns": 2920439216,
+            "decode_raw_lower_ns": 2920426362,
+            "decode_raw_upper_ns": 2920429512,
+            "decode_native_tps": 43.829023832694624,
+            "decode_raw_tps_lower": 43.829169467727255,
+            "decode_raw_tps_upper": 43.82921674229155,
+            "decode_raw_tps_mid": 43.829193104996655
+          }
+        ],
+        "summary": {
+          "excluded_warmups": 1,
+          "measured_repetitions": 3,
+          "mean_raw_tps": {
+            "prefill": {
+              "lower": 1314.5290944469125,
+              "mid": 1314.5293466263843,
+              "upper": 1314.529598805956
+            },
+            "decode": {
+              "lower": 42.90495386168939,
+              "mid": 42.90497496315198,
+              "upper": 42.904996064635434
+            }
+          },
+          "native_clock_observations": {
+            "prefill_mean_tps": 1314.5243071761308,
+            "decode_mean_tps": 42.90481064118767
+          },
+          "api_reported_observations": {
+            "prefill_mean_tps": 1314.521,
+            "decode_mean_tps": 42.904666666666664
+          },
+          "actual_input_tokens": [
+            8192,
+            8192,
+            8192
+          ],
+          "actual_output_tokens": [
+            128,
+            128,
+            128
+          ],
+          "output_caps": [
+            128,
+            128,
+            128
+          ],
+          "mean_http_qpc_seconds": 9.247344866666666,
+          "pooled_scoped_counters": {
+            "head": {
+              "rounds": 204,
+              "drafted": 330,
+              "accepted": 174,
+              "acceptance_fraction": 0.5272727272727272
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "acceptance_independently_reconciled": false,
+          "api_phase_clock_qualified": false,
+          "pooled_native_chain_counters": {
+            "rounds": 204,
+            "drafted": 330,
+            "accepted": 174,
+            "acceptance_fraction": 0.5272727272727272
+          },
+          "whole_http_output_tps": 13.84181101122266
+        },
+        "output_sha256_values": [
+          "7c84454900ec89f8ee2fc50cce38795c99a045f9f10a997a87026ccce1df17eb"
+        ],
+        "within_cohort_output_variation": false,
+        "evidence": {
+          "collector_handle_sha256": "98ae5a9228a37b25e58d2abc134e8353eaa88b335e9030a7142600a4dfecd14c",
+          "raw_report_sha256": "a125337a1ab793d5490a84b6c2efa16a995d2e9ad24164f77e3a2b1caea4d55b",
+          "qpc_audit_sha256": "4aaebd947a81692d134dbd9e402cb938ed857b5b9e7d320f0811283fd213aac6",
+          "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+          "binding_sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+        },
+        "mtp_cost_trace": {
+          "schema": "halogen0201.native-prefill-trace.v1",
+          "expected_rule": "gate",
+          "startup_banner": {
+            "marker": "confidence gate",
+            "count": 1
+          },
+          "samples": [
+            {
+              "id": 4,
+              "native_trace": {
+                "id": 4,
+                "neural_rounds": 68,
+                "legacy_accepted": 42,
+                "chain_rounds": 68,
+                "chain_drafted": 110,
+                "chain_accepted": 58,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 2
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 68,
+                "head": {
+                  "rounds": 68,
+                  "drafted": 110,
+                  "accepted": 58
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 68,
+              "mapped_head_drafted": 110,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 58,
+                "native_chain_accepted": 58,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 5,
+              "native_trace": {
+                "id": 5,
+                "neural_rounds": 68,
+                "legacy_accepted": 42,
+                "chain_rounds": 68,
+                "chain_drafted": 110,
+                "chain_accepted": 58,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 2
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 68,
+                "head": {
+                  "rounds": 68,
+                  "drafted": 110,
+                  "accepted": 58
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 68,
+              "mapped_head_drafted": 110,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 58,
+                "native_chain_accepted": 58,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 6,
+              "native_trace": {
+                "id": 6,
+                "neural_rounds": 68,
+                "legacy_accepted": 42,
+                "chain_rounds": 68,
+                "chain_drafted": 110,
+                "chain_accepted": 58,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 2
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 68,
+                "head": {
+                  "rounds": 68,
+                  "drafted": 110,
+                  "accepted": 58
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 68,
+              "mapped_head_drafted": 110,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 58,
+                "native_chain_accepted": 58,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 7,
+              "native_trace": {
+                "id": 7,
+                "neural_rounds": 68,
+                "legacy_accepted": 42,
+                "chain_rounds": 68,
+                "chain_drafted": 110,
+                "chain_accepted": 58,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 2
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 68,
+                "head": {
+                  "rounds": 68,
+                  "drafted": 110,
+                  "accepted": 58
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 68,
+              "mapped_head_drafted": 110,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 58,
+                "native_chain_accepted": 58,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            }
+          ],
+          "native_rule_activation_observed": true,
+          "per_decision_policy_observed": false,
+          "exact_mapped_rounds_and_drafted_verified": true,
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "accepted_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+          "acceptance_independently_reconciled": false,
+          "exact_independent_full_accepted_counter_proof": false,
+          "qualification_scope": "Native startup rule and exact mapped rounds/drafted plus lookup/grammar counters, with API all-neural acceptance and separately retained native chain acceptance"
+        },
+        "GPU_admission": {
+          "schema": "halogen0201.prefill4096-gpu-evidence.v1",
+          "receipts": [
+            {
+              "ordinal": 0,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.797000000020489,
+              "elapsed_seconds": 1.797000000020489,
+              "sha256": "26b25f799a18837c051f9f8ceb20a76e8f4a7fee839596e42320322e16b60780"
+            },
+            {
+              "ordinal": 0,
+              "stage": "after",
+              "observations": 3,
+              "nonzero_observations": 1,
+              "admission_decision_seconds": 3.375,
+              "elapsed_seconds": 3.375,
+              "sha256": "bd264cb88d1bb4c98ec9f165fa1b3d2ccc7c89c0c6fb9a5dcd92bb23033ca586"
+            },
+            {
+              "ordinal": 1,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 2.0,
+              "elapsed_seconds": 2.0,
+              "sha256": "c23ff8321e119dffba0cdeef79bf830ddc8994d5d86e471982dc725c25aafcde"
+            },
+            {
+              "ordinal": 1,
+              "stage": "after",
+              "observations": 4,
+              "nonzero_observations": 1,
+              "admission_decision_seconds": 4.436999999918044,
+              "elapsed_seconds": 4.436999999918044,
+              "sha256": "29473781589b38fb93ec8a8fc17b7557bf9a9bee4e4cbf2923d26a63ed0c6933"
+            },
+            {
+              "ordinal": 2,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 2.0320000000065193,
+              "elapsed_seconds": 2.0320000000065193,
+              "sha256": "a404948966fbe4c399692cc10beba1bb03fb458bfbfb6ec927df7dbb6df3606a"
+            },
+            {
+              "ordinal": 2,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 2.484000000054948,
+              "elapsed_seconds": 2.484000000054948,
+              "sha256": "96df732d5667904b86644a4b4036ba549d8cede275cc52ba4d3ea3c058108186"
+            },
+            {
+              "ordinal": 3,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 2.7339999999385327,
+              "elapsed_seconds": 2.7339999999385327,
+              "sha256": "a11370e3a0891d914aabe645962001c1b4cd07e4d25ada7611dd51627ab89be9"
+            },
+            {
+              "ordinal": 3,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.827999999979511,
+              "elapsed_seconds": 1.827999999979511,
+              "sha256": "b0cc11337935c47d4384fa740b5de24b9b050760c079d8166b3d59dc810bca2c"
+            }
+          ],
+          "all_pre_entry_and_post_checks_qualified": true,
+          "pre_request_wait_seconds_total": 8.562999999965541,
+          "post_request_wait_seconds_total": 12.123999999952503,
+          "PID_exemptions": [],
+          "ownership_attribution_claimed": false,
+          "included_in_HTTP_QPC_seconds": false,
+          "included_in_RAW_phase_seconds": false
+        },
+        "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+        "weights_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+        "weights_identity": {
+          "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+          "identity": {
+            "size": 66687678432,
+            "device": 2096,
+            "inode": 616828,
+            "mtime_ns": 1790979071648131939,
+            "ctime_ns": 1790979072020131920
+          },
+          "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+          "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+          "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+          "current_file_identity_matched": true,
+          "established_complete_file_receipt_reused": true,
+          "new_complete_file_rehash_claimed": false
+        },
+        "profile": {
+          "schema": 1,
+          "minimum_reserve_gib": 18,
+          "token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+          "backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\.local\\api-token.txt",
+          "concurrency": 1,
+          "body_bytes": 16777216,
+          "request_seconds": 1800,
+          "backend": {
+            "identifier": "halogen-v2",
+            "upstream": "http://127.0.0.1:8731",
+            "model": "halogen-qwen3.8-flash-next",
+            "checkpoint": "v2",
+            "context": 32768,
+            "expected": {
+              "status": "ok",
+              "version.api": "0.20.1",
+              "version.engine": "0.20.1",
+              "version.match": true,
+              "context": 32768,
+              "slot_ctx": 32768,
+              "kv_pool_positions": 32768,
+              "slots": 1,
+              "capability_probe": "ok",
+              "vision.enabled": false
+            },
+            "routes": [
+              "/v1/chat/completions",
+              "/v1/completions",
+              "/v1/responses",
+              "/v1/messages",
+              "/v1/messages/count_tokens"
+            ]
+          },
+          "engine": {
+            "kind": "halogen",
+            "directory": "backends/halogen-wsl2-0.20.1",
+            "checkpoint": "v2",
+            "context": 32768,
+            "prompt_cache": "Off",
+            "powershell": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "slots": 1,
+            "kv_pool_positions": 32768,
+            "launcher": "python",
+            "python_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+            "speculation_policy": {
+              "HALOGEN_PLD": "3,3",
+              "HALOGEN_MTP_GATE_P": "0.90"
+            },
+            "prefill_chunk": 4096,
+            "max_prefill_tokens": 4096,
+            "api_defaults": {
+              "enable_thinking": false,
+              "reasoning_effort": "low",
+              "max_thinking_tokens": 2048
+            },
+            "disable_vision": true,
+            "kernel_controls": {
+              "HALOGEN_DECODE_PREFETCH": 0,
+              "HALOGEN_PHASE_RAW": 1,
+              "HALOGEN_SERVE_TRACE": 1,
+              "HALOGEN_DRAFT_VOCAB_Q8": 0
+            }
+          },
+          "console_trace": true
+        },
+        "source_binding_verified": true,
+        "gpu_and_memory_quality_verified": true,
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "acceptance_independently_reconciled": false,
+        "native_trace_chain_kept_separate": true
+      },
+      "natural16384": {
+        "status": "complete",
+        "complete_cohort": true,
+        "phase_measurement_qualified": true,
+        "included_in_prefill_comparison": true,
+        "included_in_decode_comparison": false,
+        "epoch_nonce": "0201000000000002",
+        "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+        "profile_sha256": "930c62f1c517238c3c0e25d3ee2604c88dad357fb1cd04611dd77883e9ea07de",
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "native_request_id": 8,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+            "response_sha256": "0b4be48bc90e05f5a557dac5c195276a87ff8ecbc7e958d2ab9e399c9c6a9ba7",
+            "journal_sha256": "8c7bc7b416b95605c8bff9185ef78d46a614ffde02c765f7170fc6a5afcc3aac",
+            "http_qpc_seconds": 17.0097728,
+            "scoped": {
+              "head": {
+                "rounds": 69,
+                "drafted": 113,
+                "accepted": 58
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 13684.2,
+              "predicted_ms": 3275.3,
+              "prompt_per_second": 1197.293,
+              "predicted_per_second": 39.08,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 13684226908,
+            "prefill_raw_lower_ns": 13684173673,
+            "prefill_raw_upper_ns": 13684176693,
+            "prefill_native_tps": 1197.2908743877722,
+            "prefill_raw_tps_lower": 1197.295267926573,
+            "prefill_raw_tps_upper": 1197.2955321611403,
+            "prefill_raw_tps_mid": 1197.295400043842,
+            "decode_native_ns": 3275345308,
+            "decode_raw_lower_ns": 3275331565,
+            "decode_raw_upper_ns": 3275334166,
+            "decode_native_tps": 39.07984898183444,
+            "decode_raw_tps_lower": 39.079981923285686,
+            "decode_raw_tps_upper": 39.080012957405735,
+            "decode_raw_tps_mid": 39.07999744033955
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "native_request_id": 9,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+            "response_sha256": "cf3c36b417ce255a01459e533e5ab4e84d046006a7b0488f7e4ca1773fbba3a3",
+            "journal_sha256": "2eac661af42dfd4151a2d1925a49065cff444d195fca6a70e65a1da89b096dda",
+            "http_qpc_seconds": 14.7603682,
+            "scoped": {
+              "head": {
+                "rounds": 69,
+                "drafted": 113,
+                "accepted": 58
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 12539.7,
+              "predicted_ms": 3414.0,
+              "prompt_per_second": 1306.57,
+              "predicted_per_second": 37.493,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 12539668901,
+            "prefill_raw_lower_ns": 11575033530,
+            "prefill_raw_upper_ns": 11575036181,
+            "prefill_native_tps": 1306.5735729827306,
+            "prefill_raw_tps_lower": 1415.459938422805,
+            "prefill_raw_tps_upper": 1415.4602626019348,
+            "prefill_raw_tps_mid": 1415.4601005123513,
+            "decode_native_ns": 3413968555,
+            "decode_raw_lower_ns": 3151341116,
+            "decode_raw_upper_ns": 3151344966,
+            "decode_native_tps": 37.49302254484298,
+            "decode_raw_tps_lower": 40.61757801224482,
+            "decode_raw_tps_upper": 40.61762763482441,
+            "decode_raw_tps_mid": 40.61760282351946
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "native_request_id": 10,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+            "response_sha256": "3e09290cc10608e7db4ef1107372fe6e283a6e6fa556c8248ce3b5ba6f6f27f6",
+            "journal_sha256": "9f15aa80cb3aa06c4c94f38a0ab53b366118668c1fc86bd1b2a0e5dd9ede0291",
+            "http_qpc_seconds": 15.2540082,
+            "scoped": {
+              "head": {
+                "rounds": 69,
+                "drafted": 113,
+                "accepted": 58
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 13047.2,
+              "predicted_ms": 3007.3,
+              "prompt_per_second": 1255.748,
+              "predicted_per_second": 42.563,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 13047184323,
+            "prefill_raw_lower_ns": 12207163219,
+            "prefill_raw_upper_ns": 12207165999,
+            "prefill_native_tps": 1255.7498686607619,
+            "prefill_raw_tps_lower": 1342.1624643543114,
+            "prefill_raw_tps_upper": 1342.1627700118654,
+            "prefill_raw_tps_mid": 1342.162617183071,
+            "decode_native_ns": 3007281444,
+            "decode_raw_lower_ns": 3007267931,
+            "decode_raw_upper_ns": 3007271251,
+            "decode_native_tps": 42.563359094766525,
+            "decode_raw_tps_lower": 42.563503361207104,
+            "decode_raw_tps_upper": 42.56355035097802,
+            "decode_raw_tps_mid": 42.5635268560796
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "native_request_id": 11,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec",
+            "response_sha256": "d789ff20428b3d74a6fbd181a159f26b183c17e3900f8bdcbcc86ff8cbc51583",
+            "journal_sha256": "92b43e11a1bb0841f952613f9b6bc52c3497dbfbf391eacd61ad1bb5acb43df8",
+            "http_qpc_seconds": 15.2111533,
+            "scoped": {
+              "head": {
+                "rounds": 69,
+                "drafted": 113,
+                "accepted": 58
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 12166.9,
+              "predicted_ms": 2993.4,
+              "prompt_per_second": 1346.604,
+              "predicted_per_second": 42.761,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 12166915781,
+            "prefill_raw_lower_ns": 12166868115,
+            "prefill_raw_upper_ns": 12166872235,
+            "prefill_native_tps": 1346.6025650958684,
+            "prefill_raw_tps_lower": 1346.6073846710367,
+            "prefill_raw_tps_upper": 1346.6078406653296,
+            "prefill_raw_tps_mid": 1346.6076126681446,
+            "decode_native_ns": 2993410351,
+            "decode_raw_lower_ns": 2993397211,
+            "decode_raw_upper_ns": 2993400031,
+            "decode_native_tps": 42.760592431719026,
+            "decode_raw_tps_lower": 42.760739852481144,
+            "decode_raw_tps_upper": 42.760780136238324,
+            "decode_raw_tps_mid": 42.760759994350245
+          }
+        ],
+        "summary": {
+          "excluded_warmups": 1,
+          "measured_repetitions": 3,
+          "mean_raw_tps": {
+            "prefill": {
+              "lower": 1368.076595816051,
+              "mid": 1368.0767767878556,
+              "upper": 1368.07695775971
+            },
+            "decode": {
+              "lower": 41.98060707531102,
+              "mid": 41.98062989131643,
+              "upper": 41.98065270734692
+            }
+          },
+          "native_clock_observations": {
+            "prefill_mean_tps": 1302.975335579787,
+            "decode_mean_tps": 40.93899135710951
+          },
+          "api_reported_observations": {
+            "prefill_mean_tps": 1302.974,
+            "decode_mean_tps": 40.939
+          },
+          "actual_input_tokens": [
+            16384,
+            16384,
+            16384
+          ],
+          "actual_output_tokens": [
+            128,
+            128,
+            128
+          ],
+          "output_caps": [
+            128,
+            128,
+            128
+          ],
+          "mean_http_qpc_seconds": 15.075176566666666,
+          "pooled_scoped_counters": {
+            "head": {
+              "rounds": 207,
+              "drafted": 339,
+              "accepted": 174,
+              "acceptance_fraction": 0.5132743362831859
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "acceptance_independently_reconciled": false,
+          "api_phase_clock_qualified": false,
+          "pooled_native_chain_counters": {
+            "rounds": 204,
+            "drafted": 336,
+            "accepted": 171,
+            "acceptance_fraction": 0.5089285714285714
+          },
+          "whole_http_output_tps": 8.490779489974665
+        },
+        "output_sha256_values": [
+          "940e8b3abd3e9ecb0f0d3b14ec3e1df6140eb83c99d219b6b6e2ac27112f7dec"
+        ],
+        "within_cohort_output_variation": false,
+        "evidence": {
+          "collector_handle_sha256": "30d7616e562bee68f9601674fafd1031c7a761d9ca4dc32d902ba8d408741237",
+          "raw_report_sha256": "5aec2ee08e4e4934c0cbcd8d1690b6341e3b2602ca8ee33d6f1e290cb4317c7d",
+          "qpc_audit_sha256": "ef91c8902a6096914153bb1f543c3687ea1d243c53a012ee44ccc9f501b4a004",
+          "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+          "binding_sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+        },
+        "mtp_cost_trace": {
+          "schema": "halogen0201.native-prefill-trace.v1",
+          "expected_rule": "gate",
+          "startup_banner": {
+            "marker": "confidence gate",
+            "count": 1
+          },
+          "samples": [
+            {
+              "id": 8,
+              "native_trace": {
+                "id": 8,
+                "neural_rounds": 69,
+                "legacy_accepted": 41,
+                "chain_rounds": 68,
+                "chain_drafted": 112,
+                "chain_accepted": 57,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 69,
+                "head": {
+                  "rounds": 69,
+                  "drafted": 113,
+                  "accepted": 58
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 69,
+              "mapped_head_drafted": 113,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 58,
+                "native_chain_accepted": 57,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 9,
+              "native_trace": {
+                "id": 9,
+                "neural_rounds": 69,
+                "legacy_accepted": 41,
+                "chain_rounds": 68,
+                "chain_drafted": 112,
+                "chain_accepted": 57,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 69,
+                "head": {
+                  "rounds": 69,
+                  "drafted": 113,
+                  "accepted": 58
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 69,
+              "mapped_head_drafted": 113,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 58,
+                "native_chain_accepted": 57,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 10,
+              "native_trace": {
+                "id": 10,
+                "neural_rounds": 69,
+                "legacy_accepted": 41,
+                "chain_rounds": 68,
+                "chain_drafted": 112,
+                "chain_accepted": 57,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 69,
+                "head": {
+                  "rounds": 69,
+                  "drafted": 113,
+                  "accepted": 58
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 69,
+              "mapped_head_drafted": 113,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 58,
+                "native_chain_accepted": 57,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 11,
+              "native_trace": {
+                "id": 11,
+                "neural_rounds": 69,
+                "legacy_accepted": 41,
+                "chain_rounds": 68,
+                "chain_drafted": 112,
+                "chain_accepted": 57,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 69,
+                "head": {
+                  "rounds": 69,
+                  "drafted": 113,
+                  "accepted": 58
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 69,
+              "mapped_head_drafted": 113,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 58,
+                "native_chain_accepted": 57,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            }
+          ],
+          "native_rule_activation_observed": true,
+          "per_decision_policy_observed": false,
+          "exact_mapped_rounds_and_drafted_verified": true,
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "accepted_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+          "acceptance_independently_reconciled": false,
+          "exact_independent_full_accepted_counter_proof": false,
+          "qualification_scope": "Native startup rule and exact mapped rounds/drafted plus lookup/grammar counters, with API all-neural acceptance and separately retained native chain acceptance"
+        },
+        "GPU_admission": {
+          "schema": "halogen0201.prefill4096-gpu-evidence.v1",
+          "receipts": [
+            {
+              "ordinal": 0,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.7809999999590218,
+              "elapsed_seconds": 1.7809999999590218,
+              "sha256": "cb74c845b2f5e48701708fdfade86b29db5782bc23aa9d3e23172287d940b210"
+            },
+            {
+              "ordinal": 0,
+              "stage": "after",
+              "observations": 3,
+              "nonzero_observations": 1,
+              "admission_decision_seconds": 3.031000000075437,
+              "elapsed_seconds": 3.031000000075437,
+              "sha256": "91ddfb2c4d390c1efc099dd20d830f8db64276dde2a943d15fee3a18e762141b"
+            },
+            {
+              "ordinal": 1,
+              "stage": "before",
+              "observations": 5,
+              "nonzero_observations": 2,
+              "admission_decision_seconds": 5.218999999924563,
+              "elapsed_seconds": 5.218999999924563,
+              "sha256": "5ec79e11b3c8c81fb1a899b41d8ca51eed3c5483fab9f13672f7dace6dd5d550"
+            },
+            {
+              "ordinal": 1,
+              "stage": "after",
+              "observations": 3,
+              "nonzero_observations": 1,
+              "admission_decision_seconds": 3.172000000020489,
+              "elapsed_seconds": 3.172000000020489,
+              "sha256": "906ed5f5aff5b8f3106055fd86e3ba9951a68d96f6a959f5c93eeddc2d2faaba"
+            },
+            {
+              "ordinal": 2,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.875,
+              "elapsed_seconds": 1.875,
+              "sha256": "c28c11373da8725ed59ec56aff4357c82ca0dc15adf488c308f7a1273739bc9e"
+            },
+            {
+              "ordinal": 2,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.9059999999590218,
+              "elapsed_seconds": 1.9059999999590218,
+              "sha256": "08ca24aed5beb6a4b30f427e3a7a44441936b9e14b6ef47ef2749692fc92b268"
+            },
+            {
+              "ordinal": 3,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.859000000054948,
+              "elapsed_seconds": 1.859000000054948,
+              "sha256": "77d4d5f04a378626dd6b2abea14562579e47617e0127a881f11abfd3ebe32f99"
+            },
+            {
+              "ordinal": 3,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.8440000000409782,
+              "elapsed_seconds": 1.8440000000409782,
+              "sha256": "57a67e07e25e98af0db1264e4f06c1e336a386ae9e8d9b3973c0a5dff1d0322a"
+            }
+          ],
+          "all_pre_entry_and_post_checks_qualified": true,
+          "pre_request_wait_seconds_total": 10.733999999938533,
+          "post_request_wait_seconds_total": 9.953000000095926,
+          "PID_exemptions": [],
+          "ownership_attribution_claimed": false,
+          "included_in_HTTP_QPC_seconds": false,
+          "included_in_RAW_phase_seconds": false
+        },
+        "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+        "weights_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+        "weights_identity": {
+          "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+          "identity": {
+            "size": 66687678432,
+            "device": 2096,
+            "inode": 616828,
+            "mtime_ns": 1790979071648131939,
+            "ctime_ns": 1790979072020131920
+          },
+          "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+          "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+          "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+          "current_file_identity_matched": true,
+          "established_complete_file_receipt_reused": true,
+          "new_complete_file_rehash_claimed": false
+        },
+        "profile": {
+          "schema": 1,
+          "minimum_reserve_gib": 18,
+          "token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+          "backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\.local\\api-token.txt",
+          "concurrency": 1,
+          "body_bytes": 16777216,
+          "request_seconds": 1800,
+          "backend": {
+            "identifier": "halogen-v2",
+            "upstream": "http://127.0.0.1:8731",
+            "model": "halogen-qwen3.8-flash-next",
+            "checkpoint": "v2",
+            "context": 32768,
+            "expected": {
+              "status": "ok",
+              "version.api": "0.20.1",
+              "version.engine": "0.20.1",
+              "version.match": true,
+              "context": 32768,
+              "slot_ctx": 32768,
+              "kv_pool_positions": 32768,
+              "slots": 1,
+              "capability_probe": "ok",
+              "vision.enabled": false
+            },
+            "routes": [
+              "/v1/chat/completions",
+              "/v1/completions",
+              "/v1/responses",
+              "/v1/messages",
+              "/v1/messages/count_tokens"
+            ]
+          },
+          "engine": {
+            "kind": "halogen",
+            "directory": "backends/halogen-wsl2-0.20.1",
+            "checkpoint": "v2",
+            "context": 32768,
+            "prompt_cache": "Off",
+            "powershell": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "slots": 1,
+            "kv_pool_positions": 32768,
+            "launcher": "python",
+            "python_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+            "speculation_policy": {
+              "HALOGEN_PLD": "3,3",
+              "HALOGEN_MTP_GATE_P": "0.90"
+            },
+            "prefill_chunk": 4096,
+            "max_prefill_tokens": 4096,
+            "api_defaults": {
+              "enable_thinking": false,
+              "reasoning_effort": "low",
+              "max_thinking_tokens": 2048
+            },
+            "disable_vision": true,
+            "kernel_controls": {
+              "HALOGEN_DECODE_PREFETCH": 0,
+              "HALOGEN_PHASE_RAW": 1,
+              "HALOGEN_SERVE_TRACE": 1,
+              "HALOGEN_DRAFT_VOCAB_Q8": 0
+            }
+          },
+          "console_trace": true
+        },
+        "source_binding_verified": true,
+        "gpu_and_memory_quality_verified": true,
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "acceptance_independently_reconciled": false,
+        "native_trace_chain_kept_separate": true
+      }
+    },
+    "after": {
+      "natural8192": {
+        "status": "complete",
+        "complete_cohort": true,
+        "phase_measurement_qualified": true,
+        "included_in_prefill_comparison": true,
+        "included_in_decode_comparison": false,
+        "epoch_nonce": "0201000000000001",
+        "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+        "profile_sha256": "3cb1845494facff04d2b905b8d0db73fdcaadcf336048180a1aba564d5292c4f",
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "native_request_id": 4,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+            "response_sha256": "0513a0f3cc52bbac4374d1ac29568be35b694cabb9d01a36356cc030f7c5b4aa",
+            "journal_sha256": "0384aa82789244e7eddbb0dfab07a3eeaed3b121fc764b7abf4d14f64afeb0f6",
+            "http_qpc_seconds": 13.4360323,
+            "scoped": {
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 9754.0,
+              "predicted_ms": 3560.1,
+              "prompt_per_second": 839.861,
+              "predicted_per_second": 35.954,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 9753993489,
+            "prefill_raw_lower_ns": 9753955341,
+            "prefill_raw_upper_ns": 9753960242,
+            "prefill_native_tps": 839.8611306475109,
+            "prefill_raw_tps_lower": 839.8639933681206,
+            "prefill_raw_tps_upper": 839.8644153685591,
+            "prefill_raw_tps_mid": 839.8642043682869,
+            "decode_native_ns": 3560130090,
+            "decode_raw_lower_ns": 3560114894,
+            "decode_raw_upper_ns": 3560117964,
+            "decode_native_tps": 35.953742353274514,
+            "decode_raw_tps_lower": 35.9538648141267,
+            "decode_raw_tps_upper": 35.95389581828479,
+            "decode_raw_tps_mid": 35.95388031619906
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "native_request_id": 5,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+            "response_sha256": "b499959cdebfce43835b74c6d2797290f1a8e9c6d105d0e16dfa4956847ff6da",
+            "journal_sha256": "1736091c88dd5cba086b11170a18ec5380c95f5af7cfd41a90ceb41664f4cc0b",
+            "http_qpc_seconds": 9.906226,
+            "scoped": {
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 7063.9,
+              "predicted_ms": 2811.8,
+              "prompt_per_second": 1159.699,
+              "predicted_per_second": 45.522,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 7063931625,
+            "prefill_raw_lower_ns": 7063903787,
+            "prefill_raw_upper_ns": 7063905607,
+            "prefill_native_tps": 1159.6941243043248,
+            "prefill_raw_tps_lower": 1159.698395726312,
+            "prefill_raw_tps_upper": 1159.698694520172,
+            "prefill_raw_tps_mid": 1159.6985451232229,
+            "decode_native_ns": 2811817141,
+            "decode_raw_lower_ns": 2811805056,
+            "decode_raw_upper_ns": 2811807526,
+            "decode_native_tps": 45.52216363347079,
+            "decode_raw_tps_lower": 45.522319296900555,
+            "decode_raw_tps_upper": 45.52235928549379,
+            "decode_raw_tps_mid": 45.522339291188395
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "native_request_id": 6,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+            "response_sha256": "4bbfc3a6673bd319b5cccedc4afec7e0fd73351c981bcfbddb2377300ce7f981",
+            "journal_sha256": "30d2d78e395e34ba2482867bd8c3aff0a1f0f3d9d23ef73a30f4609a2b86b297",
+            "http_qpc_seconds": 10.2672392,
+            "scoped": {
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 7010.5,
+              "predicted_ms": 3176.8,
+              "prompt_per_second": 1168.533,
+              "predicted_per_second": 40.292,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 7010546050,
+            "prefill_raw_lower_ns": 7010517883,
+            "prefill_raw_upper_ns": 7010521243,
+            "prefill_native_tps": 1168.5252392001619,
+            "prefill_raw_tps_lower": 1168.5293740718218,
+            "prefill_raw_tps_upper": 1168.5299341244117,
+            "prefill_raw_tps_mid": 1168.5296540980496,
+            "decode_native_ns": 3176754284,
+            "decode_raw_lower_ns": 3176740353,
+            "decode_raw_upper_ns": 3176743503,
+            "decode_native_tps": 40.29269768980345,
+            "decode_raw_tps_lower": 40.292834432216985,
+            "decode_raw_tps_upper": 40.292874385884694,
+            "decode_raw_tps_mid": 40.292854409040935
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "native_request_id": 7,
+            "native_slot": 0,
+            "actual_input_tokens": 8192,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 8192,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+            "response_sha256": "b17144d174d5b893d8dd1a90c12ba724871d63a98098fabcc4f189281a54ea96",
+            "journal_sha256": "4e373703fb28b53f242f5fbae7d5960e145362c3f92521457f68512dccf90506",
+            "http_qpc_seconds": 10.0424438,
+            "scoped": {
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 8192,
+              "predicted_n": 128,
+              "prompt_ms": 7224.8,
+              "predicted_ms": 2782.1,
+              "prompt_per_second": 1133.872,
+              "predicted_per_second": 46.008,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 7224775257,
+            "prefill_raw_lower_ns": 7224746383,
+            "prefill_raw_upper_ns": 7224749003,
+            "prefill_native_tps": 1133.8761011372453,
+            "prefill_raw_tps_lower": 1133.8802215271921,
+            "prefill_raw_tps_upper": 1133.880632720336,
+            "prefill_raw_tps_mid": 1133.8804271237268,
+            "decode_native_ns": 2782105039,
+            "decode_raw_lower_ns": 2782092615,
+            "decode_raw_upper_ns": 2782095925,
+            "decode_native_tps": 46.00832758133687,
+            "decode_raw_tps_lower": 46.00847830219945,
+            "decode_raw_tps_upper": 46.00853304087434,
+            "decode_raw_tps_mid": 46.008505671520616
+          }
+        ],
+        "summary": {
+          "excluded_warmups": 1,
+          "measured_repetitions": 3,
+          "mean_raw_tps": {
+            "prefill": {
+              "lower": 1154.035997108442,
+              "mid": 1154.0362087816663,
+              "upper": 1154.0364204549733
+            },
+            "decode": {
+              "lower": 43.941210677105666,
+              "mid": 43.941233123916646,
+              "upper": 43.94125557075094
+            }
+          },
+          "native_clock_observations": {
+            "prefill_mean_tps": 1154.031821547244,
+            "decode_mean_tps": 43.9410629682037
+          },
+          "api_reported_observations": {
+            "prefill_mean_tps": 1154.0346666666667,
+            "decode_mean_tps": 43.940666666666665
+          },
+          "actual_input_tokens": [
+            8192,
+            8192,
+            8192
+          ],
+          "actual_output_tokens": [
+            128,
+            128,
+            128
+          ],
+          "output_caps": [
+            128,
+            128,
+            128
+          ],
+          "mean_http_qpc_seconds": 10.071969666666666,
+          "pooled_scoped_counters": {
+            "head": {
+              "rounds": 192,
+              "drafted": 318,
+              "accepted": 189,
+              "acceptance_fraction": 0.5943396226415094
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "acceptance_independently_reconciled": false,
+          "api_phase_clock_qualified": false,
+          "pooled_native_chain_counters": {
+            "rounds": 189,
+            "drafted": 315,
+            "accepted": 186,
+            "acceptance_fraction": 0.5904761904761905
+          },
+          "whole_http_output_tps": 12.708537082237044
+        },
+        "output_sha256_values": [
+          "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc"
+        ],
+        "within_cohort_output_variation": false,
+        "evidence": {
+          "collector_handle_sha256": "3003eca724c7b1b7cb05a20c7b7700cc22a290c3f2c4f165b0f3328fefec025c",
+          "raw_report_sha256": "0156adbf11a28c708b74687e4e756cb3882ac84c2ef9af8172e5b40ff687c641",
+          "qpc_audit_sha256": "340048252fe17ff822c7ba110c228d3eca647b92d01a911f3307b2bf66a9847d",
+          "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+          "binding_sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+        },
+        "mtp_cost_trace": {
+          "schema": "halogen0201.native-prefill-trace.v1",
+          "expected_rule": "gate",
+          "startup_banner": {
+            "marker": "confidence gate",
+            "count": 1
+          },
+          "samples": [
+            {
+              "id": 4,
+              "native_trace": {
+                "id": 4,
+                "neural_rounds": 64,
+                "legacy_accepted": 42,
+                "chain_rounds": 63,
+                "chain_drafted": 105,
+                "chain_accepted": 62,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 4
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 64,
+                "head": {
+                  "rounds": 64,
+                  "drafted": 106,
+                  "accepted": 63
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 64,
+              "mapped_head_drafted": 106,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 63,
+                "native_chain_accepted": 62,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 5,
+              "native_trace": {
+                "id": 5,
+                "neural_rounds": 64,
+                "legacy_accepted": 42,
+                "chain_rounds": 63,
+                "chain_drafted": 105,
+                "chain_accepted": 62,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 4
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 64,
+                "head": {
+                  "rounds": 64,
+                  "drafted": 106,
+                  "accepted": 63
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 64,
+              "mapped_head_drafted": 106,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 63,
+                "native_chain_accepted": 62,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 6,
+              "native_trace": {
+                "id": 6,
+                "neural_rounds": 64,
+                "legacy_accepted": 42,
+                "chain_rounds": 63,
+                "chain_drafted": 105,
+                "chain_accepted": 62,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 4
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 64,
+                "head": {
+                  "rounds": 64,
+                  "drafted": 106,
+                  "accepted": 63
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 64,
+              "mapped_head_drafted": 106,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 63,
+                "native_chain_accepted": 62,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 7,
+              "native_trace": {
+                "id": 7,
+                "neural_rounds": 64,
+                "legacy_accepted": 42,
+                "chain_rounds": 63,
+                "chain_drafted": 105,
+                "chain_accepted": 62,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 0,
+                "list_tokens": 127,
+                "list_off": 4
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 64,
+                "head": {
+                  "rounds": 64,
+                  "drafted": 106,
+                  "accepted": 63
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 64,
+              "mapped_head_drafted": 106,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 63,
+                "native_chain_accepted": 62,
+                "nonchain_rounds": 1,
+                "api_minus_chain_accepted": 1,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            }
+          ],
+          "native_rule_activation_observed": true,
+          "per_decision_policy_observed": false,
+          "exact_mapped_rounds_and_drafted_verified": true,
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "accepted_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+          "acceptance_independently_reconciled": false,
+          "exact_independent_full_accepted_counter_proof": false,
+          "qualification_scope": "Native startup rule and exact mapped rounds/drafted plus lookup/grammar counters, with API all-neural acceptance and separately retained native chain acceptance"
+        },
+        "GPU_admission": {
+          "schema": "halogen0201.prefill4096-gpu-evidence.v1",
+          "receipts": [
+            {
+              "ordinal": 0,
+              "stage": "before",
+              "observations": 3,
+              "nonzero_observations": 1,
+              "admission_decision_seconds": 3.125,
+              "elapsed_seconds": 3.125,
+              "sha256": "4ed5b3782cd3e41aece36d4551200c83785e7ebb93aaf7824008bb18456ce97a"
+            },
+            {
+              "ordinal": 0,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.937999999965541,
+              "elapsed_seconds": 1.937999999965541,
+              "sha256": "674f61463435322dfaf1f86f55ba6dfc3d81a8c4f5224c056563b34e0c97a1d7"
+            },
+            {
+              "ordinal": 1,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.952999999979511,
+              "elapsed_seconds": 1.952999999979511,
+              "sha256": "4b79606707856578834c858ce1ec2db945e5d350defcccf908147969755b36e3"
+            },
+            {
+              "ordinal": 1,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.875,
+              "elapsed_seconds": 1.875,
+              "sha256": "a3c23037f39be372940c28200affdcd7eac29e0fdbc8b8886e1117ee7eb55f17"
+            },
+            {
+              "ordinal": 2,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 2.047000000020489,
+              "elapsed_seconds": 2.047000000020489,
+              "sha256": "d0b305e6973f06bab87ed52ec921e8fe7bd8a9bdb91043dd7c9e9f0098ce6a5f"
+            },
+            {
+              "ordinal": 2,
+              "stage": "after",
+              "observations": 3,
+              "nonzero_observations": 1,
+              "admission_decision_seconds": 3.422000000020489,
+              "elapsed_seconds": 3.422000000020489,
+              "sha256": "28b924430044afe7f9bd5bdea07b08d45a3ca346483e6ccea2608b4bcaf18ccc"
+            },
+            {
+              "ordinal": 3,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.952999999979511,
+              "elapsed_seconds": 1.952999999979511,
+              "sha256": "36d8570208a35407255ed81eac058876a86baa0e6bee65fb3fb121f369d7cb35"
+            },
+            {
+              "ordinal": 3,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.9380000000819564,
+              "elapsed_seconds": 1.9380000000819564,
+              "sha256": "11dbc299f1fd9dd8c76164c66e8437a1e281f05181fb97b08cc65526b2be958b"
+            }
+          ],
+          "all_pre_entry_and_post_checks_qualified": true,
+          "pre_request_wait_seconds_total": 9.077999999979511,
+          "post_request_wait_seconds_total": 9.173000000067987,
+          "PID_exemptions": [],
+          "ownership_attribution_claimed": false,
+          "included_in_HTTP_QPC_seconds": false,
+          "included_in_RAW_phase_seconds": false
+        },
+        "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+        "weights_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+        "weights_identity": {
+          "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+          "identity": {
+            "size": 66687678432,
+            "device": 2096,
+            "inode": 616828,
+            "mtime_ns": 1790979071648131939,
+            "ctime_ns": 1790979072020131920
+          },
+          "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+          "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+          "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+          "current_file_identity_matched": true,
+          "established_complete_file_receipt_reused": true,
+          "new_complete_file_rehash_claimed": false
+        },
+        "profile": {
+          "schema": 1,
+          "minimum_reserve_gib": 18,
+          "token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+          "backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\.local\\api-token.txt",
+          "concurrency": 1,
+          "body_bytes": 16777216,
+          "request_seconds": 1800,
+          "backend": {
+            "identifier": "halogen-v2",
+            "upstream": "http://127.0.0.1:8731",
+            "model": "halogen-qwen3.8-flash-next",
+            "checkpoint": "v2",
+            "context": 32768,
+            "expected": {
+              "status": "ok",
+              "version.api": "0.20.1",
+              "version.engine": "0.20.1",
+              "version.match": true,
+              "context": 32768,
+              "slot_ctx": 32768,
+              "kv_pool_positions": 32768,
+              "slots": 1,
+              "capability_probe": "ok",
+              "vision.enabled": false
+            },
+            "routes": [
+              "/v1/chat/completions",
+              "/v1/completions",
+              "/v1/responses",
+              "/v1/messages",
+              "/v1/messages/count_tokens"
+            ]
+          },
+          "engine": {
+            "kind": "halogen",
+            "directory": "backends/halogen-wsl2-0.20.1",
+            "checkpoint": "v2",
+            "context": 32768,
+            "prompt_cache": "Off",
+            "powershell": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "slots": 1,
+            "kv_pool_positions": 32768,
+            "launcher": "python",
+            "python_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+            "speculation_policy": {
+              "HALOGEN_PLD": "3,3",
+              "HALOGEN_MTP_GATE_P": "0.90"
+            },
+            "prefill_chunk": 2048,
+            "max_prefill_tokens": 2048,
+            "api_defaults": {
+              "enable_thinking": false,
+              "reasoning_effort": "low",
+              "max_thinking_tokens": 2048
+            },
+            "disable_vision": true,
+            "kernel_controls": {
+              "HALOGEN_DECODE_PREFETCH": 0,
+              "HALOGEN_PHASE_RAW": 1,
+              "HALOGEN_SERVE_TRACE": 1,
+              "HALOGEN_DRAFT_VOCAB_Q8": 0
+            }
+          },
+          "console_trace": true
+        },
+        "source_binding_verified": true,
+        "gpu_and_memory_quality_verified": true,
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "acceptance_independently_reconciled": false,
+        "native_trace_chain_kept_separate": true
+      },
+      "natural16384": {
+        "status": "complete",
+        "complete_cohort": true,
+        "phase_measurement_qualified": true,
+        "included_in_prefill_comparison": true,
+        "included_in_decode_comparison": false,
+        "epoch_nonce": "0201000000000002",
+        "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+        "profile_sha256": "3cb1845494facff04d2b905b8d0db73fdcaadcf336048180a1aba564d5292c4f",
+        "samples": [
+          {
+            "ordinal": 0,
+            "phase": "warmup_excluded",
+            "native_request_id": 8,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0",
+            "response_sha256": "c7994e2c9db4c8dd4f037967d7de82e2cd636ba4f95f449a7780687e9b1e42ea",
+            "journal_sha256": "fa9fd8258e9a4d2e058e4ef7f724092358abea2844b44be88564bc9c996f9da9",
+            "http_qpc_seconds": 18.8425273,
+            "scoped": {
+              "head": {
+                "rounds": 71,
+                "drafted": 109,
+                "accepted": 55
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 14951.4,
+              "predicted_ms": 3793.0,
+              "prompt_per_second": 1095.817,
+              "predicted_per_second": 33.746,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 14951356935,
+            "prefill_raw_lower_ns": 14951298946,
+            "prefill_raw_upper_ns": 14951302116,
+            "prefill_native_tps": 1095.8202704428982,
+            "prefill_raw_tps_lower": 1095.8242882716424,
+            "prefill_raw_tps_upper": 1095.824520610184,
+            "prefill_raw_tps_mid": 1095.824404440901,
+            "decode_native_ns": 3793033909,
+            "decode_raw_lower_ns": 3793018405,
+            "decode_raw_upper_ns": 3793020726,
+            "decode_native_tps": 33.74607321497584,
+            "decode_raw_tps_lower": 33.74619050262474,
+            "decode_raw_tps_upper": 33.74621115238169,
+            "decode_raw_tps_mid": 33.746200827500054
+          },
+          {
+            "ordinal": 1,
+            "phase": "measured",
+            "native_request_id": 9,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0",
+            "response_sha256": "4cc1117932790330c5529365866abc9979d5eb8426c207eca4691e71fd2cea5b",
+            "journal_sha256": "4baa8af804a548d96b583e91349a3af1af1ef4ae34af22e2e9453743ec87f341",
+            "http_qpc_seconds": 16.6034961,
+            "scoped": {
+              "head": {
+                "rounds": 71,
+                "drafted": 109,
+                "accepted": 55
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 13452.6,
+              "predicted_ms": 3101.4,
+              "prompt_per_second": 1217.906,
+              "predicted_per_second": 41.272,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 13452554167,
+            "prefill_raw_lower_ns": 13452501875,
+            "prefill_raw_upper_ns": 13452504935,
+            "prefill_native_tps": 1217.9099817483752,
+            "prefill_raw_tps_lower": 1217.914438921557,
+            "prefill_raw_tps_upper": 1217.9147159568784,
+            "prefill_raw_tps_mid": 1217.9145774392018,
+            "decode_native_ns": 3101428596,
+            "decode_raw_lower_ns": 3101414969,
+            "decode_raw_upper_ns": 3101418209,
+            "decode_native_tps": 41.27130321977595,
+            "decode_raw_tps_lower": 41.27144144203353,
+            "decode_raw_tps_upper": 41.27148455766675,
+            "decode_raw_tps_mid": 41.271462999838874
+          },
+          {
+            "ordinal": 2,
+            "phase": "measured",
+            "native_request_id": 10,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0",
+            "response_sha256": "9e375b057ae86f60a5507aace8f3335bba756917536872c88a988661298ae0a9",
+            "journal_sha256": "65f88cbfe1bcd5cee740b17c818103e2afe66b6ed87216b4024d077995f08146",
+            "http_qpc_seconds": 15.9221266,
+            "scoped": {
+              "head": {
+                "rounds": 71,
+                "drafted": 109,
+                "accepted": 55
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 12855.4,
+              "predicted_ms": 3034.7,
+              "prompt_per_second": 1274.484,
+              "predicted_per_second": 42.179,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 12855365569,
+            "prefill_raw_lower_ns": 12855315847,
+            "prefill_raw_upper_ns": 12855317847,
+            "prefill_native_tps": 1274.4872879779557,
+            "prefill_raw_tps_lower": 1274.4920191781548,
+            "prefill_raw_tps_upper": 1274.492217460645,
+            "prefill_raw_tps_mid": 1274.4921183193921,
+            "decode_native_ns": 3034683047,
+            "decode_raw_lower_ns": 3034670062,
+            "decode_raw_upper_ns": 3034672852,
+            "decode_native_tps": 42.179034191573024,
+            "decode_raw_tps_lower": 42.17917589226847,
+            "decode_raw_tps_upper": 42.17921467075125,
+            "decode_raw_tps_mid": 42.179195281500945
+          },
+          {
+            "ordinal": 3,
+            "phase": "measured",
+            "native_request_id": 11,
+            "native_slot": 0,
+            "actual_input_tokens": 16384,
+            "actual_output_tokens": 128,
+            "processed_prompt_tokens": 16384,
+            "output_cap": 128,
+            "generated_begin": 1,
+            "generated_delta": 127,
+            "decode_numerator": 128,
+            "finish_reason": "length",
+            "output_sha256": "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0",
+            "response_sha256": "70b8d3e70751a3725d71d261d9371ec5363b5aed406bc6a2089b1700709f18d0",
+            "journal_sha256": "8b5e55e94a154534ce8cfdade1a768103dde4585ff9b05065528722ac2994523",
+            "http_qpc_seconds": 16.2254025,
+            "scoped": {
+              "head": {
+                "rounds": 71,
+                "drafted": 109,
+                "accepted": 55
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "api_reported_timings": {
+              "prompt_n": 16384,
+              "predicted_n": 128,
+              "prompt_ms": 13162.9,
+              "predicted_ms": 3024.3,
+              "prompt_per_second": 1244.711,
+              "predicted_per_second": 42.324,
+              "cache_n": 0
+            },
+            "api_phase_clock_qualified": false,
+            "prefill_native_ns": 13162854908,
+            "prefill_raw_lower_ns": 13162803337,
+            "prefill_raw_upper_ns": 13162805987,
+            "prefill_native_tps": 1244.7147761267415,
+            "prefill_raw_tps_lower": 1244.7194022445785,
+            "prefill_raw_tps_upper": 1244.7196528375816,
+            "prefill_raw_tps_mid": 1244.7195275410675,
+            "decode_native_ns": 3024296962,
+            "decode_raw_lower_ns": 3024283927,
+            "decode_raw_upper_ns": 3024286947,
+            "decode_native_tps": 42.32388604965308,
+            "decode_raw_tps_lower": 42.324026206234194,
+            "decode_raw_tps_upper": 42.32406847030801,
+            "decode_raw_tps_mid": 42.32404733826055
+          }
+        ],
+        "summary": {
+          "excluded_warmups": 1,
+          "measured_repetitions": 3,
+          "mean_raw_tps": {
+            "prefill": {
+              "lower": 1245.7086201147633,
+              "mid": 1245.7087410998872,
+              "upper": 1245.708862085035
+            },
+            "decode": {
+              "lower": 41.92488118017873,
+              "mid": 41.92490187320012,
+              "upper": 41.924922566242
+            }
+          },
+          "native_clock_observations": {
+            "prefill_mean_tps": 1245.7040152843574,
+            "decode_mean_tps": 41.924741153667355
+          },
+          "api_reported_observations": {
+            "prefill_mean_tps": 1245.7003333333332,
+            "decode_mean_tps": 41.925
+          },
+          "actual_input_tokens": [
+            16384,
+            16384,
+            16384
+          ],
+          "actual_output_tokens": [
+            128,
+            128,
+            128
+          ],
+          "output_caps": [
+            128,
+            128,
+            128
+          ],
+          "mean_http_qpc_seconds": 16.250341733333336,
+          "pooled_scoped_counters": {
+            "head": {
+              "rounds": 213,
+              "drafted": 327,
+              "accepted": 165,
+              "acceptance_fraction": 0.5045871559633027
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "acceptance_independently_reconciled": false,
+          "api_phase_clock_qualified": false,
+          "pooled_native_chain_counters": {
+            "rounds": 213,
+            "drafted": 327,
+            "accepted": 165,
+            "acceptance_fraction": 0.5045871559633027
+          },
+          "whole_http_output_tps": 7.87675743073399
+        },
+        "output_sha256_values": [
+          "0cf493d551bddf5f93b2f5cd3a303f086585e08b81b6bca2bb357f03c54d07c0"
+        ],
+        "within_cohort_output_variation": false,
+        "evidence": {
+          "collector_handle_sha256": "e39e24def7e6d5856e9d90ebb682fd9eaabb7ea17fdc1e08b03fd52f7881d8c2",
+          "raw_report_sha256": "6cfaa0510b7c2ce0204d72a21d7c3e2e275e495a17d294b212edbe730a3291b4",
+          "qpc_audit_sha256": "2792c90a5ebc92f3e09ada3e51f25027d9f6f1771bd8c1a4058f3c7637a74593",
+          "request_sha256": "0d9cd3c7820d39ebb3c6f8ec4b712b8301e91d2eb2b97c52d9be678699ce6b3d",
+          "binding_sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+        },
+        "mtp_cost_trace": {
+          "schema": "halogen0201.native-prefill-trace.v1",
+          "expected_rule": "gate",
+          "startup_banner": {
+            "marker": "confidence gate",
+            "count": 1
+          },
+          "samples": [
+            {
+              "id": 8,
+              "native_trace": {
+                "id": 8,
+                "neural_rounds": 71,
+                "legacy_accepted": 40,
+                "chain_rounds": 71,
+                "chain_drafted": 109,
+                "chain_accepted": 55,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 71,
+                "head": {
+                  "rounds": 71,
+                  "drafted": 109,
+                  "accepted": 55
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 71,
+              "mapped_head_drafted": 109,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 55,
+                "native_chain_accepted": 55,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 9,
+              "native_trace": {
+                "id": 9,
+                "neural_rounds": 71,
+                "legacy_accepted": 40,
+                "chain_rounds": 71,
+                "chain_drafted": 109,
+                "chain_accepted": 55,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 71,
+                "head": {
+                  "rounds": 71,
+                  "drafted": 109,
+                  "accepted": 55
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 71,
+              "mapped_head_drafted": 109,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 55,
+                "native_chain_accepted": 55,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 10,
+              "native_trace": {
+                "id": 10,
+                "neural_rounds": 71,
+                "legacy_accepted": 40,
+                "chain_rounds": 71,
+                "chain_drafted": 109,
+                "chain_accepted": 55,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 71,
+                "head": {
+                  "rounds": 71,
+                  "drafted": 109,
+                  "accepted": 55
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 71,
+              "mapped_head_drafted": 109,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 55,
+                "native_chain_accepted": 55,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            },
+            {
+              "id": 11,
+              "native_trace": {
+                "id": 11,
+                "neural_rounds": 71,
+                "legacy_accepted": 40,
+                "chain_rounds": 71,
+                "chain_drafted": 109,
+                "chain_accepted": 55,
+                "lookup_rounds": 0,
+                "lookup_drafted": 0,
+                "lookup_accepted": 0,
+                "grammar_rounds": 0,
+                "grammar_drafted": 0,
+                "grammar_accepted": 0,
+                "serial": 1,
+                "list_tokens": 127,
+                "list_off": 1
+              },
+              "api_speculation": {
+                "drafter": "mtp",
+                "rounds": 71,
+                "head": {
+                  "rounds": 71,
+                  "drafted": 109,
+                  "accepted": 55
+                },
+                "lookup": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                },
+                "grammar": {
+                  "rounds": 0,
+                  "drafted": 0,
+                  "accepted": 0
+                }
+              },
+              "mapped_head_rounds": 71,
+              "mapped_head_drafted": 109,
+              "accepted_crosscheck": {
+                "mode": "unavailable",
+                "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+                "api_all_neural_head_accepted": 55,
+                "native_chain_accepted": 55,
+                "nonchain_rounds": 0,
+                "api_minus_chain_accepted": 0,
+                "cross_scope_accepted_bounds": null,
+                "acceptance_independently_reconciled": false,
+                "exact_independent_full_accepted_counter_proof": false
+              }
+            }
+          ],
+          "native_rule_activation_observed": true,
+          "per_decision_policy_observed": false,
+          "exact_mapped_rounds_and_drafted_verified": true,
+          "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+          "accepted_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+          "acceptance_independently_reconciled": false,
+          "exact_independent_full_accepted_counter_proof": false,
+          "qualification_scope": "Native startup rule and exact mapped rounds/drafted plus lookup/grammar counters, with API all-neural acceptance and separately retained native chain acceptance"
+        },
+        "GPU_admission": {
+          "schema": "halogen0201.prefill4096-gpu-evidence.v1",
+          "receipts": [
+            {
+              "ordinal": 0,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.8900000000139698,
+              "elapsed_seconds": 1.8900000000139698,
+              "sha256": "00e4f5d5b9209be5a9ed5764d2cfb558f6347c1584bbc360cf21a2636357c32c"
+            },
+            {
+              "ordinal": 0,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 2.0929999999934807,
+              "elapsed_seconds": 2.0929999999934807,
+              "sha256": "5095ab3177873351300093415ff25c3fe3e56fb58c74ab73729c0e300a7d0b18"
+            },
+            {
+              "ordinal": 1,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.9059999999590218,
+              "elapsed_seconds": 1.9059999999590218,
+              "sha256": "abf35bdc2a9d92511e8093a347bbecda00610bb26e2bc2076354970161d616bf"
+            },
+            {
+              "ordinal": 1,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.797000000020489,
+              "elapsed_seconds": 1.797000000020489,
+              "sha256": "e0485a6266d93eb57ea37c601cfd9b15728917a506cbd94d1e36d412a3b15224"
+            },
+            {
+              "ordinal": 2,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.812000000034459,
+              "elapsed_seconds": 1.812000000034459,
+              "sha256": "2b58e277da3bec47dffda5ac3abdc57c0597c7c52d1792a34619a47caf421106"
+            },
+            {
+              "ordinal": 2,
+              "stage": "after",
+              "observations": 3,
+              "nonzero_observations": 1,
+              "admission_decision_seconds": 3.0459999999729916,
+              "elapsed_seconds": 3.0459999999729916,
+              "sha256": "e36899e87f3a5c0447bcdc885f11202975a8802b3ce5fa3fbe7cd5f6b8c6eeef"
+            },
+            {
+              "ordinal": 3,
+              "stage": "before",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.765999999945052,
+              "elapsed_seconds": 1.765999999945052,
+              "sha256": "78a7afe7ba46a7461d01984b66235ce6016adb895f62cde8b13187ae369da409"
+            },
+            {
+              "ordinal": 3,
+              "stage": "after",
+              "observations": 2,
+              "nonzero_observations": 0,
+              "admission_decision_seconds": 1.9059999999590218,
+              "elapsed_seconds": 1.9059999999590218,
+              "sha256": "1821ddceab268bb3ab6f7ca7a0adb974a146ec2ba83336af6a5d9e22f8edc838"
+            }
+          ],
+          "all_pre_entry_and_post_checks_qualified": true,
+          "pre_request_wait_seconds_total": 7.3739999999525025,
+          "post_request_wait_seconds_total": 8.841999999945983,
+          "PID_exemptions": [],
+          "ownership_attribution_claimed": false,
+          "included_in_HTTP_QPC_seconds": false,
+          "included_in_RAW_phase_seconds": false
+        },
+        "engine_sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577",
+        "weights_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+        "weights_identity": {
+          "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+          "identity": {
+            "size": 66687678432,
+            "device": 2096,
+            "inode": 616828,
+            "mtime_ns": 1790979071648131939,
+            "ctime_ns": 1790979072020131920
+          },
+          "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+          "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+          "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+          "current_file_identity_matched": true,
+          "established_complete_file_receipt_reused": true,
+          "new_complete_file_rehash_claimed": false
+        },
+        "profile": {
+          "schema": 1,
+          "minimum_reserve_gib": 18,
+          "token_file": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-api-token.txt",
+          "backend_token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\.local\\api-token.txt",
+          "concurrency": 1,
+          "body_bytes": 16777216,
+          "request_seconds": 1800,
+          "backend": {
+            "identifier": "halogen-v2",
+            "upstream": "http://127.0.0.1:8731",
+            "model": "halogen-qwen3.8-flash-next",
+            "checkpoint": "v2",
+            "context": 32768,
+            "expected": {
+              "status": "ok",
+              "version.api": "0.20.1",
+              "version.engine": "0.20.1",
+              "version.match": true,
+              "context": 32768,
+              "slot_ctx": 32768,
+              "kv_pool_positions": 32768,
+              "slots": 1,
+              "capability_probe": "ok",
+              "vision.enabled": false
+            },
+            "routes": [
+              "/v1/chat/completions",
+              "/v1/completions",
+              "/v1/responses",
+              "/v1/messages",
+              "/v1/messages/count_tokens"
+            ]
+          },
+          "engine": {
+            "kind": "halogen",
+            "directory": "backends/halogen-wsl2-0.20.1",
+            "checkpoint": "v2",
+            "context": 32768,
+            "prompt_cache": "Off",
+            "powershell": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "slots": 1,
+            "kv_pool_positions": 32768,
+            "launcher": "python",
+            "python_executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\venv\\Scripts\\python.exe",
+            "speculation_policy": {
+              "HALOGEN_PLD": "3,3",
+              "HALOGEN_MTP_GATE_P": "0.90"
+            },
+            "prefill_chunk": 2048,
+            "max_prefill_tokens": 2048,
+            "api_defaults": {
+              "enable_thinking": false,
+              "reasoning_effort": "low",
+              "max_thinking_tokens": 2048
+            },
+            "disable_vision": true,
+            "kernel_controls": {
+              "HALOGEN_DECODE_PREFETCH": 0,
+              "HALOGEN_PHASE_RAW": 1,
+              "HALOGEN_SERVE_TRACE": 1,
+              "HALOGEN_DRAFT_VOCAB_Q8": 0
+            }
+          },
+          "console_trace": true
+        },
+        "source_binding_verified": true,
+        "gpu_and_memory_quality_verified": true,
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "acceptance_independently_reconciled": false,
+        "native_trace_chain_kept_separate": true
+      }
+    }
+  },
+  "weights_identity_by_arm": {
+    "before": {
+      "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+      "identity": {
+        "size": 66687678432,
+        "device": 2096,
+        "inode": 616828,
+        "mtime_ns": 1790979071648131939,
+        "ctime_ns": 1790979072020131920
+      },
+      "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+      "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+      "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+      "current_file_identity_matched": true,
+      "established_complete_file_receipt_reused": true,
+      "new_complete_file_rehash_claimed": false
+    },
+    "candidate": {
+      "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+      "identity": {
+        "size": 66687678432,
+        "device": 2096,
+        "inode": 616828,
+        "mtime_ns": 1790979071648131939,
+        "ctime_ns": 1790979072020131920
+      },
+      "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+      "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+      "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+      "current_file_identity_matched": true,
+      "established_complete_file_receipt_reused": true,
+      "new_complete_file_rehash_claimed": false
+    },
+    "after": {
+      "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+      "identity": {
+        "size": 66687678432,
+        "device": 2096,
+        "inode": 616828,
+        "mtime_ns": 1790979071648131939,
+        "ctime_ns": 1790979072020131920
+      },
+      "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+      "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+      "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+      "current_file_identity_matched": true,
+      "established_complete_file_receipt_reused": true,
+      "new_complete_file_rehash_claimed": false
+    }
+  },
+  "methodology": {
+    "requests_per_case_arm": 4,
+    "excluded_warmups": 1,
+    "measured_repetitions": 3,
+    "RAW_observer_overhead_included": true,
+    "clock_rescaling_applied": false,
+    "API_phase_clock_qualified": false,
+    "best_individual_run_selected": false,
+    "prefill": "Input-matched RAW phases require all six complete cohorts and both2048 bookends.",
+    "decode": "Causal decode deltas require exact128 output tokens and matching output, finish and cap semantics across arms.",
+    "acceptance": "Pooled API all-neural head accepted/drafted; native-chain counters remain separate.",
+    "acceptance_independently_reconciled": false,
+    "weights": "Established complete-file receipt reused after matching saved current-file identity before and after each arm."
+  },
+  "acceleration_automatically_promoted": false,
+  "full_goal_achieved": false
+}

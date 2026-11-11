@@ -93,6 +93,17 @@ leave causal decode comparisons open. The online profile uses paired 2048
 while development continues toward higher prefill and decode together.
 [Complete prefill study](../benchmarks/halogen0201-prefill8192-20261111.md).
 
+The following paired 2048 / 4096 / 2048 comparison completed all six cohorts
+on 11 November. At 8K, candidate prefill reached 1314.53 tok/s, with observed
+decode of 42.90 tok/s and API head acceptance of 174/330 = 52.73%. At 16K,
+the corresponding values were 1368.08 tok/s, 41.98 tok/s and 174/339 = 51.33%.
+Prefill exceeded both controls by 11.94–13.91% and 9.82–12.00%. Candidate
+outputs differ from their controls, leaving causal decode comparisons open.
+API acceptance retains its source-derived scope and independent reconstruction
+remains open. All 26 focused CPU tests pass. The current online server uses
+the exact paired-2048 normal profile.
+[Complete 4096 comparison](../benchmarks/halogen0201-prefill4096-20261111.md).
+
 The acceleration objective remains unachieved. A separate default-off native
 [cost-aware MTP candidate](../../experiments/halogen0201-native-cost/README.md)
 is implemented as an inert source patch at fixed Q4, with twelve portable tests
@@ -147,14 +158,14 @@ Previous slower NPU consumers remain disabled. GPU kernel and alternative-draft
 ideas are prioritized with their transfer limits in the
 [current opportunity review](halogen0201-opportunities-20261110.md).
 
-The bounded official source check at **22:46:24 UTC on 10 November** confirms
+The bounded official source check at **00:49:28 UTC on 11 November** confirms
 Halogen 0.20.1 as latest. Both image tags resolve to the installed immutable
 digest. AMD still lists 26.10.2 Optional / 26.10.1 Recommended, and Ryzen AI
-remains 1.9. The next source check is due no earlier than **00:46:24 UTC on
+remains 1.9. The next source check is due no earlier than **02:49:28 UTC on
 11 November**. The reviewed host driver installation remains recorded
 separately. [Official Halogen changelog](https://github.com/peonist-ai/halogen-flash-server/blob/d2f4286fc97fd1f75cd765714dbc50524004356f/CHANGELOG.md).
 
-After the completed comparison, fresh authenticated checks at **23:00 UTC**
+After the completed comparison, fresh authenticated checks at **01:10 UTC on 11 November**
 verify API and engine 0.20.1 and a successful `READY` chat response on port 8840.
 The normal persistent console remains open, with model alias `halogen-v2` and
 the existing ServiceNow credential.
