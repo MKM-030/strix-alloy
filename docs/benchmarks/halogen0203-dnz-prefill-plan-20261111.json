@@ -1,0 +1,69 @@
+{
+  "schema": "halogen0203.DNZ-prospective-protocol.v1",
+  "utc": "2026-11-11T18:30:42.018662+00:00",
+  "engine_sha256": "bf84053705d1e89c214ff64c79ad1276c5fe353d80a9bb0f38ef3bac6645b97c",
+  "normal_profile": {
+    "path": "server\\.local\\halogen-update-20261111\\primary0203\\serving0203-text32k-8192.json",
+    "bytes": 1860,
+    "sha256": "dfa4b82b5de41cadbb3d3a5ed89b243d53112cbf9729e2de45c5f0e3958cb430"
+  },
+  "source_proof": {
+    "path": "server\\.local\\halogen-update-20261111\\primary0203\\gpu-opportunity-next\\dn-z-stream-followup-v1.json",
+    "bytes": 9448,
+    "sha256": "83a2973b4e89e6b4ae1256f041ec606f7b9a3d12ea79da8907c4fa3d23a735d0"
+  },
+  "counter_contract": {
+    "path": "server\\.local\\halogen-update-20261111\\primary0203\\gpu-opportunity-next\\dn-z-counter-contract-v1.json",
+    "bytes": 2148,
+    "sha256": "d8dab536c07f90a6fd89e81c41a84274be3e73b5dacc02000043f9ff576702f5"
+  },
+  "counter_preflight": {
+    "path": "server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-counter-read-preflight-v1.json",
+    "bytes": 558,
+    "sha256": "a42be6fa8bef547c25847382c182e3dbab4a06b2c7494343f08f82cb59216b7c"
+  },
+  "natural2048": {
+    "path": "server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\natural2048-v1\\manifest.json",
+    "bytes": 3936,
+    "sha256": "8e6f9ffe915a969f3e00c46e176666f0c4390d730e4f4843fc0df12ccb955765"
+  },
+  "request2048": {
+    "path": "server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\natural2048-v1\\request-natural2048.json",
+    "bytes": 9172,
+    "sha256": "d7ae756957ef499de88880aba9c6c89da076cad6bcad70d120c54431c7bc071b"
+  },
+  "request8192": {
+    "path": "server\\.local\\halogen-update-20261107\\primary0191\\natural8192-prep\\request-natural8192.json",
+    "bytes": 34927,
+    "sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d"
+  },
+  "arms": [
+    0,
+    1,
+    0
+  ],
+  "excluded_warmup_per_arm": 1,
+  "measured_per_arm": 3,
+  "input_sizes_separately_qualified": [
+    2048,
+    8192
+  ],
+  "output_tokens": 128,
+  "NPU_enabled": false,
+  "EXTERNAL_STREAM_omitted": true,
+  "thresholds_GiB": {
+    "startup_physical": 30,
+    "startup_commit": 131,
+    "request_physical": 22,
+    "request_commit": 22,
+    "runtime_physical": 18,
+    "runtime_commit": 18
+  },
+  "new_model_requests": 0,
+  "new_prefill_decode_acceptance": null,
+  "source_implementation_ready": false,
+  "root_execution_seal_required": true,
+  "normal_left_online": true,
+  "standing_user_lifecycle_authorization": true,
+  "root_execution_seal_complete": false
+}
