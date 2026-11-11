@@ -1,0 +1,86 @@
+{
+  "schema": "halogen0201.real-NPU-unused-head-cohort.plan.v1",
+  "created_utc": "2026-11-11T12:27:39.609126+00:00",
+  "prospective": true,
+  "root_binding": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-v1\\bindings-root-executed-v1.json",
+    "bytes": 25921,
+    "sha256": "9dd75285d367f767b1f873dc59150ade626947119b1c779177847ef80cd6b5c1"
+  },
+  "source_archive_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_flm_streaming_producer\\core_append_live_v4\\source-manifest.json",
+    "bytes": 3207,
+    "sha256": "300fbbe62d27c2d2a8fb5009e09b978e997433c26689dbc05813c982d9a572f5"
+  },
+  "live_v4_preparation": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-v1\\live-v4-preparation-v1.json",
+    "bytes": 4573,
+    "sha256": "964daadf0f5935b214ee74d51decf4dd530090bad6171d2d7e3e81918ec89073"
+  },
+  "adapter_preparation": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-v1\\live-adapter-preparation-v1.json",
+    "bytes": 6588,
+    "sha256": "2385c8f757cf66ad99a48b6cb053e53774f892100dd28ce5f853c6ad076fce89"
+  },
+  "independent_review": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-v1\\live-v4-independent-review-v1.json",
+    "bytes": 8434,
+    "sha256": "333795cbf4c1d208c76c77142711115c51371ab0c656f9be83b6e31fd53e9d71"
+  },
+  "qualified_component_audit": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-component-v1\\Root-terminal-audit-v1.json",
+    "bytes": 2709,
+    "sha256": "ee79c9fccc1456c1911e3ff3470e0787d09a760d2bd9b5930adecb86e708115b"
+  },
+  "qualified_component_reduction_percent": 37.51390122212426,
+  "component_to_engine_tok_s_conversion": false,
+  "normal_profile": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-serving-promotion-prep\\profile-8192.json",
+    "bytes": 1797,
+    "sha256": "750cb82c02d7e589ef0d02f0ef77ca42798d9e09dc0c4c8a8580226008c306c8"
+  },
+  "normal_context": 32768,
+  "experimental_context": 32768,
+  "prefill_chunk": 8192,
+  "max_prefill_tokens": 8192,
+  "actual_input_tokens": 8192,
+  "output_tokens": 128,
+  "temperature": 0,
+  "seed": 1,
+  "cache": "Off/no_store",
+  "thinking": false,
+  "MTP_gate_p": 0.9,
+  "PLD": "3,3",
+  "arms": [
+    "stock_before",
+    "NPU_unused_head_candidate",
+    "stock_after"
+  ],
+  "excluded_warmups_per_arm": 1,
+  "measured_requests_per_arm": 3,
+  "requires_complete_bracket_and_exact_T_output": true,
+  "admission": {
+    "GPU_start_GiB": [
+      30,
+      131
+    ],
+    "long_NPU_entry_GiB": [
+      22,
+      22
+    ],
+    "runtime_GiB": [
+      18,
+      18
+    ],
+    "same_idle_handle_wait_limit_seconds": 120,
+    "zero_GPU_frames": 2,
+    "GPU_PID_exemptions": []
+  },
+  "new_output_directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1",
+  "earlier_failed_series_preserved": true,
+  "automatic_retries": 0,
+  "restore_normal_server_8840_and_keep_online": true,
+  "normal_NPU_enabled_afterwards": false,
+  "engine_gain_qualified": false,
+  "full_goal_achieved": false
+}
