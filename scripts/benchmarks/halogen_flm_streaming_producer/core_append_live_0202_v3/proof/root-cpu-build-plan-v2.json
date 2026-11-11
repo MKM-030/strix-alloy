@@ -1,0 +1,257 @@
+{
+  "schema": "halogen0202.real-v4-Root-CPU-build-plan.v2",
+  "source_only": true,
+  "rejected_previous_build": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\root-cpu-build-v1\\handle.json",
+  "previous_v1_DSO_must_never_load": true,
+  "Root_create_fresh_output_directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\root-cpu-build-v2",
+  "commands": [
+    {
+      "label": "core-object",
+      "argv": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fPIC",
+        "-fno-builtin",
+        "-fno-stack-protector",
+        "-fno-tree-loop-distribute-patterns",
+        "-mgeneral-regs-only",
+        "-c",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/stream_consumer.c",
+        "-o",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/core.o"
+      ]
+    },
+    {
+      "label": "installer-object",
+      "argv": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fPIC",
+        "-fno-builtin",
+        "-fno-stack-protector",
+        "-fno-tree-loop-distribute-patterns",
+        "-mgeneral-regs-only",
+        "-c",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/cold_install.c",
+        "-o",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/installer.o"
+      ]
+    },
+    {
+      "label": "relay-object",
+      "argv": [
+        "gcc",
+        "-fPIC",
+        "-c",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/stream_relay.S",
+        "-o",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/relay.o"
+      ]
+    },
+    {
+      "label": "consumer-dso",
+      "argv": [
+        "gcc",
+        "-shared",
+        "-Wl,-z,defs,-z,relro,-z,now,-z,noexecstack",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/core.o",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/installer.o",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/relay.o",
+        "-ldl",
+        "-o",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/libhgn0202-stream.so"
+      ]
+    },
+    {
+      "label": "core-fixture-build",
+      "argv": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fPIC",
+        "-fno-builtin",
+        "-fno-stack-protector",
+        "-fno-tree-loop-distribute-patterns",
+        "-mgeneral-regs-only",
+        "-DHGN0202_STREAM_TEST=1",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/stream_consumer.c",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/test_stream_consumer.c",
+        "-o",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/test-stream-consumer"
+      ]
+    },
+    {
+      "label": "core-fixture-run",
+      "argv": [
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/test-stream-consumer"
+      ]
+    },
+    {
+      "label": "relay-fixture-build",
+      "argv": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fPIC",
+        "-fno-builtin",
+        "-fno-stack-protector",
+        "-fno-tree-loop-distribute-patterns",
+        "-mgeneral-regs-only",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/stream_relay.S",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/test_stream_relay.c",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/test_stream_relay.S",
+        "-o",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/test-stream-relay"
+      ]
+    },
+    {
+      "label": "relay-fixture-run",
+      "argv": [
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/test-stream-relay"
+      ]
+    },
+    {
+      "label": "cold-address-fixture-build",
+      "argv": [
+        "gcc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fPIC",
+        "-fno-builtin",
+        "-fno-stack-protector",
+        "-fno-tree-loop-distribute-patterns",
+        "-mgeneral-regs-only",
+        "-Wno-unused-function",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/test_cold_addresses.c",
+        "-o",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/test-cold-addresses"
+      ]
+    },
+    {
+      "label": "cold-address-fixture-run",
+      "argv": [
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/test-cold-addresses",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/extracted/flash_serve",
+        "0x1f96dc6",
+        "0x1f96dcd",
+        "0x1f9734d"
+      ]
+    },
+    {
+      "label": "core-undefined",
+      "argv": [
+        "nm",
+        "-u",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/core.o"
+      ]
+    },
+    {
+      "label": "core-disassembly",
+      "argv": [
+        "objdump",
+        "-d",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/core.o"
+      ]
+    },
+    {
+      "label": "consumer-dynamic-inspect",
+      "argv": [
+        "readelf",
+        "-d",
+        "/mnt/c/Projects/strix-alloy-clean/server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-v2/libhgn0202-stream.so"
+      ]
+    }
+  ],
+  "consumer_sources": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\cold_addresses.h",
+      "bytes": 861,
+      "sha256": "35f528b6146f083faf7a6faaf30888c267b4705794a294a70fe423c0ecdc28b9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\cold_install.c",
+      "bytes": 7892,
+      "sha256": "3eddd05a65c71a86aae4451160fe8ac4c8873c5254c6aa99aa0d9a525546770f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\native_pins.h",
+      "bytes": 867,
+      "sha256": "4f09998beca1533536e9d69aad3a060ec02c44eed078b7afb2835e52d4c80ede"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\sha256_core.h",
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\stream_consumer.c",
+      "bytes": 11738,
+      "sha256": "f6266054bec8d9270e8e416f6fd30d4249fcc07c8e64ab55f4bbc90a4243e0f2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\stream_consumer.h",
+      "bytes": 2961,
+      "sha256": "c0ec1210709ea573f8ed01906a4720c278c53c972d8372ba41d3363f364e776e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\stream_relay.S",
+      "bytes": 1412,
+      "sha256": "f8f0673c570c8f86d0ab860a4e3cb888e3c21e96b0f922e412ccc8d06f266601"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_cold_addresses.c",
+      "bytes": 2453,
+      "sha256": "0768f7229e19cdcab171b752f33c61b8997774133df1404e35ade55ed0ed6910"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_cold_addresses.py",
+      "bytes": 2454,
+      "sha256": "046cdf5b536fcff413773e111785a2a70cf86934febcbf6d6987f82f7b94d4a6"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_stream_consumer.c",
+      "bytes": 5325,
+      "sha256": "0d55478962e9fb4539afdfdbe6050dab7d1b4ebc560315ca416474dc78f74214"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_stream_relay.c",
+      "bytes": 3267,
+      "sha256": "8c2730578c85b188629165fc5dcf1331f04a42c326371137a8bb3429e6b3f322"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\consumer-native\\test_stream_relay.S",
+      "bytes": 1843,
+      "sha256": "5cefcbb4bb3dab63f4b06fe61907b3613de0c26a8146dc26d299752a62349491"
+    }
+  ],
+  "required_source_audit_before_activation": "Actual core.o disassembly must contain no xmm/ymm/zmm/x87/opmask dependencies; nm -u core.o empty. Source independently checks closure and constructor uses generated fresh pin rows. Do not activate until both pass.",
+  "fresh_native_contract": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\native-contract.json",
+    "bytes": 38154,
+    "sha256": "32f8ac8920ff486eaa1606bbfa6b7a17d9019479edfac06e12ed4b7428aae462"
+  },
+  "RAW_binary_rebuild_needed": false,
+  "existing_RAW": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\real-npu-v4-prep\\raw\\observer\\libhgn0202_raw_side.so",
+    "bytes": 21432,
+    "sha256": "c211cd808a94c947931deadfc1542ae17e0ef773f49fe3871a62f2c5d1371a60"
+  },
+  "execution_by_this_agent": false
+}

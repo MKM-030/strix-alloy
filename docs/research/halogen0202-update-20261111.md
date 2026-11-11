@@ -54,3 +54,11 @@ The bare launcher now selects 0.20.2 with paired 8K prefill controls.
 paired 2K settings. [Machine-readable evidence](halogen0202-update-20261111.json)
 records source/build/install/runtime receipts. The wider acceleration goal
 remains unachieved; no NPU engine-speed gain is inferred from component timings.
+
+The subsequent [real-NPU attempt](../benchmarks/halogen0202-real-npu-core-append-20261111.md)
+stopped after its excluded stock warmup when physical availability stayed below
+22 GiB for 120 seconds. No NPU helper or measured request started. Normal 0.20.2
+serving and its exact 47-source baseline were restored. The corrected,
+default-off [integration source archive](../../scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/README.md)
+preserves the fresh address and integer-register fixes; its CPU checks establish
+no live speed gain.

@@ -1,0 +1,472 @@
+{
+  "schema": "halogen0202.corrected-v3-public-source-archive.v1",
+  "utc": "2026-11-11T14:57:18.032612+00:00",
+  "default_enabled": false,
+  "source_only": true,
+  "standalone_installer": false,
+  "members": {
+    "cohort_campaign_core_append_v1.py": "02e749bc38a68784a8e7bde5b62503154054c8809232f17eceb829c7c13e9c45",
+    "measure_helpers.py": "629cc1b91ba7e0be24f4ebec001c52c09399c1d798ce66d0eccfffb22977dbaa",
+    "prepare_overlay.py": "f2e5f2fe42314a71d8db521199a01d81e25510ef2f67797527d3a7e4a5c0efae",
+    "prepare_bindings.py": "fe0f6baaaca8d08443723e48985f838687824cc8658a1352088d0a6cf8ef0d0d",
+    "test_framework_binding.py": "61228f7948eed82b5a16696a33bf6bf5454a9f536c79e9d6601328ef2cb5e71f",
+    "test_live_core_adapter.py": "2823dcf4b4e20b97bf3fa0747be64f89d7cc3b0b1c693f3521093aa7aeceb51d",
+    "cohort/cohort_campaign.py": "49c93ac361b9fe297dc4d31b63b9b9224ee1991fd8479ae7b4a107ffaffe3cf8",
+    "cohort/cohort_campaign_admission_v2.py": "0455a6e9efdb8a2f673367ae39b76f6861545d39f55501e3ebced3b403166c9d",
+    "cohort/evidence.py": "4705683b0d6052e96f860ef5d396e0be69db08d56a42a558884deb81a7e05d54",
+    "cohort/owned_producer.py": "612ac2d603b946b828d24f410a32ba36225c0d1a18c074d5e50d47ecb375bae2",
+    "api/api_observation.py": "282bdc002980254b8cd81bed1bd5bb6b8438d5b70c3f61d1e1479fac0564b5ab",
+    "api/api_stream_feedback.py": "a478014a5621b65d01effbbbb94ca3dd5eb88d999c870ede2395067e3ba2d287",
+    "api/native_api_fixture.py": "2053afd35c8ee9d0960372a6bac23a4ae8d8c7050e277613d22d3774f4a5626c",
+    "api/reverse_stream_publisher_v2.py": "5f654bb348a0126e54198006652715241af07d1befbf79345a2ffc328b6ea9d3",
+    "api/stream_publisher_v2.py": "cb467822d7dd8b902feb99dcac61d41a64b15c74a71c1a868e4d9cb63c581790",
+    "api/test_fresh_api.py": "94193043ca0081a5ad0654a700609f31def478a630b21a81f8dcf0af822cd1fb",
+    "api/token_feedback.py": "86ba4bd84d491fcc6743277a2e2b423579281dd447a52cf3a5009852abe59f9c",
+    "api/wire.py": "26b0d86910bbcbae5e283d1dafdb291836ea528f86d2ee101b13c72ed3516dc6",
+    "producer/service.py": "7a1e537099248541646a7f32ff90a88b9b73c0cbcdd4abf623840984e2771a18",
+    "producer/service_request_scoped_v4.py": "4a38a7c0184686968ac8bc02890163be803c282477feb6b2a7b9fb2039a61d51",
+    "producer/test_service_v4.py": "8cbb5d0a1951e150db2302e02188ba2f6c5d68a2bf134e4d7243f73a4c1cd95a",
+    "producer/test_target_identity.py": "7a41491a815c9a8ed6dfb8be95a00ffb786a32318a4d6f3a4e2058193837a6e9",
+    "consumer-native/cold_addresses.h": "35f528b6146f083faf7a6faaf30888c267b4705794a294a70fe423c0ecdc28b9",
+    "consumer-native/cold_install.c": "3eddd05a65c71a86aae4451160fe8ac4c8873c5254c6aa99aa0d9a525546770f",
+    "consumer-native/native_pins.h": "4f09998beca1533536e9d69aad3a060ec02c44eed078b7afb2835e52d4c80ede",
+    "consumer-native/sha256_core.h": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e",
+    "consumer-native/stream_consumer.c": "f6266054bec8d9270e8e416f6fd30d4249fcc07c8e64ab55f4bbc90a4243e0f2",
+    "consumer-native/stream_consumer.h": "c0ec1210709ea573f8ed01906a4720c278c53c972d8372ba41d3363f364e776e",
+    "consumer-native/stream_relay.S": "f8f0673c570c8f86d0ab860a4e3cb888e3c21e96b0f922e412ccc8d06f266601",
+    "consumer-native/test_cold_addresses.c": "0768f7229e19cdcab171b752f33c61b8997774133df1404e35ade55ed0ed6910",
+    "consumer-native/test_cold_addresses.py": "046cdf5b536fcff413773e111785a2a70cf86934febcbf6d6987f82f7b94d4a6",
+    "consumer-native/test_stream_consumer.c": "0d55478962e9fb4539afdfdbe6050dab7d1b4ebc560315ca416474dc78f74214",
+    "consumer-native/test_stream_relay.c": "8c2730578c85b188629165fc5dcf1331f04a42c326371137a8bb3429e6b3f322",
+    "consumer-native/test_stream_relay.S": "5cefcbb4bb3dab63f4b06fe61907b3613de0c26a8146dc26d299752a62349491",
+    "raw/observer/build-linux.sh": "a67aaa109df7297344a079f68b4ab0b640375b73917362da7d78dc1b5fee8843",
+    "raw/observer/capture_core.h": "5032ef6ac99847aaa003c01f178075fe3c914e9dd0168af46036b3f0457777a8",
+    "raw/observer/endpoint_pins.h": "ce50bda6261c0649e96833d5fea55a7996e16d091c18c67e1d032eba8a73a84f",
+    "raw/observer/entry.S": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d",
+    "raw/observer/observer.c": "92dab8678cc1366fe24839643f9a4f603ff2596d67a01f46e450f869df1209bc",
+    "raw/observer/observer.map": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb",
+    "raw/observer/pins.h": "a4d7d2ac60645feec35a95598d2af99114e69ce07ebcfd6e712cec2a8fb4f40e",
+    "raw/observer/producer_test.c": "aefedd27a2172ea4ad22539c992b0693b5ac74d6d3777a3b7cc8963b96714213",
+    "raw/observer/sha256_core.h": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e",
+    "raw/observer/test_validator.py": "60307095a5527076bd693bdb76c1d442aabc8f2be8794582a2ec35bbcc607c38",
+    "raw/observer/validate_capture.py": "105684845756a7aa7cba9e6d55a659ccca8581973f1b14681d354cb3451fd7e8",
+    "raw/observer/validate_cohort.py": "3bcd3604eeb0834679283c3de95029b716884ab285270254fb0c87df77918f30",
+    "raw/collector/collect_epoch.py": "bd0db745be788d999ee583825ac4d726e941fea26cc044b4caed7d6eb0d52b1b",
+    "raw/collector/qpc_audit.py": "c493cc1ff5bb07c6e2e41de13f0444f6eb1cede72a482bb1f6c9350f6b7c172d",
+    "raw/collector/test_collect_epoch.py": "3221feea118643bb26205adce79a20c674d8b015c04e9083bab3e0a0faf16859",
+    "raw/collector/test_migration_boundaries.py": "1a60713103fb00302a5e31f28277a0331ca02f343bb06ff183c3d87fc1bdc366",
+    "raw/collector/test_qpc_audit.py": "c7edfcae6650864a6f113d4dca39d9c98ca3a7a260d66b4e7a19a56ae985eb4f",
+    "raw/binding.json": "b842c1f407a92e3b325b989ebd4692076cfa9e760a340a19f4110a956e1300b9",
+    "proof/native-contract.json": "32f8ac8920ff486eaa1606bbfa6b7a17d9019479edfac06e12ed4b7428aae462",
+    "proof/independent-cohort-review-v3.json": "223b050997e4564d0a7d440f5aaa212977e511d96157c0b6fe060dbc042ecddc",
+    "proof/raw-framework-review-v1.json": "d72ccfa5df371cc615ab8bfa268a13a5fc080bacebff478efbe4f8a593699e46",
+    "proof/root-cpu-build-plan-v2.json": "523508edb2973301c2939294b967ac95c986943ca56d0db90ee50d722fd53e38",
+    "proof/overlay-v1-rejected.json": "b272e569774c00267d988d7d62c1cd83fe1b7d12447b34d33cf3563ca59306de",
+    "README.md": "a68f1336baf6459fbca94a7ab57bf89beaecd2ed2147fa6c9e15403c95534a18"
+  },
+  "referenced_unchanged_sources": [
+    {
+      "materialize_as": "producer/actor.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/actor.py",
+      "sha256": "60e78c82312b66f87b4f5490b91ba1882ad32c566b6e922061538d9d7d64bde0",
+      "bytes": 11405,
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "producer/native_backend.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/native_backend.py",
+      "sha256": "f9327bbc4e005e8adf6089be1f7a6e8123e7bd9807186cb0ff6a9ca2d9a406bf",
+      "bytes": 9548,
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "producer/request_scoped_backend.py",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/request_scoped_backend.py",
+      "sha256": "6ecf73a2fcddc24270bf84b769d9d7da74ceca9eee442b5b75cce4b704de06a0",
+      "bytes": 4435,
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "producer/native_backend.cpp",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/native_backend.cpp",
+      "sha256": "5fecfd2d199aab27d217ed6be78598ca7807c97c2a642fe0da4d9e9dd392f8be",
+      "bytes": 15228,
+      "copy_into_new_public_archive": false
+    },
+    {
+      "materialize_as": "producer/append_head_scope.hpp",
+      "existing_archive_source": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_v4/append_head_scope.hpp",
+      "sha256": "109340b3357e808d02a71d1a1fa447cc7e6a22f902993a117f40fe9d1f36ad39",
+      "bytes": 4663,
+      "copy_into_new_public_archive": false
+    }
+  ],
+  "original_private_materialization": [
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/cohort_campaign_core_append_v1.py",
+      "archive_member": "cohort_campaign_core_append_v1.py",
+      "bytes": 14984,
+      "sha256": "02e749bc38a68784a8e7bde5b62503154054c8809232f17eceb829c7c13e9c45"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/measure_helpers.py",
+      "archive_member": "measure_helpers.py",
+      "bytes": 1329,
+      "sha256": "629cc1b91ba7e0be24f4ebec001c52c09399c1d798ce66d0eccfffb22977dbaa"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/prepare_overlay.py",
+      "archive_member": "prepare_overlay.py",
+      "bytes": 10285,
+      "sha256": "f2e5f2fe42314a71d8db521199a01d81e25510ef2f67797527d3a7e4a5c0efae"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/prepare_bindings.py",
+      "archive_member": "prepare_bindings.py",
+      "bytes": 4953,
+      "sha256": "fe0f6baaaca8d08443723e48985f838687824cc8658a1352088d0a6cf8ef0d0d"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/test_framework_binding.py",
+      "archive_member": "test_framework_binding.py",
+      "bytes": 1934,
+      "sha256": "61228f7948eed82b5a16696a33bf6bf5454a9f536c79e9d6601328ef2cb5e71f"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/test_live_core_adapter.py",
+      "archive_member": "test_live_core_adapter.py",
+      "bytes": 8034,
+      "sha256": "2823dcf4b4e20b97bf3fa0747be64f89d7cc3b0b1c693f3521093aa7aeceb51d"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/cohort/cohort_campaign.py",
+      "archive_member": "cohort/cohort_campaign.py",
+      "bytes": 19609,
+      "sha256": "49c93ac361b9fe297dc4d31b63b9b9224ee1991fd8479ae7b4a107ffaffe3cf8"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/cohort/cohort_campaign_admission_v2.py",
+      "archive_member": "cohort/cohort_campaign_admission_v2.py",
+      "bytes": 8049,
+      "sha256": "0455a6e9efdb8a2f673367ae39b76f6861545d39f55501e3ebced3b403166c9d"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/cohort/evidence.py",
+      "archive_member": "cohort/evidence.py",
+      "bytes": 5570,
+      "sha256": "4705683b0d6052e96f860ef5d396e0be69db08d56a42a558884deb81a7e05d54"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/cohort/owned_producer.py",
+      "archive_member": "cohort/owned_producer.py",
+      "bytes": 7537,
+      "sha256": "612ac2d603b946b828d24f410a32ba36225c0d1a18c074d5e50d47ecb375bae2"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/api/api_observation.py",
+      "archive_member": "api/api_observation.py",
+      "bytes": 3126,
+      "sha256": "282bdc002980254b8cd81bed1bd5bb6b8438d5b70c3f61d1e1479fac0564b5ab"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/api/api_stream_feedback.py",
+      "archive_member": "api/api_stream_feedback.py",
+      "bytes": 11622,
+      "sha256": "a478014a5621b65d01effbbbb94ca3dd5eb88d999c870ede2395067e3ba2d287"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/api/native_api_fixture.py",
+      "archive_member": "api/native_api_fixture.py",
+      "bytes": 3393,
+      "sha256": "f13bfcd01a39cd6d27862c2ec83dfd9794626e39614668ba78b54bd794ae154a"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/api/reverse_stream_publisher_v2.py",
+      "archive_member": "api/reverse_stream_publisher_v2.py",
+      "bytes": 3943,
+      "sha256": "5f654bb348a0126e54198006652715241af07d1befbf79345a2ffc328b6ea9d3"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/api/stream_publisher_v2.py",
+      "archive_member": "api/stream_publisher_v2.py",
+      "bytes": 10873,
+      "sha256": "cb467822d7dd8b902feb99dcac61d41a64b15c74a71c1a868e4d9cb63c581790"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/api/test_fresh_api.py",
+      "archive_member": "api/test_fresh_api.py",
+      "bytes": 5571,
+      "sha256": "94193043ca0081a5ad0654a700609f31def478a630b21a81f8dcf0af822cd1fb"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/api/token_feedback.py",
+      "archive_member": "api/token_feedback.py",
+      "bytes": 5756,
+      "sha256": "86ba4bd84d491fcc6743277a2e2b423579281dd447a52cf3a5009852abe59f9c"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/api/wire.py",
+      "archive_member": "api/wire.py",
+      "bytes": 4100,
+      "sha256": "26b0d86910bbcbae5e283d1dafdb291836ea528f86d2ee101b13c72ed3516dc6"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/producer/service.py",
+      "archive_member": "producer/service.py",
+      "bytes": 12650,
+      "sha256": "7a1e537099248541646a7f32ff90a88b9b73c0cbcdd4abf623840984e2771a18"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/producer/service_request_scoped_v4.py",
+      "archive_member": "producer/service_request_scoped_v4.py",
+      "bytes": 15139,
+      "sha256": "4a38a7c0184686968ac8bc02890163be803c282477feb6b2a7b9fb2039a61d51"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/producer/test_service_v4.py",
+      "archive_member": "producer/test_service_v4.py",
+      "bytes": 11860,
+      "sha256": "8cbb5d0a1951e150db2302e02188ba2f6c5d68a2bf134e4d7243f73a4c1cd95a"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/producer/test_target_identity.py",
+      "archive_member": "producer/test_target_identity.py",
+      "bytes": 1570,
+      "sha256": "7a41491a815c9a8ed6dfb8be95a00ffb786a32318a4d6f3a4e2058193837a6e9"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/cold_addresses.h",
+      "archive_member": "consumer-native/cold_addresses.h",
+      "bytes": 861,
+      "sha256": "35f528b6146f083faf7a6faaf30888c267b4705794a294a70fe423c0ecdc28b9"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/cold_install.c",
+      "archive_member": "consumer-native/cold_install.c",
+      "bytes": 7892,
+      "sha256": "3eddd05a65c71a86aae4451160fe8ac4c8873c5254c6aa99aa0d9a525546770f"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/native_pins.h",
+      "archive_member": "consumer-native/native_pins.h",
+      "bytes": 867,
+      "sha256": "4f09998beca1533536e9d69aad3a060ec02c44eed078b7afb2835e52d4c80ede"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/sha256_core.h",
+      "archive_member": "consumer-native/sha256_core.h",
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/stream_consumer.c",
+      "archive_member": "consumer-native/stream_consumer.c",
+      "bytes": 11738,
+      "sha256": "f6266054bec8d9270e8e416f6fd30d4249fcc07c8e64ab55f4bbc90a4243e0f2"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/stream_consumer.h",
+      "archive_member": "consumer-native/stream_consumer.h",
+      "bytes": 2961,
+      "sha256": "c0ec1210709ea573f8ed01906a4720c278c53c972d8372ba41d3363f364e776e"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/stream_relay.S",
+      "archive_member": "consumer-native/stream_relay.S",
+      "bytes": 1412,
+      "sha256": "f8f0673c570c8f86d0ab860a4e3cb888e3c21e96b0f922e412ccc8d06f266601"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/test_cold_addresses.c",
+      "archive_member": "consumer-native/test_cold_addresses.c",
+      "bytes": 2453,
+      "sha256": "0768f7229e19cdcab171b752f33c61b8997774133df1404e35ade55ed0ed6910"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/test_cold_addresses.py",
+      "archive_member": "consumer-native/test_cold_addresses.py",
+      "bytes": 2454,
+      "sha256": "046cdf5b536fcff413773e111785a2a70cf86934febcbf6d6987f82f7b94d4a6"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/test_stream_consumer.c",
+      "archive_member": "consumer-native/test_stream_consumer.c",
+      "bytes": 5325,
+      "sha256": "0d55478962e9fb4539afdfdbe6050dab7d1b4ebc560315ca416474dc78f74214"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/test_stream_relay.c",
+      "archive_member": "consumer-native/test_stream_relay.c",
+      "bytes": 3267,
+      "sha256": "8c2730578c85b188629165fc5dcf1331f04a42c326371137a8bb3429e6b3f322"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/consumer-native/test_stream_relay.S",
+      "archive_member": "consumer-native/test_stream_relay.S",
+      "bytes": 1843,
+      "sha256": "5cefcbb4bb3dab63f4b06fe61907b3613de0c26a8146dc26d299752a62349491"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/build-linux.sh",
+      "archive_member": "raw/observer/build-linux.sh",
+      "bytes": 566,
+      "sha256": "a67aaa109df7297344a079f68b4ab0b640375b73917362da7d78dc1b5fee8843"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/capture_core.h",
+      "archive_member": "raw/observer/capture_core.h",
+      "bytes": 1593,
+      "sha256": "5032ef6ac99847aaa003c01f178075fe3c914e9dd0168af46036b3f0457777a8"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/endpoint_pins.h",
+      "archive_member": "raw/observer/endpoint_pins.h",
+      "bytes": 211,
+      "sha256": "ce50bda6261c0649e96833d5fea55a7996e16d091c18c67e1d032eba8a73a84f"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/entry.S",
+      "archive_member": "raw/observer/entry.S",
+      "bytes": 394,
+      "sha256": "eed552ab32477432b1650d1eed1f972e9207a07951ea5d1f3c7378e4b0593f6d"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/observer.c",
+      "archive_member": "raw/observer/observer.c",
+      "bytes": 15567,
+      "sha256": "92dab8678cc1366fe24839643f9a4f603ff2596d67a01f46e450f869df1209bc"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/observer.map",
+      "archive_member": "raw/observer/observer.map",
+      "bytes": 84,
+      "sha256": "7517df00085aa697ee6615dc076f19b7f471d5557c7b672b1ad560d6a7ccb2fb"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/pins.h",
+      "archive_member": "raw/observer/pins.h",
+      "bytes": 3161,
+      "sha256": "a4d7d2ac60645feec35a95598d2af99114e69ce07ebcfd6e712cec2a8fb4f40e"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/producer_test.c",
+      "archive_member": "raw/observer/producer_test.c",
+      "bytes": 6810,
+      "sha256": "aefedd27a2172ea4ad22539c992b0693b5ac74d6d3777a3b7cc8963b96714213"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/sha256_core.h",
+      "archive_member": "raw/observer/sha256_core.h",
+      "bytes": 3721,
+      "sha256": "5a412383228df47df040c86e41681eb8b041b4d42fd96931e076b91c415e851e"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/test_validator.py",
+      "archive_member": "raw/observer/test_validator.py",
+      "bytes": 13894,
+      "sha256": "60307095a5527076bd693bdb76c1d442aabc8f2be8794582a2ec35bbcc607c38"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/validate_capture.py",
+      "archive_member": "raw/observer/validate_capture.py",
+      "bytes": 13219,
+      "sha256": "105684845756a7aa7cba9e6d55a659ccca8581973f1b14681d354cb3451fd7e8"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/observer/validate_cohort.py",
+      "archive_member": "raw/observer/validate_cohort.py",
+      "bytes": 4288,
+      "sha256": "3bcd3604eeb0834679283c3de95029b716884ab285270254fb0c87df77918f30"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/collector/collect_epoch.py",
+      "archive_member": "raw/collector/collect_epoch.py",
+      "bytes": 27607,
+      "sha256": "bd0db745be788d999ee583825ac4d726e941fea26cc044b4caed7d6eb0d52b1b"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/collector/qpc_audit.py",
+      "archive_member": "raw/collector/qpc_audit.py",
+      "bytes": 8154,
+      "sha256": "c493cc1ff5bb07c6e2e41de13f0444f6eb1cede72a482bb1f6c9350f6b7c172d"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/collector/test_collect_epoch.py",
+      "archive_member": "raw/collector/test_collect_epoch.py",
+      "bytes": 23391,
+      "sha256": "3221feea118643bb26205adce79a20c674d8b015c04e9083bab3e0a0faf16859"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/collector/test_migration_boundaries.py",
+      "archive_member": "raw/collector/test_migration_boundaries.py",
+      "bytes": 4834,
+      "sha256": "1a60713103fb00302a5e31f28277a0331ca02f343bb06ff183c3d87fc1bdc366"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/collector/test_qpc_audit.py",
+      "archive_member": "raw/collector/test_qpc_audit.py",
+      "bytes": 10611,
+      "sha256": "c7edfcae6650864a6f113d4dca39d9c98ca3a7a260d66b4e7a19a56ae985eb4f"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw/binding.json",
+      "archive_member": "raw/binding.json",
+      "bytes": 39660,
+      "sha256": "b842c1f407a92e3b325b989ebd4692076cfa9e760a340a19f4110a956e1300b9"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/npu-consumer-seam-v1/native-contract.json",
+      "archive_member": "proof/native-contract.json",
+      "bytes": 38154,
+      "sha256": "32f8ac8920ff486eaa1606bbfa6b7a17d9019479edfac06e12ed4b7428aae462"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/npu-consumer-seam-v1/independent-cohort-review-v3.json",
+      "archive_member": "proof/independent-cohort-review-v3.json",
+      "bytes": 2290,
+      "sha256": "223b050997e4564d0a7d440f5aaa212977e511d96157c0b6fe060dbc042ecddc"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/raw-framework-review-v1.json",
+      "archive_member": "proof/raw-framework-review-v1.json",
+      "bytes": 9389,
+      "sha256": "d72ccfa5df371cc615ab8bfa268a13a5fc080bacebff478efbe4f8a593699e46"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/root-cpu-build-plan-v2.json",
+      "archive_member": "proof/root-cpu-build-plan-v2.json",
+      "bytes": 11415,
+      "sha256": "523508edb2973301c2939294b967ac95c986943ca56d0db90ee50d722fd53e38"
+    },
+    {
+      "private_materialization": "server/.local/halogen-update-20261111/primary0202/real-npu-v4-prep/overlay-v1-rejected.json",
+      "archive_member": "proof/overlay-v1-rejected.json",
+      "bytes": 1238,
+      "sha256": "b272e569774c00267d988d7d62c1cd83fe1b7d12447b34d33cf3563ca59306de"
+    }
+  ],
+  "preparation_sha256": "e399c0db9cd4e8d9993c66ea1d3c64ce921e488d4fcf08709246a5a04b3e1d09",
+  "actual_cohort": {
+    "session": 64109,
+    "terminal": true,
+    "completed": false,
+    "restored": true,
+    "excluded_stock_warmups": 1,
+    "measured_requests": 0,
+    "NPU_helper_started": false,
+    "NPU_token_rates": null,
+    "qualified_speed_gain": false,
+    "report": "docs/benchmarks/halogen0202-real-npu-core-append-20261111.json"
+  },
+  "corrected_consumer_sha256_reference_only": "bd093556801a9b816ebb0d8f5ca743812db95230a5d836cc824c7b2df5874e06",
+  "RAW_sha256_reference_only": "c211cd808a94c947931deadfc1542ae17e0ef773f49fe3871a62f2c5d1371a60",
+  "no_native_binaries_models_SDK_credentials_or_executed_bindings": true,
+  "archive_text_only_edits": {
+    "api/native_api_fixture.py": {
+      "original_private_sha256": "f13bfcd01a39cd6d27862c2ec83dfd9794626e39614668ba78b54bd794ae154a",
+      "published_sha256": "2053afd35c8ee9d0960372a6bac23a4ae8d8c7050e277613d22d3774f4a5626c",
+      "edit": "Remove redundant blank line at EOF",
+      "Python_AST_identical": true
+    }
+  }
+}
