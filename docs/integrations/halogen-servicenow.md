@@ -1,13 +1,15 @@
 # Halogen foreground console and ServiceNow REST integration
 
-The launcher now selects **installed Halogen 0.20.1 (ROCm 10.1)** with
+The launcher now selects **installed Halogen 0.20.2 (ROCm 10.1)** with
 `-Profile CurrentText32K`, including when no profile is specified. The current
 text configuration uses 32,768 context positions, one slot, a 32,768-position
-KV pool, one concurrent request and a paired 2,048-token prefill chunk and arena.
+KV pool, one concurrent request and a paired 8,192-token prefill chunk and arena.
 The public model remains `halogen-v2` and uses the existing ServiceNow API key.
-The 0.20.1 endpoint passed authenticated model-discovery and functional
+The 0.20.2 endpoint passed authenticated model-discovery and functional
 generation checks. Fresh release-specific performance evidence belongs in the
-[10 November update](../research/halogen0201-update-20261110.md). The normal
+[11 November update](../research/halogen0202-update-20261111.md). The
+[10 November update](../research/halogen0201-update-20261110.md) retains the
+historical 0.20.1 evidence. The normal
 startup floor remains 30 GiB physical / 131 GiB commit, with an 18/18 GiB
 runtime reserve.
 The [7 November update report](../research/halogen0191-update-20261107.md)
@@ -27,7 +29,7 @@ Agent maintenance package. After renewed measurement authorization, the
 [prefix-cache comparison](../benchmarks/halogen01822-cache-followups-20261101.md)
 qualified faster repeated-context follow-ups. `FollowupText32K` explicitly selects
 that historical **0.18.22** Flexible-cache option. `CurrentText32K` selects
-**0.20.1** with Cache Off.
+**0.20.2** with Cache Off.
 The separate
 [two-request comparison](../benchmarks/halogen01822-concurrency2-20261101.md)
 records its own aggregate-throughput and individual-latency trade-off. Two slots remain an explicit optional configuration; the current command below
@@ -35,7 +37,7 @@ selects one slot.
 
 The [larger-workspace trial](../benchmarks/halogen01822-arena16384-20261101.md)
 was rejected after a 16K output change and lower draft acceptance. The latest
-Voice profile uses paired 2048 prefill settings. The bare text preset also uses 2048.
+Voice profile uses paired 2048 prefill settings. The bare text preset uses paired 8192.
 
 The retained measured text preset is **Halogen 0.18.16**. Select it
 explicitly with `-Profile MeasuredText32K`. The measured text preset uses 32K capacity,
@@ -95,10 +97,10 @@ server and API trace. This command selects the installed current text settings;
 wait for successful startup before sending requests.
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 1 -KvPoolPositions 32768 -Concurrency 1 -PrefillTokens 2048 -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 1 -KvPoolPositions 32768 -Concurrency 1 -PrefillTokens 8192 -ConsoleTrace
 ```
 
-For an explicit trial of prefix caching on the current 0.20.1 release:
+For an explicit trial of prefix caching on the current 0.20.2 release:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentCachedText32K -ConsoleTrace
@@ -106,7 +108,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-
 
 This profile retains one 32768-position slot/pool, concurrency one, paired
 2048 prefill settings, gate 0.90, PLD `3,3`, Thinking Off/low, Vision Off and
-prefetch 0; only the prompt-cache policy changes to Flexible. It preserves the
+prefetch 0. It uses Flexible cache and keeps its explicit 2048 prefill settings,
+separate from the default text profile's paired 8192 settings. It preserves the
 public credential and endpoint. Capacity and `PrefillTokens` selectors are
 rejected, including explicit values equal to the defaults. The current cached
 profile has no qualified latency or throughput gain; stable repeated context
@@ -160,7 +163,7 @@ Off and do not qualify Thinking On throughput.
 
 `Current4K` pairs a 4,096-token prefill chunk with a 4,096-token arena;
 `Current8K` explicitly pairs 8,192 with 8,192. Their default installed version
-is 0.20.1. Use `-HalogenVersion` to select another supported installed backend.
+is 0.20.2. Use `-HalogenVersion` to select another supported installed backend.
 For the retained 0.18.10 configuration, pass both `-Profile Current4K` and
 `-HalogenVersion 0.18.10` explicitly.
 The historical Stock A profile requires an explicit 0.16.2 selection; it rejects
@@ -198,19 +201,19 @@ ServiceNow's Authorization header. Credential values are never printed.
 
 ## What the profiles actually select
 
-The bare launcher selects **0.20.1 CurrentText32K**, one slot, one concurrent
-request and paired 2048 prefill settings. The command above uses these same
+The bare launcher selects **0.20.2 CurrentText32K**, one slot, one concurrent
+request and paired 8192 prefill settings. The command above uses these same
 one-slot settings; two slots require explicit capacity and concurrency options.
 `-PrefillTokens` applies only to `CurrentText32K` and sets both prefill controls.
-`CurrentCachedText32K` selects the same 0.20.1 preset with Flexible cache and
+`CurrentCachedText32K` selects 0.20.2 with Flexible cache and
 fixed one-slot/paired-2048 settings; no capacity or prefill selectors are accepted.
 It is an unmeasured opt-in, separate from historical `FollowupText32K`.
 
-`Current4K` and `Current8K` default to installed Halogen **0.20.1**;
+`Current4K` and `Current8K` default to installed Halogen **0.20.2**;
 `HistoricalStock` requires explicitly selected **0.16.2**. All three retain
 262,144-position capacity and fixed MTP depth 2. `MeasuredText32K` explicitly
 selects **0.18.16**, 32,768-position capacity, adaptive gate 0.90 and Cache Off.
-`CurrentText32K` selects **0.20.1** with the same text capacity and policy.
+`CurrentText32K` selects **0.20.2** with the same text capacity and policy.
 `FollowupText32K` retains the measured **0.18.22** text configuration with Flexible
 cache and paired 8192 prefill settings.
 `Measured32K` separately selects **0.18.15**, 32,768-position capacity, adaptive
@@ -233,7 +236,7 @@ remain available for an explicit 0.17.2 selection.
 
 | Startup control | HistoricalStock | Current4K | Current8K | MeasuredText32K |
 | --- | --- | --- | --- | --- |
-| Halogen version | `0.16.2` | `0.20.1` | `0.20.1` | `0.18.16` |
+| Halogen version | `0.16.2` | `0.20.2` | `0.20.2` | `0.18.16` |
 | `HALOGEN_CTX` / `HALOGEN_KV_POOL_POSITIONS` | `262144` / `262144` | `262144` / `262144` | `262144` / `262144` | `32768` / `32768` |
 | `HALOGEN_KV_SLOTS` | `1` | `1` | `1` | `1` |
 | `HALOGEN_MTP_DEPTH` / `HALOGEN_PLD` | `2` / `3,3` | `2` / `3,3` | `2` / `3,3` | Depth unset / `3,3` |

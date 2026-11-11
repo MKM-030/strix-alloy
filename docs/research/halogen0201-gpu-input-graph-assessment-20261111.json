@@ -1,0 +1,228 @@
+{
+  "schema": "halogen0201.GPU-input-prep-graph-bounded-closure.v1",
+  "utc": "2026-11-11T13:00:47.265327+00:00",
+  "owner": "/root/cost_0200_audit",
+  "scope": "CPU-only source and retained-fixture assessment; no hardware, WSL, API, compiler, lifecycle, profile, canonical source or git mutation",
+  "verdict": "NO_IMPLEMENTATION_WITH_CURRENT_EVIDENCE",
+  "unit": {
+    "entry": "0x1f9d0a0",
+    "end_exclusive": "0x1f9da5e",
+    "mode": "count1/defaultwireD",
+    "sysv_arguments": [
+      "RDI=model",
+      "RSI=host_u32_ids",
+      "EDX=count"
+    ],
+    "instruction_byte_audit": {
+      "pass": true,
+      "instructions": 522,
+      "bytes": 2494,
+      "mapping": "ELF64 PT_LOAD file extents"
+    },
+    "wire_environment": "HALOGEN_MTP_WIRE",
+    "default_wire_ascii": 68
+  },
+  "host_outside_graph": [
+    "Copy 4*count host ID bytes to *(model+0xbd8), replace IDs >=248320 with0, increment model+0xbe0 and preserve warning semantics.",
+    "Retain existing hipMemcpyAsync H2D of count1 ID (4 bytes) to *(model+0xdd0), stream0.",
+    "Keep caller context/position handling, layer48, vocabulary head/argmax, accept/reject/stop, state retention and host result synchronization outside selected unit."
+  ],
+  "stages": [
+    {
+      "order": 1,
+      "operation": "gather",
+      "launch": "0x1f9d279",
+      "descriptor": "0x20c33e0",
+      "pointer_args": [
+        "*(model+0xa10)",
+        "*(model+0xdd0)",
+        "*(model+0xd58)"
+      ],
+      "grid_count1": "1,1,1",
+      "block": "256,1,1",
+      "stream": 0
+    },
+    {
+      "order": 2,
+      "operation": "embedding RMS",
+      "launch": "0x1f9d354",
+      "descriptor": "0x20c2648",
+      "args": [
+        "*(model+0xd58)",
+        "*(model+0x13a8)",
+        "*(model+0xd58)",
+        "width=2560",
+        "constant=1"
+      ],
+      "grid_count1": "1,1,1",
+      "block": "256,1,1",
+      "stream": 0,
+      "alias": "input/output in place"
+    },
+    {
+      "order": 3,
+      "operation": "embedding FC",
+      "call": "0x1f9d385",
+      "dispatcher": "0x1f355b0",
+      "args": [
+        "model+0x11c8",
+        "*(model+0xd58)",
+        "*(model+0x13c0)",
+        "N=2560",
+        "M=1",
+        "K=2560"
+      ],
+      "exact_selected_kernel_closed": false
+    },
+    {
+      "order": 4,
+      "operation": "whole hidden RMS",
+      "launch": "0x1f9d46f",
+      "descriptor": "0x20c2648",
+      "args": [
+        "*(model+0xd60)",
+        "*(model+0x13b0)",
+        "*(base+0x20c9680)",
+        "width=10240",
+        "constant=1"
+      ],
+      "grid_count1": "1,1,1",
+      "block": "256,1,1",
+      "stream": 0
+    },
+    {
+      "order": 5,
+      "operation": "hidden FC",
+      "call": "0x1f9d49e",
+      "dispatcher": "0x1f355b0",
+      "args": [
+        "model+0x1240",
+        "*(base+0x20c9680)",
+        "*(base+0x20c9698)",
+        "N=2560",
+        "M=4",
+        "K=2560"
+      ],
+      "exact_selected_kernel_closed": false
+    },
+    {
+      "order": 6,
+      "operation": "wireD seed add",
+      "setup": "0x1f9d4c6..0x1f9d548",
+      "shared_tail_launch": "0x1f9d9ab",
+      "descriptor": "0x20c33f8",
+      "pointer_args": [
+        "*(model+0x13c0)",
+        "*(base+0x20c9698)",
+        "*(model+0xd60)"
+      ],
+      "grid_count1": "1,1,1",
+      "block": "256,1,1",
+      "stream": 0,
+      "alias": "seed output aliases consumed original hidden input"
+    }
+  ],
+  "graph_plausibility": {
+    "conditional": true,
+    "reason": "A fixed count1 D invocation has constant scalar launch shape and device pointers read at each call. Token value and hidden contents may change without changing graph node parameters. Ordered dependency edges must preserve in-place embedding RMS and hidden-to-seed alias.",
+    "actual_six_node_count_proved": false,
+    "limit": "Six semantic stages are not necessarily six launches: both FC dispatcher routes and current code-object bindings remain unclosed. Absence of direct graph imports does not prove graph support absent."
+  },
+  "missing_closure": [
+    "Exact current FC dispatcher 0x1f355b0 selected routes, kernel/function bindings, ABI and all hidden node/workspace requirements for descriptors model+11c8/model+1240 at M1/M4.",
+    "Allocation, extent, owner, growth/reallocation, sharing and destruction of scratch globals base+20c9680/base+20c9698 and the relevant model buffers/descriptor pointers. Their reads do not establish address stability across requests or arena replacement.",
+    "One coherent current0.20.1 real fixture for complete unit: valid token ID, original embedding table representation/gather row, both raw RMS weight vectors, pre-RMS hidden row10240, original FC descriptors/weights and final combined seed oracle.",
+    "Current complete-operation cost budget; old0.16.2 isolatedFC event timing is not current input-preparation timing."
+  ],
+  "existing_fixture_limit": {
+    "engine_version": "0.16.2",
+    "scope": "Explicit already normalized BF16 M1/M4 inputs and individual FC outputs, raw Q8 weights and original0.16.2 shader timing.",
+    "A_embedding_output_bytes": 5120,
+    "A_hidden_output_bytes": 20480,
+    "B_embedding_output_bytes": 5120,
+    "B_hidden_output_bytes": 20480,
+    "old_pair_gpu_mean_ms": 0.3117021861875,
+    "old_host_enqueue_wait_mean_ms": 0.4871700625,
+    "complete_current_unit_fixture": false,
+    "reason": "Normalized FC endpoints cannot establish current raw gather/RMS/seed-add parity. Do not invert RMS or combine unrelated output captures into a full-unit oracle."
+  },
+  "bounded_recommendation": "Do not implement a graph replacement or start a new hardware/profiling-only campaign on this evidence. Reconsider only when the exact current FC routes and scratch lifetimes are source-closed and one authentic complete-unit fixture is already available. Then explicit ordered graph nodes, generation-bound resource ownership, native fallback, and a single finite native/graph/native component would be the route; Root decides hardware.",
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "acceptance": null,
+  "speedup_qualified": false,
+  "evidence_pins": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\extracted\\flash_serve",
+      "bytes": 34367712,
+      "sha256": "7a72e138f0090008d171e41358a23f86a875fe92fadbcbc5daf2d3225e426577"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-opening-audit\\producer-callee-1f9d0a0.txt",
+      "bytes": 37446,
+      "sha256": "8ad95ba17d64aa7aca28e84c0802cc494c6e62ead80fe72c05639218a28e44f1"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen0162_fc_timing.c",
+      "bytes": 35114,
+      "sha256": "e6da80abb13b318354627788888bd5537e905bb9858713da13152d9a115ca61f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\gpu-timing-summary.json",
+      "bytes": 1002,
+      "sha256": "5f1ee5c9acf68d318d1c7adcb9e33e746f36c73807626921fc9e432f37add796"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\plan.json",
+      "bytes": 4843,
+      "sha256": "17406c1a40fe3325982f1272fc605e5511102dfc509b221232b626c14418ff04"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\native\\timing.json",
+      "bytes": 8468,
+      "sha256": "4eeaef8311d94ea12691b8e4580f63ae55b0048837806c432bd91ca402035c1a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\docs\\research\\halogen-native-d-fc-dispatch-20261004.md",
+      "bytes": 12165,
+      "sha256": "e6f0ef9eb1cb1c73dc13df9aaf1a95977e97eee50cb8be85fe9dda5c9faa48c0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\native\\A-embedding-fc-u16.bin",
+      "bytes": 5120,
+      "sha256": "e474b8c6a93ccc515d7c2e96b1bda4305fd64147d1ed622594953dd260ee9e88"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\native\\A-hidden-fc-u16.bin",
+      "bytes": 20480,
+      "sha256": "9a5ee795e87adaf5b1778dfc5e108789fbef4731b5d8d323bf6279435c743fcc"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\native\\B-embedding-fc-u16.bin",
+      "bytes": 5120,
+      "sha256": "c3625f78e90423e54aec273ca8aa9a8580dde1e4ce3edb45c1feb4b036678c31"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\alloy-fc-timing-f7c3c720f88f4edfaa0a1adcee68a56d\\native\\B-hidden-fc-u16.bin",
+      "bytes": 20480,
+      "sha256": "cd2b863552798729181fe5670859f3f272ddd694370c2803b84271b3c456a138"
+    }
+  ],
+  "Root_independent_byte_audit": {
+    "receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\gpu-input-prep-graph-closure-v1\\Root-byte-audit-v1.json",
+      "bytes": 563,
+      "sha256": "ebcdf659d395e4b0e1828f244fe39e16dcc3f1887aa1f5f2d6e384a7a8eeb593"
+    },
+    "instructions": 522,
+    "bytes": 2494,
+    "evidence_pins": 11,
+    "passed": true,
+    "native_or_hardware_execution": false
+  },
+  "source_assessment": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\gpu-input-prep-graph-closure-v1\\assessment-v1.json",
+    "bytes": 9229,
+    "sha256": "b6466bf8d28d664d233e23425ca07cea0359a8da514929f3435c6fe0923d90d9"
+  }
+}
