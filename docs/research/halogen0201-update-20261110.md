@@ -169,3 +169,26 @@ After the completed comparison, fresh authenticated checks at **01:10 UTC on 11 
 verify API and engine 0.20.1 and a successful `READY` chat response on port 8840.
 The normal persistent console remains open, with model alias `halogen-v2` and
 the existing ServiceNow credential.
+
+## Startup observation repair and full-history cache study
+
+The first complete-history cache attempt reached a Docker inspection timeout
+during private startup. The existing startup exception path then cleaned up
+the owned container. This attempt contains zero benchmark requests and its
+terminal record confirms authenticated normal restoration.
+
+The normal startup loop now catches that inspection's `TimeoutExpired`, checks
+the cache worker and continues observing the same container within the original
+startup deadline. Seven regressions exercise the actual source block, including
+same-container recovery and fatal ownership, exit and worker errors. The source
+manifest contains 47 verified members, with SHA256
+`4b70963dcd8442206c5b775c757dcdab18cb68b2c7b40e5cadaa0cd475953da6`.
+
+A controlled normal restart completed at 02:21 UTC. Authenticated discovery
+confirms API/engine 0.20.1 on port 8840, with the paired-2048 normal profile and
+visible console. The next 24-request Off/Flexible/Off comparison freezes each
+full conversation from its before-arm answer and replays the identical history.
+It records first-content and whole-request time together with actual full,
+cached and newly processed token counts. This tests the combined follow-up
+cache benefit. Incremental reply-end attribution requires further evidence.
+[Prospective V2 protocol](../benchmarks/halogen0201-reply-end-cache-plan-20261111-v2.json).

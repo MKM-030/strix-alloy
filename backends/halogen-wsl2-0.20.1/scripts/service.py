@@ -791,7 +791,15 @@ def serve(o):
             if cancelled(): raise InterruptedError('Startup cancelled')
             keepalive.check()
             guard_alive(guard_proc,attempt)
-            info=r.inspect(cid); owned(info,cid,m,running=info['State']['Running'])
+            try:
+                info=r.inspect(cid)
+            except subprocess.TimeoutExpired as exc:
+                # The independent guard retains ownership freshness and memory checks.
+                log.warning('Docker inspect observation timed out; continuing startup for same owned container %s: %s',cid,exc)
+                cache_worker.check()
+                time.sleep(1)
+                continue
+            owned(info,cid,m,running=info['State']['Running'])
             if not info['State']['Running']: raise startup_exit_error(attempt)
             cache_worker.check()
             try: health=http('/health',secret)
