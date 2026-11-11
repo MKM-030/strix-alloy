@@ -1,0 +1,1331 @@
+{
+  "schema": "halogen0203.raw-phase-binding.v1",
+  "implementation_state": "fresh_static_elf_and_provider_bound_not_activated",
+  "engine_executed": false,
+  "hardware_executed": false,
+  "engine_sha256": "bf84053705d1e89c214ff64c79ad1276c5fe353d80a9bb0f38ef3bac6645b97c",
+  "engine_bytes": 35410384,
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:be5624fe83c1cecb1f4a025bf169988103044263224c1bfcb4ce54697f98ce69",
+  "chrono_symbol": "_ZNSt6chrono3_V212steady_clock3nowEv",
+  "chrono_symbol_version": "GLIBCXX_3.4.19",
+  "chrono_plt_rva": "0x21bec40",
+  "chrono_got_rva": "0x21c71d8",
+  "chrono_relocation": {
+    "symbol": "_ZNSt6chrono3_V212steady_clock3nowEv",
+    "type": 7,
+    "addend": 0
+  },
+  "discovery": "Nine unique executable-segment semantic windows; fresh complete containing FDE disassembly; exact dynamic chrono target proof. No shifted old RVA pins.",
+  "endpoints": [
+    {
+      "name": "prefill_begin",
+      "call_rva": "0x1f810aa",
+      "return_rva": "0x1f810af",
+      "object_register": "r15",
+      "caller_function": {
+        "start_rva": 33034384,
+        "end_rva": 33038794,
+        "bytes": 4410,
+        "file_offset": 33030288,
+        "sha256": "943abdd032d887043a720c61aaf052a9a8f1b57737db4c01cff9e5c8ba7984ba",
+        "fde_rva": 32881300,
+        "fde_file_offset": 32881300,
+        "fde_bytes": 472,
+        "fde_sha256": "236a1b64bd5a91222867aac0c4ae98dcc0571b3a424630ba3afae895eb681aa7",
+        "cie_file_offset": 32872588,
+        "cie_bytes": 32,
+        "cie_hex": "1c00000000000000017a504c5200017810079bc1d226001b1b0c070890010000",
+        "cfi_hex": "410e10420e18420e20420e28420e30410e38470eb00283078c068d058e048f038602492e006c2e004d2e00612e00026e2e00562e00024c2e005d2e004c2e00722e0002632e0002562e007d2e00752e005a2e00482e00026d2e0002642e10440eb8024a0ec002490eb00202442e00572e000307012e00652e10450eb802440ec002490eb00202482e00752e00792e10460eb802440ec0024d0eb00202e82e00452e00792e10440eb8024e0ec002490eb0024a2e00782e20520eb802420ec002410ec802420ed002490eb0022e0002632e00024b2e0002562e004c2e00652e00482e006f2e006c2e0002462e00692e00602e0002402e00730e38410e30420e28420e20420e18420e10410e08410eb002642e00582e007a2e0002482e205b0eb802420ec002420ec802420ed002490eb0024a2e005d2e00452e00652e00582e00612e00632e00502e00542e005f2e00502e00552e00602e0002982e00592e005e2e00452e00602e005a2e00662e00722e00692e00692e00662e00602e00632e00542e004b2e00512e00542e004c2e00512e00542e004b2e00512e005b2e004b2e00582e00542e004b2e0002842e00532e0002432e00662e00782e00692e00452e00000000",
+        "cie_cfi_hex": "0c070890010000",
+        "augmentation": "zPLR",
+        "code_align": 1,
+        "data_align": -8,
+        "return_register": 16,
+        "lsda_encoding": 27,
+        "fde_augmentation_hex": "bbf00ffe"
+      },
+      "call_bytes": "e891db2300"
+    },
+    {
+      "name": "prefill_end",
+      "call_rva": "0x1f818d0",
+      "return_rva": "0x1f818d5",
+      "object_register": "r15",
+      "caller_function": {
+        "start_rva": 33034384,
+        "end_rva": 33038794,
+        "bytes": 4410,
+        "file_offset": 33030288,
+        "sha256": "943abdd032d887043a720c61aaf052a9a8f1b57737db4c01cff9e5c8ba7984ba",
+        "fde_rva": 32881300,
+        "fde_file_offset": 32881300,
+        "fde_bytes": 472,
+        "fde_sha256": "236a1b64bd5a91222867aac0c4ae98dcc0571b3a424630ba3afae895eb681aa7",
+        "cie_file_offset": 32872588,
+        "cie_bytes": 32,
+        "cie_hex": "1c00000000000000017a504c5200017810079bc1d226001b1b0c070890010000",
+        "cfi_hex": "410e10420e18420e20420e28420e30410e38470eb00283078c068d058e048f038602492e006c2e004d2e00612e00026e2e00562e00024c2e005d2e004c2e00722e0002632e0002562e007d2e00752e005a2e00482e00026d2e0002642e10440eb8024a0ec002490eb00202442e00572e000307012e00652e10450eb802440ec002490eb00202482e00752e00792e10460eb802440ec0024d0eb00202e82e00452e00792e10440eb8024e0ec002490eb0024a2e00782e20520eb802420ec002410ec802420ed002490eb0022e0002632e00024b2e0002562e004c2e00652e00482e006f2e006c2e0002462e00692e00602e0002402e00730e38410e30420e28420e20420e18420e10410e08410eb002642e00582e007a2e0002482e205b0eb802420ec002420ec802420ed002490eb0024a2e005d2e00452e00652e00582e00612e00632e00502e00542e005f2e00502e00552e00602e0002982e00592e005e2e00452e00602e005a2e00662e00722e00692e00692e00662e00602e00632e00542e004b2e00512e00542e004c2e00512e00542e004b2e00512e005b2e004b2e00582e00542e004b2e0002842e00532e0002432e00662e00782e00692e00452e00000000",
+        "cie_cfi_hex": "0c070890010000",
+        "augmentation": "zPLR",
+        "code_align": 1,
+        "data_align": -8,
+        "return_register": 16,
+        "lsda_encoding": 27,
+        "fde_augmentation_hex": "bbf00ffe"
+      },
+      "call_bytes": "e86bd32300"
+    },
+    {
+      "name": "decode_begin",
+      "call_rva": "0x1f83c15",
+      "return_rva": "0x1f83c1a",
+      "object_register": "r14",
+      "caller_function": {
+        "start_rva": 33041552,
+        "end_rva": 33046431,
+        "bytes": 4879,
+        "file_offset": 33037456,
+        "sha256": "13dc59872cb7adc40e4565f9e2b3ac8c63bf330687ed851371d2400401b7fdec",
+        "fde_rva": 32881928,
+        "fde_file_offset": 32881928,
+        "fde_bytes": 396,
+        "fde_sha256": "f6f3d9fcfe48c138114e7691d632ae33118d5f69ce3dfb7a5e036c94ba91121e",
+        "cie_file_offset": 32872588,
+        "cie_bytes": 32,
+        "cie_hex": "1c00000000000000017a504c5200017810079bc1d226001b1b0c070890010000",
+        "cfi_hex": "410e10420e18420e20420e28420e30410e38470eb00283078c068d058e048f0386024f2e00632e004e2e0002422e00642e000326012e000376012e005b2e00532e0002992e005f2e00532e0002922e00542e00532e0002992e005f2e00532e0002922e00542e00532e0002872e00542e00532e00722e00612e10650eb802420ec002490eb002037c012e000351012e00552e00532e0002922e00552e00532e0002922e00552e00532e0002922e00552e00532e0002922e00552e00532e0002872e00552e00532e00772e007b2e104d0eb802420ec002490eb002642e10570eb802420ec002490eb002472e005f2e00672e00622e007c2e00692e00622e00672e0002762e006e2e00510e38410e30420e28420e20420e18420e10410e08410eb002602e00582e00602e00512e006b2e00552e004d2e00752e004c2e004c2e004c2e004c2e004c2e004c2e00542e004b2e00512e004c2e004c2e004c2e004c2e004c2e004c2e00542e004c2e00622e00622e00452e000000",
+        "cie_cfi_hex": "0c070890010000",
+        "augmentation": "zPLR",
+        "code_align": 1,
+        "data_align": -8,
+        "return_register": 16,
+        "lsda_encoding": 27,
+        "fde_augmentation_hex": "c7ee0ffe"
+      },
+      "call_bytes": "e826b02300"
+    },
+    {
+      "name": "decode_end",
+      "call_rva": "0x1fa114b",
+      "return_rva": "0x1fa1150",
+      "object_register": "r14",
+      "caller_function": {
+        "start_rva": 33165408,
+        "end_rva": 33169567,
+        "bytes": 4159,
+        "file_offset": 33161312,
+        "sha256": "1376d61aa938ab687f25c6081437c6119e168bc709acc4c08e0fde7a9df242d1",
+        "fde_rva": 32890384,
+        "fde_file_offset": 32890384,
+        "fde_bytes": 392,
+        "fde_sha256": "6bf6de884add51b59bb900b5f8a9de54d1c5bf68ac5a64cd1b6e079142d6ecff",
+        "cie_file_offset": 32872588,
+        "cie_bytes": 32,
+        "cie_hex": "1c00000000000000017a504c5200017810079bc1d226001b1b0c070890010000",
+        "cfi_hex": "410e10420e18420e20420e28420e30410e38470ec00783078c068d058e048f0386026d2e00582e0002862e000376012ed0015d0ec807420ed007420ed807420ee007410ee807410ef007470ef807470e8008470e8808470e9008470e9808470ea008470ea808420eb008470eb808470ec008470ec808470ed008470ed808470ee008470ee808470ef008470ef808470e8009470e8809470e90094c0ec007502e005e2e0002402e0002e02e00029e2e00024f2e0002432e005f2e005b2e00532e00592e00029f2e0002af2e00025c2e00732e00024c2e0002b62e000318012e00542e007d2e0002442e00642e00572e00562e005d2e005c2e0002462e00592e00592e006b2e0002592e00772e00642e00722e005e2e00602e00652e004e0e38410e30420e28420e20420e18420e10410e08410ec00702742e0002462e00682e00632e004c2e004c2e004c2e004c2e004c2e0002592e005b2e00652e00027e2e007b2e00622e00662e00692e00652e00452e0000",
+        "cie_cfi_hex": "0c070890010000",
+        "augmentation": "zPLR",
+        "code_align": 1,
+        "data_align": -8,
+        "return_register": 16,
+        "lsda_encoding": 27,
+        "fde_augmentation_hex": "37da0ffe"
+      },
+      "call_bytes": "e8f0da2100"
+    }
+  ],
+  "windows": [
+    {
+      "name": "prefill_begin_timestamp_store",
+      "rva": "0x1f810a1",
+      "end_rva": "0x1f810b4",
+      "bytes": 19,
+      "instruction_bytes_hex": "4189d44989f74889fbe891db23004889442418",
+      "sha256": "f560762735b737cbf47aaace964b7308cec6ab75f0e8f336e8430fae6fc3f4b7",
+      "instructions": [
+        {
+          "rva": "0x1f810a1",
+          "mnemonic": "mov",
+          "operand": "r12d, edx"
+        },
+        {
+          "rva": "0x1f810a4",
+          "mnemonic": "mov",
+          "operand": "r15, rsi"
+        },
+        {
+          "rva": "0x1f810a7",
+          "mnemonic": "mov",
+          "operand": "rbx, rdi"
+        },
+        {
+          "rva": "0x1f810aa",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1f810af",
+          "mnemonic": "mov",
+          "operand": "qword ptr [rsp + 0x18], rax"
+        }
+      ]
+    },
+    {
+      "name": "prefill_end_accumulation",
+      "rva": "0x1f818cd",
+      "end_rva": "0x1f818fc",
+      "bytes": 47,
+      "instruction_bytes_hex": "4531e4e86bd32300482b4424180f57c0f2480f2ac0f20f5e059e5c09fef2410f588728050000f2410f118728050000",
+      "sha256": "199a5720f25af6b7bb9dbd4709423da3d3ea1f50548c8d41e7897ee96cc2b4e0",
+      "instructions": [
+        {
+          "rva": "0x1f818cd",
+          "mnemonic": "xor",
+          "operand": "r12d, r12d"
+        },
+        {
+          "rva": "0x1f818d0",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1f818d5",
+          "mnemonic": "sub",
+          "operand": "rax, qword ptr [rsp + 0x18]"
+        },
+        {
+          "rva": "0x1f818da",
+          "mnemonic": "xorps",
+          "operand": "xmm0, xmm0"
+        },
+        {
+          "rva": "0x1f818dd",
+          "mnemonic": "cvtsi2sd",
+          "operand": "xmm0, rax"
+        },
+        {
+          "rva": "0x1f818e2",
+          "mnemonic": "divsd",
+          "operand": "xmm0, qword ptr [rip - 0x1f6a362] # 0x17588"
+        },
+        {
+          "rva": "0x1f818ea",
+          "mnemonic": "addsd",
+          "operand": "xmm0, qword ptr [r15 + 0x528]"
+        },
+        {
+          "rva": "0x1f818f3",
+          "mnemonic": "movsd",
+          "operand": "qword ptr [r15 + 0x528], xmm0"
+        }
+      ]
+    },
+    {
+      "name": "decode_begin_count_start",
+      "rva": "0x1f83c02",
+      "end_rva": "0x1f83c21",
+      "bytes": 31,
+      "instruction_bytes_hex": "418b465c4189868402000041c7466001000000e826b0230049898690020000",
+      "sha256": "5f5a6a64bc3e5e08e5f24063b42e3bab43bb1a1f331d9be6ac1ecc39ccce19b2",
+      "instructions": [
+        {
+          "rva": "0x1f83c02",
+          "mnemonic": "mov",
+          "operand": "eax, dword ptr [r14 + 0x5c]"
+        },
+        {
+          "rva": "0x1f83c06",
+          "mnemonic": "mov",
+          "operand": "dword ptr [r14 + 0x284], eax"
+        },
+        {
+          "rva": "0x1f83c0d",
+          "mnemonic": "mov",
+          "operand": "dword ptr [r14 + 0x60], 0x1"
+        },
+        {
+          "rva": "0x1f83c15",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1f83c1a",
+          "mnemonic": "mov",
+          "operand": "qword ptr [r14 + 0x290], rax"
+        }
+      ]
+    },
+    {
+      "name": "decode_end_start_subtract",
+      "rva": "0x1fa1130",
+      "end_rva": "0x1fa1172",
+      "bytes": 66,
+      "instruction_bytes_hex": "83f8027c3d498b9e900200004589cf4989ccf20f11842490000000e8f0da2100f20f108424900000004c89e14589f94829d80f57c9f2480f2ac8f20f5e0d166407fe",
+      "sha256": "c21233affdcc06972650b9a48f47fe80f43ab6f6e90ef4a4157a57e9a2e8c119",
+      "instructions": [
+        {
+          "rva": "0x1fa1130",
+          "mnemonic": "cmp",
+          "operand": "eax, 0x2"
+        },
+        {
+          "rva": "0x1fa1133",
+          "mnemonic": "jl",
+          "operand": "0x1fa1172 <.text+0x36d52>"
+        },
+        {
+          "rva": "0x1fa1135",
+          "mnemonic": "mov",
+          "operand": "rbx, qword ptr [r14 + 0x290]"
+        },
+        {
+          "rva": "0x1fa113c",
+          "mnemonic": "mov",
+          "operand": "r15d, r9d"
+        },
+        {
+          "rva": "0x1fa113f",
+          "mnemonic": "mov",
+          "operand": "r12, rcx"
+        },
+        {
+          "rva": "0x1fa1142",
+          "mnemonic": "movsd",
+          "operand": "qword ptr [rsp + 0x90], xmm0"
+        },
+        {
+          "rva": "0x1fa114b",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1fa1150",
+          "mnemonic": "movsd",
+          "operand": "xmm0, qword ptr [rsp + 0x90]"
+        },
+        {
+          "rva": "0x1fa1159",
+          "mnemonic": "mov",
+          "operand": "rcx, r12"
+        },
+        {
+          "rva": "0x1fa115c",
+          "mnemonic": "mov",
+          "operand": "r9d, r15d"
+        },
+        {
+          "rva": "0x1fa115f",
+          "mnemonic": "sub",
+          "operand": "rax, rbx"
+        },
+        {
+          "rva": "0x1fa1162",
+          "mnemonic": "xorps",
+          "operand": "xmm1, xmm1"
+        },
+        {
+          "rva": "0x1fa1165",
+          "mnemonic": "cvtsi2sd",
+          "operand": "xmm1, rax"
+        },
+        {
+          "rva": "0x1fa116a",
+          "mnemonic": "divsd",
+          "operand": "xmm1, qword ptr [rip - 0x1f89bea] # 0x17588"
+        }
+      ]
+    },
+    {
+      "name": "prefill_accumulator_zero",
+      "rva": "0x1f76eb7",
+      "end_rva": "0x1f76ee2",
+      "bytes": 43,
+      "instruction_bytes_hex": "f30f7f800405000048c7801105000000000000f30f7f8042050000f30f7f8038050000f30f7f8028050000",
+      "sha256": "c67fc074b817e7a6a4d69a398aa50ac359372dc001d583ad37f1df7f6af68c9d",
+      "instructions": [
+        {
+          "rva": "0x1f76eb7",
+          "mnemonic": "movdqu",
+          "operand": "xmmword ptr [rax + 0x504], xmm0"
+        },
+        {
+          "rva": "0x1f76ebf",
+          "mnemonic": "mov",
+          "operand": "qword ptr [rax + 0x511], 0x0"
+        },
+        {
+          "rva": "0x1f76eca",
+          "mnemonic": "movdqu",
+          "operand": "xmmword ptr [rax + 0x542], xmm0"
+        },
+        {
+          "rva": "0x1f76ed2",
+          "mnemonic": "movdqu",
+          "operand": "xmmword ptr [rax + 0x538], xmm0"
+        },
+        {
+          "rva": "0x1f76eda",
+          "mnemonic": "movdqu",
+          "operand": "xmmword ptr [rax + 0x528], xmm0"
+        }
+      ]
+    },
+    {
+      "name": "prefill_to_request_transfer",
+      "rva": "0x1fa03f1",
+      "end_rva": "0x1fa0410",
+      "bytes": 31,
+      "instruction_bytes_hex": "4889dfe837b1fdff4d8b742410f2410f108628050000f2410f118688020000",
+      "sha256": "afbf4158b5480874858eb59d8e429d19d3b68e25cd641e32cbda863315f051c8",
+      "instructions": [
+        {
+          "rva": "0x1fa03f1",
+          "mnemonic": "mov",
+          "operand": "rdi, rbx"
+        },
+        {
+          "rva": "0x1fa03f4",
+          "mnemonic": "call",
+          "operand": "0x1f7b530 <.text+0x11110>"
+        },
+        {
+          "rva": "0x1fa03f9",
+          "mnemonic": "mov",
+          "operand": "r14, qword ptr [r12 + 0x10]"
+        },
+        {
+          "rva": "0x1fa03fe",
+          "mnemonic": "movsd",
+          "operand": "xmm0, qword ptr [r14 + 0x528]"
+        },
+        {
+          "rva": "0x1fa0407",
+          "mnemonic": "movsd",
+          "operand": "qword ptr [r14 + 0x288], xmm0"
+        }
+      ]
+    },
+    {
+      "name": "prefill_identity_slot_trace",
+      "rva": "0x1f81b63",
+      "end_rva": "0x1f81b92",
+      "bytes": 47,
+      "instruction_bytes_hex": "498b07488944240831c048837b08000f94c0c1e008418bac0720040000458b6f5c458b7f08e8b3d02300482b442418",
+      "sha256": "dafef7c49008c7844db11ec12b138b8eb28505612615e5de37d8d90dd53b59c4",
+      "instructions": [
+        {
+          "rva": "0x1f81b63",
+          "mnemonic": "mov",
+          "operand": "rax, qword ptr [r15]"
+        },
+        {
+          "rva": "0x1f81b66",
+          "mnemonic": "mov",
+          "operand": "qword ptr [rsp + 0x8], rax"
+        },
+        {
+          "rva": "0x1f81b6b",
+          "mnemonic": "xor",
+          "operand": "eax, eax"
+        },
+        {
+          "rva": "0x1f81b6d",
+          "mnemonic": "cmp",
+          "operand": "qword ptr [rbx + 0x8], 0x0"
+        },
+        {
+          "rva": "0x1f81b72",
+          "mnemonic": "sete",
+          "operand": "al"
+        },
+        {
+          "rva": "0x1f81b75",
+          "mnemonic": "shl",
+          "operand": "eax, 0x8"
+        },
+        {
+          "rva": "0x1f81b78",
+          "mnemonic": "mov",
+          "operand": "ebp, dword ptr [r15 + rax + 0x420]"
+        },
+        {
+          "rva": "0x1f81b80",
+          "mnemonic": "mov",
+          "operand": "r13d, dword ptr [r15 + 0x5c]"
+        },
+        {
+          "rva": "0x1f81b84",
+          "mnemonic": "mov",
+          "operand": "r15d, dword ptr [r15 + 0x8]"
+        },
+        {
+          "rva": "0x1f81b88",
+          "mnemonic": "call",
+          "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+        },
+        {
+          "rva": "0x1f81b8d",
+          "mnemonic": "sub",
+          "operand": "rax, qword ptr [rsp + 0x18]"
+        }
+      ]
+    },
+    {
+      "name": "decode_request_slot_argument",
+      "rva": "0x1f82ca1",
+      "end_rva": "0x1f82cb5",
+      "bytes": 20,
+      "instruction_bytes_hex": "4989d64989f54989fc488b3f8b7208e8fb6e1200",
+      "sha256": "44b047ca0b0ae125530d56d3c7913e4ed73a3dca35689e50c203dc802b5e3b5c",
+      "instructions": [
+        {
+          "rva": "0x1f82ca1",
+          "mnemonic": "mov",
+          "operand": "r14, rdx"
+        },
+        {
+          "rva": "0x1f82ca4",
+          "mnemonic": "mov",
+          "operand": "r13, rsi"
+        },
+        {
+          "rva": "0x1f82ca7",
+          "mnemonic": "mov",
+          "operand": "r12, rdi"
+        },
+        {
+          "rva": "0x1f82caa",
+          "mnemonic": "mov",
+          "operand": "rdi, qword ptr [rdi]"
+        },
+        {
+          "rva": "0x1f82cad",
+          "mnemonic": "mov",
+          "operand": "esi, dword ptr [rdx + 0x8]"
+        },
+        {
+          "rva": "0x1f82cb0",
+          "mnemonic": "call",
+          "operand": "0x20a9bb0 <_ZSt17__rotate_adaptiveIN9__gnu_cxx17__normal_iteratorIPmSt6vectorImSaImEEEES2_lET_S7_S7_S7_T1_S8_T0_S8_+0xada10>"
+        }
+      ]
+    },
+    {
+      "name": "decode_completion_identity_fields",
+      "rva": "0x1fa1110",
+      "end_rva": "0x1fa1124",
+      "bytes": 20,
+      "instruction_bytes_hex": "498b0e458b4e5c418b4660f2410f108688020000",
+      "sha256": "2c953a92e756de1192c2e7f8e17ecef38c4cd21f16612a0562c75d0b85caae07",
+      "instructions": [
+        {
+          "rva": "0x1fa1110",
+          "mnemonic": "mov",
+          "operand": "rcx, qword ptr [r14]"
+        },
+        {
+          "rva": "0x1fa1113",
+          "mnemonic": "mov",
+          "operand": "r9d, dword ptr [r14 + 0x5c]"
+        },
+        {
+          "rva": "0x1fa1117",
+          "mnemonic": "mov",
+          "operand": "eax, dword ptr [r14 + 0x60]"
+        },
+        {
+          "rva": "0x1fa111b",
+          "mnemonic": "movsd",
+          "operand": "xmm0, qword ptr [r14 + 0x288]"
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "function": {
+        "start_rva": 33034384,
+        "end_rva": 33038794,
+        "bytes": 4410,
+        "file_offset": 33030288,
+        "sha256": "943abdd032d887043a720c61aaf052a9a8f1b57737db4c01cff9e5c8ba7984ba",
+        "fde_rva": 32881300,
+        "fde_file_offset": 32881300,
+        "fde_bytes": 472,
+        "fde_sha256": "236a1b64bd5a91222867aac0c4ae98dcc0571b3a424630ba3afae895eb681aa7",
+        "cie_file_offset": 32872588,
+        "cie_bytes": 32,
+        "cie_hex": "1c00000000000000017a504c5200017810079bc1d226001b1b0c070890010000",
+        "cfi_hex": "410e10420e18420e20420e28420e30410e38470eb00283078c068d058e048f038602492e006c2e004d2e00612e00026e2e00562e00024c2e005d2e004c2e00722e0002632e0002562e007d2e00752e005a2e00482e00026d2e0002642e10440eb8024a0ec002490eb00202442e00572e000307012e00652e10450eb802440ec002490eb00202482e00752e00792e10460eb802440ec0024d0eb00202e82e00452e00792e10440eb8024e0ec002490eb0024a2e00782e20520eb802420ec002410ec802420ed002490eb0022e0002632e00024b2e0002562e004c2e00652e00482e006f2e006c2e0002462e00692e00602e0002402e00730e38410e30420e28420e20420e18420e10410e08410eb002642e00582e007a2e0002482e205b0eb802420ec002420ec802420ed002490eb0024a2e005d2e00452e00652e00582e00612e00632e00502e00542e005f2e00502e00552e00602e0002982e00592e005e2e00452e00602e005a2e00662e00722e00692e00692e00662e00602e00632e00542e004b2e00512e00542e004c2e00512e00542e004b2e00512e005b2e004b2e00582e00542e004b2e0002842e00532e0002432e00662e00782e00692e00452e00000000",
+        "cie_cfi_hex": "0c070890010000",
+        "augmentation": "zPLR",
+        "code_align": 1,
+        "data_align": -8,
+        "return_register": 16,
+        "lsda_encoding": 27,
+        "fde_augmentation_hex": "bbf00ffe"
+      },
+      "evidence": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\raw-phase-function-1.txt",
+        "bytes": 64824,
+        "sha256": "ba4e02c4e7cc35c40a694fe2537bc1a3b5244ab611f16c8fb395ad19dcbf6538"
+      },
+      "command": [
+        "C:/AI/runtimes/ironenv/Lib/site-packages/llvm-aie/bin/llvm-objdump.exe",
+        "--disassemble",
+        "--x86-asm-syntax=intel",
+        "--start-address=0x1f81090",
+        "--stop-address=0x1f821ca",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\flash_serve"
+      ]
+    },
+    {
+      "function": {
+        "start_rva": 33041552,
+        "end_rva": 33046431,
+        "bytes": 4879,
+        "file_offset": 33037456,
+        "sha256": "13dc59872cb7adc40e4565f9e2b3ac8c63bf330687ed851371d2400401b7fdec",
+        "fde_rva": 32881928,
+        "fde_file_offset": 32881928,
+        "fde_bytes": 396,
+        "fde_sha256": "f6f3d9fcfe48c138114e7691d632ae33118d5f69ce3dfb7a5e036c94ba91121e",
+        "cie_file_offset": 32872588,
+        "cie_bytes": 32,
+        "cie_hex": "1c00000000000000017a504c5200017810079bc1d226001b1b0c070890010000",
+        "cfi_hex": "410e10420e18420e20420e28420e30410e38470eb00283078c068d058e048f0386024f2e00632e004e2e0002422e00642e000326012e000376012e005b2e00532e0002992e005f2e00532e0002922e00542e00532e0002992e005f2e00532e0002922e00542e00532e0002872e00542e00532e00722e00612e10650eb802420ec002490eb002037c012e000351012e00552e00532e0002922e00552e00532e0002922e00552e00532e0002922e00552e00532e0002922e00552e00532e0002872e00552e00532e00772e007b2e104d0eb802420ec002490eb002642e10570eb802420ec002490eb002472e005f2e00672e00622e007c2e00692e00622e00672e0002762e006e2e00510e38410e30420e28420e20420e18420e10410e08410eb002602e00582e00602e00512e006b2e00552e004d2e00752e004c2e004c2e004c2e004c2e004c2e004c2e00542e004b2e00512e004c2e004c2e004c2e004c2e004c2e004c2e00542e004c2e00622e00622e00452e000000",
+        "cie_cfi_hex": "0c070890010000",
+        "augmentation": "zPLR",
+        "code_align": 1,
+        "data_align": -8,
+        "return_register": 16,
+        "lsda_encoding": 27,
+        "fde_augmentation_hex": "c7ee0ffe"
+      },
+      "evidence": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\raw-phase-function-2.txt",
+        "bytes": 66928,
+        "sha256": "5e8abe721aa02c8b021e088df0b13e0199d4a4fe2026ce9e913e86bb8c807d2a"
+      },
+      "command": [
+        "C:/AI/runtimes/ironenv/Lib/site-packages/llvm-aie/bin/llvm-objdump.exe",
+        "--disassemble",
+        "--x86-asm-syntax=intel",
+        "--start-address=0x1f82c90",
+        "--stop-address=0x1f83f9f",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\flash_serve"
+      ]
+    },
+    {
+      "function": {
+        "start_rva": 33165408,
+        "end_rva": 33169567,
+        "bytes": 4159,
+        "file_offset": 33161312,
+        "sha256": "1376d61aa938ab687f25c6081437c6119e168bc709acc4c08e0fde7a9df242d1",
+        "fde_rva": 32890384,
+        "fde_file_offset": 32890384,
+        "fde_bytes": 392,
+        "fde_sha256": "6bf6de884add51b59bb900b5f8a9de54d1c5bf68ac5a64cd1b6e079142d6ecff",
+        "cie_file_offset": 32872588,
+        "cie_bytes": 32,
+        "cie_hex": "1c00000000000000017a504c5200017810079bc1d226001b1b0c070890010000",
+        "cfi_hex": "410e10420e18420e20420e28420e30410e38470ec00783078c068d058e048f0386026d2e00582e0002862e000376012ed0015d0ec807420ed007420ed807420ee007410ee807410ef007470ef807470e8008470e8808470e9008470e9808470ea008470ea808420eb008470eb808470ec008470ec808470ed008470ed808470ee008470ee808470ef008470ef808470e8009470e8809470e90094c0ec007502e005e2e0002402e0002e02e00029e2e00024f2e0002432e005f2e005b2e00532e00592e00029f2e0002af2e00025c2e00732e00024c2e0002b62e000318012e00542e007d2e0002442e00642e00572e00562e005d2e005c2e0002462e00592e00592e006b2e0002592e00772e00642e00722e005e2e00602e00652e004e0e38410e30420e28420e20420e18420e10410e08410ec00702742e0002462e00682e00632e004c2e004c2e004c2e004c2e004c2e0002592e005b2e00652e00027e2e007b2e00622e00662e00692e00652e00452e0000",
+        "cie_cfi_hex": "0c070890010000",
+        "augmentation": "zPLR",
+        "code_align": 1,
+        "data_align": -8,
+        "return_register": 16,
+        "lsda_encoding": 27,
+        "fde_augmentation_hex": "37da0ffe"
+      },
+      "evidence": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\native-D-formatter.txt",
+        "bytes": 61835,
+        "sha256": "43f530465c95cbbd13b62552253d06632be53a05a2668ba48c13f2f4495b9957"
+      },
+      "command": [
+        "C:/AI/runtimes/ironenv/Lib/site-packages/llvm-aie/bin/llvm-objdump.exe",
+        "--disassemble",
+        "--x86-asm-syntax=intel",
+        "--start-address=0x1fa1060",
+        "--stop-address=0x1fa209f",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\flash_serve"
+      ]
+    },
+    {
+      "function": {
+        "start_rva": 32952896,
+        "end_rva": 33006594,
+        "bytes": 53698,
+        "file_offset": 32948800,
+        "sha256": "92d7499f322d18c820b57b2cf26ff0b6897d249972a269101caf4a2a5a9f0b2b",
+        "fde_rva": 32874148,
+        "fde_file_offset": 32874148,
+        "fde_bytes": 2820,
+        "fde_sha256": "ce603cabcbc28b0292695e06978225fc9d5a41bcafc4058af67367112eb60729",
+        "cie_file_offset": 32872588,
+        "cie_bytes": 32,
+        "cie_hex": "1c00000000000000017a504c5200017810079bc1d226001b1b0c070890010000",
+        "cfi_hex": "410e10420e18420e20420e28420e30410e38470e803d83078c068d058e048f038602552e0002912e005f2e0002692e00025b2e00662e0002602e00034c022e0003b4032e005e2e0002712e00772e00027c2e0002962e0002492e0002652e00024a2e007d2e006b2e006c2e0002562e00602e0002562e0002ef2e007b2e0002462e00502e00602e006a2e005a2e005a2e00662e0002b52e00552e005c2e00512e004d2e0002512e0002472e005a2e00024a2e00552e0002692e00024c2e00026e2e00522e005a2e00662e0002a52e00452e005c2e0002662e00752e00722e0002482e0002e32e00522e007b2e005d2e00582e006f2e005b2e0002cd2e00682e006b2e00024d2e0002452e0002402e004d2e004e2e00026b2e0002612e00026e2e004f2e00602e0002bd2e00552e00502e00502e00502e00027c2e0003ff012e0003b2012e00652e004a2e00622e004a2e00742e00032e022e8003470e80400386020e803d502e005c2e0002422e00452e00762e007c2e00502e0002422e0002592e00552e007d2e00732e00452e00027d2e00512e004f2e00482e0002472e00028c2e40440ec03d7f0e803d502e005c2e0002462e0002672e00682e006b2e00024d2e00732e00652e0002dc2e0002452e00502e0002c72e00652e000344032e006f2e00452e007e2e0002592e00552e007d2e007f2e007c2e0002472e00026b2e00652e004f2e005e2e00792e0002592e00552e007d2e00682e004d2e0002642e007a2e00612e00582e00552e0002912e0002422e0002502e0002bc2e00612e0002bd2e0002442e000324012e00025b2e006e2e007a2e00027e2e00502e004d2e00502e0002552e006a2e00702e00026a2e0002542e004f2e00582e0002512e00552e00732e10440e883d500e903d490e803d432e00772e00782e00512e0002d22e00542e00542e0002712e00792e00024c2e005f2e00482e0002e92e0002f12e0002562e0002ae2e006b2e0002402e005b2e00682e005c2e0002522e00652e00582e007c2e0002ca2e00024e2e0002492e005d2e0002972e0002702e0002b72e006c2e007b2e006c2e0002a82e00672e00027f2e0002532e00652e00522e0002412e007e2e005d2e00572e00452e00632e00512e005a2e00452e006a2e00522e004f2e00542e004b2e00512e00542e004b2e00512e00602e004c2e00572e00542e004b2e00512e00542e004b2e00512e00542e004b2e00512e00542e004b2e00512e00662e004c2e005a2e00542e004b2e00512e00542e004b2e00512e00542e004c2e00512e00542e004c2e006a2e0002f02e006d2e00762e00024b2e000346012e005d2e005d2e0002ae2e0002b92e0002462e00472e004f2e00024c2e0002452e0002ae2e00632e0002bc2e00025f2e00782e007a2e00502e00025d2e005d2e007b2e0002432e00024c2e006f2e00452e00612e00672e006f2e007c2e006a2e00532e0002612e0002be2e00652e007a2e004f2e00712e004a2e00612e00792e00582e007a2e00029e2e0002522e20440e883d4f0e903d420e983d470ea03d490e803d552e00482e005c2e0002602e00452e005a2e00032c012e00782e00642e00492e00452e005a2e004a2e00602e0002582e00622e0002462e00025a2e00572e00024f2e00642e0002582e006e2e0002542e00712e00612e0002522e0002682e0002962e0002492e0002642e0002412e007d2e006b2e00752e00502e00037e032e0002d42e00632e004d2e0002462e00522e0002ec2e004b2e0002442e0002452e00662e004d2e0002462e000345012e0002542e00025e2e00024c2e0002542e0002d32e000358012e00592e00024b2e0002452e00025c2e0002c32e000358012e00592e00025b2e0002422e00025f2e0002c32e000340012e00592e0002432e007b2e0002662e0002552e006d2e005c2e00652e00652e00652e00652e00652e00652e00652e00652e00652e00692e0002e22e0002442e004f2e006a2e0002d22e00031a022e005e2e004d2e00030c012e00025b2e0002682e005f2e00612e004b2e0002532e00652e007b2e00712e0002522e00612e004d2e0002462e006e2e0002732e00762e00592e004d2e0002462e005a2e0002412e00025d2e0002942e005d2e00622e00652e006c2e0002eb2e0002842e0002442e0002b52e0002532e0002432e0002572e0002552e00682e005c2e00652e0002c62e0002af2e00025f2e00024d2e00025a2e0002bb2e000332012e00592e00024c2e00024c2e00024e2e00025a2e0002652e0002a12e00562e00024c2e00712e007c2e00652e005c2e00652e00652e00652e00652e00652e00652e00672e00452e006d2e0002592e00552e007d2e0002402e004d2e0002492e00662e000301012e00612e004d2e0002462e006e2e0002652e0002752e000332012e00592e00024c2e00024e2e00024e2e00652e0002452e00652e00652e00652e006b2e00552e004d2e0002462e005a2e0002432e006e2e0002a42e006c2e00752e004d2e0002412e006b2e005c2e000365042e004a2e00502e00582e00682e0002612e20490e883d410e903d420e983d420ea03d490e803d02902e004c2e00024b2e005d2e005d2e005d2e005d2e005d2e005d2e006b2e004c2e005b2e000343012e00030b012e006a2e00582e00024f2e004d2e006d2e00662e006a2e00792e00602e0002462e0002712e00522e00492e004b2e0002452e00025c2e000303022e00622e005c2e00612e0002632e0002422e0002432e006f2e00452e00482e006c2e00024f2e00552e00026d2e20440e883d510e903d420e983d420ea03d490e803d442e00025a2e00452e005c2e006b2e00032e022e00025c2e0002ff2e0003e5012e0002522e20440e883d4f0e903d420e983d470ea03d490e803d2e00602e00712e00452e00552e0002832e00782e00642e004f2e00762e00452e00672e00512e00752e00642e0002cb2e00602e0002592e30560e883d470e903d420e983d420ea03d420ea83d410eb03d490e803d4a2e005c2e00612e005e2e00542e004b2e00512e005a2e004b2e00532e00542e004b2e00512e00542e004b2e00512e00542e004c2e0002432e006d2e00712e004d2e00592e006c2e0002492e00692e00026f2e006a2e005f2e00772e0002522e004e2e00672e00582e00752e00602e004d2e00572e004d2e00562e00672e005b2e00652e00672e006c2e00642e006c2e005e0e38410e30420e28420e20420e18420e10410e08410e803d562e0002842e0002a32e006a2e006c2e005f2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e00472e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e004c2e00592e006c2e00772e00792e00732e00732e004f2e00742e004d2e007f2e00482e00702e00452e00522e00482e00672e0002432e0002bc2e00552e005c2e00712e00732e00612e004b2e00552e005b2e00482e004d2e005c2e00572e007f2e006d2e00472e00782e0002732e00024c2e0002972e00592e00632e00452e007b2e0002422e000319012e00024a2e0002472e00692e00692e007f2e00024f2e00602e0002452e00452e0002c42e005a2e00522e007d2e0002432e0002752e0002792e00024b2e00452e00027f2e00452e0002592e0002bf2e00752e0002702e00452e006d2e00452e00562e00582e00612e00692e00692e00652e00692e00692e00692e00692e00692e00792e00782e004a2e000377012e007a2e00692e00672e005a2e00522e0002422e00722e00452e004d2e004d2e00552e004d2e00652e00452e00572e004d2e00452e00492e00652e00452e004d2e005c2e0000",
+        "cie_cfi_hex": "0c070890010000",
+        "augmentation": "zPLR",
+        "code_align": 1,
+        "data_align": -8,
+        "return_register": 16,
+        "lsda_encoding": 27,
+        "fde_augmentation_hex": "270310fe"
+      },
+      "evidence": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\raw-phase-function-0.txt",
+        "bytes": 686279,
+        "sha256": "1c7eaa92edd83a538e4cd814e698b0ad44fffa2cf73b6944c4b08a0ef36731ce"
+      },
+      "command": [
+        "C:/AI/runtimes/ironenv/Lib/site-packages/llvm-aie/bin/llvm-objdump.exe",
+        "--disassemble",
+        "--x86-asm-syntax=intel",
+        "--start-address=0x1f6d240",
+        "--stop-address=0x1f7a402",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\flash_serve"
+      ]
+    },
+    {
+      "function": {
+        "start_rva": 33161536,
+        "end_rva": 33162844,
+        "bytes": 1308,
+        "file_offset": 33157440,
+        "sha256": "ab2e8c5b10d7d8d4f6f68fe6ebde71a1dcf0e8b79852f2937a0b4f5c3caf251a",
+        "fde_rva": 32886972,
+        "fde_file_offset": 32886972,
+        "fde_bytes": 220,
+        "fde_sha256": "bd075a48938b5f6667bfc5aa497078c79e81863161a1b7bb0ee561db870c2fd7",
+        "cie_file_offset": 32872588,
+        "cie_bytes": 32,
+        "cie_hex": "1c00000000000000017a504c5200017810079bc1d226001b1b0c070890010000",
+        "cfi_hex": "410e10420e18420e20420e28410e30470ed00283068c058e048f038602512e00612e0002452e20440ed802420ee002420ee802420ef002490ed00202782e00512e007d2e005d2e005d2e005d2e005d2e00572e00572e00024b2e00482e00482e00592e007c2e00782e00542e00602e004f2e00582e0002472e00024e2e20440ed8024b0ee002420ee802410ef002490ed002442e00582e00622e004a2e007d2e00612e00692e004f0e30410e28420e20420e18420e10410e08410ed002432e00712e00452e0000",
+        "cie_cfi_hex": "0c070890010000",
+        "augmentation": "zPLR",
+        "code_align": 1,
+        "data_align": -8,
+        "return_register": 16,
+        "lsda_encoding": 27,
+        "fde_augmentation_hex": "5be70ffe"
+      },
+      "evidence": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\raw-phase-function-3.txt",
+        "bytes": 20637,
+        "sha256": "61a057db9e8839ab59c63558d7bc7515570f034687d65242208531d9f5b0fcce"
+      },
+      "command": [
+        "C:/AI/runtimes/ironenv/Lib/site-packages/llvm-aie/bin/llvm-objdump.exe",
+        "--disassemble",
+        "--x86-asm-syntax=intel",
+        "--start-address=0x1fa0140",
+        "--stop-address=0x1fa065c",
+        "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\flash_serve"
+      ]
+    }
+  ],
+  "native_divisors": [
+    {
+      "rva": "0x17588",
+      "double": 1000000.0
+    },
+    {
+      "rva": "0x17588",
+      "double": 1000000.0
+    }
+  ],
+  "fields": {
+    "request_signed_id": "i64+0x0",
+    "native_slot": "i32+0x8",
+    "prompt_count": "u32+0x5c",
+    "generated_count": "u32+0x60",
+    "prefill_accumulator": "f64+0x528",
+    "published_prefill_ms": "f64+0x288",
+    "native_decode_start": "i64+0x290",
+    "prefill_native_start": "caller_SP+0x18",
+    "decode_end_carried_native_start": "saved_rbx"
+  },
+  "zero_accumulator_proof": {
+    "zero_rva": "0x1f76b0d",
+    "end_rva": "0x1f76ee2",
+    "straight_line_instructions": 119,
+    "no_incoming_direct_edge_into_block": true
+  },
+  "prefill_transfer": {
+    "call_rva": "0x1fa03f4",
+    "helper_target_rva": "0x1f7b530",
+    "source": "f64+0x528",
+    "destination": "f64+0x288",
+    "limitation": "This window proves the exact field copy. The preceding helper call is not claimed to target the bound prefill function."
+  },
+  "completion_identity": {
+    "object_register": "r14 from rdx",
+    "object_move_rva": "0x1fa1086",
+    "native_id_load": "mov rcx, qword ptr [r14]",
+    "printf_id_argument": "rcx retained, saved r12 across chrono then restored rcx",
+    "fresh_identity_dataflow": [
+      {
+        "rva": "0x1fa1110",
+        "mnemonic": "mov",
+        "operand": "rcx, qword ptr [r14]"
+      },
+      {
+        "rva": "0x1fa114b",
+        "mnemonic": "call",
+        "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+      },
+      {
+        "rva": "0x1fa1159",
+        "mnemonic": "mov",
+        "operand": "rcx, r12"
+      }
+    ],
+    "format_load_rva": "0x1fa12b2",
+    "format_string_rva": "0x30665",
+    "format_string": "D %ld %s %d %d %.1f %.1f %d %ld %ld %d %ld %ld %ld %ld %d %d %d %d %d %d %d %d %d %d %.1f %ld %ld %ld %ld %ld %ld %ld",
+    "runtime_requirement": "The API native D identity must equal every captured native object identity."
+  },
+  "provider": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\cpu-provider\\files\\stdcpp-libstdc++.so.6.0.33",
+    "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+    "bytes": 2497768,
+    "symbol_rva": "0xd5490",
+    "symbol_bytes": 39,
+    "symbol_code_hex": "f30f1efa4883ec18bf010000004889e6e8eb83fcff4869042400ca9a3b48034424084883c418c3",
+    "clock_id": 1,
+    "clock_gettime_plt": "0x9d890",
+    "clock_gettime_got": "0x25f430",
+    "evidence": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\raw-phase-prep\\evidence\\0201-chrono-provider-function-0.txt",
+      "bytes": 788,
+      "sha256": "ee9fe4fa11f9c1e1995b15fccceded7b23b49f4c25a6a58f9a7e664c493503af"
+    },
+    "command": [
+      "C:\\AI\\runtimes\\ironenv\\Lib\\site-packages\\llvm-aie\\bin\\llvm-objdump.exe",
+      "--disassemble",
+      "--x86-asm-syntax=intel",
+      "--start-address=0xd5490",
+      "--stop-address=0xd54b7",
+      "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\extracted\\cpu-provider\\files\\libstdc++.so.6.0.33"
+    ],
+    "receipt_sha256": "54e63de32d36abead37b77c5957d6c5a45bdff0e6769fcb16190e6779bd8e260",
+    "fresh_whole_file_identity_verified": true,
+    "fresh_dynamic_symbol_checked": true,
+    "same_exact_prior_inspector_capture_reused": true,
+    "provider_disassembled_now": false
+  },
+  "fresh_provider_verified": true,
+  "exact_whole_file_rebinding": {
+    "schema": "halogen0203.native-whole-file-rebinding-proof.v1",
+    "created_utc": "2026-11-11T16:16:43.312236+00:00",
+    "actual_whole_file_identities": {
+      "flash_serve": {
+        "previous": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\flash_serve",
+          "bytes": 35410384,
+          "sha256": "bf84053705d1e89c214ff64c79ad1276c5fe353d80a9bb0f38ef3bac6645b97c"
+        },
+        "current": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\flash_serve",
+          "bytes": 35410384,
+          "sha256": "bf84053705d1e89c214ff64c79ad1276c5fe353d80a9bb0f38ef3bac6645b97c"
+        },
+        "whole_file_byte_equal": true
+      },
+      "serve_api.py": {
+        "previous": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\serve_api.py",
+          "bytes": 338407,
+          "sha256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4"
+        },
+        "current": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\serve_api.py",
+          "bytes": 338407,
+          "sha256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4"
+        },
+        "whole_file_byte_equal": true
+      },
+      "chrono_provider": {
+        "previous": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\extracted\\cpu-provider\\files\\stdcpp-libstdc++.so.6.0.33",
+          "bytes": 2497768,
+          "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00"
+        },
+        "current": {
+          "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\cpu-provider\\files\\stdcpp-libstdc++.so.6.0.33",
+          "bytes": 2497768,
+          "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00"
+        },
+        "whole_file_byte_equal": true
+      }
+    },
+    "prior_native_contract": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\native-contract.json",
+      "bytes": 38154,
+      "sha256": "32f8ac8920ff486eaa1606bbfa6b7a17d9019479edfac06e12ed4b7428aae462"
+    },
+    "prior_RAW_binding": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\npu-consumer-seam-v1\\raw-binding.json",
+      "bytes": 39660,
+      "sha256": "b842c1f407a92e3b325b989ebd4692076cfa9e760a340a19f4110a956e1300b9"
+    },
+    "actual_extraction_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\handle.json",
+      "bytes": 20556,
+      "sha256": "e5fe18ef499d9f7f60d99983969697d2baaba7222217877160e92808c88335f0"
+    },
+    "actual_provider_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\extracted\\cpu-provider\\receipt.json",
+      "bytes": 37854,
+      "sha256": "0f287655fae7e5f5b537980bf639024428ec50540faf765960afecc204d6840d"
+    },
+    "full_generation_FDE_and_CFI_rechecked": true,
+    "full_RAW_containing_FDEs_and_CFI_rechecked": true,
+    "checked_HDO2_pin_rows": [
+      {
+        "rva": "0x1f96dc6",
+        "bytes": 7,
+        "signature_hex": "498dbd68020000",
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "rva": "0x1f96dcd",
+        "bytes": 12,
+        "signature_hex": "84c00f846b050000418b85b8",
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "rva": "0x1f9734d",
+        "bytes": 12,
+        "signature_hex": "89c585c00f8e75f6ffff498b",
+        "current_actual_ELF_bytes_verified": true
+      }
+    ],
+    "checked_RAW_windows": [
+      {
+        "name": "prefill_begin_timestamp_store",
+        "rva": "0x1f810a1",
+        "end_rva": "0x1f810b4",
+        "bytes": 19,
+        "instruction_bytes_hex": "4189d44989f74889fbe891db23004889442418",
+        "sha256": "f560762735b737cbf47aaace964b7308cec6ab75f0e8f336e8430fae6fc3f4b7",
+        "instructions": [
+          {
+            "rva": "0x1f810a1",
+            "mnemonic": "mov",
+            "operand": "r12d, edx"
+          },
+          {
+            "rva": "0x1f810a4",
+            "mnemonic": "mov",
+            "operand": "r15, rsi"
+          },
+          {
+            "rva": "0x1f810a7",
+            "mnemonic": "mov",
+            "operand": "rbx, rdi"
+          },
+          {
+            "rva": "0x1f810aa",
+            "mnemonic": "call",
+            "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+          },
+          {
+            "rva": "0x1f810af",
+            "mnemonic": "mov",
+            "operand": "qword ptr [rsp + 0x18], rax"
+          }
+        ],
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "name": "prefill_end_accumulation",
+        "rva": "0x1f818cd",
+        "end_rva": "0x1f818fc",
+        "bytes": 47,
+        "instruction_bytes_hex": "4531e4e86bd32300482b4424180f57c0f2480f2ac0f20f5e059e5c09fef2410f588728050000f2410f118728050000",
+        "sha256": "199a5720f25af6b7bb9dbd4709423da3d3ea1f50548c8d41e7897ee96cc2b4e0",
+        "instructions": [
+          {
+            "rva": "0x1f818cd",
+            "mnemonic": "xor",
+            "operand": "r12d, r12d"
+          },
+          {
+            "rva": "0x1f818d0",
+            "mnemonic": "call",
+            "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+          },
+          {
+            "rva": "0x1f818d5",
+            "mnemonic": "sub",
+            "operand": "rax, qword ptr [rsp + 0x18]"
+          },
+          {
+            "rva": "0x1f818da",
+            "mnemonic": "xorps",
+            "operand": "xmm0, xmm0"
+          },
+          {
+            "rva": "0x1f818dd",
+            "mnemonic": "cvtsi2sd",
+            "operand": "xmm0, rax"
+          },
+          {
+            "rva": "0x1f818e2",
+            "mnemonic": "divsd",
+            "operand": "xmm0, qword ptr [rip - 0x1f6a362] # 0x17588"
+          },
+          {
+            "rva": "0x1f818ea",
+            "mnemonic": "addsd",
+            "operand": "xmm0, qword ptr [r15 + 0x528]"
+          },
+          {
+            "rva": "0x1f818f3",
+            "mnemonic": "movsd",
+            "operand": "qword ptr [r15 + 0x528], xmm0"
+          }
+        ],
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "name": "decode_begin_count_start",
+        "rva": "0x1f83c02",
+        "end_rva": "0x1f83c21",
+        "bytes": 31,
+        "instruction_bytes_hex": "418b465c4189868402000041c7466001000000e826b0230049898690020000",
+        "sha256": "5f5a6a64bc3e5e08e5f24063b42e3bab43bb1a1f331d9be6ac1ecc39ccce19b2",
+        "instructions": [
+          {
+            "rva": "0x1f83c02",
+            "mnemonic": "mov",
+            "operand": "eax, dword ptr [r14 + 0x5c]"
+          },
+          {
+            "rva": "0x1f83c06",
+            "mnemonic": "mov",
+            "operand": "dword ptr [r14 + 0x284], eax"
+          },
+          {
+            "rva": "0x1f83c0d",
+            "mnemonic": "mov",
+            "operand": "dword ptr [r14 + 0x60], 0x1"
+          },
+          {
+            "rva": "0x1f83c15",
+            "mnemonic": "call",
+            "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+          },
+          {
+            "rva": "0x1f83c1a",
+            "mnemonic": "mov",
+            "operand": "qword ptr [r14 + 0x290], rax"
+          }
+        ],
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "name": "decode_end_start_subtract",
+        "rva": "0x1fa1130",
+        "end_rva": "0x1fa1172",
+        "bytes": 66,
+        "instruction_bytes_hex": "83f8027c3d498b9e900200004589cf4989ccf20f11842490000000e8f0da2100f20f108424900000004c89e14589f94829d80f57c9f2480f2ac8f20f5e0d166407fe",
+        "sha256": "c21233affdcc06972650b9a48f47fe80f43ab6f6e90ef4a4157a57e9a2e8c119",
+        "instructions": [
+          {
+            "rva": "0x1fa1130",
+            "mnemonic": "cmp",
+            "operand": "eax, 0x2"
+          },
+          {
+            "rva": "0x1fa1133",
+            "mnemonic": "jl",
+            "operand": "0x1fa1172 <.text+0x36d52>"
+          },
+          {
+            "rva": "0x1fa1135",
+            "mnemonic": "mov",
+            "operand": "rbx, qword ptr [r14 + 0x290]"
+          },
+          {
+            "rva": "0x1fa113c",
+            "mnemonic": "mov",
+            "operand": "r15d, r9d"
+          },
+          {
+            "rva": "0x1fa113f",
+            "mnemonic": "mov",
+            "operand": "r12, rcx"
+          },
+          {
+            "rva": "0x1fa1142",
+            "mnemonic": "movsd",
+            "operand": "qword ptr [rsp + 0x90], xmm0"
+          },
+          {
+            "rva": "0x1fa114b",
+            "mnemonic": "call",
+            "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+          },
+          {
+            "rva": "0x1fa1150",
+            "mnemonic": "movsd",
+            "operand": "xmm0, qword ptr [rsp + 0x90]"
+          },
+          {
+            "rva": "0x1fa1159",
+            "mnemonic": "mov",
+            "operand": "rcx, r12"
+          },
+          {
+            "rva": "0x1fa115c",
+            "mnemonic": "mov",
+            "operand": "r9d, r15d"
+          },
+          {
+            "rva": "0x1fa115f",
+            "mnemonic": "sub",
+            "operand": "rax, rbx"
+          },
+          {
+            "rva": "0x1fa1162",
+            "mnemonic": "xorps",
+            "operand": "xmm1, xmm1"
+          },
+          {
+            "rva": "0x1fa1165",
+            "mnemonic": "cvtsi2sd",
+            "operand": "xmm1, rax"
+          },
+          {
+            "rva": "0x1fa116a",
+            "mnemonic": "divsd",
+            "operand": "xmm1, qword ptr [rip - 0x1f89bea] # 0x17588"
+          }
+        ],
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "name": "prefill_accumulator_zero",
+        "rva": "0x1f76eb7",
+        "end_rva": "0x1f76ee2",
+        "bytes": 43,
+        "instruction_bytes_hex": "f30f7f800405000048c7801105000000000000f30f7f8042050000f30f7f8038050000f30f7f8028050000",
+        "sha256": "c67fc074b817e7a6a4d69a398aa50ac359372dc001d583ad37f1df7f6af68c9d",
+        "instructions": [
+          {
+            "rva": "0x1f76eb7",
+            "mnemonic": "movdqu",
+            "operand": "xmmword ptr [rax + 0x504], xmm0"
+          },
+          {
+            "rva": "0x1f76ebf",
+            "mnemonic": "mov",
+            "operand": "qword ptr [rax + 0x511], 0x0"
+          },
+          {
+            "rva": "0x1f76eca",
+            "mnemonic": "movdqu",
+            "operand": "xmmword ptr [rax + 0x542], xmm0"
+          },
+          {
+            "rva": "0x1f76ed2",
+            "mnemonic": "movdqu",
+            "operand": "xmmword ptr [rax + 0x538], xmm0"
+          },
+          {
+            "rva": "0x1f76eda",
+            "mnemonic": "movdqu",
+            "operand": "xmmword ptr [rax + 0x528], xmm0"
+          }
+        ],
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "name": "prefill_to_request_transfer",
+        "rva": "0x1fa03f1",
+        "end_rva": "0x1fa0410",
+        "bytes": 31,
+        "instruction_bytes_hex": "4889dfe837b1fdff4d8b742410f2410f108628050000f2410f118688020000",
+        "sha256": "afbf4158b5480874858eb59d8e429d19d3b68e25cd641e32cbda863315f051c8",
+        "instructions": [
+          {
+            "rva": "0x1fa03f1",
+            "mnemonic": "mov",
+            "operand": "rdi, rbx"
+          },
+          {
+            "rva": "0x1fa03f4",
+            "mnemonic": "call",
+            "operand": "0x1f7b530 <.text+0x11110>"
+          },
+          {
+            "rva": "0x1fa03f9",
+            "mnemonic": "mov",
+            "operand": "r14, qword ptr [r12 + 0x10]"
+          },
+          {
+            "rva": "0x1fa03fe",
+            "mnemonic": "movsd",
+            "operand": "xmm0, qword ptr [r14 + 0x528]"
+          },
+          {
+            "rva": "0x1fa0407",
+            "mnemonic": "movsd",
+            "operand": "qword ptr [r14 + 0x288], xmm0"
+          }
+        ],
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "name": "prefill_identity_slot_trace",
+        "rva": "0x1f81b63",
+        "end_rva": "0x1f81b92",
+        "bytes": 47,
+        "instruction_bytes_hex": "498b07488944240831c048837b08000f94c0c1e008418bac0720040000458b6f5c458b7f08e8b3d02300482b442418",
+        "sha256": "dafef7c49008c7844db11ec12b138b8eb28505612615e5de37d8d90dd53b59c4",
+        "instructions": [
+          {
+            "rva": "0x1f81b63",
+            "mnemonic": "mov",
+            "operand": "rax, qword ptr [r15]"
+          },
+          {
+            "rva": "0x1f81b66",
+            "mnemonic": "mov",
+            "operand": "qword ptr [rsp + 0x8], rax"
+          },
+          {
+            "rva": "0x1f81b6b",
+            "mnemonic": "xor",
+            "operand": "eax, eax"
+          },
+          {
+            "rva": "0x1f81b6d",
+            "mnemonic": "cmp",
+            "operand": "qword ptr [rbx + 0x8], 0x0"
+          },
+          {
+            "rva": "0x1f81b72",
+            "mnemonic": "sete",
+            "operand": "al"
+          },
+          {
+            "rva": "0x1f81b75",
+            "mnemonic": "shl",
+            "operand": "eax, 0x8"
+          },
+          {
+            "rva": "0x1f81b78",
+            "mnemonic": "mov",
+            "operand": "ebp, dword ptr [r15 + rax + 0x420]"
+          },
+          {
+            "rva": "0x1f81b80",
+            "mnemonic": "mov",
+            "operand": "r13d, dword ptr [r15 + 0x5c]"
+          },
+          {
+            "rva": "0x1f81b84",
+            "mnemonic": "mov",
+            "operand": "r15d, dword ptr [r15 + 0x8]"
+          },
+          {
+            "rva": "0x1f81b88",
+            "mnemonic": "call",
+            "operand": "0x21bec40 <_ZNSt6chrono3_V212steady_clock3nowEv@plt>"
+          },
+          {
+            "rva": "0x1f81b8d",
+            "mnemonic": "sub",
+            "operand": "rax, qword ptr [rsp + 0x18]"
+          }
+        ],
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "name": "decode_request_slot_argument",
+        "rva": "0x1f82ca1",
+        "end_rva": "0x1f82cb5",
+        "bytes": 20,
+        "instruction_bytes_hex": "4989d64989f54989fc488b3f8b7208e8fb6e1200",
+        "sha256": "44b047ca0b0ae125530d56d3c7913e4ed73a3dca35689e50c203dc802b5e3b5c",
+        "instructions": [
+          {
+            "rva": "0x1f82ca1",
+            "mnemonic": "mov",
+            "operand": "r14, rdx"
+          },
+          {
+            "rva": "0x1f82ca4",
+            "mnemonic": "mov",
+            "operand": "r13, rsi"
+          },
+          {
+            "rva": "0x1f82ca7",
+            "mnemonic": "mov",
+            "operand": "r12, rdi"
+          },
+          {
+            "rva": "0x1f82caa",
+            "mnemonic": "mov",
+            "operand": "rdi, qword ptr [rdi]"
+          },
+          {
+            "rva": "0x1f82cad",
+            "mnemonic": "mov",
+            "operand": "esi, dword ptr [rdx + 0x8]"
+          },
+          {
+            "rva": "0x1f82cb0",
+            "mnemonic": "call",
+            "operand": "0x20a9bb0 <_ZSt17__rotate_adaptiveIN9__gnu_cxx17__normal_iteratorIPmSt6vectorImSaImEEEES2_lET_S7_S7_S7_T1_S8_T0_S8_+0xada10>"
+          }
+        ],
+        "current_actual_ELF_bytes_verified": true
+      },
+      {
+        "name": "decode_completion_identity_fields",
+        "rva": "0x1fa1110",
+        "end_rva": "0x1fa1124",
+        "bytes": 20,
+        "instruction_bytes_hex": "498b0e458b4e5c418b4660f2410f108688020000",
+        "sha256": "2c953a92e756de1192c2e7f8e17ecef38c4cd21f16612a0562c75d0b85caae07",
+        "instructions": [
+          {
+            "rva": "0x1fa1110",
+            "mnemonic": "mov",
+            "operand": "rcx, qword ptr [r14]"
+          },
+          {
+            "rva": "0x1fa1113",
+            "mnemonic": "mov",
+            "operand": "r9d, dword ptr [r14 + 0x5c]"
+          },
+          {
+            "rva": "0x1fa1117",
+            "mnemonic": "mov",
+            "operand": "eax, dword ptr [r14 + 0x60]"
+          },
+          {
+            "rva": "0x1fa111b",
+            "mnemonic": "movsd",
+            "operand": "xmm0, qword ptr [r14 + 0x288]"
+          }
+        ],
+        "current_actual_ELF_bytes_verified": true
+      }
+    ],
+    "chrono_provider_code_rechecked": true,
+    "chrono_relocation_rechecked": true,
+    "prior_inspector_evidence_reused_only_through_complete_file_identity": true,
+    "disassembler_compiler_engine_WSL_Docker_API_or_hardware_called": false,
+    "binary_products_copied_or_loaded": false,
+    "runtime_or_speedup_qualified": false
+  }
+}

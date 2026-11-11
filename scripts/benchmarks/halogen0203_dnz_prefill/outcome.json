@@ -1,0 +1,82 @@
+{
+  "schema": "halogen0203.DNZ-archived-unqualified-outcome.v1",
+  "headline_qualified": false,
+  "rates_verified": false,
+  "arms": {},
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "acceptance": null,
+  "DNZ_tok_s_difference": null,
+  "warmup_rates_exported": false,
+  "v1": {
+    "restored_in_original_campaign": true,
+    "context": 32768,
+    "candidate_started": false,
+    "measured_requests": 0,
+    "reason": "22-GiB entry rejection before any request",
+    "completed": false,
+    "output_cap": 128,
+    "terminal": true,
+    "actual_input_tokens": 2048,
+    "excluded_warmups": 0
+  },
+  "v2": {
+    "original_campaign_handle": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\handle.json",
+      "bytes": 48737,
+      "sha256": "629cb44f650be9336db6d7c27b05f16287f949177fa7f537b51591e1dad3e73e"
+    },
+    "excluded_stock_warmups": 1,
+    "context": 8192,
+    "measured_requests": 0,
+    "original_campaign_flags_unchanged": {
+      "terminal": false,
+      "completed": false,
+      "restored": false,
+      "phase": "restoration_incomplete"
+    },
+    "original_request_failure": {
+      "type": "ValueError",
+      "message": "22-GiB memory reserve unavailable",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\campaign.py\", line 365, in run\n    report = asyncio.run(collector.collect_epoch(runtime=runtime, profile=profile, port=18840,\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 195, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\base_events.py\", line 691, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\raw\\collector\\collect_epoch.py\", line 346, in collect_epoch\n    m.check_reserve(runtime, 22)\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\measure_helpers.py\", line 31, in check_reserve\n    require(min(frame['available_bytes'], frame['commit_headroom_bytes']) >= floor * 2**30, str(floor) + '-GiB memory reserve unavailable')\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\measure_helpers.py\", line 15, in require\n    raise ValueError(message)\nValueError: 22-GiB memory reserve unavailable\n"
+    },
+    "actual_output_tokens": 128,
+    "original_restoration_error": {
+      "type": "RuntimeError",
+      "message": "Unexpected owned startup phase"
+    },
+    "separate_later_recovery": {
+      "supplemental_session": {
+        "id": 13542,
+        "exit_code": 0,
+        "terminal": true,
+        "normal_ready": true
+      },
+      "receipt_pin": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\Root-terminal-recovered-normal.json",
+        "bytes": 18478,
+        "sha256": "c14c7221586e81e78b3166a1ef8cfbbb26d8afa191239a3a517adfac3c95db4b"
+      },
+      "authenticated_READY_smoke": true,
+      "independent_live_check_by_exporter": false,
+      "port": 8840,
+      "campaign_session": {
+        "id": 35211,
+        "exit_code": 1,
+        "coordinator_exit_observed_by_Root": true
+      },
+      "smoke_is_not_benchmark": true,
+      "normal_context": 32768
+    },
+    "actual_input_tokens": 2048,
+    "candidate_started": false
+  },
+  "limits_retained": {
+    "startup_commit_GiB": 131,
+    "startup_physical_GiB": 30,
+    "runtime_GiB": 18,
+    "entry_GiB": 22
+  },
+  "full_acceleration_goal_achieved": false,
+  "export_scope": "Offline archival copy/projection of already-closed evidence only; original incomplete v2 handle and separately successful later recovery remain distinct."
+}

@@ -1,0 +1,458 @@
+{
+  "schema": "halogen0203.DNZ8K-supplemental-normal-recovery.v1",
+  "utc": "2026-11-11T19:27:59.544806+00:00",
+  "campaign_session_id": 35211,
+  "campaign_exit_code": 1,
+  "coordinator_identity_exited": true,
+  "original_campaign_handle": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\handle.json",
+    "bytes": 48737,
+    "sha256": "629cb44f650be9336db6d7c27b05f16287f949177fa7f537b51591e1dad3e73e"
+  },
+  "original_campaign_flags": {
+    "terminal": false,
+    "completed": false,
+    "restored": false,
+    "phase": "restoration_incomplete"
+  },
+  "original_failure": {
+    "type": "ValueError",
+    "message": "22-GiB memory reserve unavailable",
+    "traceback": "Traceback (most recent call last):\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\campaign.py\", line 365, in run\n    report = asyncio.run(collector.collect_epoch(runtime=runtime, profile=profile, port=18840,\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 195, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\base_events.py\", line 691, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\raw\\collector\\collect_epoch.py\", line 346, in collect_epoch\n    m.check_reserve(runtime, 22)\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\measure_helpers.py\", line 31, in check_reserve\n    require(min(frame['available_bytes'], frame['commit_headroom_bytes']) >= floor * 2**30, str(floor) + '-GiB memory reserve unavailable')\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\measure_helpers.py\", line 15, in require\n    raise ValueError(message)\nValueError: 22-GiB memory reserve unavailable\n"
+  },
+  "original_restoration_error": {
+    "type": "RuntimeError",
+    "message": "Unexpected owned startup phase"
+  },
+  "original_evidence_unchanged": true,
+  "supplemental_session_id": 13542,
+  "supplemental_exit_code": 0,
+  "supplemental_ready": true,
+  "supplemental_recovery": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\handle.json",
+    "bytes": 18325,
+    "sha256": "0b28b17f82370ad2fe44e2072fb59a37f8d2bc496d48da0b9ebf4f047e756120"
+  },
+  "normal_profile": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\serving0203-text32k-8192.json",
+    "bytes": 1860,
+    "sha256": "dfa4b82b5de41cadbb3d3a5ed89b243d53112cbf9729e2de45c5f0e3958cb430"
+  },
+  "normal_ready": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\Root-ready-current.json",
+    "bytes": 13358,
+    "sha256": "7ec7033697e49dbaf0722b9088ebd03404e2781b649cbbcc0b861f2298f5fb28"
+  },
+  "normal": {
+    "utc": "2026-11-11T19:27:59.544806+00:00",
+    "outer": {
+      "schema": 1,
+      "run_id": "654493ed6ada4273bd4e1df13a41b955",
+      "pid": 19076,
+      "phase": "ready",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 32768,
+      "port": 8840,
+      "heartbeat": 1794425278.6244695,
+      "minimum_reserve_gib": 18.0,
+      "profile_sha256": "dfa4b82b5de41cadbb3d3a5ed89b243d53112cbf9729e2de45c5f0e3958cb430",
+      "memory": {
+        "available_bytes": 24223580160,
+        "committed_bytes": 119275331584,
+        "commit_limit_bytes": 240139440128,
+        "commit_headroom_bytes": 120864108544
+      },
+      "minimum_available_gib": 21.419227600097656,
+      "ready_at": 1794424996.3190124,
+      "active_requests": 0,
+      "available_gib": 22.58038330078125
+    },
+    "inner": {
+      "schema": 1,
+      "run_id": "d93fb5bc3cf9475f95767ac4c6e1a636",
+      "attempt": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\.local\\services\\d93fb5bc3cf9475f95767ac4c6e1a636",
+      "phase": "ready",
+      "endpoint": "http://127.0.0.1:8731/v1",
+      "model": "halogen-qwen3.8-flash-next",
+      "context": 32768,
+      "slots": 1,
+      "checkpoint": "v2",
+      "prompt_cache": "Off",
+      "disable_vision": true,
+      "serve_seconds": 0,
+      "controller_pid": 29908,
+      "token_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\.local\\api-token.txt",
+      "log_file": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\.local\\services\\d93fb5bc3cf9475f95767ac4c6e1a636\\engine.log",
+      "controller_log": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\.local\\services\\d93fb5bc3cf9475f95767ac4c6e1a636\\service.log",
+      "kv_pool_positions": 32768,
+      "ready_at": 1794425004.9030037,
+      "container_id": "2232f9c22004bd4b6b39f406f9bb6e9201ad4d180eaf0f42c16961d5802726c2"
+    },
+    "identities": {
+      "controller": {
+        "pid": 19076,
+        "creation_time_100ns": 134388984192956675,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 29908,
+        "creation_time_100ns": 134388984297245508,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      }
+    },
+    "profile": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\serving0203-text32k-8192.json",
+      "bytes": 1860,
+      "sha256": "dfa4b82b5de41cadbb3d3a5ed89b243d53112cbf9729e2de45c5f0e3958cb430"
+    },
+    "gateway": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 32768,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "draining": false,
+      "completed": 1,
+      "cancelled": 0,
+      "request_admission_ready": null,
+      "request_admission": {
+        "version": 1,
+        "policy": "not_required",
+        "ready": null,
+        "reason": "not_required",
+        "required_available_bytes": null,
+        "required_commit_headroom_bytes": null,
+        "available_bytes": null,
+        "commit_headroom_bytes": null,
+        "sample_age_ms": null
+      }
+    },
+    "native": {
+      "status": "ok",
+      "model": "halogen-qwen3.8-flash-next",
+      "endpoints": [
+        "/v1/chat/completions",
+        "/v1/completions",
+        "/v1/messages",
+        "/v1/messages/count_tokens",
+        "/v1/models",
+        "/v1/responses"
+      ],
+      "cache_counters": "/cache",
+      "metrics": "/metrics",
+      "context": 32768,
+      "capability_probe": "ok",
+      "rope_scaling": null,
+      "indexer_budget": 2048,
+      "vision": {
+        "enabled": false,
+        "endpoints": [
+          "/v1/chat/completions",
+          "/v1/messages",
+          "/v1/responses"
+        ],
+        "input": "data: URL or bare base64 in an image content part; http(s) URLs are refused",
+        "max_pixels": 3686400,
+        "size_multiple": 32,
+        "disabled_because": [
+          "the engine was started without a vision tower (HALOGEN_VISION_TOWER)"
+        ]
+      },
+      "version": {
+        "api": "0.20.3",
+        "engine": "0.20.3",
+        "match": true
+      },
+      "modes": [
+        "all",
+        "engine",
+        "api",
+        "bench",
+        "sweep",
+        "convert",
+        "inspect",
+        "verify",
+        "ppl",
+        "niah"
+      ],
+      "checkpoint_format": "hgn",
+      "chat_template": {
+        "path": "/models/tokenizer/chat_template.jinja",
+        "sha256": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041",
+        "probe": "passed",
+        "thinking_control": true
+      },
+      "engine": {
+        "responds": true,
+        "probe_s": 1.002
+      },
+      "busy": false,
+      "slots": 1,
+      "slot_ctx": 32768,
+      "kv_pool_positions": 32768,
+      "kv_cache": "bf16",
+      "in_flight": 0,
+      "busy_for_s": 0,
+      "queued": 0,
+      "longest_wait_s": 0.0,
+      "decode": "greedy at temperature 0 (the default); sampled at temperature > 0",
+      "drafters_available": [
+        "serial",
+        "mtp"
+      ],
+      "drafter_default": "mtp",
+      "prompt_lookup": {
+        "ngram": 3,
+        "chain": 3,
+        "applies_to": "greedy requests with the mtp drafter, or with no head at all (HALOGEN_MTP=0)"
+      },
+      "shortlist_draft_head": false,
+      "drafter_weights_loaded": true,
+      "prompt_cache": {
+        "enabled": false,
+        "cap_mb": 0,
+        "mode": 0,
+        "snapshot_align": 0,
+        "bitwise_identical_to_cold": false
+      },
+      "composable_context": {
+        "enabled": false
+      },
+      "tool_calls": {
+        "wire_format": "qwen-xml (<function=>/<parameter=>)",
+        "streaming": true,
+        "tool_choice": [
+          "auto",
+          "none",
+          "required",
+          "{type: function, function: {name}}"
+        ],
+        "forced_call_is_a_prefill": true,
+        "required_is_exact": "named tool_choice, one tool, or any strict tool",
+        "parallel_tool_calls": true,
+        "constrained_decoding": "strict tools only",
+        "forced_call_disables_thinking": true,
+        "argument_types_need_schema": true
+      },
+      "supported": [
+        "reasoning_effort",
+        "enable_thinking",
+        "preserve_thinking",
+        "max_thinking_tokens",
+        "thinking_budget_tokens",
+        "thinking_budget",
+        "thinking_token_budget",
+        "reasoning",
+        "thinking",
+        "tools",
+        "tool_choice",
+        "parallel_tool_calls",
+        "stop",
+        "max_tokens",
+        "max_completion_tokens",
+        "max_output_tokens",
+        "stream",
+        "stream_options",
+        "return_progress"
+      ],
+      "token_budget_aliases": [
+        "max_tokens",
+        "max_completion_tokens",
+        "max_output_tokens"
+      ],
+      "max_tokens_default": 8192,
+      "reasoning_effort_default": "low",
+      "reasoning_effort_values": [
+        "high",
+        "low",
+        "max",
+        "medium",
+        "minimal",
+        "none",
+        "xhigh"
+      ],
+      "token_budget_covers_reasoning": true,
+      "max_thinking_tokens_default": 2048,
+      "thinking_answer_room": "max(1024, 15% of max_tokens)",
+      "end_of_turn_guard": true,
+      "answer_guard": true,
+      "stop_ids": [
+        248044,
+        248046
+      ],
+      "thinking_control_aliases": [
+        "thinking_budget_tokens",
+        "thinking_budget",
+        "thinking_token_budget",
+        "reasoning.{enabled,effort,max_tokens}",
+        "thinking.{type,budget_tokens}"
+      ],
+      "server_defaults": {
+        "HALOGEN_REASONING_EFFORT": "low",
+        "HALOGEN_ENABLE_THINKING": false,
+        "HALOGEN_MAX_THINKING_TOKENS": 2048
+      },
+      "server_defaults_rule": "a field the request sends always wins; a default fills only a field the request omits. A request that sends temperature 0 decodes greedy and takes no sampling default",
+      "chat_template_kwargs": [
+        "reasoning_effort",
+        "enable_thinking",
+        "preserve_thinking"
+      ],
+      "error_format": "openai",
+      "accepted_but_ignored": [
+        "n"
+      ],
+      "not_implemented": [],
+      "structured_output": {
+        "enabled": true,
+        "reason": null,
+        "response_format": [
+          "json_schema",
+          "json_object"
+        ],
+        "text.format": [
+          "json_schema",
+          "json_object"
+        ],
+        "routes": [
+          "/v1/chat/completions",
+          "/v1/completions",
+          "/v1/responses",
+          "/v1/messages"
+        ],
+        "sampling": "any temperature: each token is drawn from the model's distribution over the tokens the schema allows next (top_p, top_k and min_p act on that distribution); logprobs with a schema are a 400",
+        "images": "a schema applies to a request with images as to any other",
+        "thinking": "the reasoning block is unconstrained; the final text is constrained after </think>",
+        "tools": "a request with tools may open a <tool_call> instead of the JSON (the schema binds the final text; a call is held to its tool's schema when the tool is strict)",
+        "keys": "object keys are emitted in schema order",
+        "strict_tools": {
+          "enabled": true,
+          "declared_by": [
+            "chat: tools[].function.strict",
+            "responses: tools[].strict",
+            "messages: tools[].strict"
+          ],
+          "guarantee": "when any tool is strict, a call names a declared tool, and a strict tool's arguments match its parameter schema",
+          "arguments": "keys in any order, each at most once; extra keys are refused unless the schema allows them inside an argument; a string argument cannot contain the line </parameter>",
+          "parallel_tool_calls": "false allows one call when a tool on the request is strict",
+          "accepted_not_enforced": [
+            "minimum",
+            "maximum",
+            "exclusiveMinimum",
+            "exclusiveMaximum",
+            "multipleOf",
+            "pattern",
+            "format",
+            "title",
+            "description",
+            "default",
+            "examples"
+          ],
+          "not_enforced": "a strict tool whose schema uses a refused keyword, allows extra keys at the top or has more than 32 parameters, and every strict tool on a request with logprobs or more than 128 tools, is called as without strict; counted in /metrics and named in the request's log line",
+          "thinking": "a call written inside the reasoning block is not held to a schema"
+        },
+        "enforced": [
+          "type",
+          "properties",
+          "required",
+          "additionalProperties",
+          "items",
+          "minItems",
+          "maxItems",
+          "minLength",
+          "maxLength",
+          "enum",
+          "const",
+          "anyOf",
+          "oneOf (as anyOf)",
+          "type: [..., \"null\"]",
+          "$ref",
+          "$defs"
+        ],
+        "accepted_not_enforced": [
+          "minimum",
+          "maximum",
+          "exclusiveMinimum",
+          "exclusiveMaximum",
+          "multipleOf",
+          "title",
+          "description",
+          "default",
+          "examples"
+        ],
+        "refused": [
+          "pattern",
+          "format",
+          "allOf",
+          "not",
+          "if",
+          "then",
+          "else",
+          "patternProperties",
+          "dependentRequired",
+          "dependentSchemas",
+          "uniqueItems",
+          "contains",
+          "propertyNames",
+          "unevaluatedProperties",
+          "unevaluatedItems",
+          "minProperties",
+          "maxProperties",
+          "prefixItems"
+        ]
+      },
+      "sampling": {
+        "implemented": [
+          "temperature",
+          "top_p",
+          "top_k",
+          "min_p",
+          "seed",
+          "presence_penalty",
+          "frequency_penalty",
+          "repetition_penalty",
+          "logit_bias",
+          "logprobs",
+          "top_logprobs"
+        ],
+        "decode": "temperature 0 (the default) is greedy: a forward pass and an argmax, byte-identical to serial greedy decode. temperature > 0 samples from the filtered target on the same drafter the request would otherwise get; with the MTP drafter the speculative accept/reject rule emits exactly the target distribution",
+        "filters": "top_k, top_p and min_p compose as an intersection (the HF/vLLM convention); top_p >= 1 and top_k = 0 disable a filter. A sampled request that omits top_k or top_p takes the operator's default, else the model's (filter_defaults)",
+        "filter_defaults": {
+          "top_k": 20,
+          "top_p": 0.95,
+          "source": "generation_config.json"
+        },
+        "seed": "reproduces a request on the same drafter; a sampled MTP run and a sampled serial run agree in distribution, not token for token",
+        "penalties": "presence and frequency count GENERATED tokens only; repetition_penalty scales every id in the prompt or the output (vLLM's rule); applied on both drafters",
+        "logprobs": "a sampled request carries the chosen token's logprob on every token; at temperature 0, and with top_logprobs (up to 20) at any temperature, the first generated token only, so those need max_tokens 1",
+        "not_implemented": [
+          "logprobs with stream=true",
+          "logprobs past the first token at temperature 0",
+          "n > 1"
+        ]
+      },
+      "max_tokens_cap": 65536,
+      "max_tokens_over_cap": "400"
+    },
+    "memory": {
+      "available_bytes": 24257196032,
+      "committed_bytes": 119224156160,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 120915283968
+    }
+  },
+  "authenticated_smoke": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\authenticated-smoke.json",
+    "bytes": 1389,
+    "sha256": "3967d748102ec922342497e1cc87f7db93d1dade8d924f7ed28e4bca5f6f12a8"
+  },
+  "restored_after_supplemental_recovery": true,
+  "benchmark_requests_total": 1,
+  "excluded_warmups": 1,
+  "measured_requests": 0,
+  "candidate_started": false,
+  "DNZ_gain_qualified": false,
+  "full_goal_achieved": false
+}

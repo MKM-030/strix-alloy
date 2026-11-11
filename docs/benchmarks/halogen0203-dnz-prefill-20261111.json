@@ -1,55 +1,250 @@
 {
-  "schema": "halogen0203.DNZ32K-no-request-result.v1",
-  "session_id": 45035,
-  "exit_code": 1,
-  "terminal": true,
-  "completed": false,
-  "restored": true,
-  "input_tokens": 2048,
-  "requested_output_tokens": 128,
-  "capacity": 32768,
-  "requests": 0,
-  "warmups": 0,
-  "measured_requests": 0,
-  "counter_reads": 0,
-  "candidate_started": false,
+  "schema": "halogen0203.DNZ-two-partial-attempts-result.v2",
+  "headline_qualified": false,
+  "rates_verified": false,
   "prefill_tok_s": null,
   "decode_tok_s": null,
   "acceptance": null,
   "qualified_change": null,
-  "reason": "22GiB request admission failed before first request",
-  "failed_exact_memory_frame_retained": false,
-  "last_retained_available_GiB": 21.95439910888672,
-  "normal_context": 32768,
-  "normal_port": 8840,
-  "normal_ready_verified_utc": "2026-11-11T18:56:09.582596+00:00",
-  "normal_identities": {
-    "controller": {
-      "pid": 17520,
-      "creation_time_100ns": 134388964518939816,
-      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+  "DNZ_tok_s_difference": null,
+  "arms": {},
+  "warmup_rates_exported": false,
+  "composite_terminal": true,
+  "completed_comparison": false,
+  "full_goal_achieved": false,
+  "unchanged_retry_permitted": false,
+  "limits_retained": {
+    "runtime_physical_commit_GiB": 18,
+    "startup_commit_GiB": 131,
+    "entry_physical_commit_GiB": 22,
+    "startup_physical_GiB": 30
+  },
+  "common_workload": {
+    "requested_output_tokens": 128,
+    "decode_prefetch": 0,
+    "cache": "Off",
+    "thinking": false,
+    "vision": false,
+    "mtp_gate": "0.90",
+    "temperature": 0,
+    "NPU_helper": false,
+    "external_stream": false,
+    "pld": "3,3",
+    "seed": 1,
+    "max_prefill_tokens": 8192,
+    "slots": 1,
+    "input_tokens": 2048,
+    "prefill_chunk": 8192
+  },
+  "attempts": {
+    "v1": {
+      "session_id": 45035,
+      "exit_code": 1,
+      "terminal": true,
+      "completed": false,
+      "restored_in_original_campaign": true,
+      "capacity": 32768,
+      "requests": 0,
+      "excluded_warmups": 0,
+      "measured_requests": 0,
+      "counter_reads": 0,
+      "candidate_started": false,
+      "prefill_tok_s": null,
+      "decode_tok_s": null,
+      "acceptance": null,
+      "reason": "22-GiB entry rejected before any request or RAW arming",
+      "failed_exact_memory_frame_retained": false,
+      "adjacent_retained_available_GiB": 21.95439910888672,
+      "execution_pins_verified": 249,
+      "normal_baseline_files_verified": 48,
+      "terminal_receipt": {
+        "path": "server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\Root-terminal-normal-ready.json",
+        "bytes": 16689,
+        "sha256": "2a7af02ace2c3513663212232e3886dc27dbcd7508fdd82ea8cbbc4a52d91b87"
+      },
+      "execution_binding": {
+        "path": "server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-execution-bindings-v1.json",
+        "bytes": 71498,
+        "sha256": "1820682d9a3ff0cb0a888668220601451d805aa1700e1481a13f605d066e1847"
+      },
+      "independent_audit": {
+        "path": "server/.local/halogen-update-20261111/primary0203/dnz-prefill-prep/independent-terminal-audit-v1.json",
+        "bytes": 4421,
+        "sha256": "8d8b63ad4c200aee3d3625ac8c9b7d31305c8ba76999b8270cc09a38a3a76f64"
+      }
     },
-    "backend": {
-      "pid": 45232,
-      "creation_time_100ns": 134388964623551876,
-      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    "v2": {
+      "original_session": {
+        "id": 35211,
+        "exit_code": 1,
+        "coordinator_exit_observed_by_Root": true
+      },
+      "capacity": 8192,
+      "requests": 1,
+      "excluded_stock_warmups": 1,
+      "actual_warmup_input_tokens": 2048,
+      "actual_warmup_output_tokens": 128,
+      "measured_requests": 0,
+      "counter_reads": 2,
+      "stock_DNZ_counter_delta": 0,
+      "counter_reads_outside_HTTP_QPC": true,
+      "candidate_started": false,
+      "prefill_tok_s": null,
+      "decode_tok_s": null,
+      "acceptance": null,
+      "warmup_rates_exported": false,
+      "reason": "22-GiB entry rejected after excluded Stock warmup and before first measurement",
+      "failed_exact_memory_frame_retained": false,
+      "adjacent_saved_postwarmup_resources": {
+        "before_warmup_physical_GiB": 22.198570251464844,
+        "post_warmup_physical_GiB": 21.912460327148438,
+        "post_warmup_commit_headroom_GiB": 112.32651138305664,
+        "post_warmup_shortfall_to22_bytes": 93995008,
+        "post_warmup_shortfall_to22_MiB": 89.640625,
+        "warmup_runtime_minimum_reserve_GiB": 21.9208984375,
+        "above18_runtime_reserve": true,
+        "exact_failed_admission_frame_retained": false,
+        "scope": "Saved post-warmup direct Windows frame; adjacent to failure, not claimed as the exact failing frame. No attribution to any device/component."
+      },
+      "native_capacity_and_rounded_allocation": {
+        "context": 8192,
+        "slot_ctx": 8192,
+        "pool": 8192,
+        "slots": 1,
+        "before_rounded_allocation": {
+          "weights": 62.1,
+          "kv_pool": 0.9,
+          "working": 5.8,
+          "total": 68.8
+        },
+        "private8K_rounded_allocation": {
+          "weights": 62.1,
+          "kv_pool": 0.2,
+          "working": 5.8,
+          "total": 68.1
+        },
+        "allocation_log_corroborated": true,
+        "exact_resident_or_Windows_memory_gain_proved": false,
+        "no_speedup_from_capacity_change_claimed": true
+      },
+      "original_campaign_handle": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\handle.json",
+        "bytes": 48737,
+        "sha256": "629cb44f650be9336db6d7c27b05f16287f949177fa7f537b51591e1dad3e73e"
+      },
+      "original_campaign_flags_unchanged": {
+        "terminal": false,
+        "completed": false,
+        "restored": false,
+        "phase": "restoration_incomplete"
+      },
+      "original_request_failure": {
+        "type": "ValueError",
+        "message": "22-GiB memory reserve unavailable"
+      },
+      "original_restoration_error": {
+        "type": "RuntimeError",
+        "message": "Unexpected owned startup phase"
+      },
+      "underlying_normal_restart_guard": {
+        "service_outcome": {
+          "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\.local\\services\\147e0322dfe54631864f2b34cb02828a\\outcome.json",
+          "bytes": 207,
+          "sha256": "f7f3803121bfecb56cdd53f942fcc05bc24ab76ec9ff14bbd4b46c86e76522f5"
+        },
+        "log": {
+          "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\.local\\services\\147e0322dfe54631864f2b34cb02828a\\service.log",
+          "bytes": 887,
+          "sha256": "ce5d8d6deabf97ebb6e199403d753b169f72a805ba4845a20777c2f81e8783e6"
+        },
+        "error": "Context 32768 needs 30 GiB free physical / 131 GiB commit headroom; observed 29.97 / 182.92",
+        "service_cleanup_recovery": true,
+        "cause": "Fresh unchanged30/131 guard rejected after container creation;29.97 physical/182.92 commit GiB are rounded native-service observations."
+      },
+      "separate_later_recovery": {
+        "session": {
+          "id": 13542,
+          "exit_code": 0,
+          "terminal": true,
+          "normal_ready": true
+        },
+        "verified": true,
+        "receipt": {
+          "path": "server/.local/halogen-update-20261111/primary0203/dnz-prefill-capacity8192-v2/Root-supplemental-normal-recovery-v1/Root-terminal-recovered-normal.json",
+          "bytes": 18478,
+          "sha256": "c14c7221586e81e78b3166a1ef8cfbbb26d8afa191239a3a517adfac3c95db4b"
+        },
+        "normal_context": 32768,
+        "normal_port": 8840,
+        "authenticated_READY_smoke": true,
+        "smoke_is_not_benchmark": true,
+        "original_handle_rewritten": false
+      },
+      "execution_pins_verified": 262,
+      "normal_baseline_files_verified": 48,
+      "private_RAW_artifact_removed": true,
+      "independent_audit": {
+        "path": "server/.local/halogen-update-20261111/primary0203/dnz-prefill-capacity8192-v2/independent-terminal-audit-v2.json",
+        "bytes": 9505,
+        "sha256": "0a5f8ee68b3cd3ec661576f363ae3de9b7ded7cb175c1f8a90249cb7bb79f724"
+      },
+      "closed_offline_audit": {
+        "path": "server/.local/halogen-update-20261111/primary0203/dnz-analysis-v2/closed-partial-audit-v2/audit.json",
+        "bytes": 8857,
+        "sha256": "07f0e8b8ca7b98fe0e5847a0c1ebde66cc0893e2ee990ad8e3174820c416eaa8"
+      }
     }
   },
-  "terminal_receipt": {
-    "path": "server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\Root-terminal-normal-ready.json",
-    "bytes": 16689,
-    "sha256": "2a7af02ace2c3513663212232e3886dc27dbcd7508fdd82ea8cbbc4a52d91b87"
+  "normal_latest_verification": {
+    "verified_utc": "2026-11-11T19:45:48.9232940+00:00",
+    "installed_version": "0.20.3",
+    "API_engine_version": {
+      "api": "0.20.3",
+      "engine": "0.20.3",
+      "match": true
+    },
+    "context": 32768,
+    "pool": 32768,
+    "slots": 1,
+    "port": 8840,
+    "identities": {
+      "controller": {
+        "pid": 19076,
+        "creation_time_100ns": 134388984192956675,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 29908,
+        "creation_time_100ns": 134388984297245508,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      }
+    },
+    "single_engine_container": "2232f9c22004bd4b6b39f406f9bb6e9201ad4d180eaf0f42c16961d5802726c2",
+    "source_members_verified": 47,
+    "profile_sha256": "dfa4b82b5de41cadbb3d3a5ed89b243d53112cbf9729e2de45c5f0e3958cb430",
+    "source_manifest_sha256": "c32138235c3847dfe29576d9ed634e4686f2ddc203ac718395444b7784804492",
+    "authenticated_functional_API": {
+      "returned_READY": true,
+      "http_status": 200,
+      "benchmark": false
+    },
+    "left_online": true,
+    "server_restarted_by_final_check": false,
+    "benchmark_run": false,
+    "evidence": {
+      "path": "server/.local/halogen-update-20261111/primary0203/update-final-current-20261111.json",
+      "bytes": 30912,
+      "sha256": "8c3d7f47d17cfc5df2f70be2dac98f09e1e60b53ed49e43615f283349fb3be8d"
+    }
   },
-  "independent_audit": {
-    "path": "server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\independent-terminal-audit-v1.json",
-    "bytes": 4421,
-    "sha256": "8d8b63ad4c200aee3d3625ac8c9b7d31305c8ba76999b8270cc09a38a3a76f64"
+  "archive": {
+    "path": "scripts/benchmarks/halogen0203_dnz_prefill/README.md",
+    "default_off": true,
+    "archival_Root_only": true,
+    "nonportable_local_lifecycle_paths": true,
+    "includes_binaries_weights_tokenizer_or_full_API": false,
+    "independent_native_output_ID_sequence_reconstruction": false,
+    "independent_all_neural_acceptance_reconstruction": false
   },
-  "execution_binding": {
-    "path": "server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-execution-bindings-v1.json",
-    "bytes": 71498,
-    "sha256": "1820682d9a3ff0cb0a888668220601451d805aa1700e1481a13f605d066e1847"
-  },
-  "full_goal_achieved": false,
-  "unchanged_retry_permitted": false
+  "evidence_scope": "Closed source/evidence audits and a saved Root live functional verification; documentation update performs no new API, hardware or liveness check."
 }

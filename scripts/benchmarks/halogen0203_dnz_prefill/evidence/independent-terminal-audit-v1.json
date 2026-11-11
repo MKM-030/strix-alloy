@@ -1,0 +1,98 @@
+{
+  "schema": "halogen0203.DNZ32K-independent-terminal-audit.v1",
+  "utc": "2026-11-11T18:58:11.884487+00:00",
+  "reviewer": "/root/source0201",
+  "verdict": "CLOSED_BEFORE_ANY_REQUEST_NORMAL_RESTORED_NO_SPEED_VALUE",
+  "session_id": 45035,
+  "exit_code_from_Root_terminal": 1,
+  "terminal": true,
+  "completed": false,
+  "restored": true,
+  "failure": "22-GiB entry reserve unavailable before RAW arming and before first request",
+  "measured_requests": 0,
+  "excluded_warmups": 0,
+  "counter_reads": 0,
+  "candidate_started": false,
+  "raw_captures": 0,
+  "output_or_acceptance_or_speed_qualified": false,
+  "all_execution_pins_verified": 249,
+  "source_restoration": {
+    "normal_manifest_members": 47,
+    "baseline_files_verified": 48,
+    "private_source_extras_absent": 16,
+    "private_RAW_artifacts_removed": 1
+  },
+  "normal_ready_recorded": {
+    "controller": {
+      "pid": 17520,
+      "creation_time_100ns": 134388964518939816,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 45232,
+      "creation_time_100ns": 134388964623551876,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "container_id": "18721cfc54d3406d1c2332e23455466a5d981585e55d4963ef0d9d403ce20870",
+    "context": 32768,
+    "port": 8840,
+    "version": {
+      "api": "0.20.3",
+      "engine": "0.20.3",
+      "match": true
+    },
+    "consumer_authenticated_and_selection_restored": true,
+    "latest_Root_check_utc": "2026-11-11T18:56:09.582596+00:00",
+    "latest_Root_available_gib": 22.39962387084961
+  },
+  "limits_retained": {
+    "startup_physical": 30,
+    "startup_commit": 131,
+    "entry": 22,
+    "runtime": 18
+  },
+  "unchanged_retry_permitted": false,
+  "evidence": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\Root-terminal-normal-ready.json",
+      "bytes": 16689,
+      "sha256": "2a7af02ace2c3513663212232e3886dc27dbcd7508fdd82ea8cbbc4a52d91b87"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\handle.json",
+      "bytes": 79078,
+      "sha256": "2fe01a3180e3d1efca170f5050a03d602320d13d67f040543d77c8af9cbda068"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\executed-bindings.json",
+      "bytes": 72839,
+      "sha256": "e101f7287d8cdd32020db8699b92254f3f05ff6db555e9d5b6e3320995d44c37"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\before\\natural2048\\handle.json",
+      "bytes": 1435,
+      "sha256": "1dc65507af9996bfbbcb4209adcacedfa80c31054acab3d1f6968282e6ae265f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\final-private-stop-stop-observation.json",
+      "bytes": 174,
+      "sha256": "287a078dc12a4668dd4c29b8613534275e83b11a421c029deb3ca8711440aac0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\rollback-terminal.json",
+      "bytes": 2142,
+      "sha256": "936be5a58553cd776d888f327f15c0a62db3c85f702fc4020290c93d6878c7b7"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\ready-left-online.json",
+      "bytes": 13931,
+      "sha256": "38d4f5b22e00e41f90850de370b33140322e22c089f805367563bb60d2efedd2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-prep\\Root-dnz-natural2048-v1\\consumer-restored.json",
+      "bytes": 671,
+      "sha256": "78c3ffc58adc40e955dff04c6b424d77e7eec675868f83849f7158da3fe832de"
+    }
+  ],
+  "audit_scope": "Offline receipts and source/artifact hashes only. No live process, WSL, API, model, device, compiler or counter operation; live-ready observation belongs to Root."
+}

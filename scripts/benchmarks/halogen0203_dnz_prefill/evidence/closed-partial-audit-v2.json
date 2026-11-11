@@ -1,0 +1,145 @@
+{
+  "schema": "halogen0203.DNZ8K-partial-and-supplemental-recovery-audit.v1",
+  "utc": "2026-11-11T19:33:52.911277+00:00",
+  "headline_qualified": false,
+  "rates_verified": false,
+  "warmup_throughput_exported": false,
+  "arms": {},
+  "audit_passed": true,
+  "new_prefill_tok_s": null,
+  "new_decode_tok_s": null,
+  "new_acceptance": null,
+  "independent_native_token_ID_sequence_reconstruction": false,
+  "independent_all_neural_acceptance_reconstruction": false,
+  "hardware_calls": 0,
+  "API_calls": 0,
+  "WSL_used": false,
+  "DLL_loaded": false,
+  "source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-analysis-v2\\audit_terminal.py",
+    "bytes": 42895,
+    "sha256": "c6c280cb3f070bcccfc93a51d678f87bfbbfacb5d9ec4d57b84044e9b302452d"
+  },
+  "original_handle": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\handle.json",
+    "bytes": 48737,
+    "sha256": "629cb44f650be9336db6d7c27b05f16287f949177fa7f537b51591e1dad3e73e"
+  },
+  "errors": [],
+  "executed_pins_verified": 262,
+  "original_campaign_flags": {
+    "terminal": false,
+    "completed": false,
+    "restored": false,
+    "phase": "restoration_incomplete"
+  },
+  "original_failure": {
+    "type": "ValueError",
+    "message": "22-GiB memory reserve unavailable",
+    "traceback": "Traceback (most recent call last):\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\campaign.py\", line 365, in run\n    report = asyncio.run(collector.collect_epoch(runtime=runtime, profile=profile, port=18840,\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 195, in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 118, in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\base_events.py\", line 691, in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\raw\\collector\\collect_epoch.py\", line 346, in collect_epoch\n    m.check_reserve(runtime, 22)\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\measure_helpers.py\", line 31, in check_reserve\n    require(min(frame['available_bytes'], frame['commit_headroom_bytes']) >= floor * 2**30, str(floor) + '-GiB memory reserve unavailable')\n  File \"C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\measure_helpers.py\", line 15, in require\n    raise ValueError(message)\nValueError: 22-GiB memory reserve unavailable\n"
+  },
+  "original_restoration_error": {
+    "type": "RuntimeError",
+    "message": "Unexpected owned startup phase"
+  },
+  "later_normal_recovery_verified": true,
+  "saved_normal_port": 8840,
+  "saved_normal_context": 32768,
+  "saved_normal_controller_pid": 19076,
+  "saved_normal_backend_pid": 29908,
+  "original_coordinator_exit_proved_by_Root_receipt": true,
+  "campaign_session_id": 35211,
+  "campaign_exit_code": 1,
+  "supplemental_session_id": 13542,
+  "supplemental_exit_code": 0,
+  "DNZ_tok_s_difference": null,
+  "independent_live_liveness_check": false,
+  "status": "partial_later_normal_recovered_verified",
+  "benchmark_requests_total": 1,
+  "excluded_warmups": 1,
+  "measured_requests": 0,
+  "candidate_started": false,
+  "DNZ_successful_enqueues_before_warmup": 0,
+  "actual_input_tokens": 2048,
+  "actual_output_tokens": 128,
+  "private_context_capacity": 8192,
+  "valid_excluded_warmup_RAW_brackets_and_HTTPQPC": true,
+  "runtime_minimum_observed_gib": 21.9208984375,
+  "resource_policy": {
+    "startup_physical": 30,
+    "startup_commit": 131,
+    "entry": 22,
+    "runtime": 18
+  },
+  "original_native8K_ready_observed": true,
+  "startup_allocation_is_rounded_not_physical_release": true,
+  "normal_baseline_files_rehashed": 48,
+  "original_artifact_restoration_verified": true,
+  "authenticated_READY_smoke_verified": true,
+  "smoke_is_not_a_benchmark": true,
+  "recovery_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\Root-terminal-recovered-normal.json",
+    "bytes": 18478,
+    "sha256": "c14c7221586e81e78b3166a1ef8cfbbb26d8afa191239a3a517adfac3c95db4b"
+  },
+  "linked_recovery_pins": {
+    "supplemental_recovery": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\handle.json",
+      "bytes": 18325,
+      "sha256": "0b28b17f82370ad2fe44e2072fb59a37f8d2bc496d48da0b9ebf4f047e756120"
+    },
+    "normal_ready": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\Root-ready-current.json",
+      "bytes": 13358,
+      "sha256": "7ec7033697e49dbaf0722b9088ebd03404e2781b649cbbcc0b861f2298f5fb28"
+    },
+    "authenticated_smoke": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\authenticated-smoke.json",
+      "bytes": 1389,
+      "sha256": "3967d748102ec922342497e1cc87f7db93d1dade8d924f7ed28e4bca5f6f12a8"
+    }
+  },
+  "closed_collector": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\handle.json",
+    "bytes": 1578,
+    "sha256": "958d5914a88820b5e79784f9172abc593d03b6204cd444ec40964bbdf9d4d733"
+  },
+  "excluded_warmup_evidence": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\response-0.json",
+      "bytes": 1302,
+      "sha256": "f538b17e846e71e1c2d1d8be80596569ca5685523d16ad11309f6c6335c86d04"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\sample-0.json",
+      "bytes": 2230,
+      "sha256": "9e38bb340c1e122bf49ead32a0bf3081ee8b3990933b321d805a88d0e9a2f18f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\raw-sample-0.json",
+      "bytes": 1346,
+      "sha256": "4c24cf8f14d76101a5eec88a43e8a71d33f773df66c1f04af2915c6ec4044a6a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\transport-0.json",
+      "bytes": 166,
+      "sha256": "88febfa14a8a2f3e27c92afcc8c3e61f22c4f88034c52f38a9a2b930d3d15606"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\dnz-counter-0.json",
+      "bytes": 2099,
+      "sha256": "29f9b9f05fc3950d681e0e2e9d7718fd656473c1bfc8042a4b504c4d7a0797b9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\parity-0.json",
+      "bytes": 207,
+      "sha256": "8f54f7628b18756f8107843925f6ed1ca24b3a06ade0cdd96e53f02c7a076157"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\journals\\capture-020300d800000001-0.bin",
+      "bytes": 8768,
+      "sha256": "f61990fbe73a0149892e3d78ca6bc8e934e8b2832a50701fee236ef352813319"
+    }
+  ],
+  "full_goal_achieved": false
+}

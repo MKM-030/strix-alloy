@@ -20,6 +20,19 @@ a visible terminal window matches its automatic title. The window check uses
 title matching rather than an explicit Windows Terminal tab identity. This functional
 check is not a throughput benchmark. [Recheck evidence](halogen0203-online-recheck-20261111.json).
 
+The latest source check completed at **19:40:49 UTC** and still found 0.20.3
+in official main, release metadata and the registry. At **19:45:48 UTC**, Root
+verified the running API and engine as 0.20.3, all 47 normal source members,
+the single serving container and a fresh authenticated HTTP 200 `READY` reply.
+The same normal controller/backend identities remained online on port 8840;
+no additional update or restart was needed. The visible console was also
+confirmed. Private receipts are retained under
+`server/.local/halogen-update-20261111/primary0203/` as
+`source-refresh-20261111T194049Z-complete.json` and
+`update-final-current-20261111.json`. This readiness check provides no new
+throughput result; the [DNZ attempt report](../benchmarks/halogen0203-dnz-prefill-20261111.md)
+separately preserves the incomplete measurement and later recovery history.
+
 ## What the release changes
 
 The manufacturer reports **7–9% faster `d3-nano` decisions on the NPU**, with

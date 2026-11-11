@@ -1,0 +1,194 @@
+{
+  "schema": "halogen0203.DNZ-capacity8192-composite-terminal-independent-audit.v2",
+  "utc": "2026-11-11T19:31:50.487754+00:00",
+  "reviewer": "/root/source0201",
+  "verdict": "CLOSED_PARTIAL_STOCK_WARMUP_ONLY_NORMAL_RESTORED_BY_SEPARATE_RECOVERY",
+  "composite_terminal": true,
+  "original_campaign_handle_preserved": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\handle.json",
+    "bytes": 48737,
+    "sha256": "629cb44f650be9336db6d7c27b05f16287f949177fa7f537b51591e1dad3e73e"
+  },
+  "original_campaign_flags_unchanged": {
+    "terminal": false,
+    "completed": false,
+    "restored": false,
+    "phase": "restoration_incomplete"
+  },
+  "original_session": {
+    "id": 35211,
+    "exit_code": 1,
+    "coordinator_exit_observed_by_Root": true
+  },
+  "supplemental_session": {
+    "id": 13542,
+    "exit_code": 0,
+    "terminal": true,
+    "normal_ready": true
+  },
+  "excluded_stock_warmups": 1,
+  "measured_requests": 0,
+  "candidate_started": false,
+  "DNZ_activation_or_gain_qualified": false,
+  "limits_retained": {
+    "startup_physical": 30,
+    "startup_commit": 131,
+    "entry": 22,
+    "runtime": 18
+  },
+  "all_execution_pins_verified": 262,
+  "normal_baseline_files_verified": 48,
+  "private_source_extras_absent": 16,
+  "private_RAW_DSO_removed": true,
+  "original_RAW_arm_disarmed": true,
+  "original_private_owner_stopped_and_cleanup_observed": true,
+  "original_normal_restore_failure": {
+    "service_outcome": {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\.local\\services\\147e0322dfe54631864f2b34cb02828a\\outcome.json",
+      "bytes": 207,
+      "sha256": "f7f3803121bfecb56cdd53f942fcc05bc24ab76ec9ff14bbd4b46c86e76522f5"
+    },
+    "log": {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\.local\\services\\147e0322dfe54631864f2b34cb02828a\\service.log",
+      "bytes": 887,
+      "sha256": "ce5d8d6deabf97ebb6e199403d753b169f72a805ba4845a20777c2f81e8783e6"
+    },
+    "error": "Context 32768 needs 30 GiB free physical / 131 GiB commit headroom; observed 29.97 / 182.92",
+    "service_cleanup_recovery": true,
+    "cause": "Fresh unchanged30/131 guard rejected after container creation;29.97 physical/182.92 commit GiB are rounded native-service observations."
+  },
+  "actual_native8K": {
+    "context": 8192,
+    "slot_ctx": 8192,
+    "pool": 8192,
+    "slots": 1,
+    "before_rounded_allocation": {
+      "weights": 62.1,
+      "kv_pool": 0.9,
+      "working": 5.8,
+      "total": 68.8
+    },
+    "private8K_rounded_allocation": {
+      "weights": 62.1,
+      "kv_pool": 0.2,
+      "working": 5.8,
+      "total": 68.1
+    },
+    "allocation_log_corroborated": true,
+    "exact_resident_or_Windows_memory_gain_proved": false,
+    "no_speedup_from_capacity_change_claimed": true
+  },
+  "saved_postwarmup_resources": {
+    "before_warmup_physical_GiB": 22.198570251464844,
+    "post_warmup_physical_GiB": 21.912460327148438,
+    "post_warmup_commit_headroom_GiB": 112.32651138305664,
+    "post_warmup_shortfall_to22_bytes": 93995008,
+    "post_warmup_shortfall_to22_MiB": 89.640625,
+    "warmup_runtime_minimum_reserve_GiB": 21.9208984375,
+    "above18_runtime_reserve": true,
+    "exact_failed_admission_frame_retained": false,
+    "scope": "Saved post-warmup direct Windows frame; adjacent to failure, not claimed as the exact failing frame. No attribution to any device/component."
+  },
+  "warmup_journal_independently_revalidated": true,
+  "stock_DNZ_counter_delta": 0,
+  "counter_reads_outside_HTTP_QPC": true,
+  "normal_restored": {
+    "controller": {
+      "pid": 19076,
+      "creation_time_100ns": 134388984192956675,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 29908,
+      "creation_time_100ns": 134388984297245508,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "container_id": "2232f9c22004bd4b6b39f406f9bb6e9201ad4d180eaf0f42c16961d5802726c2",
+    "context": 32768,
+    "pool": 32768,
+    "slots": 1,
+    "port": 8840,
+    "profile": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\serving0203-text32k-8192.json",
+      "bytes": 1860,
+      "sha256": "dfa4b82b5de41cadbb3d3a5ed89b243d53112cbf9729e2de45c5f0e3958cb430"
+    },
+    "authenticated_READY_smoke": true,
+    "smoke_is_not_benchmark": true,
+    "recovery_entry_physical_GiB": 30.25,
+    "actual_service_floor_GiB": [
+      30,
+      131
+    ],
+    "Root_ready_utc": "2026-11-11T19:27:59.544806+00:00"
+  },
+  "own_idle_shells_closed": "Reported true by Root recovery handle; this offline review performed no process inspection or termination.",
+  "evidence": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\Root-terminal-recovered-normal.json",
+      "bytes": 18478,
+      "sha256": "c14c7221586e81e78b3166a1ef8cfbbb26d8afa191239a3a517adfac3c95db4b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\executed-bindings.json",
+      "bytes": 76374,
+      "sha256": "63a9460c9d7496f052ca1f75db7ca0c4585233e53f1b845c73a31c8ae5eaca91"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\handle.json",
+      "bytes": 1578,
+      "sha256": "958d5914a88820b5e79784f9172abc593d03b6204cd444ec40964bbdf9d4d733"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\sample-0.json",
+      "bytes": 2230,
+      "sha256": "9e38bb340c1e122bf49ead32a0bf3081ee8b3990933b321d805a88d0e9a2f18f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\raw-sample-0.json",
+      "bytes": 1346,
+      "sha256": "4c24cf8f14d76101a5eec88a43e8a71d33f773df66c1f04af2915c6ec4044a6a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\dnz-counter-0.json",
+      "bytes": 2099,
+      "sha256": "29f9b9f05fc3950d681e0e2e9d7718fd656473c1bfc8042a4b504c4d7a0797b9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\natural2048_context8192\\ready-after-0.json",
+      "bytes": 13351,
+      "sha256": "854cbb2c1a8c42750bdfbac6d83c7a55fe2e1e827e9682d77360ab50a5f66b69"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\before\\startup-allocation.json",
+      "bytes": 578,
+      "sha256": "a3c8c0ef297668e9fad99fd08ada879815a156ce4d13de859b162dd5701f4ab5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-dnz-natural2048-context8192-v2\\rollback-terminal.json",
+      "bytes": 2106,
+      "sha256": "dec7887795eeec430e51b078f3aa2bd06a6de2b6ff04f6d5425dcceddbec87a7"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\handle.json",
+      "bytes": 18325,
+      "sha256": "0b28b17f82370ad2fe44e2072fb59a37f8d2bc496d48da0b9ebf4f047e756120"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\Root-ready-current.json",
+      "bytes": 13358,
+      "sha256": "7ec7033697e49dbaf0722b9088ebd03404e2781b649cbbcc0b861f2298f5fb28"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\consumer-restored.json",
+      "bytes": 671,
+      "sha256": "d9df41aa18ddbce15ef8211ff479ea00a8e9085b337e6e79f6adc7a7b30324ad"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\dnz-prefill-capacity8192-v2\\Root-supplemental-normal-recovery-v1\\authenticated-smoke.json",
+      "bytes": 1389,
+      "sha256": "3967d748102ec922342497e1cc87f7db93d1dade8d924f7ed28e4bca5f6f12a8"
+    }
+  ],
+  "scope": "Offline saved evidence, unchanged source hashes and one saved RAW journal only. No new diagnostic, hardware, WSL, API, native process/counter operation or benchmark request. Original incomplete handle was not edited. Live observation belongs to Root."
+}
