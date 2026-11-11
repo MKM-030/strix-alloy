@@ -283,3 +283,16 @@ failure/cleanup evidence is retained. Authenticated health, discovery and `READY
 pass on the recovered server. Its controller/backend runs are
 `54495bb566554fe8a4be00be80f129d5` / `693717e5bba9420f8f1e791ec4adff31`.
 This same recovered server remains ready after both NPU component processes close.
+
+The retained-prefix serial producer now also passes exact comparison of
+32,001,030 BF16 values: 66 committed-prefix promotions reuse cached state and
+62 corrections restore and forward the actual target suffix. Its
+[source and qualification](../benchmarks/halogen0201-streaming-npu-qualification-20261111.md)
+are published with 51 passing portable CPU tests. Live GPU arrival and whole-engine
+speedup are separate outstanding measurements. A reproduced publisher-lock
+contention bug is being corrected before that comparison; the normal server
+remains unchanged.
+
+At 08:40 UTC, the official tag and OCI latest digest still match the installed
+0.20.1 image. Both live API and engine agree on 0.20.1; an authenticated chat
+returns `READY`. The existing paired8192 profile and port 8840 remain online.

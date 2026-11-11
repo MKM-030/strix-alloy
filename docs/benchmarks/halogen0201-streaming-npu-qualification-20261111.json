@@ -1,0 +1,151 @@
+{
+  "schema": "halogen0201.real-stateful-producer-qualification.v1",
+  "measured_utc": "2026-11-11T07:45:00.821757+00:00",
+  "scope": "Actual serial actor and new typed Windows FLM1.0.12 C boundary; full-ring offline feedback scheduling, no liveGPUhandoff",
+  "states": 129,
+  "shared_rows_per_state": 248070,
+  "nonshared_head_rows_excluded": 250,
+  "compared_BF16_values": 32001030,
+  "compared_candidate_bytes": 64002060,
+  "differing_words": 0,
+  "tolerance_relaxed": false,
+  "true_ids_committed_once": 128,
+  "committed_state_promotions_without_native_replay": 66,
+  "correction_commits": 62,
+  "speculative_forwards": 250,
+  "all_forwards": 312,
+  "qpc_component_windows": {
+    "startup_ms": 540.8568,
+    "seed512_ms": 399.2741,
+    "forward_count": 312,
+    "forward_mean_ms": 21.154159294871796,
+    "state_read_count": 313,
+    "state_read_mean_ms": 4.595601597444089,
+    "state_write_count": 62,
+    "state_write_mean_ms": 5.482606451612903,
+    "read_excludes_opaque_state_new_and_free": true,
+    "forward_includes_native_copy_validation_argmax": true,
+    "pure_NPU_kernel_times": false
+  },
+  "worker_phase_ms": 10193.6262,
+  "child_wall_seconds": 26.015999999945052,
+  "child_wall_includes_offline_comparison": true,
+  "API_state_estimated_bytes_min": 25829376,
+  "API_state_estimated_bytes_max": 27402240,
+  "API_estimates_not_actual_allocations": true,
+  "source_schedule": "Each actual singleton feedback is sent only after bounded greedy ring preparation; real target pacing/arrival not measured",
+  "full_retain_state_parity_qualified": true,
+  "empty_tail_no_restore_native_branch_exercised": false,
+  "full_retain_engine_gain_qualified": false,
+  "offline_committed_next_id_agreement": {
+    "matches": 66,
+    "denominator": 128,
+    "ratio": 0.515625,
+    "not_native_MTP_acceptance": true
+  },
+  "native_acceptance": null,
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "arrival_before_target_need": null,
+  "engine_gain": null,
+  "worker_thread_closed": true,
+  "native_cleanup_complete": true,
+  "native_closed": true,
+  "terminal_cancel_completed": true,
+  "min_observed_physical_gib": 21.81924819946289,
+  "min_observed_commit_gib": 111.4251594543457,
+  "entry_gib": 22,
+  "runtime_gib": 18,
+  "outer_deadline_seconds": 120,
+  "retries": 0,
+  "original_GPU_unchanged_and_ready": true,
+  "GPU_identities": {
+    "controller": {
+      "pid": 30100,
+      "creation_time_100ns": 134388517729261060,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 41248,
+      "creation_time_100ns": 134388517837097195,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "actual_modules": {
+    "native_backend.dll": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-live-build-v1\\producer\\native_backend.dll",
+      "bytes": 165376,
+      "sha256": "f1da91330f8be5616fbccdde1e63b303f53fd04c64b6438abe0e9d70302f348e"
+    },
+    "qwen3_5vl_npu.dll": {
+      "path": "C:\\AI\\runtimes\\flm-1.0.12-npu-probe\\portable\\qwen3_5vl_npu.dll",
+      "bytes": 2341376,
+      "sha256": "81b9349b5eb6cc7af277a41fad3a5dd7aa71321a82f8a484e7a980d80c334fad"
+    },
+    "q4_npu_eXpress.dll": {
+      "path": "C:\\AI\\runtimes\\flm-1.0.12-npu-probe\\portable\\q4_npu_eXpress.dll",
+      "bytes": 1103872,
+      "sha256": "c8a601860ba99f9a2191099c4b20f8229f7eb99e2048c744190099d34982ed9d"
+    },
+    "xrt_coreutil.dll": {
+      "path": "C:\\Windows\\System32\\xrt_coreutil.dll",
+      "bytes": 2010984,
+      "sha256": "d0dce13280a0d668b497d4fcabdcb43f1a7353e466af3acabd98c6df7607ed8e"
+    }
+  },
+  "source_CPP_sha256": "08a072c063cc0db0edef9557be936f3aa9bcb0588f2565fd0f20c75897804073",
+  "full_prompt_raw_SHA256": "322ad3ae71dac4989a35ef9c9a73b3f80dba15443b6ef1160467681355acfbe5",
+  "full_prompt_domain_SHA256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+  "hash_domain": "halogen-authoritative-token-ids-v1\\0",
+  "old_raw_hash_wording_corrected_not_data_changed": true,
+  "evidence": [
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-producer-qualification-v1/handle.json",
+      "bytes": 78048,
+      "sha256": "1eca73cd91cd6357d0335d1c1ef238e9bddf8bb9a755a8705ce580067eb90ece"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-producer-qualification-v1/qualification.json",
+      "bytes": 441398,
+      "sha256": "245aaced88285fb57c60c6451bf44190aa1026c6687afbabbc1f20b46eb61a5a"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-producer-qualification-v1/qualification.json.comparison.json",
+      "bytes": 124222,
+      "sha256": "775887d364870d4457cd00ef05f644a45a8ea87f51dcee903c3aa0f1f9e905c9"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-producer-qualification-v1/independent-closed-audit-v1.json",
+      "bytes": 7426,
+      "sha256": "17b4b4835d0fbe70f716229289e1b93c159c89578005ec5dcc9adb8d2d4da7f4"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-producer-qualification-v1/ready-left-online.json",
+      "bytes": 13381,
+      "sha256": "86d13d71a3935f51e4e8967e89a0bcad6dc31a4187920f4ba4c4470d4ea37443"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-live-prep/producer/runtime-preparation-v1.json",
+      "bytes": 54318,
+      "sha256": "cd6417d44a952915fbd98cb098a202a8d9e1802f34a7107aa20f7f7ebd5ce3e9"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-live-prep/producer/qualification-preparation-v3.json",
+      "bytes": 6191,
+      "sha256": "20075992c8cea978991ea4fd8dc3ddad8da218e7d55f40128c7614feaf8ddcad"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-live-build-v1/producer/pe-preflight.json",
+      "bytes": 71796,
+      "sha256": "d12958aa7eb2551547552cb5afe422c6b1cdb38803ebbf2d99b2139128c18aa4"
+    }
+  ],
+  "session_finalization_supplement": {
+    "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-producer-qualification-v1/session-finalization-supplement-v1.json",
+    "bytes": 3339,
+    "sha256": "0bb2675aca111b1e04bb81af0bfb2e8c9067f42e3b468c2285db8d3272a1d4dd",
+    "core_numerical_results_unchanged": true
+  },
+  "published_source": "scripts/benchmarks/halogen_flm_streaming_producer",
+  "published_source_CPU_tests": 51
+}
