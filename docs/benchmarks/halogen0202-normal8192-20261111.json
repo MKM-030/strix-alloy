@@ -1,0 +1,264 @@
+{
+  "schema": "halogen0202.normal8192-public-observations.v1",
+  "version": "0.20.2",
+  "actual_inputs": [
+    8192,
+    16384
+  ],
+  "output_tokens": 128,
+  "reported_observations": {
+    "complete_cohorts": true,
+    "native_reported_observations_only": true,
+    "api_phase_clock_qualified": false,
+    "RAW_observer_used": false,
+    "cases": {
+      "natural8192": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "warmup_excluded": 1,
+        "measured_repetitions": 3,
+        "prefill_native_reported_mean_tps": 1460.3403333333333,
+        "decode_native_reported_mean_tps": 47.98533333333334,
+        "prefill_native_pooled_tps": 1450.1681713577623,
+        "decode_native_pooled_tps": 47.985004686035616,
+        "http_qpc_mean_seconds": 8.371122933333334,
+        "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 189,
+            "drafted": 312,
+            "accepted": 192,
+            "acceptance_fraction": 0.6153846153846154
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      },
+      "natural16k": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "warmup_excluded": 1,
+        "measured_repetitions": 3,
+        "prefill_native_reported_mean_tps": 1414.6186666666665,
+        "decode_native_reported_mean_tps": 43.44566666666667,
+        "prefill_native_pooled_tps": 1414.2100023593182,
+        "decode_native_pooled_tps": 43.23545307151865,
+        "http_qpc_mean_seconds": 14.606883266666667,
+        "output_sha256": "0cbab25540ce1452d5615aed3052df54609fc321ed21591c989d1c8a9ed715bc",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 201,
+            "drafted": 324,
+            "accepted": 180,
+            "acceptance_fraction": 0.5555555555555556
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      }
+    }
+  },
+  "comparison_to_prior_0201": {
+    "natural8192": {
+      "output_sha256_matches_prior": true,
+      "causal_comparison": false,
+      "prior_0201_prefill_reported_tps": 1475.0363333333332,
+      "prior_0201_decode_reported_tps": 47.519333333333336,
+      "prefill_observed_change_percent": -0.9963144410680025,
+      "decode_observed_change_percent": 0.9806534884047258,
+      "HTTP_mean_observed_change_percent": 1.0777666619671056,
+      "prior_head_acceptance": 0.6153846153846154,
+      "new_head_acceptance": 0.6153846153846154
+    },
+    "natural16k": {
+      "output_sha256_matches_prior": true,
+      "causal_comparison": false,
+      "prior_0201_prefill_reported_tps": 1447.231,
+      "prior_0201_decode_reported_tps": 45.074333333333335,
+      "prefill_observed_change_percent": -2.253429710483912,
+      "decode_observed_change_percent": -3.6132906384268915,
+      "HTTP_mean_observed_change_percent": 2.7411010732762087,
+      "prior_head_acceptance": 0.5555555555555556,
+      "new_head_acceptance": 0.5555555555555556
+    }
+  },
+  "causal_comparison": false,
+  "acceptance_independently_reconciled": false,
+  "RAW_observer_used": false,
+  "real_NPU_prediction": false,
+  "profile": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\serving0202-text32k-8192.json",
+    "bytes": 1860,
+    "sha256": "e9452bdf8075ffffb498c41d86ba9b0a9533695417d842a5258f336a54fab7fe"
+  },
+  "runtime_seal": {
+    "schema": "halogen0202.normal8192-runtime-seal.v1",
+    "profile": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\serving0202-text32k-8192.json",
+      "bytes": 1860,
+      "sha256": "e9452bdf8075ffffb498c41d86ba9b0a9533695417d842a5258f336a54fab7fe"
+    },
+    "identities": {
+      "controller": {
+        "pid": 24640,
+        "creation_time_100ns": 134388779728344124,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 22004,
+        "creation_time_100ns": 134388779832501629,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      }
+    },
+    "controller_run": "1b54db71c9624713a93c03f7d0512a02",
+    "backend_run": "16971e94fd654ff7a2bd8c05c9e80e4d",
+    "port": 8840
+  },
+  "evidence": {
+    "handle": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\normal8192-native-confirmation-v1\\handle.json",
+      "bytes": 19204,
+      "sha256": "d8fae4d22456b7ed5ce996ca97b801a4d9d0d536417c9f7351cbc8dca9456e97"
+    },
+    "summary": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\normal8192-native-confirmation-v1\\summary.json",
+      "bytes": 2345,
+      "sha256": "60035228a9c64d8b19f403967a40ac6be0f85c696b6858fb45efe5f4b9bf5b52"
+    },
+    "preparation": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\normal-comparison-prep\\preparation.json",
+      "bytes": 11722,
+      "sha256": "17c047b54544ade20057428011ee10e353e92b407f9ebe94658c2e87b970abea"
+    },
+    "ready_before": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\normal8192-native-confirmation-v1\\ready-before.json",
+      "bytes": 13357,
+      "sha256": "a65e99837ff7ab0e4ed9e00961897b5962d8395bf7a630c3a1f89ce5a50b59e2"
+    },
+    "ready_after": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\normal8192-native-confirmation-v1\\ready-after.json",
+      "bytes": 13359,
+      "sha256": "a2668c30a7aeb4859caa42002b0edb4998215a6778da48ec37e0719fbca30e27"
+    },
+    "runtime_seal": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\normal8192-native-confirmation-v1\\runtime-seal.json",
+      "bytes": 906,
+      "sha256": "d24776c7184902ea67347e0ebc0c638612a1e2cb7bb701a8dd8f6754e683dd81"
+    },
+    "audit": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0202\\normal8192-terminal-audit-export-v2\\audit-terminal-v2.json",
+      "bytes": 22431,
+      "sha256": "5cf7964b69ccdfee72eaad61d2ca2e3d8c0c52c882876f717eedca4df720e0b7"
+    }
+  },
+  "CPU_tests": 7,
+  "source_member_count": 47,
+  "guard_receipts": 16,
+  "minimum_observed_runtime_reserve_gib": 22.39737319946289,
+  "full_goal_achieved": false,
+  "QPC_phase_enclosure": {
+    "observations": [
+      {
+        "case": "natural8192",
+        "ordinal": 0,
+        "http_qpc_seconds": 13.9285932,
+        "API_phase_sum_seconds": 14.3085,
+        "API_phase_sum_within_HTTP": false,
+        "phase": "warmup_excluded",
+        "native_minus_HTTP_seconds": 0.37990680000000054
+      },
+      {
+        "case": "natural8192",
+        "ordinal": 1,
+        "http_qpc_seconds": 8.1661158,
+        "API_phase_sum_seconds": 8.1413,
+        "API_phase_sum_within_HTTP": true,
+        "phase": "measured",
+        "native_minus_HTTP_seconds": -0.02481580000000072
+      },
+      {
+        "case": "natural8192",
+        "ordinal": 2,
+        "http_qpc_seconds": 9.0516141,
+        "API_phase_sum_seconds": 8.9818,
+        "API_phase_sum_within_HTTP": true,
+        "phase": "measured",
+        "native_minus_HTTP_seconds": -0.06981410000000032
+      },
+      {
+        "case": "natural8192",
+        "ordinal": 3,
+        "http_qpc_seconds": 7.8956389,
+        "API_phase_sum_seconds": 7.8264,
+        "API_phase_sum_within_HTTP": true,
+        "phase": "measured",
+        "native_minus_HTTP_seconds": -0.06923890000000021
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 0,
+        "http_qpc_seconds": 17.7104684,
+        "API_phase_sum_seconds": 17.634400000000003,
+        "API_phase_sum_within_HTTP": true,
+        "phase": "warmup_excluded",
+        "native_minus_HTTP_seconds": -0.07606839999999693
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 1,
+        "http_qpc_seconds": 14.7252018,
+        "API_phase_sum_seconds": 14.6509,
+        "API_phase_sum_within_HTTP": true,
+        "phase": "measured",
+        "native_minus_HTTP_seconds": -0.07430180000000064
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 2,
+        "http_qpc_seconds": 14.6602977,
+        "API_phase_sum_seconds": 14.6305,
+        "API_phase_sum_within_HTTP": true,
+        "phase": "measured",
+        "native_minus_HTTP_seconds": -0.029797699999999594
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 3,
+        "http_qpc_seconds": 14.4351503,
+        "API_phase_sum_seconds": 14.356,
+        "API_phase_sum_within_HTTP": true,
+        "phase": "measured",
+        "native_minus_HTTP_seconds": -0.07915030000000023
+      }
+    ],
+    "all_measured_API_phase_sums_within_HTTP": true,
+    "all_warmup_API_phase_sums_within_HTTP": false,
+    "tolerance_seconds": 0.005,
+    "API_phase_clock_qualified": false,
+    "interpretation": "HTTP enclosure is necessary, not independent phase-clock qualification; no scaling or subtraction applied"
+  }
+}

@@ -30,7 +30,10 @@ See the [official release source](https://github.com/peonist-ai/halogen-flash-se
 Verification includes fresh API/auth/cache/rendering/tokenizer tests, managed
 profile forwarding, Windows PowerShell 5.1 launcher tests and the authenticated
 17-input/2-output-token smoke request. **That request is not a benchmark.**
-No new 0.20.2 prefill/decode/acceptance cohort is claimed. The
+The subsequent [complete 8K/16K API observation series](../benchmarks/halogen0202-normal8192-20261111.md)
+has an excluded warmup and three measured requests per input. Its phase clock
+remains unqualified, with a retained warmup enclosure counterexample; no causal
+release or NPU speed gain is established. The
 [0.20.1 normal-serving measurements](../benchmarks/halogen0201-normal8192-20261111.md)
 remain separately labelled historical results.
 
