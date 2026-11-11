@@ -1,0 +1,51 @@
+{
+  "schema": "halogen0201.stateful1012-prospective-component.v1",
+  "registered_utc": "2026-11-11T06:40:35.951892+00:00",
+  "status": "registered_before_native_execution",
+  "runtime_version": "1.0.12",
+  "runtime_release_commit": "cce7e5bb7d56af182b5051c12253175a86957b73",
+  "acquisition": {
+    "path": "C:\\AI\\runtimes\\flm-1.0.12-npu-probe\\acquisition-receipt-v2.json",
+    "bytes": 9365,
+    "sha256": "894db6e4733c0e96212c864d4d5aca7f621cf8e3143259e8efea721ded85b9c4"
+  },
+  "native_preparation": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-prep\\runtime-preparation-v1.json",
+    "bytes": 5183,
+    "sha256": "4b0ef166d3a87ad7c8b454eaa9c91f76529a22386c9eb748393cb3692860cf33"
+  },
+  "comparator_registration": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-prep\\comparator-registration-v1.json",
+    "bytes": 1358,
+    "sha256": "b214163517309a736bd7b2851523b3b14fc2cb1851ffebb830affe9c0570c6b4"
+  },
+  "workload": "Exact non-repeated8192 document teacher from paired2048 warmup; NPU consumes tail512 +128 already recorded authoritative IDs",
+  "scope": "Two fresh sequential native processes: reference and always-restore scenario. Complete BF16 endpoints, real opaque state read/write and QPC.",
+  "source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-prep\\stateful_host.cpp",
+    "bytes": 12617,
+    "sha256": "3f1eeebf6984853a98e8c37cd31dba5f082ef403838cb46bede0b8564250518d"
+  },
+  "executable": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-build-v1\\stateful1012.exe",
+    "bytes": 221696,
+    "sha256": "bf86ea460a6188e02fd81baaf009c9924c34c8069328ec1d36d25d469ea03336"
+  },
+  "static_PE": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-build-v1\\pe-preflight.json",
+    "bytes": 72916,
+    "sha256": "8caa6c710d4ba012aa06ec4fdbcbd6fef96efc80786a0ff58bcc6ae240f5fd79"
+  },
+  "constraints": {
+    "entry_gib": 22,
+    "runtime_gib": 18,
+    "seconds_per_process": 120,
+    "automatic_retries": 0,
+    "GPU_unchanged": true
+  },
+  "native_acceptance": null,
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "full_retain_qualified": false,
+  "engine_gain_qualified": false
+}

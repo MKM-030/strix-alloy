@@ -14,6 +14,19 @@ The older server incident's precise cause remains unproved. Fixing the wall-cloc
 
 The first post-start 22-GiB smoke-entry check briefly failed before sending inference. The same ready controller and backend were verified again; the subsequent unchanged admission passed and `READY` succeeded, with no second engine launch. Startup 30/131, entry 22/22 and runtime 18/18 GiB limits are retained. Exact old files and terminal cleanup receipts are preserved for rollback.
 
+## Subsequent availability
+
+The earlier server snapshot was later stopped by the 18-GiB runtime memory guard
+after additional Voice-model allocation. One exactly identified owned TTS model
+was unloaded under the existing authorization. The new normal launch passed
+unchanged 30/131 start admission and later 22/22 request entry, returning an
+authenticated `READY`. Controller/backend runs
+`54495bb566554fe8a4be00be80f129d5` / `693717e5bba9420f8f1e791ec4adff31`
+replace the historical snapshot identities. Original failed recovery evidence is
+preserved; fresh five-frame recovery was proven before its owned lock was
+reclaimed. The [subsequent stateful NPU component](../benchmarks/halogen0201-stateful-npu-20261111.md)
+ends with this recovered server still online and unchanged during both jobs.
+
 ## Performance scope
 
 This is a serving/reliability update, **not a new throughput benchmark**. The [last normal serving observations](../benchmarks/halogen0201-normal8192-20261111.md) remain 1475.04 prefill / 47.52 decode tok/s and 61.54% API neural-head acceptance at 8192 inputs; 1447.23 / 45.07 and 55.56% at 16384 inputs. Their phase-clock and acceptance limitations remain unchanged. No NPU producer is enabled; the completed [bulk NPU experiment](../benchmarks/halogen0201-bulk-npu-20261111.md) is rejected for both numerical failure and higher cost. The full acceleration goal remains open.

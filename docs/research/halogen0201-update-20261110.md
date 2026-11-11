@@ -266,3 +266,20 @@ remains online on port 8840 with its visible console. Earlier process identities
 above are historical; the new sealed runs and exact generated script are in the
 [current online snapshot](halogen0201-online-watchdog-20261111.md).
 This reliability change establishes no new throughput gain.
+
+## Stateful NPU component and current availability
+
+The separate FLM 1.0.12 full-snapshot/always-restore component now passes all
+32,001,030 BF16 comparisons exactly. State read/write calls average 2.82/5.04 ms;
+normal authoritative NPU appends average 21.07 ms. These component timings and
+66/128 offline next-ID matches establish no Halogen tok/s or native acceptance.
+[Full measured result and source](../benchmarks/halogen0201-stateful-npu-20261111.md).
+
+After the earlier online snapshot, the 18-GiB runtime guard stopped that server
+under additional memory pressure. The exact owned TTS process was unloaded
+under the existing Voice-pause authorization, and a fresh normal launch passed
+the unchanged 30/131-GiB start and 22/22-GiB request-entry admission. Original
+failure/cleanup evidence is retained. Authenticated health, discovery and `READY`
+pass on the recovered server. Its controller/backend runs are
+`54495bb566554fe8a4be00be80f129d5` / `693717e5bba9420f8f1e791ec4adff31`.
+This same recovered server remains ready after both NPU component processes close.

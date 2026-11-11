@@ -34,6 +34,7 @@ KV pool, paired 8192 prefill settings, adaptive MTP gate 0.90, PLD `3,3`,
 Cache Off, Thinking Off and Vision Off. It keeps the existing ServiceNow token and endpoint on port 8840.
 The 0.20.1 endpoint passed fresh authenticated functional checks on 11 November. Version-specific evidence is kept in the [update status](docs/research/halogen0201-update-20261110.md), with the completed [paired-8192 prefill comparison](docs/benchmarks/halogen0201-prefill8192-20261111.md) and [normal serving observations](docs/benchmarks/halogen0201-normal8192-20261111.md).
 The [latest online verification and watchdog correction](docs/research/halogen0201-online-watchdog-20261111.md) confirm the official version remains current and the normal server answers authenticated requests after its controlled restart.
+The [FLM 1.0.12 NPU state component](docs/benchmarks/halogen0201-stateful-npu-20261111.md) now passes exact full-row restoration; its component costs remain separate from unmeasured NPU engine throughput gains.
 The opt-in `CurrentCachedText32K` profile uses the same 0.20.1 one-slot text settings with Flexible prefix caching; invoke it without capacity or prefill selectors. Its workload benefit remains unqualified, and the default stays Cache Off.
 Stop an existing managed session through its normal controls before changing
 profiles. See the [ServiceNow guide](docs/integrations/halogen-servicenow.md).
