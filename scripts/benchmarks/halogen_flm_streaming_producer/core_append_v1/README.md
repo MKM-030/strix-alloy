@@ -38,3 +38,10 @@ rows never enter either timing mean. Original tolerances and 22-GiB entry /
 prefill/decode tok/s or MTP acceptance.
 
 See the [implementation plan](../../../../docs/superpowers/plans/2026-11-11-npu-unused-head.md).
+
+The [completed native component](../../../../docs/benchmarks/halogen0201-core-append-component-20261111.md)
+passes all 81 endpoint rows exactly and reduces mean queued catch-up work from
+2602.95 to 1626.48 ms (37.51%). All 568 head skips restore the original calls;
+the single native child exits cleanly and the GPU server stays unchanged.
+This does not establish a Halogen tok/s or acceptance improvement. The live
+producer integration requires its own reviewed source closure and full comparison.
