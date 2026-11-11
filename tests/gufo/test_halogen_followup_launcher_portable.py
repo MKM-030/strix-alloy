@@ -39,7 +39,7 @@ class FollowupLauncherTests(unittest.TestCase):
         venv.EnvBuilder(with_pip=False).create(cls.fixture_venv)
         cls.stable = server/".local/servicenow-api-token.txt"
         cls.stable.write_text("SYNTHETIC_PUBLIC_TOKEN_NEVER_PRINT_123", encoding="utf-8")
-        for version in ("0.18.10", "0.18.22", "0.19.1", "0.20.0", "0.20.2"):
+        for version in ("0.18.10", "0.18.22", "0.19.1", "0.20.0", "0.20.3"):
             package = cls.root/("backends/halogen-wsl2-"+version)
             (package/"profiles").mkdir(parents=True)
             (package/".local").mkdir()
@@ -47,7 +47,7 @@ class FollowupLauncherTests(unittest.TestCase):
             (package/"profiles/release.json").write_text(json.dumps(release))
             (package/".local/machine.json").write_text(json.dumps(dict(version=version, image=release["image"], pwsh=str(PS))))
             (package/".local/api-token.txt").write_text("SYNTHETIC_BACKEND_TOKEN_NEVER_PRINT_456")
-            if version in ("0.18.22", "0.19.1", "0.20.0", "0.20.2"):
+            if version in ("0.18.22", "0.19.1", "0.20.0", "0.20.3"):
                 (package/"scripts").mkdir()
                 shutil.copy2(REPO/("backends/halogen-wsl2-"+version)/"scripts/capacity_policy.py",
                              package/"scripts/capacity_policy.py")
@@ -80,7 +80,7 @@ class FollowupLauncherTests(unittest.TestCase):
         self.assertGreaterEqual(start, 0, result.stdout)
         return json.JSONDecoder().raw_decode(result.stdout[start:])[0]
 
-    def expected_current(self, version="0.20.2", prefill=8192):
+    def expected_current(self, version="0.20.3", prefill=8192):
         return {
             "schema":1, "minimum_reserve_gib":18, "token_file":str(self.stable),
             "backend_token_file":str(self.root/("backends/halogen-wsl2-"+version)/".local/api-token.txt"),
@@ -124,7 +124,7 @@ class FollowupLauncherTests(unittest.TestCase):
         self.assertIn("benefit must be qualified", result.stdout)
 
     def test_current_cached_matching_selectors_are_explicit_and_trace_opt_in(self):
-        result = self.invoke("-HalogenVersion", "0.20.2", "-Thinking", "Off",
+        result = self.invoke("-HalogenVersion", "0.20.3", "-Thinking", "Off",
             "-MtpPolicy", "Auto", "-PromptCache", "Flexible", "-ConsoleTrace",
             profile="CurrentCachedText32K")
         actual = self.decoded(result)
@@ -140,7 +140,7 @@ class FollowupLauncherTests(unittest.TestCase):
             with self.subTest(options=options):
                 result = self.invoke(*options, profile="CurrentCachedText32K")
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn("CurrentCachedText32K requires Halogen 0.20.2", result.stdout+result.stderr)
+                self.assertIn("CurrentCachedText32K requires Halogen 0.20.3", result.stdout+result.stderr)
         for selector, value in (("-Slots", "1"), ("-Slots", "2"),
                 ("-Concurrency", "1"), ("-Concurrency", "2"),
                 ("-KvPoolPositions", "32768"), ("-PrefillTokens", "2048")):
@@ -201,7 +201,7 @@ class FollowupLauncherTests(unittest.TestCase):
         result = self.invoke(profile=None)
         actual = self.decoded(result)
         self.assertEqual(self.normalize(actual), self.normalize(self.expected_current()))
-        self.assertIn("Profile: CurrentText32K; Halogen 0.20.2 v2; MTP policy Confidence90; PLD 3,3; cache Off", result.stdout)
+        self.assertIn("Profile: CurrentText32K; Halogen 0.20.3 v2; MTP policy Confidence90; PLD 3,3; cache Off", result.stdout)
         self.assertIn("Thinking default: Off; low effort", result.stdout)
         self.assertIn("Prefill chunk / token arena: 8192 / 8192", result.stdout)
 
@@ -244,7 +244,7 @@ class FollowupLauncherTests(unittest.TestCase):
             with self.subTest(options=options):
                 result = self.invoke(*options, profile="CurrentText32K")
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn("CurrentText32K requires Halogen 0.20.2", result.stdout+result.stderr)
+                self.assertIn("CurrentText32K requires Halogen 0.20.3", result.stdout+result.stderr)
 
     def test_capacity_and_prefill_selectors_require_current_text32k(self):
         for profile in ("FollowupText32K", "Current4K", "CurrentCachedText32K"):

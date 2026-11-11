@@ -8,7 +8,8 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 | Backend | Status | Entry point |
 |---|---|---|
-| **Halogen WSL2 0.20.2** | Installed and authenticated text serving; API and engine versions verified | [Update and online status](docs/research/halogen0202-update-20261111.md) |
+| **Halogen WSL2 0.20.3** | Installed and online; API/engine version agreement and authenticated serving verified | [Current installation and online status](docs/research/halogen0203-update-20261111.md) |
+| **Halogen WSL2 0.20.2** | Previous verified text-serving release and retained measurements | [Previous update and online checks](docs/research/halogen0202-update-20261111.md) |
 | **Halogen WSL2 0.20.1** | Retained previous release and measurements | [Previous update and qualification status](docs/research/halogen0201-update-20261110.md) |
 | **Halogen WSL2 0.20.0** | Retained installed update and preparation evidence | [Earlier installation status](docs/research/halogen0200-update-20261108.md) |
 | **Halogen WSL2 0.19.1** | Retained qualified one-slot 32K text measurements and explicit rollback | [Earlier update and measurements](docs/research/halogen0191-update-20261107.md) |
@@ -24,16 +25,18 @@ with explicit availability, reproducible measurements and no silent fallback.
 
 For BYOLLM in ServiceNow, use the [canonical documentation](docs/servicenow-byollm/README.md). It separates the immutable 19 October 2.0 baseline from the 2.1 working consolidation and later deltas; see [batch status](docs/servicenow-byollm/batch-status.md).
 
-For the current installed Halogen text configuration, use Windows PowerShell 5.1:
+The [0.20.3 update](docs/research/halogen0203-update-20261111.md) is installed and
+left online in its verified visible console after an authenticated `READY` response. Use Windows PowerShell 5.1
+with the new 0.20.3 default:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -Slots 1 -KvPoolPositions 32768 -Concurrency 1 -PrefillTokens 8192 -ConsoleTrace
 ```
 
-This command selects installed 0.20.2, v2, one 32768-position slot, a 32768-position
+This command now selects installed 0.20.3, v2, one 32768-position slot, a 32768-position
 KV pool, paired 8192 prefill settings, adaptive MTP gate 0.90, PLD `3,3`,
 Cache Off, Thinking Off and Vision Off. It keeps the existing ServiceNow token and endpoint on port 8840.
-The 0.20.2 endpoint passed fresh authenticated functional checks on 11 November and is left online. See the [new update status](docs/research/halogen0202-update-20261111.md) and [completed 8K/16K API observations](docs/benchmarks/halogen0202-normal8192-20261111.md). These preserve an excluded-warmup clock discrepancy and do not establish a causal speed gain or qualified native phase clock. The previous 0.20.1 [paired-8192 prefill comparison](docs/benchmarks/halogen0201-prefill8192-20261111.md) and [normal serving observations](docs/benchmarks/halogen0201-normal8192-20261111.md) retain their own version and timing scopes.
+The 0.20.3 API and engine agree on their version; authenticated chat returned `READY` at 16:04:57 UTC on 11 November. See the [current update status](docs/research/halogen0203-update-20261111.md) and [machine-readable verification](docs/research/halogen0203-update-20261111.json). The 17-input/2-output-token request is a functional check, not a benchmark. No new 0.20.3 prefill, decode or acceptance measurement is qualified. The release changes the `d3-nano` NPU classifier; Flash executable and API files are byte-identical to 0.20.2. The previous [0.20.2 installation](docs/research/halogen0202-update-20261111.md) and [8K/16K API observations](docs/benchmarks/halogen0202-normal8192-20261111.md) retain their historical scope, including an excluded-warmup clock discrepancy and no causal speed-gain claim. The earlier 0.20.1 [paired-8192 prefill comparison](docs/benchmarks/halogen0201-prefill8192-20261111.md) and [normal serving observations](docs/benchmarks/halogen0201-normal8192-20261111.md) retain their own version and timing scopes.
 The [watchdog correction and earlier online verification](docs/research/halogen0201-online-watchdog-20261111.md) record the version and authenticated serving checks after the controlled restart.
 The [FLM 1.0.12 NPU state component](docs/benchmarks/halogen0201-stateful-npu-20261111.md) now passes exact full-row restoration; its component costs remain separate from unmeasured NPU engine throughput gains.
 The [retained-prefix NPU producer](docs/benchmarks/halogen0201-streaming-npu-qualification-20261111.md) additionally qualifies cached state promotion and correction; its published source passes 51 CPU tests. A live Halogen speed gain remains unproven.
@@ -41,8 +44,8 @@ Its [scalar catch-up component](docs/benchmarks/halogen0201-scalar-catchup-compo
 The [subsequent real NPU comparison](docs/benchmarks/halogen0201-real-npu-catchup-20261111.md) completed three measured requests per stock/NPU arm; its final stock arm failed request-entry memory admission after an excluded warmup. No NPU speed gain is qualified. Normal 0.20.1 serving was restored and freshly returned authenticated `READY` at 11:19 UTC; the NPU helper is closed and disabled in normal serving.
 The new [unused-head NPU component](docs/benchmarks/halogen0201-core-append-component-20261111.md) reduces queued catch-up time from 2602.95 to 1626.48 ms (37.51%) while matching all 20,093,670 checked BF16 values exactly. This is a component result; whole-engine prefill/decode and acceptance gains remain unqualified. The normal GPU server stayed online and unchanged.
 The [first genuine-v4 live attempt](docs/benchmarks/halogen0201-core-append-live-partial-20261111.md) stopped after its excluded stock warmup when physical availability remained 21.29–21.91 GiB, below the unchanged 22-GiB entry limit. No measured request or NPU helper started. The normal 0.20.1 server was restored on 8840 and freshly returned authenticated `READY`; further comparison awaits materially increased memory headroom.
-The [fresh 0.20.2 NPU integration](scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/README.md) corrects constructor address binding and preserves the integer-only callback contract. Its [actual partial attempt](docs/benchmarks/halogen0202-real-npu-core-append-20261111.md) again retained one excluded stock warmup and no measured request or NPU helper: the 120-second entry wait stayed at 21.72–21.89 GiB. Normal 0.20.2 serving is restored; no NPU speed gain is claimed and the prototype remains disabled.
-The opt-in `CurrentCachedText32K` profile selects 0.20.2 with one slot, Flexible prefix caching and its own paired 2048 prefill settings; invoke it without capacity or prefill selectors. Its workload benefit remains unqualified, and the default stays Cache Off with paired 8192 settings.
+The [fresh 0.20.2 NPU integration](scripts/benchmarks/halogen_flm_streaming_producer/core_append_live_0202_v3/README.md) corrects constructor address binding and preserves the integer-only callback contract. Its [actual partial attempt](docs/benchmarks/halogen0202-real-npu-core-append-20261111.md) again retained one excluded stock warmup and no measured request or NPU helper: the 120-second entry wait stayed at 21.72–21.89 GiB. That attempt restored normal 0.20.2 serving; no NPU speed gain is claimed and the prototype remains disabled. Its version-specific NPU hooks have not been transferred to 0.20.3.
+The opt-in `CurrentCachedText32K` profile selects 0.20.3 with one slot, Flexible prefix caching and its own paired 2048 prefill settings; invoke it without capacity or prefill selectors. Its workload benefit remains unqualified, and the default stays Cache Off with paired 8192 settings.
 Stop an existing managed session through its normal controls before changing
 profiles. See the [ServiceNow guide](docs/integrations/halogen-servicenow.md).
 
