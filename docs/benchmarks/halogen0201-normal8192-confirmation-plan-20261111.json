@@ -1,0 +1,74 @@
+{
+  "schema": "halogen0201.normal8192-confirmation-preparation.v1",
+  "utc": "2026-11-11T03:55:37.262532+00:00",
+  "enabled": false,
+  "hardware_accessed": false,
+  "API_requests_sent": 0,
+  "lifecycle_actions": false,
+  "original_measure_source_unchanged": true,
+  "tests": {
+    "count": 9,
+    "exit_code": 0,
+    "log": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\normal8192-confirmation-prep\\cpu-tests.log",
+      "bytes": 1259,
+      "sha256": "a6bb98eab33ec58d7c74f554c83defc0a3e4c2709f27b396ac3442713a8d8df9"
+    }
+  },
+  "source_pins": {
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\normal8192-confirmation-prep\\measure_normal.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\normal8192-confirmation-prep\\measure_normal.py",
+      "bytes": 10419,
+      "sha256": "fef7860671fb7789e634959346e65dee07725e1636e161e706a533d8910533c2"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\normal8192-confirmation-prep\\test_measure_normal.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\normal8192-confirmation-prep\\test_measure_normal.py",
+      "bytes": 6350,
+      "sha256": "a0b86f247fe2fb18b1b7403965c2d9cf60bd4cdc4c9b4b12634aab958c0c0dad"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\normal8192-confirmation-prep\\README.md": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\normal8192-confirmation-prep\\README.md",
+      "bytes": 3407,
+      "sha256": "9866280b72cc9d3b612a628c802224403e91aca718b2315b24f6dbb75b25e4c2"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\measure.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\measure.py",
+      "bytes": 16441,
+      "sha256": "a50e87602e90817c8244351d8ae23e877fcb0466d2065f0dc1a7f99faba6b94c"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill8192-cohort-prep-v2\\gpu_admission.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill8192-cohort-prep-v2\\gpu_admission.py",
+      "bytes": 5923,
+      "sha256": "d49af82bc2f17947ca465249d13f827c1db6c72449cc7a0cc3a518cdcddd70bc"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-serving-promotion-prep\\profile-8192.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-serving-promotion-prep\\profile-8192.json",
+      "bytes": 1797,
+      "sha256": "750cb82c02d7e589ef0d02f0ef77ca42798d9e09dc0c4c8a8580226008c306c8"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\prepared-v1\\overlay\\transition.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\prepared-v1\\overlay\\transition.json",
+      "bytes": 25754,
+      "sha256": "e0fe047037d4e4e03047d49e41f88d5a5e5669ddb02c5a07ea054342ce25b04c"
+    }
+  },
+  "runtime_activation_required": true,
+  "runtime_seal": "Fresh actual identities/runs matched to completed activation; no hardcoded historical run",
+  "workload": {
+    "actual_input_tokens": [
+      8192,
+      16384
+    ],
+    "warmup_excluded_per_size": 1,
+    "measured_requests_per_size": 3,
+    "output_tokens": 128,
+    "temperature": 0,
+    "seed": 1,
+    "cache": "Off/no_store",
+    "thinking": false
+  },
+  "phase_clock": "API/native reported observations only; no RAW qualification or causal comparison",
+  "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+  "acceptance_independently_reconciled": false,
+  "full_goal_achieved": false
+}

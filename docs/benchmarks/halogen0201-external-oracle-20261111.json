@@ -1,0 +1,2699 @@
+{
+  "schema": "halogen0201.oracle-cohort-public.v1",
+  "version": "0.20.1",
+  "terminal": true,
+  "restored": true,
+  "campaign_completed": true,
+  "case": "natural8192",
+  "actual_input_tokens": 8192,
+  "arms": {
+    "before": {
+      "status": "complete",
+      "complete_cohort": true,
+      "phase_measurement_qualified": true,
+      "included_in_prefill_comparison": false,
+      "included_in_decode_comparison": false,
+      "epoch_nonce": "0201000a00000001",
+      "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+      "profile_sha256": "6f3a3c72bb9e24cd98d1afb0539ad382d583df7d48f1e2f92a6d4ec23c1db8cb",
+      "samples": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "native_request_id": 4,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "30e9d1b88beb1a5cf351b00155a561472a069881c4909ab1fc2b982a93a647a4",
+          "journal_sha256": "0d325633e5ab6abe26a6b1ef9c47097bdbd82fccaa35935fb51be644de696fe7",
+          "http_qpc_seconds": 12.2297126,
+          "scoped": {
+            "head": {
+              "rounds": 64,
+              "drafted": 106,
+              "accepted": 63
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 8499.3,
+            "predicted_ms": 3609.7,
+            "prompt_per_second": 963.844,
+            "predicted_per_second": 35.46,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 8499264361,
+          "prefill_raw_lower_ns": 8499265025,
+          "prefill_raw_upper_ns": 8499268765,
+          "prefill_native_tps": 963.8481228552058,
+          "prefill_raw_tps_lower": 963.8476234255195,
+          "prefill_raw_tps_upper": 963.8480475551473,
+          "prefill_raw_tps_mid": 963.8478354902867,
+          "decode_native_ns": 3609706928,
+          "decode_raw_lower_ns": 3609706148,
+          "decode_raw_upper_ns": 3609709138,
+          "decode_native_tps": 35.45994246987799,
+          "decode_raw_tps_lower": 35.45992075996457,
+          "decode_raw_tps_upper": 35.459950132206714,
+          "decode_raw_tps_mid": 35.45993544607956
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "native_request_id": 5,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "eefcc539bf08241b46f047926589955706c8f1be0f3864dc902b329a02f0eb6f",
+          "journal_sha256": "780857c03fe8aa1ea71d5d7433b409b1d71dbe7bc964cd6e77048b3bac5666e9",
+          "http_qpc_seconds": 8.7186359,
+          "scoped": {
+            "head": {
+              "rounds": 64,
+              "drafted": 106,
+              "accepted": 63
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 5912.7,
+            "predicted_ms": 2776.7,
+            "prompt_per_second": 1385.492,
+            "predicted_per_second": 46.098,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 5912743297,
+          "prefill_raw_lower_ns": 5912743195,
+          "prefill_raw_upper_ns": 5912745355,
+          "prefill_native_tps": 1385.4821000188604,
+          "prefill_raw_tps_lower": 1385.4816177856521,
+          "prefill_raw_tps_upper": 1385.4821239196403,
+          "prefill_raw_tps_mid": 1385.4818708526,
+          "decode_native_ns": 2776658041,
+          "decode_raw_lower_ns": 2776657093,
+          "decode_raw_upper_ns": 2776660184,
+          "decode_native_tps": 46.09858258019465,
+          "decode_raw_tps_lower": 46.09854700174575,
+          "decode_raw_tps_upper": 46.09859831906871,
+          "decode_raw_tps_mid": 46.098572660392946
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "native_request_id": 6,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "cd087fbd8f1f4bbe20fd3eb2d134158c7efd08c1f107b110d8afb7cba8196350",
+          "journal_sha256": "30ab44bbd641b326f2e0739fbb38a5d9ce8b037adc92b86083ea265bc5160296",
+          "http_qpc_seconds": 9.1407704,
+          "scoped": {
+            "head": {
+              "rounds": 64,
+              "drafted": 106,
+              "accepted": 63
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6371.2,
+            "predicted_ms": 2737.5,
+            "prompt_per_second": 1285.786,
+            "predicted_per_second": 46.758,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 6371217898,
+          "prefill_raw_lower_ns": 6371217998,
+          "prefill_raw_upper_ns": 6371219968,
+          "prefill_native_tps": 1285.7824251422267,
+          "prefill_raw_tps_lower": 1285.7820073934072,
+          "prefill_raw_tps_upper": 1285.7824049611181,
+          "prefill_raw_tps_mid": 1285.782206177232,
+          "decode_native_ns": 2737497388,
+          "decode_raw_lower_ns": 2737496284,
+          "decode_raw_upper_ns": 2737499404,
+          "decode_native_tps": 46.758035482005,
+          "decode_raw_tps_lower": 46.75800104758671,
+          "decode_raw_tps_upper": 46.758054338969835,
+          "decode_raw_tps_mid": 46.75802769326309
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "native_request_id": 7,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "0a1ab16ecd60184f48cf6121c9b9c79065586f3e47cbff4512f6dd0b28bb9602",
+          "journal_sha256": "53c5c27e709e6f8c340802450ce561ebe64ffa694794640b20d6efaa23695a8b",
+          "http_qpc_seconds": 9.0902037,
+          "scoped": {
+            "head": {
+              "rounds": 64,
+              "drafted": 106,
+              "accepted": 63
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6307.8,
+            "predicted_ms": 2751.1,
+            "prompt_per_second": 1298.71,
+            "predicted_per_second": 46.527,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 6307834434,
+          "prefill_raw_lower_ns": 6307834439,
+          "prefill_raw_upper_ns": 6307836589,
+          "prefill_native_tps": 1298.7024446685089,
+          "prefill_raw_tps_lower": 1298.7020009817188,
+          "prefill_raw_tps_upper": 1298.7024436390727,
+          "prefill_raw_tps_mid": 1298.7022223103581,
+          "decode_native_ns": 2751135820,
+          "decode_raw_lower_ns": 2751134687,
+          "decode_raw_upper_ns": 2751137677,
+          "decode_native_tps": 46.526238024846045,
+          "decode_raw_tps_lower": 46.526206619938634,
+          "decode_raw_tps_upper": 46.52625718575006,
+          "decode_raw_tps_mid": 46.52623190283061
+        }
+      ],
+      "summary": {
+        "excluded_warmups": 1,
+        "measured_repetitions": 3,
+        "mean_raw_tps": {
+          "prefill": {
+            "lower": 1323.321875386926,
+            "mid": 1323.3220997800634,
+            "upper": 1323.3223241732771
+          },
+          "decode": {
+            "lower": 46.46091822309037,
+            "mid": 46.46094408549555,
+            "upper": 46.460969947929534
+          }
+        },
+        "native_clock_observations": {
+          "prefill_mean_tps": 1323.322323276532,
+          "decode_mean_tps": 46.46095202901523
+        },
+        "api_reported_observations": {
+          "prefill_mean_tps": 1323.3293333333334,
+          "decode_mean_tps": 46.461
+        },
+        "actual_input_tokens": [
+          8192,
+          8192,
+          8192
+        ],
+        "actual_output_tokens": [
+          128,
+          128,
+          128
+        ],
+        "output_caps": [
+          128,
+          128,
+          128
+        ],
+        "mean_http_qpc_seconds": 8.983203333333334,
+        "pooled_scoped_counters": {
+          "head": {
+            "rounds": 192,
+            "drafted": 318,
+            "accepted": 189,
+            "acceptance_fraction": 0.5943396226415094
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "acceptance_independently_reconciled": false,
+        "api_phase_clock_qualified": false
+      },
+      "output_sha256_values": [
+        "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc"
+      ],
+      "within_cohort_output_variation": false,
+      "evidence": {
+        "collector_handle_sha256": "a4353184d1e4669fc19381e8ee1a92e9d34c47e7a5eee8b255d113519504d876",
+        "raw_report_sha256": "67641825944cc84209d796243d8f3c271e51433bff51bfae6b2543e6d080a5a2",
+        "qpc_audit_sha256": "d7fea4d88e40a2458373f514bda907d7b0e9c6a91a6e20e37b5c0740c620e255",
+        "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+        "binding_sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+      },
+      "GPU_admission": {
+        "schema": "halogen0201.prefill4096-gpu-evidence.v1",
+        "receipts": [
+          {
+            "ordinal": 0,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.8439999999245629,
+            "elapsed_seconds": 1.8439999999245629,
+            "sha256": "e49566b715ceb329321a918decaf079cd08589695c8440c8af88c3a5e5b28b65"
+          },
+          {
+            "ordinal": 0,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 2.0,
+            "elapsed_seconds": 2.0,
+            "sha256": "ce4efb0466a5761855d64978c164bb974de32eb415a0196fe235f11f7315db90"
+          },
+          {
+            "ordinal": 1,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.812000000034459,
+            "elapsed_seconds": 1.812000000034459,
+            "sha256": "3378d19e75abb7343e195c240f77e27896bc3b4f166ca8a68eb9aa3640d8fc1b"
+          },
+          {
+            "ordinal": 1,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.875,
+            "elapsed_seconds": 1.875,
+            "sha256": "40ac1f7781872a3d593f96f7d57864a93d235ff375d7a6853687caa51a5e6a66"
+          },
+          {
+            "ordinal": 2,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.875,
+            "elapsed_seconds": 1.875,
+            "sha256": "2440e37bd3b25df33094d937d1d9ae77e5c7d77b3aa896ea9e5d91cf97649c65"
+          },
+          {
+            "ordinal": 2,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 2.1719999999040738,
+            "elapsed_seconds": 2.1719999999040738,
+            "sha256": "6a8871de29a00d4b1f3e86130120fe82b1f4a68128d8e138e4a3db8b5b721edd"
+          },
+          {
+            "ordinal": 3,
+            "stage": "before",
+            "observations": 4,
+            "nonzero_observations": 1,
+            "admission_decision_seconds": 4.188000000081956,
+            "elapsed_seconds": 4.188000000081956,
+            "sha256": "c46b2ea026094f0b5e64265bb739fd660f722be6eb0b3a27e5010b7288ce48ab"
+          },
+          {
+            "ordinal": 3,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.8589999999385327,
+            "elapsed_seconds": 1.8589999999385327,
+            "sha256": "169b8c6fa9c5005ac4f8dba1cf4b50ff878d064440f103f1f4154df940947e83"
+          }
+        ],
+        "all_pre_entry_and_post_checks_qualified": true,
+        "pre_request_wait_seconds_total": 9.719000000040978,
+        "post_request_wait_seconds_total": 7.9059999998426065,
+        "PID_exemptions": [],
+        "ownership_attribution_claimed": false,
+        "included_in_HTTP_QPC_seconds": false,
+        "included_in_RAW_phase_seconds": false
+      },
+      "weights_identity": {
+        "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+        "identity": {
+          "size": 66687678432,
+          "device": 2096,
+          "inode": 616828,
+          "mtime_ns": 1790979071648131939,
+          "ctime_ns": 1790979072020131920
+        },
+        "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+        "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+        "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+        "current_file_identity_matched": true,
+        "established_complete_file_receipt_reused": true,
+        "new_complete_file_rehash_claimed": false
+      },
+      "mtp_cost_trace": {
+        "schema": "halogen0201.native-oracle-trace.v1",
+        "expected_rule": "gate",
+        "startup_banner": {
+          "marker": "confidence gate",
+          "count": 1
+        },
+        "samples": [
+          {
+            "id": 4,
+            "native_trace": {
+              "id": 4,
+              "neural_rounds": 64,
+              "legacy_accepted": 42,
+              "chain_rounds": 63,
+              "chain_drafted": 105,
+              "chain_accepted": 62,
+              "lookup_rounds": 0,
+              "lookup_drafted": 0,
+              "lookup_accepted": 0,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 0,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 64,
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 64,
+            "mapped_head_drafted": 106,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 63,
+              "native_chain_accepted": 62,
+              "nonchain_rounds": 1,
+              "api_minus_chain_accepted": 1,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          },
+          {
+            "id": 5,
+            "native_trace": {
+              "id": 5,
+              "neural_rounds": 64,
+              "legacy_accepted": 42,
+              "chain_rounds": 63,
+              "chain_drafted": 105,
+              "chain_accepted": 62,
+              "lookup_rounds": 0,
+              "lookup_drafted": 0,
+              "lookup_accepted": 0,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 0,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 64,
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 64,
+            "mapped_head_drafted": 106,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 63,
+              "native_chain_accepted": 62,
+              "nonchain_rounds": 1,
+              "api_minus_chain_accepted": 1,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          },
+          {
+            "id": 6,
+            "native_trace": {
+              "id": 6,
+              "neural_rounds": 64,
+              "legacy_accepted": 42,
+              "chain_rounds": 63,
+              "chain_drafted": 105,
+              "chain_accepted": 62,
+              "lookup_rounds": 0,
+              "lookup_drafted": 0,
+              "lookup_accepted": 0,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 0,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 64,
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 64,
+            "mapped_head_drafted": 106,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 63,
+              "native_chain_accepted": 62,
+              "nonchain_rounds": 1,
+              "api_minus_chain_accepted": 1,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          },
+          {
+            "id": 7,
+            "native_trace": {
+              "id": 7,
+              "neural_rounds": 64,
+              "legacy_accepted": 42,
+              "chain_rounds": 63,
+              "chain_drafted": 105,
+              "chain_accepted": 62,
+              "lookup_rounds": 0,
+              "lookup_drafted": 0,
+              "lookup_accepted": 0,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 0,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 64,
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 64,
+            "mapped_head_drafted": 106,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 63,
+              "native_chain_accepted": 62,
+              "nonchain_rounds": 1,
+              "api_minus_chain_accepted": 1,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          }
+        ],
+        "native_rule_activation_observed": true,
+        "per_decision_policy_observed": false,
+        "exact_mapped_rounds_and_drafted_verified": true,
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "accepted_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+        "acceptance_independently_reconciled": false,
+        "exact_independent_full_accepted_counter_proof": false,
+        "qualification_scope": "Native startup rule and exact mapped rounds/drafted plus lookup/grammar counters, with API all-neural acceptance and separately retained native chain acceptance",
+        "oracle_lookup_activity_allowed": true,
+        "copied_oracle_counters_folded_into_acceptance": false,
+        "original_scope_reconciliation_unchanged": true
+      },
+      "token_samples": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "native_request_id": 4,
+          "request_epoch": "f21cf903661349cda641accc36581a49",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\before\\natural8192\\token-ids\\request-4-f21cf903661349cda641accc36581a49.json",
+            "bytes": 3189,
+            "sha256": "388719d8d7895e97aad378b234c1c1c92bfdc1dafa8bde7dfe0c313bcdc719b8"
+          },
+          "oracle_statistics": {
+            "before": null,
+            "after": null,
+            "publication": {},
+            "statistics_available": false,
+            "consumer_hit_observed": false
+          }
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "native_request_id": 5,
+          "request_epoch": "8f669df82b19490a939de81612e6f4d2",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\before\\natural8192\\token-ids\\request-5-8f669df82b19490a939de81612e6f4d2.json",
+            "bytes": 3188,
+            "sha256": "81c147e0bf8b5247afa35fe7faf5f80b27583f923fbda71835cfa9f16557ee2f"
+          },
+          "oracle_statistics": {
+            "before": null,
+            "after": null,
+            "publication": {},
+            "statistics_available": false,
+            "consumer_hit_observed": false
+          }
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "native_request_id": 6,
+          "request_epoch": "03336337b4014665a03e9dcf9f413993",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\before\\natural8192\\token-ids\\request-6-03336337b4014665a03e9dcf9f413993.json",
+            "bytes": 3188,
+            "sha256": "ad3d7f702c217418b8ff2ef99da8f237ca6e0bd30468afc99b6a39ded9e1f380"
+          },
+          "oracle_statistics": {
+            "before": null,
+            "after": null,
+            "publication": {},
+            "statistics_available": false,
+            "consumer_hit_observed": false
+          }
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "native_request_id": 7,
+          "request_epoch": "8ac6d9d626cb49d49155969497a215b5",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\before\\natural8192\\token-ids\\request-7-8ac6d9d626cb49d49155969497a215b5.json",
+            "bytes": 3188,
+            "sha256": "5bf9826c921cd59cf7ad72772b6954295d84f63a7039bfdeff85b32d8369b424"
+          },
+          "oracle_statistics": {
+            "before": null,
+            "after": null,
+            "publication": {},
+            "statistics_available": false,
+            "consumer_hit_observed": false
+          }
+        }
+      ],
+      "token_evidence_failures": [],
+      "exact_token_evidence_complete": true
+    },
+    "candidate": {
+      "status": "complete",
+      "complete_cohort": true,
+      "phase_measurement_qualified": true,
+      "included_in_prefill_comparison": false,
+      "included_in_decode_comparison": false,
+      "epoch_nonce": "0201000a00000002",
+      "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+      "profile_sha256": "66da667cfda2d0a3397a0be9f1d5d9108c8c5f078b90f8152fb0b5694d60f97f",
+      "samples": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "native_request_id": 4,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "5b7e653969f8986cd9dd958b62ddc65cba02666f6d36c6da9b8516f8c4839f47",
+          "journal_sha256": "c910b12ff5e03253ee43415aa3e44b68cc4955fc9865a4be7b73892a299e6b39",
+          "http_qpc_seconds": 11.02042,
+          "scoped": {
+            "head": {
+              "rounds": 10,
+              "drafted": 11,
+              "accepted": 0
+            },
+            "lookup": {
+              "rounds": 29,
+              "drafted": 87,
+              "accepted": 87
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 8383.0,
+            "predicted_ms": 2521.3,
+            "prompt_per_second": 977.216,
+            "predicted_per_second": 50.767,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 8382968640,
+          "prefill_raw_lower_ns": 8382969062,
+          "prefill_raw_upper_ns": 8382974762,
+          "prefill_native_tps": 977.2194495528973,
+          "prefill_raw_tps_lower": 977.2187358996131,
+          "prefill_raw_tps_upper": 977.2194003595143,
+          "prefill_raw_tps_mid": 977.2190681294508,
+          "decode_native_ns": 2521303111,
+          "decode_raw_lower_ns": 2521301887,
+          "decode_raw_upper_ns": 2521305068,
+          "decode_native_tps": 50.76739858907032,
+          "decode_raw_tps_lower": 50.76735918416041,
+          "decode_raw_tps_upper": 50.767423234788545,
+          "decode_raw_tps_mid": 50.767391209454274
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "native_request_id": 5,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "aff7141a23c7f455a870bb561271e29c784b2ed1deeeeceabbe6663cc906d6c2",
+          "journal_sha256": "9ac00ea76ff6223eb1709a158be2404e402e2f0d3b58cb0e495ba57782331b34",
+          "http_qpc_seconds": 7.8146917,
+          "scoped": {
+            "head": {
+              "rounds": 10,
+              "drafted": 11,
+              "accepted": 0
+            },
+            "lookup": {
+              "rounds": 29,
+              "drafted": 87,
+              "accepted": 87
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 5926.5,
+            "predicted_ms": 1856.7,
+            "prompt_per_second": 1382.266,
+            "predicted_per_second": 68.94,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 5926502095,
+          "prefill_raw_lower_ns": 5926502004,
+          "prefill_raw_upper_ns": 5926504204,
+          "prefill_native_tps": 1382.2656043454922,
+          "prefill_raw_tps_lower": 1382.2651124538036,
+          "prefill_raw_tps_upper": 1382.265625569845,
+          "prefill_raw_tps_mid": 1382.2653690117768,
+          "decode_native_ns": 1856662857,
+          "decode_raw_lower_ns": 1856661535,
+          "decode_raw_upper_ns": 1856664665,
+          "decode_native_tps": 68.94089549829347,
+          "decode_raw_tps_lower": 68.94082836439395,
+          "decode_raw_tps_upper": 68.94094458632709,
+          "decode_raw_tps_mid": 68.94088647531154
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "native_request_id": 6,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "d3ae653c43fd2502fa2883cec99fcbb48dd3a6167e00cc39838d68c8bf8b1d75",
+          "journal_sha256": "9c7406694ef45f385d7e63f596469310550bd438c70294a3b56c2e08a65be02d",
+          "http_qpc_seconds": 7.7393471,
+          "scoped": {
+            "head": {
+              "rounds": 10,
+              "drafted": 11,
+              "accepted": 0
+            },
+            "lookup": {
+              "rounds": 29,
+              "drafted": 87,
+              "accepted": 87
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 5884.2,
+            "predicted_ms": 1826.4,
+            "prompt_per_second": 1392.203,
+            "predicted_per_second": 70.083,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 5884234101,
+          "prefill_raw_lower_ns": 5884234111,
+          "prefill_raw_upper_ns": 5884236141,
+          "prefill_native_tps": 1392.1947800492514,
+          "prefill_raw_tps_lower": 1392.194297390622,
+          "prefill_raw_tps_upper": 1392.194777683277,
+          "prefill_raw_tps_mid": 1392.194537536908,
+          "decode_native_ns": 1826390319,
+          "decode_raw_lower_ns": 1826389179,
+          "decode_raw_upper_ns": 1826391959,
+          "decode_native_tps": 70.08359531279359,
+          "decode_raw_tps_lower": 70.08353238156148,
+          "decode_raw_tps_upper": 70.08363905774104,
+          "decode_raw_tps_mid": 70.08358571961067
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "native_request_id": 7,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "425093a5a46e91bee97fa1f82f292c66acc5eb0cfc50cd3db797a812571974eb",
+          "journal_sha256": "3eb8ee5d6277d94d6f28355d75863c57fb2297e804e8241ff2795425fc5de968",
+          "http_qpc_seconds": 8.1958852,
+          "scoped": {
+            "head": {
+              "rounds": 10,
+              "drafted": 11,
+              "accepted": 0
+            },
+            "lookup": {
+              "rounds": 29,
+              "drafted": 87,
+              "accepted": 87
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 5934.8,
+            "predicted_ms": 2235.4,
+            "prompt_per_second": 1380.333,
+            "predicted_per_second": 57.26,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 5934819750,
+          "prefill_raw_lower_ns": 5934819621,
+          "prefill_raw_upper_ns": 5934821801,
+          "prefill_native_tps": 1380.3283579084268,
+          "prefill_raw_tps_lower": 1380.3278808842538,
+          "prefill_raw_tps_upper": 1380.3283879114208,
+          "prefill_raw_tps_mid": 1380.3281343977908,
+          "decode_native_ns": 2235368915,
+          "decode_raw_lower_ns": 2235368638,
+          "decode_raw_upper_ns": 2235370498,
+          "decode_native_tps": 57.261241820569914,
+          "decode_raw_tps_lower": 57.26120127044819,
+          "decode_raw_tps_upper": 57.261248916206725,
+          "decode_raw_tps_mid": 57.26122509331754
+        }
+      ],
+      "summary": {
+        "excluded_warmups": 1,
+        "measured_repetitions": 3,
+        "mean_raw_tps": {
+          "prefill": {
+            "lower": 1384.9290969095598,
+            "mid": 1384.9293469821584,
+            "upper": 1384.9295970548476
+          },
+          "decode": {
+            "lower": 65.42852067213454,
+            "mid": 65.42856576274659,
+            "upper": 65.42861085342496
+          }
+        },
+        "native_clock_observations": {
+          "prefill_mean_tps": 1384.9295807677236,
+          "decode_mean_tps": 65.42857754388567
+        },
+        "api_reported_observations": {
+          "prefill_mean_tps": 1384.934,
+          "decode_mean_tps": 65.42766666666667
+        },
+        "actual_input_tokens": [
+          8192,
+          8192,
+          8192
+        ],
+        "actual_output_tokens": [
+          128,
+          128,
+          128
+        ],
+        "output_caps": [
+          128,
+          128,
+          128
+        ],
+        "mean_http_qpc_seconds": 7.916641333333333,
+        "pooled_scoped_counters": {
+          "head": {
+            "rounds": 30,
+            "drafted": 33,
+            "accepted": 0,
+            "acceptance_fraction": 0.0
+          },
+          "lookup": {
+            "rounds": 87,
+            "drafted": 261,
+            "accepted": 261,
+            "acceptance_fraction": 1.0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "acceptance_independently_reconciled": false,
+        "api_phase_clock_qualified": false
+      },
+      "output_sha256_values": [
+        "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc"
+      ],
+      "within_cohort_output_variation": false,
+      "evidence": {
+        "collector_handle_sha256": "3cdb49ef3b66eea138629c58a82f90a364c1f9e89b2200a6081f17b89d823809",
+        "raw_report_sha256": "38a06299f15db1f1a616a1beb1cc751c81cfe9f4ba959e65efa24762a13eabd4",
+        "qpc_audit_sha256": "055a4014f83f92c21b975971749324d82231e5e87d241ca86c8a1978f4ba6425",
+        "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+        "binding_sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+      },
+      "GPU_admission": {
+        "schema": "halogen0201.prefill4096-gpu-evidence.v1",
+        "receipts": [
+          {
+            "ordinal": 0,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.9209999999729916,
+            "elapsed_seconds": 1.9209999999729916,
+            "sha256": "b3d780a63d7a9ea0732ff4ae6144070c650995c822954334664795d43adb0879"
+          },
+          {
+            "ordinal": 0,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.875,
+            "elapsed_seconds": 1.875,
+            "sha256": "01d75c65e8004e970b007836b5771a509f12016e6285b24c592e071fde6ca42e"
+          },
+          {
+            "ordinal": 1,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.8589999999385327,
+            "elapsed_seconds": 1.8589999999385327,
+            "sha256": "27a354941a7b650f77dc89ab2816f81a82ab488506e890442801152c73fe29e4"
+          },
+          {
+            "ordinal": 1,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.8429999999934807,
+            "elapsed_seconds": 1.8429999999934807,
+            "sha256": "3724f02fa4ba4ce067f25621289c83a7a681c6623f665439ac47011d609efeed"
+          },
+          {
+            "ordinal": 2,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.812000000034459,
+            "elapsed_seconds": 1.812000000034459,
+            "sha256": "846de161ffdbce4e2557e8d73b26a824561015e582088ac6099fe0809e300cde"
+          },
+          {
+            "ordinal": 2,
+            "stage": "after",
+            "observations": 3,
+            "nonzero_observations": 1,
+            "admission_decision_seconds": 3.093999999924563,
+            "elapsed_seconds": 3.093999999924563,
+            "sha256": "1f373f32526c70a691e0a2db413d2a0e8e5b531179383f5330515e4c5faa7f2e"
+          },
+          {
+            "ordinal": 3,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.875,
+            "elapsed_seconds": 1.875,
+            "sha256": "18c29fe7af6304f9850440e9a678ca1de2a6edbf14cbbd261fec3777d14dd2b8"
+          },
+          {
+            "ordinal": 3,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.8440000000409782,
+            "elapsed_seconds": 1.8440000000409782,
+            "sha256": "daa92931f4a6179cc975bae5d523128fe0b410dad34ef28c380501884a29b894"
+          }
+        ],
+        "all_pre_entry_and_post_checks_qualified": true,
+        "pre_request_wait_seconds_total": 7.466999999945983,
+        "post_request_wait_seconds_total": 8.655999999959022,
+        "PID_exemptions": [],
+        "ownership_attribution_claimed": false,
+        "included_in_HTTP_QPC_seconds": false,
+        "included_in_RAW_phase_seconds": false
+      },
+      "weights_identity": {
+        "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+        "identity": {
+          "size": 66687678432,
+          "device": 2096,
+          "inode": 616828,
+          "mtime_ns": 1790979071648131939,
+          "ctime_ns": 1790979072020131920
+        },
+        "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+        "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+        "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+        "current_file_identity_matched": true,
+        "established_complete_file_receipt_reused": true,
+        "new_complete_file_rehash_claimed": false
+      },
+      "mtp_cost_trace": {
+        "schema": "halogen0201.native-oracle-trace.v1",
+        "expected_rule": "gate",
+        "startup_banner": {
+          "marker": "confidence gate",
+          "count": 1
+        },
+        "samples": [
+          {
+            "id": 4,
+            "native_trace": {
+              "id": 4,
+              "neural_rounds": 10,
+              "legacy_accepted": 0,
+              "chain_rounds": 10,
+              "chain_drafted": 11,
+              "chain_accepted": 0,
+              "lookup_rounds": 29,
+              "lookup_drafted": 87,
+              "lookup_accepted": 87,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 1,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 39,
+              "head": {
+                "rounds": 10,
+                "drafted": 11,
+                "accepted": 0
+              },
+              "lookup": {
+                "rounds": 29,
+                "drafted": 87,
+                "accepted": 87
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 10,
+            "mapped_head_drafted": 11,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 0,
+              "native_chain_accepted": 0,
+              "nonchain_rounds": 0,
+              "api_minus_chain_accepted": 0,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          },
+          {
+            "id": 5,
+            "native_trace": {
+              "id": 5,
+              "neural_rounds": 10,
+              "legacy_accepted": 0,
+              "chain_rounds": 10,
+              "chain_drafted": 11,
+              "chain_accepted": 0,
+              "lookup_rounds": 29,
+              "lookup_drafted": 87,
+              "lookup_accepted": 87,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 1,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 39,
+              "head": {
+                "rounds": 10,
+                "drafted": 11,
+                "accepted": 0
+              },
+              "lookup": {
+                "rounds": 29,
+                "drafted": 87,
+                "accepted": 87
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 10,
+            "mapped_head_drafted": 11,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 0,
+              "native_chain_accepted": 0,
+              "nonchain_rounds": 0,
+              "api_minus_chain_accepted": 0,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          },
+          {
+            "id": 6,
+            "native_trace": {
+              "id": 6,
+              "neural_rounds": 10,
+              "legacy_accepted": 0,
+              "chain_rounds": 10,
+              "chain_drafted": 11,
+              "chain_accepted": 0,
+              "lookup_rounds": 29,
+              "lookup_drafted": 87,
+              "lookup_accepted": 87,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 1,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 39,
+              "head": {
+                "rounds": 10,
+                "drafted": 11,
+                "accepted": 0
+              },
+              "lookup": {
+                "rounds": 29,
+                "drafted": 87,
+                "accepted": 87
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 10,
+            "mapped_head_drafted": 11,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 0,
+              "native_chain_accepted": 0,
+              "nonchain_rounds": 0,
+              "api_minus_chain_accepted": 0,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          },
+          {
+            "id": 7,
+            "native_trace": {
+              "id": 7,
+              "neural_rounds": 10,
+              "legacy_accepted": 0,
+              "chain_rounds": 10,
+              "chain_drafted": 11,
+              "chain_accepted": 0,
+              "lookup_rounds": 29,
+              "lookup_drafted": 87,
+              "lookup_accepted": 87,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 1,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 39,
+              "head": {
+                "rounds": 10,
+                "drafted": 11,
+                "accepted": 0
+              },
+              "lookup": {
+                "rounds": 29,
+                "drafted": 87,
+                "accepted": 87
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 10,
+            "mapped_head_drafted": 11,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 0,
+              "native_chain_accepted": 0,
+              "nonchain_rounds": 0,
+              "api_minus_chain_accepted": 0,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          }
+        ],
+        "native_rule_activation_observed": true,
+        "per_decision_policy_observed": false,
+        "exact_mapped_rounds_and_drafted_verified": true,
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "accepted_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+        "acceptance_independently_reconciled": false,
+        "exact_independent_full_accepted_counter_proof": false,
+        "qualification_scope": "Native startup rule and exact mapped rounds/drafted plus lookup/grammar counters, with API all-neural acceptance and separately retained native chain acceptance",
+        "oracle_lookup_activity_allowed": true,
+        "copied_oracle_counters_folded_into_acceptance": false,
+        "original_scope_reconciliation_unchanged": true
+      },
+      "token_samples": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "native_request_id": 4,
+          "request_epoch": "723ce6e35f1740c5890d1b33fe5c0b08",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\candidate\\natural8192\\token-ids\\request-4-723ce6e35f1740c5890d1b33fe5c0b08.json",
+            "bytes": 3868,
+            "sha256": "234403cf0757ddc866335b3c0b945ec2be7dec991a89460b538ef0f88d4f856d"
+          },
+          "oracle_statistics": {
+            "before": {
+              "queries": 2,
+              "lock_busy": 0,
+              "datagrams": 0,
+              "rejected_datagrams": 0,
+              "request_rebindings": 1,
+              "oracle_hits": 0,
+              "proposed_ids": 0,
+              "native_fallbacks": 2,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "after": {
+              "queries": 41,
+              "lock_busy": 0,
+              "datagrams": 1,
+              "rejected_datagrams": 0,
+              "request_rebindings": 2,
+              "oracle_hits": 39,
+              "proposed_ids": 117,
+              "native_fallbacks": 2,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "publication": {
+              "sent": true,
+              "reason": "submitted",
+              "oracle_future_IDs": true,
+              "bytes": 592,
+              "token_count": 128,
+              "oracle_stats_before": {
+                "queries": 2,
+                "lock_busy": 0,
+                "datagrams": 0,
+                "rejected_datagrams": 0,
+                "request_rebindings": 1,
+                "oracle_hits": 0,
+                "proposed_ids": 0,
+                "native_fallbacks": 2,
+                "lead_mismatches": 0,
+                "recv_errors": 0
+              }
+            },
+            "statistics_available": true,
+            "consumer_hit_observed": true,
+            "delta": {
+              "queries": 39,
+              "lock_busy": 0,
+              "datagrams": 1,
+              "rejected_datagrams": 0,
+              "request_rebindings": 1,
+              "oracle_hits": 39,
+              "proposed_ids": 117,
+              "native_fallbacks": 0,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "copied_IDs_are_not_verified_acceptance": true
+          }
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "native_request_id": 5,
+          "request_epoch": "330ce4e680044b4c80df9f6b21614a50",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\candidate\\natural8192\\token-ids\\request-5-330ce4e680044b4c80df9f6b21614a50.json",
+            "bytes": 3871,
+            "sha256": "90748de8a976014d67b01a3e99aa1bbbf2c59a09a38c3119ab3ab540f1eb1b92"
+          },
+          "oracle_statistics": {
+            "before": {
+              "queries": 41,
+              "lock_busy": 0,
+              "datagrams": 1,
+              "rejected_datagrams": 0,
+              "request_rebindings": 2,
+              "oracle_hits": 39,
+              "proposed_ids": 117,
+              "native_fallbacks": 2,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "after": {
+              "queries": 80,
+              "lock_busy": 0,
+              "datagrams": 2,
+              "rejected_datagrams": 0,
+              "request_rebindings": 3,
+              "oracle_hits": 78,
+              "proposed_ids": 234,
+              "native_fallbacks": 2,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "publication": {
+              "sent": true,
+              "reason": "submitted",
+              "oracle_future_IDs": true,
+              "bytes": 592,
+              "token_count": 128,
+              "oracle_stats_before": {
+                "queries": 41,
+                "lock_busy": 0,
+                "datagrams": 1,
+                "rejected_datagrams": 0,
+                "request_rebindings": 2,
+                "oracle_hits": 39,
+                "proposed_ids": 117,
+                "native_fallbacks": 2,
+                "lead_mismatches": 0,
+                "recv_errors": 0
+              }
+            },
+            "statistics_available": true,
+            "consumer_hit_observed": true,
+            "delta": {
+              "queries": 39,
+              "lock_busy": 0,
+              "datagrams": 1,
+              "rejected_datagrams": 0,
+              "request_rebindings": 1,
+              "oracle_hits": 39,
+              "proposed_ids": 117,
+              "native_fallbacks": 0,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "copied_IDs_are_not_verified_acceptance": true
+          }
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "native_request_id": 6,
+          "request_epoch": "3bf41efc70424bc1a95533253c8a9f12",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\candidate\\natural8192\\token-ids\\request-6-3bf41efc70424bc1a95533253c8a9f12.json",
+            "bytes": 3873,
+            "sha256": "20814932f29181091f3f57331ec9fb2c1d180226a630eceaaac78b5729101fb5"
+          },
+          "oracle_statistics": {
+            "before": {
+              "queries": 80,
+              "lock_busy": 0,
+              "datagrams": 2,
+              "rejected_datagrams": 0,
+              "request_rebindings": 3,
+              "oracle_hits": 78,
+              "proposed_ids": 234,
+              "native_fallbacks": 2,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "after": {
+              "queries": 119,
+              "lock_busy": 0,
+              "datagrams": 3,
+              "rejected_datagrams": 0,
+              "request_rebindings": 4,
+              "oracle_hits": 117,
+              "proposed_ids": 351,
+              "native_fallbacks": 2,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "publication": {
+              "sent": true,
+              "reason": "submitted",
+              "oracle_future_IDs": true,
+              "bytes": 592,
+              "token_count": 128,
+              "oracle_stats_before": {
+                "queries": 80,
+                "lock_busy": 0,
+                "datagrams": 2,
+                "rejected_datagrams": 0,
+                "request_rebindings": 3,
+                "oracle_hits": 78,
+                "proposed_ids": 234,
+                "native_fallbacks": 2,
+                "lead_mismatches": 0,
+                "recv_errors": 0
+              }
+            },
+            "statistics_available": true,
+            "consumer_hit_observed": true,
+            "delta": {
+              "queries": 39,
+              "lock_busy": 0,
+              "datagrams": 1,
+              "rejected_datagrams": 0,
+              "request_rebindings": 1,
+              "oracle_hits": 39,
+              "proposed_ids": 117,
+              "native_fallbacks": 0,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "copied_IDs_are_not_verified_acceptance": true
+          }
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "native_request_id": 7,
+          "request_epoch": "16c6fa705c2e4e1da83df3afa09b1c83",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\candidate\\natural8192\\token-ids\\request-7-16c6fa705c2e4e1da83df3afa09b1c83.json",
+            "bytes": 3875,
+            "sha256": "b8409bb0225bfc8b53609147050137115c6528a3df5b36501e547abc8cf2fdff"
+          },
+          "oracle_statistics": {
+            "before": {
+              "queries": 119,
+              "lock_busy": 0,
+              "datagrams": 3,
+              "rejected_datagrams": 0,
+              "request_rebindings": 4,
+              "oracle_hits": 117,
+              "proposed_ids": 351,
+              "native_fallbacks": 2,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "after": {
+              "queries": 158,
+              "lock_busy": 0,
+              "datagrams": 4,
+              "rejected_datagrams": 0,
+              "request_rebindings": 5,
+              "oracle_hits": 156,
+              "proposed_ids": 468,
+              "native_fallbacks": 2,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "publication": {
+              "sent": true,
+              "reason": "submitted",
+              "oracle_future_IDs": true,
+              "bytes": 592,
+              "token_count": 128,
+              "oracle_stats_before": {
+                "queries": 119,
+                "lock_busy": 0,
+                "datagrams": 3,
+                "rejected_datagrams": 0,
+                "request_rebindings": 4,
+                "oracle_hits": 117,
+                "proposed_ids": 351,
+                "native_fallbacks": 2,
+                "lead_mismatches": 0,
+                "recv_errors": 0
+              }
+            },
+            "statistics_available": true,
+            "consumer_hit_observed": true,
+            "delta": {
+              "queries": 39,
+              "lock_busy": 0,
+              "datagrams": 1,
+              "rejected_datagrams": 0,
+              "request_rebindings": 1,
+              "oracle_hits": 39,
+              "proposed_ids": 117,
+              "native_fallbacks": 0,
+              "lead_mismatches": 0,
+              "recv_errors": 0
+            },
+            "copied_IDs_are_not_verified_acceptance": true
+          }
+        }
+      ],
+      "token_evidence_failures": [],
+      "exact_token_evidence_complete": true,
+      "runtime_oracle_binding": {
+        "schema": "halogen0201.original-target-oracle-binding.v1",
+        "dso": {
+          "bytes": 21496,
+          "sha256": "514387d9e151f9a3f28ac7107e546d371612f7c5a18471dc7c410aa43584e6a2"
+        },
+        "bundle": {
+          "bytes": 7987,
+          "sha256": "68b0b8c0c3cf7e68a4ab9347299ec881091a5ad70ca03c419e95cd442c1b8458"
+        },
+        "socket": "/tmp/hgn0201-oracle.sock",
+        "stats": "/tmp/hgn0201-oracle-stats.bin",
+        "source": "exact original-target T IDs from this campaign before arm",
+        "proposal_limit": 3,
+        "original_query_fallback": true,
+        "NPU_production": false
+      }
+    },
+    "after": {
+      "status": "complete",
+      "complete_cohort": true,
+      "phase_measurement_qualified": true,
+      "included_in_prefill_comparison": false,
+      "included_in_decode_comparison": false,
+      "epoch_nonce": "0201000a00000003",
+      "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+      "profile_sha256": "6f3a3c72bb9e24cd98d1afb0539ad382d583df7d48f1e2f92a6d4ec23c1db8cb",
+      "samples": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "native_request_id": 4,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "83b5f95cc1c125b1de831f5881b1eccb9a905c91e737d90ef1f9bc28ecb4fb4c",
+          "journal_sha256": "c48a2bcdfc0c8dd577e6514f3135d699c5ef5a0518582208335b0d29231c11f5",
+          "http_qpc_seconds": 12.4607248,
+          "scoped": {
+            "head": {
+              "rounds": 64,
+              "drafted": 106,
+              "accepted": 63
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 8654.4,
+            "predicted_ms": 3695.2,
+            "prompt_per_second": 946.571,
+            "predicted_per_second": 34.64,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 8654391796,
+          "prefill_raw_lower_ns": 8654392510,
+          "prefill_raw_upper_ns": 8654397100,
+          "prefill_native_tps": 946.5714279062666,
+          "prefill_raw_tps_lower": 946.5708477832616,
+          "prefill_raw_tps_upper": 946.5713498127438,
+          "prefill_raw_tps_mid": 946.5710987979361,
+          "decode_native_ns": 3695194084,
+          "decode_raw_lower_ns": 3695193174,
+          "decode_raw_upper_ns": 3695196304,
+          "decode_native_tps": 34.639587824150674,
+          "decode_raw_tps_lower": 34.639567013379434,
+          "decode_raw_tps_upper": 34.639596354699265,
+          "decode_raw_tps_mid": 34.63958168403313
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "native_request_id": 5,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "f5ab21e49e8afd91153f99c54a8eb2ee3a32854e16258a2f441e6011ff82f9c5",
+          "journal_sha256": "82cf4780818678c2c75831a81e575fd03aeae2b92fa7ffca2497b1345497a563",
+          "http_qpc_seconds": 9.4096715,
+          "scoped": {
+            "head": {
+              "rounds": 64,
+              "drafted": 106,
+              "accepted": 63
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6184.7,
+            "predicted_ms": 3197.0,
+            "prompt_per_second": 1324.559,
+            "predicted_per_second": 40.038,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 6184720402,
+          "prefill_raw_lower_ns": 6184720439,
+          "prefill_raw_upper_ns": 6184722530,
+          "prefill_native_tps": 1324.5546229302283,
+          "prefill_raw_tps_lower": 1324.5541671858964,
+          "prefill_raw_tps_upper": 1324.5546150060995,
+          "prefill_raw_tps_mid": 1324.55439109596,
+          "decode_native_ns": 3196981821,
+          "decode_raw_lower_ns": 3196981318,
+          "decode_raw_upper_ns": 3196983218,
+          "decode_native_tps": 40.0377628547047,
+          "decode_raw_tps_lower": 40.03774535922509,
+          "decode_raw_tps_upper": 40.037769154082994,
+          "decode_raw_tps_mid": 40.03775725665051
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "native_request_id": 6,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "367614f6acd475fa6fb293964d21b0c5490ed53959f719f6806c1f7a5669a934",
+          "journal_sha256": "f525f6cbf0ac7f353eabff9176152cbfbad2c7122e262af79f5e8c479e202824",
+          "http_qpc_seconds": 10.3406906,
+          "scoped": {
+            "head": {
+              "rounds": 64,
+              "drafted": 106,
+              "accepted": 63
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 7451.4,
+            "predicted_ms": 2857.7,
+            "prompt_per_second": 1099.391,
+            "predicted_per_second": 44.791,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 7451414587,
+          "prefill_raw_lower_ns": 7451414389,
+          "prefill_raw_upper_ns": 7451417169,
+          "prefill_native_tps": 1099.388566339075,
+          "prefill_raw_tps_lower": 1099.3881853885505,
+          "prefill_raw_tps_upper": 1099.388595552178,
+          "prefill_raw_tps_mid": 1099.388390470326,
+          "decode_native_ns": 2857665936,
+          "decode_raw_lower_ns": 2857665168,
+          "decode_raw_upper_ns": 2857667808,
+          "decode_native_tps": 44.791799624825,
+          "decode_raw_tps_lower": 44.79177028262902,
+          "decode_raw_tps_upper": 44.79181166266012,
+          "decode_raw_tps_mid": 44.79179097263501
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "native_request_id": 7,
+          "native_slot": 0,
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "processed_prompt_tokens": 8192,
+          "output_cap": 128,
+          "generated_begin": 1,
+          "generated_delta": 127,
+          "decode_numerator": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "response_sha256": "73c2c1c2c146f7f54da256db0e182a662db2a196ad04416e15f17cbb84079c64",
+          "journal_sha256": "0e6337b6ea7efbc723645b1c13091b4c48838f7b6194355599c210921e44e98d",
+          "http_qpc_seconds": 9.3986044,
+          "scoped": {
+            "head": {
+              "rounds": 64,
+              "drafted": 106,
+              "accepted": 63
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0
+            }
+          },
+          "api_reported_timings": {
+            "prompt_n": 8192,
+            "predicted_n": 128,
+            "prompt_ms": 6617.7,
+            "predicted_ms": 2744.6,
+            "prompt_per_second": 1237.892,
+            "predicted_per_second": 46.637,
+            "cache_n": 0
+          },
+          "api_phase_clock_qualified": false,
+          "prefill_native_ns": 6617689941,
+          "prefill_raw_lower_ns": 6617690185,
+          "prefill_raw_upper_ns": 6617692385,
+          "prefill_native_tps": 1237.8942007008122,
+          "prefill_raw_tps_lower": 1237.893743530359,
+          "prefill_raw_tps_upper": 1237.894155058575,
+          "prefill_raw_tps_mid": 1237.8939492944328,
+          "decode_native_ns": 2744612690,
+          "decode_raw_lower_ns": 2744611157,
+          "decode_raw_upper_ns": 2744614517,
+          "decode_native_tps": 46.63681708765983,
+          "decode_raw_tps_lower": 46.63678604305801,
+          "decode_raw_tps_upper": 46.63684313661048,
+          "decode_raw_tps_mid": 46.63681458981677
+        }
+      ],
+      "summary": {
+        "excluded_warmups": 1,
+        "measured_repetitions": 3,
+        "mean_raw_tps": {
+          "prefill": {
+            "lower": 1220.6120320349353,
+            "mid": 1220.6122436202395,
+            "upper": 1220.6124552056176
+          },
+          "decode": {
+            "lower": 43.82210056163737,
+            "mid": 43.82212093970077,
+            "upper": 43.822141317784535
+          }
+        },
+        "native_clock_observations": {
+          "prefill_mean_tps": 1220.612463323372,
+          "decode_mean_tps": 43.82212652239651
+        },
+        "api_reported_observations": {
+          "prefill_mean_tps": 1220.614,
+          "decode_mean_tps": 43.821999999999996
+        },
+        "actual_input_tokens": [
+          8192,
+          8192,
+          8192
+        ],
+        "actual_output_tokens": [
+          128,
+          128,
+          128
+        ],
+        "output_caps": [
+          128,
+          128,
+          128
+        ],
+        "mean_http_qpc_seconds": 9.716322166666666,
+        "pooled_scoped_counters": {
+          "head": {
+            "rounds": 192,
+            "drafted": 318,
+            "accepted": 189,
+            "acceptance_fraction": 0.5943396226415094
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "acceptance_independently_reconciled": false,
+        "api_phase_clock_qualified": false
+      },
+      "output_sha256_values": [
+        "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc"
+      ],
+      "within_cohort_output_variation": false,
+      "evidence": {
+        "collector_handle_sha256": "23fce2677f675f2661fda61d89f6645d37f901094947691a9495f32097e5e376",
+        "raw_report_sha256": "0045c838a8cf3348d29b59ee14b8feded0091506e30b574037f2eecfe2d98235",
+        "qpc_audit_sha256": "0dd436f24436ac8df566b2fff735940cbc4d97c7e26660e08d7b0e44c806e78c",
+        "request_sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d",
+        "binding_sha256": "729a24b2df7269202dc782082cb36a4158e20a236625a145d46884108f0c2134"
+      },
+      "GPU_admission": {
+        "schema": "halogen0201.prefill4096-gpu-evidence.v1",
+        "receipts": [
+          {
+            "ordinal": 0,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 2.219000000040978,
+            "elapsed_seconds": 2.219000000040978,
+            "sha256": "03eb536513f10dfabdb58743f6e6d41e8cd6852bf2b516e5f16ca19d3b7f0a84"
+          },
+          {
+            "ordinal": 0,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.8900000000139698,
+            "elapsed_seconds": 1.8900000000139698,
+            "sha256": "539d411c026e89e4202be82e2d0e8c4a29db1ccc98335353d8638d5d854621c4"
+          },
+          {
+            "ordinal": 1,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 2.155999999959022,
+            "elapsed_seconds": 2.155999999959022,
+            "sha256": "0d6c8a2f56f35f18109efa591f537c6431fe879467cc72afed1c6c7af888b310"
+          },
+          {
+            "ordinal": 1,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 2.23499999998603,
+            "elapsed_seconds": 2.23499999998603,
+            "sha256": "69d3173d61158bfc7991609586f2dcd7dc2fb2ea12af239f6f88bb4ee69d4712"
+          },
+          {
+            "ordinal": 2,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 2.156000000075437,
+            "elapsed_seconds": 2.156000000075437,
+            "sha256": "129033c573b9bd35eecf9dd664853963f4a718068b2744a1fb096bdbabc86dc9"
+          },
+          {
+            "ordinal": 2,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 2.0459999999729916,
+            "elapsed_seconds": 2.0459999999729916,
+            "sha256": "c02ea0c648a6932abc10cd71127e061e7bf7a5422419d071fe1f7f23119b97fb"
+          },
+          {
+            "ordinal": 3,
+            "stage": "before",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 2.312999999965541,
+            "elapsed_seconds": 2.312999999965541,
+            "sha256": "cce83aadcb7e9b0184c51840f15931fe83569cb2297bb756e9814e436573521d"
+          },
+          {
+            "ordinal": 3,
+            "stage": "after",
+            "observations": 2,
+            "nonzero_observations": 0,
+            "admission_decision_seconds": 1.8910000000614673,
+            "elapsed_seconds": 1.8910000000614673,
+            "sha256": "4bf5c2bc8dd128d3a612515ed11f7835ee929e29ac278adfe956263cbe18ebe6"
+          }
+        ],
+        "all_pre_entry_and_post_checks_qualified": true,
+        "pre_request_wait_seconds_total": 8.844000000040978,
+        "post_request_wait_seconds_total": 8.062000000034459,
+        "PID_exemptions": [],
+        "ownership_attribution_claimed": false,
+        "included_in_HTTP_QPC_seconds": false,
+        "included_in_RAW_phase_seconds": false
+      },
+      "weights_identity": {
+        "sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+        "identity": {
+          "size": 66687678432,
+          "device": 2096,
+          "inode": 616828,
+          "mtime_ns": 1790979071648131939,
+          "ctime_ns": 1790979072020131920
+        },
+        "checkpoint_source": "/home/revn/halogen-models-native/qwen38-flash-next-v2.hgn",
+        "evidence_sha256": "9962e5ce6553432b2a0d0c40bd725a9a9d6a80d88a280d04c6e6cd41a6ad50e3",
+        "receipt_sha256": "7b95c3181e036ffcba67602b1cbea0143d3389c2ff842888aef4d8c7f1e11ef2",
+        "current_file_identity_matched": true,
+        "established_complete_file_receipt_reused": true,
+        "new_complete_file_rehash_claimed": false
+      },
+      "mtp_cost_trace": {
+        "schema": "halogen0201.native-oracle-trace.v1",
+        "expected_rule": "gate",
+        "startup_banner": {
+          "marker": "confidence gate",
+          "count": 1
+        },
+        "samples": [
+          {
+            "id": 4,
+            "native_trace": {
+              "id": 4,
+              "neural_rounds": 64,
+              "legacy_accepted": 42,
+              "chain_rounds": 63,
+              "chain_drafted": 105,
+              "chain_accepted": 62,
+              "lookup_rounds": 0,
+              "lookup_drafted": 0,
+              "lookup_accepted": 0,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 0,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 64,
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 64,
+            "mapped_head_drafted": 106,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 63,
+              "native_chain_accepted": 62,
+              "nonchain_rounds": 1,
+              "api_minus_chain_accepted": 1,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          },
+          {
+            "id": 5,
+            "native_trace": {
+              "id": 5,
+              "neural_rounds": 64,
+              "legacy_accepted": 42,
+              "chain_rounds": 63,
+              "chain_drafted": 105,
+              "chain_accepted": 62,
+              "lookup_rounds": 0,
+              "lookup_drafted": 0,
+              "lookup_accepted": 0,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 0,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 64,
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 64,
+            "mapped_head_drafted": 106,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 63,
+              "native_chain_accepted": 62,
+              "nonchain_rounds": 1,
+              "api_minus_chain_accepted": 1,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          },
+          {
+            "id": 6,
+            "native_trace": {
+              "id": 6,
+              "neural_rounds": 64,
+              "legacy_accepted": 42,
+              "chain_rounds": 63,
+              "chain_drafted": 105,
+              "chain_accepted": 62,
+              "lookup_rounds": 0,
+              "lookup_drafted": 0,
+              "lookup_accepted": 0,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 0,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 64,
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 64,
+            "mapped_head_drafted": 106,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 63,
+              "native_chain_accepted": 62,
+              "nonchain_rounds": 1,
+              "api_minus_chain_accepted": 1,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          },
+          {
+            "id": 7,
+            "native_trace": {
+              "id": 7,
+              "neural_rounds": 64,
+              "legacy_accepted": 42,
+              "chain_rounds": 63,
+              "chain_drafted": 105,
+              "chain_accepted": 62,
+              "lookup_rounds": 0,
+              "lookup_drafted": 0,
+              "lookup_accepted": 0,
+              "grammar_rounds": 0,
+              "grammar_drafted": 0,
+              "grammar_accepted": 0,
+              "serial": 0,
+              "list_tokens": 127,
+              "list_off": 4
+            },
+            "api_speculation": {
+              "drafter": "mtp",
+              "rounds": 64,
+              "head": {
+                "rounds": 64,
+                "drafted": 106,
+                "accepted": 63
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "mapped_head_rounds": 64,
+            "mapped_head_drafted": 106,
+            "accepted_crosscheck": {
+              "mode": "unavailable",
+              "explanation": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+              "api_all_neural_head_accepted": 63,
+              "native_chain_accepted": 62,
+              "nonchain_rounds": 1,
+              "api_minus_chain_accepted": 1,
+              "cross_scope_accepted_bounds": null,
+              "acceptance_independently_reconciled": false,
+              "exact_independent_full_accepted_counter_proof": false
+            }
+          }
+        ],
+        "native_rule_activation_observed": true,
+        "per_decision_policy_observed": false,
+        "exact_mapped_rounds_and_drafted_verified": true,
+        "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+        "accepted_crosscheck": "Exact independent all-neural accepted-token crosscheck unavailable in the native trace summary",
+        "acceptance_independently_reconciled": false,
+        "exact_independent_full_accepted_counter_proof": false,
+        "qualification_scope": "Native startup rule and exact mapped rounds/drafted plus lookup/grammar counters, with API all-neural acceptance and separately retained native chain acceptance",
+        "oracle_lookup_activity_allowed": true,
+        "copied_oracle_counters_folded_into_acceptance": false,
+        "original_scope_reconciliation_unchanged": true
+      },
+      "token_samples": [
+        {
+          "ordinal": 0,
+          "phase": "warmup_excluded",
+          "native_request_id": 4,
+          "request_epoch": "6a1970f0749d42318e9048c02e681911",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\after\\natural8192\\token-ids\\request-4-6a1970f0749d42318e9048c02e681911.json",
+            "bytes": 3189,
+            "sha256": "72f604b8e3e361b4d730a4202364c80c2199179e53624a6af628c11ea107540a"
+          },
+          "oracle_statistics": {
+            "before": null,
+            "after": null,
+            "publication": {},
+            "statistics_available": false,
+            "consumer_hit_observed": false
+          }
+        },
+        {
+          "ordinal": 1,
+          "phase": "measured",
+          "native_request_id": 5,
+          "request_epoch": "2d99bb2fb4f84c92af747758807e83ad",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\after\\natural8192\\token-ids\\request-5-2d99bb2fb4f84c92af747758807e83ad.json",
+            "bytes": 3188,
+            "sha256": "abc7626ac51f26982a95548120c93632669d227610bbf8b38a4fcb52b834fe6d"
+          },
+          "oracle_statistics": {
+            "before": null,
+            "after": null,
+            "publication": {},
+            "statistics_available": false,
+            "consumer_hit_observed": false
+          }
+        },
+        {
+          "ordinal": 2,
+          "phase": "measured",
+          "native_request_id": 6,
+          "request_epoch": "acb1e0cc7d30448baa95f95aa497f48e",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\after\\natural8192\\token-ids\\request-6-acb1e0cc7d30448baa95f95aa497f48e.json",
+            "bytes": 3189,
+            "sha256": "c31b669e984ca2050dd44d4582105e216be0b103dd8e01634dfc06c69042fd03"
+          },
+          "oracle_statistics": {
+            "before": null,
+            "after": null,
+            "publication": {},
+            "statistics_available": false,
+            "consumer_hit_observed": false
+          }
+        },
+        {
+          "ordinal": 3,
+          "phase": "measured",
+          "native_request_id": 7,
+          "request_epoch": "700f5af47dc24013862625685566f834",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "output_cap": 128,
+          "finish_reason": "length",
+          "output_sha256": "eed0e9bf07effec4daf4650c7647b9c3e39323b50307e32882eeeda0a34fe6cc",
+          "output_token_ID_sha256": "f6c0b2ca31e0db7325f93c8459ba2276f3f9b3bbc0c3adc44b22ac1b1fd864f4",
+          "prefix_sha256": "db50995e2fb9f8eff514405041f9f9b2511acd09b013591d30971d0b14f1242b",
+          "capture": {
+            "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\after\\natural8192\\token-ids\\request-7-700f5af47dc24013862625685566f834.json",
+            "bytes": 3188,
+            "sha256": "3b0bac8d63d9e54b3fbb6690748f60673bd7808ff8aa37717ce580e7789e7a2c"
+          },
+          "oracle_statistics": {
+            "before": null,
+            "after": null,
+            "publication": {},
+            "statistics_available": false,
+            "consumer_hit_observed": false
+          }
+        }
+      ],
+      "token_evidence_failures": [],
+      "exact_token_evidence_complete": true
+    }
+  },
+  "comparison": {
+    "all_three_cohorts_complete": true,
+    "exact_input_and_prompt_match": true,
+    "exact_output_ID_match": true,
+    "exact_output_text_match": true,
+    "exact128_outputs_and_caps": true,
+    "matching_length_finish": true,
+    "oracle_consumer_active_in_all_candidate_requests": true,
+    "prefill_comparison_qualified": true,
+    "decode_comparison_qualified": true,
+    "observations_preserved_when_outputs_differ": true
+  },
+  "qualified_RAW_changes_percent": {
+    "prefill": {
+      "before": {
+        "midpoint_percent": 4.655499006049557,
+        "conservative_lower_percent": 4.655462362487572,
+        "conservative_upper_percent": 4.655535649624776
+      },
+      "after": {
+        "midpoint_percent": 13.461859343190552,
+        "conservative_lower_percent": 13.461819187832425,
+        "conservative_upper_percent": 13.461899498563135
+      }
+    },
+    "decode": {
+      "before": {
+        "midpoint_percent": 40.82487355906412,
+        "conservative_lower_percent": 40.82469811857698,
+        "conservative_upper_percent": 40.825048999802014
+      },
+      "after": {
+        "midpoint_percent": 49.30488155234725,
+        "conservative_lower_percent": 49.3047092283037,
+        "conservative_upper_percent": 49.305053876632975
+      }
+    }
+  },
+  "consumer_failure": false,
+  "first_candidate_consumer": {
+    "before": {
+      "queries": 2,
+      "lock_busy": 0,
+      "datagrams": 0,
+      "rejected_datagrams": 0,
+      "request_rebindings": 1,
+      "oracle_hits": 0,
+      "proposed_ids": 0,
+      "native_fallbacks": 2,
+      "lead_mismatches": 0,
+      "recv_errors": 0
+    },
+    "after": {
+      "queries": 41,
+      "lock_busy": 0,
+      "datagrams": 1,
+      "rejected_datagrams": 0,
+      "request_rebindings": 2,
+      "oracle_hits": 39,
+      "proposed_ids": 117,
+      "native_fallbacks": 2,
+      "lead_mismatches": 0,
+      "recv_errors": 0
+    },
+    "publication": {
+      "sent": true,
+      "reason": "submitted",
+      "oracle_future_IDs": true,
+      "bytes": 592,
+      "token_count": 128,
+      "oracle_stats_before": {
+        "queries": 2,
+        "lock_busy": 0,
+        "datagrams": 0,
+        "rejected_datagrams": 0,
+        "request_rebindings": 1,
+        "oracle_hits": 0,
+        "proposed_ids": 0,
+        "native_fallbacks": 2,
+        "lead_mismatches": 0,
+        "recv_errors": 0
+      }
+    },
+    "statistics_available": true,
+    "consumer_hit_observed": true,
+    "delta": {
+      "queries": 39,
+      "lock_busy": 0,
+      "datagrams": 1,
+      "rejected_datagrams": 0,
+      "request_rebindings": 1,
+      "oracle_hits": 39,
+      "proposed_ids": 117,
+      "native_fallbacks": 0,
+      "lead_mismatches": 0,
+      "recv_errors": 0
+    },
+    "copied_IDs_are_not_verified_acceptance": true
+  },
+  "oracle_bundle_revalidation": {
+    "available": true,
+    "valid": true
+  },
+  "oracle_future_IDs": true,
+  "real_NPU_prediction": false,
+  "NPU_tok_s_measured": false,
+  "acceptance_scope": "API all-neural head with source-derived D counter mapping",
+  "acceptance_independently_reconciled": false,
+  "native_oracle_hits_are_not_accepted_tokens": true,
+  "best_individual_run_selected": false,
+  "source_handle": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\handle.json",
+    "bytes": 243595,
+    "sha256": "b4bd2c4489c41a8914b3f85f0c5a24d2a220d749029ecc604c8b0068ecc1d43b"
+  },
+  "executed_plan": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-oracle-comparison-v1\\executed-plan.json",
+    "bytes": 16268,
+    "sha256": "4f5fcd6a0cb002972449c3814d80bf134c3690107ebef280299044e7f126d71e"
+  },
+  "normal_source_restoration": {
+    "source_manifest": {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\profiles\\sources.json",
+      "bytes": 5084,
+      "sha256": "4b70963dcd8442206c5b775c757dcdab18cb68b2c7b40e5cadaa0cd475953da6"
+    },
+    "files": {
+      ".gitattributes": "790e26d97d187b57ce20328adc0e43b92045c7e2be226aceac657bbaed1dd687",
+      ".gitignore": "d8974a1bd0952e55874013d796a654bfe6278147b832cc19879b3c5338ea85a3",
+      "Install.ps1": "4fa0fb55c5faea48d42ac998b247de35883fdf741666b21e2f41a939aec1fb9d",
+      "LICENSE": "7d7b3a69be9e85fce6fb2f55053180fad22327acc61b93194d30a601daa4b182",
+      "patches/halogen-preflight-bridge.c": "e1db8e82c7469a373e2bd3ab7115cd1af1a2ad44a510e91f443311ee6d45ee6e",
+      "patches/halogen-preflight-trampoline.S": "8a75b3619c471297cb26dbbf2c2364c1778b26a2e1d97e301cae9189cf5e3356",
+      "patches/hip-preflight-plan.h": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b",
+      "patches/hip-register-hybrid.c": "b221403f8f016b41c1d6a4758e020a1c2d486027a2bfafe50da4d37ad1c62a15",
+      "patches/hip-register-private-rw.c": "221bda2e00d346926357717bd55b52d022305986269d3a9348d4a3933551b90b",
+      "portable-source-notes.md": "092abf161be854f3eebfe7ff9f219b21cbd655bb85504c755fc1592d9798fa0b",
+      "profiles/preflight-sequences.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+      "profiles/release.json": "8cee09df39167f19c22a953aff07b33c4eada7351e5d65924009bfee2072561a",
+      "README.md": "c1738f91fd7f7fd4c5b506b16d54918481570a2d1d3ede6e9664787b2eb836c1",
+      "scripts/api_defaults.py": "669da5d268be39737412fe45fcb1bfeefc8a5de867900d6a00c4b1e79a1aba0c",
+      "scripts/auth_api.py": "449a3330a2762bce5d2087f383ef891dd30e9d44f21578af7d3a4d300cc0abe0",
+      "scripts/bounded_hash.py": "047043c45539b50d3f56253849db3fcc2ea8f3d0dc87105c65a29558e2a0f6e2",
+      "scripts/bridge_adapter.py": "98a512d3236d1dc9b8bb69958ed243d24dce76450cac2399dcfee998ab204443",
+      "scripts/checkpoint_integrity.py": "aa25634534ba11865113403648b8c667eed65529d7f10f508787416d47ef30ea",
+      "scripts/entrypoint_adapter.py": "b41c7c2f1e01070d530f5497f4984fe652e3999ce7f20f9f209b89aed7b31634",
+      "scripts/halogen0201_hip_probe.c": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533",
+      "scripts/host_frames.py": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
+      "scripts/kernel_controls.py": "1045d91d066d91f32577a3d4fa176263d4a5bfe1bbe2345b4cf356183496e230",
+      "scripts/lease_supervisor.py": "8c7c5f594e1b9ea0808f4546f877cbc38c3c636459268a8b8877df2328f885de",
+      "scripts/lookup_source.py": "a83569d941d2c4a2f7db9e8ace1fcf3bfba93699a55ef58649f427bab78e81e5",
+      "scripts/matmul_plan.py": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd",
+      "scripts/matmul_tuning.py": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37",
+      "scripts/memory_budget.py": "7028c17c93102ca4145e6383d89159fcfb32cc65ddca54a79e205ce0d4f9f1ca",
+      "scripts/portable.py": "ee9d1cd34dbcbf06911d4f7e1f66b87347d4a295ba32af8c891416a278cfd6ac",
+      "scripts/private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
+      "scripts/runner.py": "16e167fc5a837a0965ae2441ba22cb835580b7541f9c4412dc634b4232799b1c",
+      "scripts/sample.ps1": "f959c1528e002b94adfe3f01bf53693b62c9e09b70dfa363bbe1f38b0aaf414d",
+      "scripts/service.py": "c57315e27478891c243833d4e3dd355372019c36582dcb52e4e68b94af2b6c99",
+      "scripts/speculation_policy.py": "29507ba0f28f7904e8a0fc54c22a422f040734a455b202f4864f53ae8760de4e",
+      "scripts/startup_cache.py": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977",
+      "scripts/startup_guard.py": "df23fb264da20c933af13518b76099e5026be79ecdfaf0d2b70dbac722713dc8",
+      "scripts/startup_monitor.py": "c45677fd83e30e722e7079a26584111802da99e711881b894ccf01f707ed54f0",
+      "scripts/state_io.py": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347",
+      "Start.ps1": "59345cca5252c699cd0dd02ec489dda867228dd764d81d343089fe2978b6bb9b",
+      "THIRD_PARTY_NOTICES.md": "9e606df7f4e78c1f7e396495534fd2a0c9593c0c10d41968b5e8433cb60a8464",
+      "Uninstall.ps1": "97dce06a0905a1cc5285fd1db0e85d9f3f27d14598210966625fa60409c9ffb4",
+      "preparation.json": "fe25f0d6fc9a7b6dda5c606ff01d5225a4c44c53e4787adfd654218ce7293e7a",
+      "tests/v2-vision-plan-fixture.c": "c485b45c48649b032fce0454a4566c8273df3681d0eb36df773fc42d407a1f4a",
+      "tests/test_v2_vision_plan.py": "c6775fa24ea5d72be901b5ce3213faffd7f51c3b2b81f1b5f7af17a1bc1f0464",
+      "tests/test_v2_vision_budget.py": "38848ded49dfed25b8ff9d8e81be4fadbe8242b154cb3aa217806e72d6bd62ca",
+      "scripts/capacity_policy.py": "4df1d703d8b4e2916752bd68db18f1d4a055ec2783f5732a2d8309becb5864e3",
+      "tests/test_capacity_portable.py": "ea978e2e181e7e62059d8ef3351c54ae26c8948c1abbe8ccb93911c4a099bc41",
+      "tests/fixtures/halogen0201-capacity-default-environment.json": "5c2ae703858021adc114e5fe12d3e026d2a3be14cd4a6e33d303e61835a019c3",
+      "profiles/sources.json": "4b70963dcd8442206c5b775c757dcdab18cb68b2c7b40e5cadaa0cd475953da6",
+      ".local/machine.json": "92bf7da29cdce436ee88b0a84b862c5a0aee39b3694c1c9e9c5c00ec30a2cd07",
+      ".local/install-manifest.json": "29b608acc6889d02039ba3029436f700a88fa5b528aaef4050eebd194d994093"
+    },
+    "source_member_count": 47,
+    "exact_bytes_verified": true,
+    "authenticated_health_models": true,
+    "remembered_selection": true
+  },
+  "full_goal_achieved": false,
+  "methodology": {
+    "excluded_warmups_per_arm": 1,
+    "measured_repetitions_per_arm": 3,
+    "request": "128 cap, temperature0, seed1, no_store, nonrepetitive frozen natural8192",
+    "profiles": "paired2048 throughout; EXTERNAL_ORACLE0/1/0 is the only between-arm control",
+    "bundle": "Current BEFORE excluded warmup0; all four baseline repeats checked and preserved",
+    "rates": "Original unscaled RAW bounds; whole-HTTP QPC retained; native/API clocks separate",
+    "acceptance": "Pooled API all-neural head scope stays separate from native lookup/chain and copied oracle counters",
+    "differing_outputs": "Valid complete cohorts remain observations; causal decode deltas require exact IDs and text."
+  }
+}
