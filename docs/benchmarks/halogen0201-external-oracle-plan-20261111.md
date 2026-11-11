@@ -1,0 +1,9 @@
+# Halogen 0.20.1 external integer-consumer experiment
+
+This prospective Stock / Oracle / Stock comparison tests whether the existing GPU verifier benefits from ready external token IDs. It uses the exact non-repeated 8192-token document request, temperature 0/seed 1, Cache Off, 128 output-token cap, paired2048, gate0.90, Q4 draft vocabulary and PLD3,3. Each arm has one excluded warmup and three measured requests. Source bytes remain identical across arms; only the external-oracle enable control changes 0/1/0.
+
+The oracle is derived from the excluded first stock warmup, not a selected best run. It supplies future exact IDs as an optimistic consumer-cost experiment. No NPU model runs. This cannot establish real proposer speed, NPU acceptance or NPU acceleration. Native target verification, opening constraints and rollback remain in place. First candidate warmup must show positive same-process query, oracle-hit and proposed-ID counter deltas; otherwise preserve it, stop the candidate and restore the normal server without repeating unchanged diagnostics.
+
+The full causal comparison requires all three arms, matching actual IDs, text, token counts, finish reason and cap. Different valid trajectories remain descriptive observations. API neural-head, native lookup, copied oracle IDs and chain counters have separate scopes. No component milliseconds are converted to measured token rates.
+
+The [frozen machine-readable plan](halogen0201-external-oracle-plan-20261111.json) has SHA256 `4f5fcd6a0cb002972449c3814d80bf134c3690107ebef280299044e7f126d71e`. Root reran all 28 preparation tests and validated unchanged source bindings before registering the experiment. Normal authenticated port8840 and the exact 47-member source manifest must be restored afterwards. Existing startup30/131, entry22/22 and runtime18/18 GiB reserves remain effective. Root alone controls hardware and checks current games/GPU activity before execution.

@@ -1,0 +1,242 @@
+{
+  "schema": "halogen0201.oracle-cohort-plan.v1",
+  "version": "0.20.1",
+  "prepared_utc": "2026-11-11T02:52:08.822300+00:00",
+  "arms": [
+    "before",
+    "candidate",
+    "after"
+  ],
+  "cases": [
+    "natural8192"
+  ],
+  "warmups_excluded": 1,
+  "measured_repetitions": 3,
+  "requests_per_arm": 4,
+  "actual_input_tokens": 8192,
+  "output_token_cap": 128,
+  "paired_prefill": 2048,
+  "only_between_arm_control": "HALOGEN_EXTERNAL_ORACLE",
+  "oracle_values": [
+    0,
+    1,
+    0
+  ],
+  "source_pins": {
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\oracle_campaign.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\oracle_campaign.py",
+      "bytes": 27612,
+      "sha256": "ed8a12dff02c8c728dd476c00ca62121b2ebdfe6af600d9b83ff944322d5ac58"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\oracle_evidence.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\oracle_evidence.py",
+      "bytes": 6438,
+      "sha256": "90295dc94c0b717365223de04570c5ac40c59ccb246867b187d92b4cbf925d18"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\oracle_trace.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\oracle_trace.py",
+      "bytes": 1534,
+      "sha256": "ce87636a68e344fcc780e154980ed1b2df041f70882e245cd0bee5e60236a772"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\export_results.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\export_results.py",
+      "bytes": 14998,
+      "sha256": "932104f8c992d6058cb10612f168563d5b32cced613063773a7eb4d31942925c"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\collector\\collect_epoch.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\collector\\collect_epoch.py",
+      "bytes": 27469,
+      "sha256": "348a829187a3524930512a0ad480e5b5f03d1d19e696adfe3ae974e891010df0"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\path-audit-v1.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\path-audit-v1.json",
+      "bytes": 9932,
+      "sha256": "484124cda440ac13b4598265cb631c1697fe10ffc2847e9ff344dac2f33430f3"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\prepare_overlay.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\prepare_overlay.py",
+      "bytes": 16821,
+      "sha256": "50786034a9caf669543c051e752df41eece6ba9535c3fe645436267a275c55e0"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\external_draft_binding.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\external_draft_binding.py",
+      "bytes": 10475,
+      "sha256": "fb782be8edc34fce2bc2d0198c2776bda6a1de33674426d8af78ad2422b8d85a"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\api_feedback.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\api_feedback.py",
+      "bytes": 8288,
+      "sha256": "f21f4633ad2ca8b421292941afb2051fa12f16ec7b366c02de8183bd4b9d93c4"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\oracle_publisher.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\oracle_publisher.py",
+      "bytes": 4916,
+      "sha256": "bc3cf678da3e0d6d5f0c31dd961db60949ab4943d2a6cd24dc54050231528f06"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\build_oracle_bundle.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-api-prep\\build_oracle_bundle.py",
+      "bytes": 6721,
+      "sha256": "53f857a0189975cec0ad0a32edaccd45a25d9bbb35fc8e784f1593550f3a0924"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\npu-token-feedback-prep\\token_feedback.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\npu-token-feedback-prep\\token_feedback.py",
+      "bytes": 5756,
+      "sha256": "f9495fd926d42810060711f3b0d893496face771c3fa595c0a10e9d86c968262"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-consumer-prep\\cpu-build-v3\\receipt.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-consumer-prep\\cpu-build-v3\\receipt.json",
+      "bytes": 10323,
+      "sha256": "29cd33e260718ff2c9b793c73db3d213afa7d5dd9427d75cfa46ba0c7dfc5911"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-consumer-prep\\cpu-build-v3\\libhgn0201_oracle.so": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\external-draft-consumer-prep\\cpu-build-v3\\libhgn0201_oracle.so",
+      "bytes": 21496,
+      "sha256": "514387d9e151f9a3f28ac7107e546d371612f7c5a18471dc7c410aa43584e6a2"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill4096-cohort-prep\\root_campaign.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill4096-cohort-prep\\root_campaign.py",
+      "bytes": 39652,
+      "sha256": "bfa411fba2d50662913857aa55dbd0982d201bca55d4318f5606a00085230a11"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill4096-cohort-prep\\coordinator_skeleton.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill4096-cohort-prep\\coordinator_skeleton.py",
+      "bytes": 12222,
+      "sha256": "256b4467087ba57d0e4b94cd020bbdd2ba7fe998f25073402827f78adb4e9e30"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill8192-cohort-prep-v2\\collector\\collect_epoch.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill8192-cohort-prep-v2\\collector\\collect_epoch.py",
+      "bytes": 27305,
+      "sha256": "5552572541418744496bf9626dce45f9b6aa479cc8cb068e46495862d2216c72"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill8192-cohort-prep-v2\\gpu_admission.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill8192-cohort-prep-v2\\gpu_admission.py",
+      "bytes": 5923,
+      "sha256": "d49af82bc2f17947ca465249d13f827c1db6c72449cc7a0cc3a518cdcddd70bc"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill8192-cohort-prep-v2\\mtp_trace.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\prefill8192-cohort-prep-v2\\mtp_trace.py",
+      "bytes": 6029,
+      "sha256": "57e94d5bb654b6ac899ae8a76798bb2f147a5c2869de865fb77cbf2c79f2ede9"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\raw-phase-prep-v2\\observer\\validate_capture.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\raw-phase-prep-v2\\observer\\validate_capture.py",
+      "bytes": 13219,
+      "sha256": "776fdb05f0ec9b883a5c1146d7af558fe686fd3051154130ac44e95169ceb476"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\raw-phase-prep-v2\\observer\\validate_cohort.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\raw-phase-prep-v2\\observer\\validate_cohort.py",
+      "bytes": 4288,
+      "sha256": "1f07aa5b16a03a2ce9f1c06226cc0b4498a1734b72f53817e219b223b172566f"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\raw-phase-prep-v2\\collector\\qpc_audit.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\raw-phase-prep-v2\\collector\\qpc_audit.py",
+      "bytes": 8154,
+      "sha256": "385822cfb6baf97d216b2a72b97c6bbd084f8998abeaed1ed943524c05aa8698"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\cost-cohort-prep-v5\\await_owned.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\cost-cohort-prep-v5\\await_owned.py",
+      "bytes": 6620,
+      "sha256": "031749f13c5a5ccee029f87f076f3c92203b6f50a76c6536f445dd58db563f8d"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\measure.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\measure.py",
+      "bytes": 16441,
+      "sha256": "a50e87602e90817c8244351d8ae23e877fcb0466d2065f0dc1a7f99faba6b94c"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\controller.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\controller.py",
+      "bytes": 43652,
+      "sha256": "114b38980bf1488b473df4de4c607b544b27a78315c5b9c0a76dc9266cd7fa85"
+    },
+    "C:\\Projects\\strix-alloy-clean\\voice\\native-start\\controller_consumer.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\voice\\native-start\\controller_consumer.py",
+      "bytes": 7884,
+      "sha256": "6592641692788b77fd9088fda1b9ad9906e71454508ba36e8399a1e954ed3945"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\root_ops.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\root_ops.py",
+      "bytes": 6451,
+      "sha256": "483e1481410742f4caac5ff7f6229d508993b2fece3cfd43a74f8c4b8c908770"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\lifecycle.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\lifecycle.py",
+      "bytes": 7146,
+      "sha256": "91c97dfef4396946e5655ddb82b98310015fa12ba285bca6afdbf04f14477e6f"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\run_finite_update.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\primary0188\\run_finite_update.py",
+      "bytes": 19135,
+      "sha256": "01d3881559fe1a8e7147399e7d2946594979789b7e9266eb3ca2c7b169dca4f5"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\run_measurement.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261025\\primary01815\\run_measurement.py",
+      "bytes": 9685,
+      "sha256": "c575b55e38af3be326baeb5e3636bd7c8bedc5c6bdafbad628af0cd17f70316b"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\run_cache_followup_finite.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\run_cache_followup_finite.py",
+      "bytes": 13373,
+      "sha256": "49057d15e2e3860884441caec11e15f06c75c93400c6bec7b64afaabd9a34bd8"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\resume_concurrency2_finite.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261101\\primary01822\\resume_concurrency2_finite.py",
+      "bytes": 5606,
+      "sha256": "373919c4a7d1d651df70e9eb968ac117fd33f76411229835aa366bad2be8e50c"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\run_windows_trial_inline_q8_v1.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261017\\goal-next-20261017\\hipfire-mq2-memory\\run_windows_trial_inline_q8_v1.py",
+      "bytes": 32235,
+      "sha256": "311176e7b1fe61360bf32e8565517a0935e593e8cbf99ae3d938d9e50e72daa0"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0180-adaptive-option-20261011\\client\\measure.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\optimization9h-20261004\\halogen0172-backend-preparation-20261008\\halogen0180-adaptive-option-20261011\\client\\measure.py",
+      "bytes": 26012,
+      "sha256": "ddfc64739e365dd0e25632019ac56c90dea6ec33596f0466c2bf6c8e563c8341"
+    },
+    "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.1\\scripts\\host_frames.py": {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.18.1\\scripts\\host_frames.py",
+      "bytes": 1479,
+      "sha256": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\startup-inspect-timeout-prep\\transition.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\startup-inspect-timeout-prep\\transition.json",
+      "bytes": 4037,
+      "sha256": "d5d6c9d74d931ce4bfc132af0f17ee57130c17204f0245906d6512a5be5cccc7"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-sessions\\86b9d6d5ef174a25949a5966e5f61c55.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\servicenow-sessions\\86b9d6d5ef174a25949a5966e5f61c55.json",
+      "bytes": 3141,
+      "sha256": "06df227385b7f6de97d1de0123c08f70a544cad9396ab4aedbd6d2607598a128"
+    },
+    "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261107\\primary0191\\natural8192-prep\\request-natural8192.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261107\\primary0191\\natural8192-prep\\request-natural8192.json",
+      "bytes": 34927,
+      "sha256": "2e26413988ce75fcf745a1a143aa3647297349c1516f9d18968e9d1b4da0632d"
+    }
+  },
+  "transition": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\prepared-v1\\overlay\\transition.json",
+    "bytes": 25754,
+    "sha256": "e0fe047037d4e4e03047d49e41f88d5a5e5669ddb02c5a07ea054342ce25b04c"
+  },
+  "normal_source_manifest_sha256": "4b70963dcd8442206c5b775c757dcdab18cb68b2c7b40e5cadaa0cd475953da6",
+  "normal_source_members": 47,
+  "candidate_source_members": 53,
+  "source_bytes_identical_across_arms": true,
+  "oracle_data_derived_after_before": true,
+  "selection": "Current BEFORE excluded warmup ordinal 0, prospective and fixed",
+  "first_candidate_warmup_requires_positive_delta": [
+    "queries",
+    "oracle_hits",
+    "proposed_ids"
+  ],
+  "runtime_hook_path_proved_before_run": false,
+  "path_audit": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\oracle-cohort-prep\\path-audit-v1.json",
+    "bytes": 9932,
+    "sha256": "484124cda440ac13b4598265cb631c1697fe10ffc2847e9ff344dac2f33430f3"
+  },
+  "oracle_future_IDs": true,
+  "real_NPU_prediction": false,
+  "hardware_started": false
+}
