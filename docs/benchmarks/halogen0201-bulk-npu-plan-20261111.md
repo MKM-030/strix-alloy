@@ -1,0 +1,13 @@
+# Authoritative NPU suffix batches: prospective component test
+
+The exact retained FLM 1.0.7 interface publicly supports appending uncached suffix vectors to a nonempty context. This experiment tests whether that route can process already queued authoritative IDs more efficiently than repeated scalar forwards. No waiting to fill a batch, guessed input or context reset is introduced.
+
+One sealed input family contains the last512 IDs of the recorded8192-token document request and128 actual target output IDs. Three separate fresh native processes run sequentially: scalarreference, bulk2 and bulk4. Each seeds512 and finishes at640. Scalar saves129 states; bulk2 saves65 and bulk4 saves33. Every complete248070-value BF16 row at each bulk endpoint is compared with the scalar row at the identical authoritative prefix, using the original exact-word criterion. Any mismatch remains a failed candidate, even if greedy IDs agree. All samples and cold first calls remain in component timing summaries.
+
+Before every append, validate request/epoch, all IDs, count1..4 and the640-token limit. Invalidate readiness before the model call, call typed `prefill(vector,nullptr)` without clear, require actual context exactly `old + count`, then own the final row. No intermediate prediction is published. Any partial error retires that local epoch. Failure messages retain actual and expected native context without adding model calls.
+
+Record actual per-call WindowsQPC start/owned/return endpoints, batch IDs, context transitions and scalar/vector call counts. CPU logit copy/argmax remains included; row writes remain separate. This yields component milliseconds, not engine tok/s. Native MTP acceptance, target readiness and full-engine benefit remain null. Fixed aligned2/4 partitions alone do not qualify arbitrary live batch offsets, sizes1/3, transport or a complete producer.
+
+Root compiles against the unchanged selected headers/import libraries, checks actual native payload imports and loaded DLL identities, and owns all child handles. Retain22/22 GiB entry and18/18 GiB runtime reserves,120seconds per mode and no automatic retries. A scalar-reference failure stops dependent comparisons. An independently failed bulk mode is preserved; the other declared mode may still run in a fresh process after cleanup and fresh admission. Keep the same authenticated GPU server online throughout.
+
+[Frozen source/build preparation](halogen0201-bulk-npu-build-plan-20261111.json), SHA256 `925b12885359225f79c8d51c2a7a90de00630a26da5d0d51d1911afafdddf7ac`. Nine focused CPU tests pass. Input remains SHA256 `7ca5117fc7570b079fe2eba777220f1acc389601db2849233b7c67d22ae9a7dd`. The canonical39-test growing implementation and all earlier native evidence remain unchanged.
