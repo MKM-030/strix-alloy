@@ -1,0 +1,119 @@
+{
+  "schema": "halogen0201.scalar-catchup-component-result.v1",
+  "completed": true,
+  "teacher_forced_component_only": true,
+  "engine_future_feed": false,
+  "runs": 8,
+  "warmup_excluded_per_mode": 1,
+  "measured_runs_per_mode": 3,
+  "summary": {
+    "singleton": {
+      "excluded_warmup_commit_loop_ms": 3529.7813,
+      "measured_commit_loop_ms": [
+        3432.821,
+        3417.5163,
+        3444.1021
+      ],
+      "mean_commit_loop_ms": 3431.4797999999996,
+      "median_commit_loop_ms": 3432.821
+    },
+    "queued16": {
+      "excluded_warmup_commit_loop_ms": 2594.9118,
+      "measured_commit_loop_ms": [
+        2594.8356,
+        2596.7299,
+        2593.1615
+      ],
+      "mean_commit_loop_ms": 2594.909,
+      "median_commit_loop_ms": 2594.8356
+    },
+    "mean_commit_loop_reduction_ms": 836.5707999999995
+  },
+  "mean_commit_loop_reduction_percent": 24.379301314843808,
+  "exact_endpoint_states": 72,
+  "exact_BF16_values": 17861040,
+  "endpoint_G": [
+    0,
+    16,
+    32,
+    48,
+    64,
+    80,
+    96,
+    112,
+    128
+  ],
+  "tolerance_relaxed": false,
+  "timing_scope": "Sum of eight commit-only QPC spans per run; seed/reset, endpoint capture, disk and comparisons excluded",
+  "source_scope": "One scalar NPU forward per actual ID; intermediate row copies/snapshots omitted only for already-known queued IDs",
+  "actual_loaded_modules": {
+    "native_backend.dll": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-v2\\build\\native_backend.dll",
+      "bytes": 166400,
+      "sha256": "8d997e0a9c7566c740ed7a754a59aaa7efed1af174c3a38ba8ad7a5c3e68f91a"
+    },
+    "qwen3_5vl_npu.dll": {
+      "path": "C:\\AI\\runtimes\\flm-1.0.12-npu-probe\\portable\\qwen3_5vl_npu.dll",
+      "bytes": 2341376,
+      "sha256": "81b9349b5eb6cc7af277a41fad3a5dd7aa71321a82f8a484e7a980d80c334fad"
+    },
+    "q4_npu_eXpress.dll": {
+      "path": "C:\\AI\\runtimes\\flm-1.0.12-npu-probe\\portable\\q4_npu_eXpress.dll",
+      "bytes": 1103872,
+      "sha256": "c8a601860ba99f9a2191099c4b20f8229f7eb99e2048c744190099d34982ed9d"
+    },
+    "xrt_coreutil.dll": {
+      "path": "C:\\Windows\\System32\\xrt_coreutil.dll",
+      "bytes": 2010984,
+      "sha256": "d0dce13280a0d668b497d4fcabdcb43f1a7353e466af3acabd98c6df7607ed8e"
+    }
+  },
+  "module_inspection_errors_retained": [
+    "[WinError 299] Only part of a ReadProcessMemory or WriteProcessMemory request was completed."
+  ],
+  "minimum_physical_GiB": 22.663021087646484,
+  "normal_server_online": true,
+  "same_GPU_identities": {
+    "controller": {
+      "pid": 42908,
+      "creation_time_100ns": 134388647738765263,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 44720,
+      "creation_time_100ns": 134388647846709305,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "evidence": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-component-v1\\handle.json",
+      "bytes": 84757,
+      "sha256": "70ff828f301f9585ec10e2cce5bdf8a5d04096d9b96299ab31b61aa2b79f16de"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-component-v1\\qualification.json",
+      "bytes": 634666,
+      "sha256": "dabba40be67ebcb7dc1db580db3d55aac10e2b02fa8beac63ae0a88995eab63e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-component-v1\\qualification.json.comparison.json",
+      "bytes": 67897,
+      "sha256": "641de575d7e0d72b75fa941eb041cc43443de773b3bccdb36a7b29e7865f0cea"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-component-v1\\independent-closed-audit-v1.json",
+      "bytes": 4971,
+      "sha256": "b1388d301353a75241f445c787c7563a511b5963a2dd46cef30dd325bc2d3cd7"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-component-v1\\ready-left-online.json",
+      "bytes": 13381,
+      "sha256": "945be02e2b3ed4f6037370eb64dc05bbfb68f6459989bae3d9cb1bf2f1cdd4a6"
+    }
+  ],
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "native_MTP_acceptance": null,
+  "engine_gain_qualified": false
+}

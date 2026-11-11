@@ -36,6 +36,7 @@ The 0.20.1 endpoint passed fresh authenticated functional checks on 11 November.
 The [latest online verification and watchdog correction](docs/research/halogen0201-online-watchdog-20261111.md) confirm the official version remains current and the normal server answers authenticated requests after its controlled restart.
 The [FLM 1.0.12 NPU state component](docs/benchmarks/halogen0201-stateful-npu-20261111.md) now passes exact full-row restoration; its component costs remain separate from unmeasured NPU engine throughput gains.
 The [retained-prefix NPU producer](docs/benchmarks/halogen0201-streaming-npu-qualification-20261111.md) additionally qualifies cached state promotion and correction; its published source passes 51 CPU tests. A live Halogen speed gain remains unmeasured.
+Its [scalar catch-up component](docs/benchmarks/halogen0201-scalar-catchup-component-20261111.md) passes 72 exact native endpoints and reduces measured commit work by 24.38%; this is not an engine token-rate result.
 The opt-in `CurrentCachedText32K` profile uses the same 0.20.1 one-slot text settings with Flexible prefix caching; invoke it without capacity or prefill selectors. Its workload benefit remains unqualified, and the default stays Cache Off.
 Stop an existing managed session through its normal controls before changing
 profiles. See the [ServiceNow guide](docs/integrations/halogen-servicenow.md).

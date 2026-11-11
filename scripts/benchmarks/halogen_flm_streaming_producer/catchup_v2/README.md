@@ -18,9 +18,11 @@ python -B -m unittest discover -s scripts/benchmarks/halogen_flm_streaming_produ
 ```
 
 The new Windows C wrapper compiles with the qualified FLM 1.0.12 SDK and exports
-`sl1012_append_only`. Native endpoint parity and timing remain unqualified at
-publication. No native binary or model is included. See the unchanged-source
-hashes in `source-manifest.json` and the [first live result](../../../../docs/benchmarks/halogen0201-real-npu-partial-20261111.md).
+`sl1012_append_only`. Its [native component test](../../../../docs/benchmarks/halogen0201-scalar-catchup-component-20261111.md)
+now passes 72 exact endpoints and observes 24.38% lower commit time for queued
+groups. Whole-engine benefit remains unqualified. No native binary or model is
+included. See the unchanged-source hashes in `source-manifest.json` and the
+[first live result](../../../../docs/benchmarks/halogen0201-real-npu-partial-20261111.md).
 
 The GPU target retains its existing kernels. Potential benefits are earlier
 NPU proposals and less shared-memory traffic. GPU-only speed, whole-engine
