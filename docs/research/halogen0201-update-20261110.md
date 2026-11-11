@@ -192,3 +192,17 @@ It records first-content and whole-request time together with actual full,
 cached and newly processed token counts. This tests the combined follow-up
 cache benefit. Incremental reply-end attribution requires further evidence.
 [Prospective V2 protocol](../benchmarks/halogen0201-reply-end-cache-plan-20261111-v2.json).
+
+The subsequent V3 comparison completed all 24 requests and restored normal
+serving. Flexible reused 8160 of 8192 follow-up tokens and observed 0.243-second
+first-content latency versus 6.136 / 6.235 seconds for the two cold controls.
+One answer changes text and length, so a full output-matched speed claim remains
+unqualified. Cold first-turn latency also increases by 5–7%. Cache Off remains
+the serving default. [Complete V3 result and limitations](../benchmarks/halogen0201-reply-end-cache-20261111.md).
+
+At **03:24 UTC on 11 November**, a fresh official tag check confirms 0.20.1
+as latest. The normal server reports matching API/engine 0.20.1 and answers an
+authenticated chat request with `READY`. Port 8840, model alias `halogen-v2`,
+the existing ServiceNow credential and visible request/response console remain
+available. Current controller/backend runs are `02e38955abb44f40be18b878c6768a63`
+and `642221c86f6e4196b1f0ece635d80b59`; earlier run identities above are historical.
