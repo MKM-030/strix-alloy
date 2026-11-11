@@ -14,6 +14,12 @@ or dependency wheels. Nothing is installed or downloaded by these scripts.
 
 ## Evidence and limits
 
+The subsequent [full serving-Transformers comparison](full_transformers/README.md)
+is complete. Exact LOOK-ID/cache parity passed, but HF list batching made all
+four cold multi-section cases **43.16–152.32% slower**, with 21/21 slower pairs
+in each case. This candidate is rejected and remains disabled. The earlier
+85-to-6 native-call result below establishes parity and call counts only.
+
 The adapter requires this exact extracted `serve_api.py` SHA-256:
 `7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4`.
 It isolates the real upstream `view_segments` and `lookup_view` functions for
@@ -85,10 +91,8 @@ paths and a fresh output JSON path. It verifies the recorded tokenizer hash and
 Its CLI without `--run` is inert. The completed eight-case receipt above is the
 result currently established; a new run is a separate CPU experiment.
 
-For later integration, retain a separate opt-in API/source manifest and first
-qualify the actual Transformers wrapper. A future tool-workload stock/batch/
-stock comparison should freeze numbered/JSON tool-response messages, LOOK IDs,
-request/output tokens, sampling and engine settings. Report cold-view and warm-
-cache requests separately, measuring complete-request and first-token latency;
-keep native prefill/decode and acceptance distinct. Fewer tokenizer calls alone
-do not justify promotion or a repeat of the ordinary novel-input cohorts.
+The actual Transformers wrapper is now qualified for parity and rejected for
+performance. Do not promote this batch adapter or run an engine cohort from
+the call-count result. The separate [direct scalar-backend experiment](../halogen_api_lookup_direct_0203/README.md)
+retains native scalar encodes while bypassing HF wrapper work. Its CPU component
+timings do not establish native prefill/decode, acceptance or end-to-end gain.

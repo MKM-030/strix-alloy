@@ -1,0 +1,67 @@
+{
+  "schema": "halogen0203.full-Transformers-harness-source-preparation.v1",
+  "utc": "2026-11-11T17:15:14.573620+00:00",
+  "harness": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-full-transformers-v1\\full_transformers_harness.py",
+    "bytes": 16450,
+    "sha256": "afcad697779c406f801510215abbe81302d8bb61bc80c896f6a94439b1c2acb6"
+  },
+  "tests": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-full-transformers-v1\\test_full_transformers_harness.py",
+    "bytes": 7013,
+    "sha256": "2e7caeeadeb75d29fc9a90fc4196ea2393d576818a5e06e41cc92f7d29ea9e9a"
+  },
+  "notes": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-full-transformers-v1\\HARNESS.md",
+    "bytes": 2272,
+    "sha256": "8df4836d6c1248a2ad1b083635b3d2c291cd7a376ec759b2c8f4edeef95b767e"
+  },
+  "fake_only_tests": {
+    "count": 10,
+    "passed": true,
+    "actual_transformers_tokenizers_native_loaded": false,
+    "red_log": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-full-transformers-v1\\harness-red-v1.log",
+      "bytes": 12593,
+      "sha256": "1e568bc0ad67efd9f8b0b684b9bfe5c03b972269103cffb8d88940804406a1e8"
+    },
+    "green_log": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-full-transformers-v1\\harness-green-v1.log",
+      "bytes": 1542,
+      "sha256": "33a32a958b3365dc26a38b928960271ec0f1c00a80df39b2d8dd42b04f2538d2"
+    }
+  },
+  "adapter": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\adapter.py",
+    "bytes": 5458,
+    "sha256": "c262083f18eea8df0e5cf5e03bc710a721ddc0f7882f95333979265fae6d0e18"
+  },
+  "original_eight_fixture_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_api_lookup_batch_0203\\evidence\\cpu-harness-result.json",
+    "bytes": 9119,
+    "sha256": "285ad91accdd755629dd0989c4f7e9681a6c7181652d7ed3e76c4f9a26ae756b"
+  },
+  "original_fixture_bodies_and_repetitions_preserved": true,
+  "actual_tokenizer_source": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-full-transformers-v1\\actual-tokenizer-source.json",
+    "bytes": 1490,
+    "sha256": "4ad1b3ac05211d1852fe00a69eece59cdac26373024e84137bb8a1b6d00ae3b3"
+  },
+  "default_inert": true,
+  "execution_only_by_Root": true,
+  "actual_harness_run_by_this_agent": false,
+  "exact_original_serving_loader_without_kwargs": true,
+  "untimed_counter_pass_separate": true,
+  "timed_counter_facade": false,
+  "timing": {
+    "iterations_per_arm_per_case": 21,
+    "excluded_warmups_per_arm_per_case": 1,
+    "alternating_pair_order": true,
+    "fresh_view_caches_outside_timing": true,
+    "separate_untimed_warm_cache_priming": true,
+    "clock": "perf_counter_ns",
+    "measured_scope": "Full lookup_view CPU call only; no native/HTTPtok/s or acceptance inference"
+  },
+  "HTTP_WSL_Docker_GPU_NPU_calls": false,
+  "active_backend_or_public_adapter_changed": false
+}

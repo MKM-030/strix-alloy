@@ -1,0 +1,100 @@
+{
+  "schema": "halogen0203.full-transformers-lookup-independent-source-review.v2",
+  "utc": "2026-11-11T17:18:13.9784166Z",
+  "reviewer": "/root/source0201",
+  "verdict": "CLEAR_SOURCE_ONLY",
+  "reviewed": [
+    {
+      "name": "full_transformers_harness.py",
+      "bytes": 16450,
+      "sha256": "afcad697779c406f801510215abbe81302d8bb61bc80c896f6a94439b1c2acb6"
+    },
+    {
+      "name": "test_full_transformers_harness.py",
+      "bytes": 7013,
+      "sha256": "2e7caeeadeb75d29fc9a90fc4196ea2393d576818a5e06e41cc92f7d29ea9e9a"
+    },
+    {
+      "name": "root_container.py",
+      "bytes": 21151,
+      "sha256": "a1be627fdf9a6d16386fcebd3d836ccbe3d11c417bce601d4869bce0db73b7cb"
+    },
+    {
+      "name": "test_root_container.py",
+      "bytes": 8990,
+      "sha256": "dcabb4bd9cbb900aa4f3944131ff7dec751f1de907d9a4a2516ef50ee7b5b522"
+    },
+    {
+      "name": "actual-tokenizer-source.json",
+      "bytes": 1490,
+      "sha256": "4ad1b3ac05211d1852fe00a69eece59cdac26373024e84137bb8a1b6d00ae3b3"
+    },
+    {
+      "name": "harness-source-preparation-v1.json",
+      "bytes": 3285,
+      "sha256": "d47b2ee3d65316621234d270cfc92097771a4dd8bce02683894d7bb3e75a5b30"
+    },
+    {
+      "name": "root-container-source-handoff-v2.json",
+      "bytes": 2194,
+      "sha256": "0babcf91f2430a06a467e4a63028e7bf162aca9f1ce747c91295828842611838"
+    },
+    {
+      "name": "independent-fake-tests-v2.log",
+      "bytes": 2858,
+      "sha256": "9b543def3a0af1f5a1bbe2020e5ac199c495e78d725f6e756a647038aa234d89"
+    }
+  ],
+  "independent_fake_tests": {
+    "count": 18,
+    "passed": true,
+    "actual_Transformers_or_native_tokenizer_run": false,
+    "actual_Docker_WSL_GPU_NPU_HTTP_engine_compiler_calls": false
+  },
+  "semantic_findings": {
+    "actual_API_loader_AST_without_added_kwargs": true,
+    "optional_chat_template_override_retained": true,
+    "no_other_explicit_serving_HF_tokenizer_mutation_found": true,
+    "ordinary_HF_scalar_and_batch_call_defaults_unchanged": true,
+    "genuine_HF_object_direct_in_timing": true,
+    "encode_counter_untimed_only": true,
+    "fresh_view_cache_outside_timing": true,
+    "regex_primed_outside_timing": true,
+    "warm_view_cache_priming_outside_timing": true,
+    "warmups_excluded": true,
+    "alternating_pair_order": true,
+    "exact_LOOK_ID_cache_LRU_and_budget_parity_each_pair": true,
+    "eight_original_fixture_bodies_and_repetitions_retained": true,
+    "tokenizer_six_file_pins_before_and_after": true,
+    "selected_actual_environment_preserved": true,
+    "scope": "Lookup CPU/HF semantics and latency only, no Engine or chat-template benchmark"
+  },
+  "lifecycle_findings": {
+    "normal_server_fixed_process_creation_profile_and_source47_binding": true,
+    "exact_image_and_owned_container_label_name_command_mount_binding": true,
+    "tokenizer_only_readonly_inputs": true,
+    "no_network_no_devices_no_CPU_quota_or_thread_env_override": true,
+    "worker_memory_limit_GiB": 2,
+    "local_worker_entry_GiB": 20,
+    "runtime_reserve_GiB": 18,
+    "normal_server_never_stopped_or_modified": true,
+    "one_create_and_one_start_no_retry": true,
+    "cleanup_owned_container_only": true,
+    "hard_CPU_deadline_seconds": 300,
+    "observation_tool_yields_do_not_restart": true,
+    "execution_deadline_status": "failed_execution_deadline",
+    "controlled_own_stop": "Only validated own still-running container: stop --time 5, re-inspect exact identity and nonrunning state, retain actual state/stdout/stderr, then remove. No restart."
+  },
+  "resolved_findings": [
+    {
+      "finding": "Internal hard deadline was initially described as observation timeout",
+      "resolution": "Final exact failed_execution_deadline status, explicit bounded own-stop, terminal re-inspection and residual logs before owned removal; tool yields remain resumable.",
+      "source_sha256": "a1be627fdf9a6d16386fcebd3d836ccbe3d11c417bce601d4869bce0db73b7cb"
+    }
+  ],
+  "production_backend_changed": false,
+  "actual_tokenizer_or_hardware_run_by_reviewer": false,
+  "prefill_decode_acceptance_gain_qualified": false,
+  "remaining": "Root alone may perform the isolated actual HF-wrapper run. Source CLEAR does not assert successful execution or engine tok/s benefit.",
+  "supersedes": "independent-source-review-v1.json; final lifecycle delta only, harness unchanged"
+}

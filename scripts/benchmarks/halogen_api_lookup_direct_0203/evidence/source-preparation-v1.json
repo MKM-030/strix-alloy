@@ -1,0 +1,70 @@
+{
+  "schema": "halogen0203.scalar-direct-backend-source-preparation.v1",
+  "utc": "2026-11-11T17:29:28.2154460Z",
+  "author": "/root/source0201",
+  "files": [
+    {
+      "name": "direct_backend_adapter.py",
+      "bytes": 7858,
+      "sha256": "00172cbc3f245e3ea7c0130064712b7d6c9860275b2983ed98a8c1f04748546e"
+    },
+    {
+      "name": "test_direct_backend_adapter.py",
+      "bytes": 11408,
+      "sha256": "bb288ca4cbe223dc65d0b860e61132eaadcfc05dc0a53455186d3ce230036c20"
+    },
+    {
+      "name": "CONCEPT.md",
+      "bytes": 2457,
+      "sha256": "73b866190738f65bb15754daa1431b472405e3acc75723a149fad66e1a6a8757"
+    },
+    {
+      "name": "fake-red-v1.log",
+      "bytes": 41070,
+      "sha256": "79685d5919e4f0df25aa49ebb8ab65eda7c8631fe720973de7ead1c171ad8f8b"
+    },
+    {
+      "name": "fake-green-v2.log",
+      "bytes": 2210,
+      "sha256": "2cd5422e206facc7766b1d4e762a9e62205b3d998828a052e2df68e655a43ba4"
+    }
+  ],
+  "default_off": true,
+  "actual_API_sha256": "7f529cd224e973265237d70e8b9157350302a19faffdc70c05eee3a884e2f4f4",
+  "software_versions": {
+    "transformers": "5.15.0",
+    "tokenizers": "0.22.2"
+  },
+  "source_pins": {
+    "tokenization_utils_base.py": "520a914d0dcc873f8c8788e60ad3007f7db032c82c0b2b2c44ee7f44f2cdad8e",
+    "tokenization_utils_tokenizers.py": "bf921a160f483c7a32973952ed82a08c7d8982f769726bd220933aae2df98de8",
+    "tokenization_qwen2.py": "fac4e6576bfe2369731be147a4e530f262bdf32f2ac50436f96f0d8bdd2fc628"
+  },
+  "fake_tests": {
+    "red_before_implementation": true,
+    "red_reason": "Inactive adapter missing",
+    "green_count": 13,
+    "passed": true,
+    "actual_HF_or_native_imports": false
+  },
+  "interface": {
+    "API_SHA256": true,
+    "source_sha": true,
+    "patch_source": true,
+    "lookup_namespace": true,
+    "candidate_helper": "_lookup_encode_segments",
+    "additional_globals": [
+      "_LOOKUP_DIRECT_ENABLED",
+      "_LOOKUP_DIRECT_TYPES"
+    ],
+    "activation": "Set only the isolated candidate namespace _LOOKUP_DIRECT_ENABLED=True; generated source defaults False",
+    "binding_cache": "One-time exact source/version/type proof in _LOOKUP_DIRECT_TYPES; no tokenizer-state mutation"
+  },
+  "mechanism": "Scalar native encode(segment, add_special_tokens=False).ids only when exact type/state conditions hold; otherwise original HF scalar call",
+  "existing_api_cache_LOOK_ID_separators_unchanged": true,
+  "unknown_state_native_error_malformed_ID_overlength_fallback": true,
+  "real_Docker_WSL_HTTP_GPU_NPU_engine_compiler_or_tokenizer_calls": false,
+  "active_backend_models_weights_drivers_or_env_changed": false,
+  "prefill_decode_acceptance_gain_qualified": false,
+  "pending": "Independent source review and Root-only real isolated HF parity/latency run; no production integration"
+}

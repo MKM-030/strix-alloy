@@ -11,6 +11,15 @@ unchanged.
 
 [Machine-readable installation and runtime evidence](halogen0203-update-20261111.json).
 
+The user's update request was checked again at **17:47 UTC**: official main and
+the release metadata still identify **0.20.3**, matching the running container,
+API and engine. A fresh authenticated chat returned HTTP 200 and `READY`, with
+zero reasoning tokens. The normal instance and existing credential were
+preserved. The current restored launcher/controller still share a console, and
+a visible terminal window matches its automatic title. The window check uses
+title matching rather than an explicit Windows Terminal tab identity. This functional
+check is not a throughput benchmark. [Recheck evidence](halogen0203-online-recheck-20261111.json).
+
 ## What the release changes
 
 The manufacturer reports **7–9% faster `d3-nano` decisions on the NPU**, with

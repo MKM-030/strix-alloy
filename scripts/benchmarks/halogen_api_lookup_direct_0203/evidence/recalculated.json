@@ -1,0 +1,249 @@
+{
+  "schema": "halogen0203.cpu-lookup-direct-backend-recalculation.v1",
+  "utc": "2026-11-11T17:48:59.592025+00:00",
+  "source_result": {
+    "path": "server\\.local\\halogen-update-20261111\\primary0203\\cpu-lookup-direct-backend-v1\\export\\evidence\\result.json",
+    "bytes": 283621,
+    "sha256": "a91796d9ef4d8271e6ae89d33286db6c5acb3fd4c1e5d3568ca35b914299ae9a"
+  },
+  "independent_raw_arithmetic_passed": true,
+  "cases": [
+    {
+      "name": "no-tool-block",
+      "cache_mode": "cold",
+      "pairs": 21,
+      "measured_calls_per_observation": 1,
+      "stock": {
+        "mean_ns": 3075.285714285714,
+        "median_ns": 3060,
+        "min_ns": 2900,
+        "max_ns": 3470,
+        "stdev_ns": 112.32414827504496
+      },
+      "direct_backend_scalar": {
+        "mean_ns": 3086.9523809523807,
+        "median_ns": 3080,
+        "min_ns": 2910,
+        "max_ns": 3480,
+        "stdev_ns": 131.4593002379353
+      },
+      "direct_backend_scalar_mean_change_percent": 0.3793685449280604,
+      "direct_backend_scalar_slower_pairs": 12,
+      "stock_first_pairs": 11,
+      "mean_saved_ns": -11.666666666666515,
+      "median_paired_saved_ns": -21,
+      "direct_faster_pairs": 9
+    },
+    {
+      "name": "unrecognized-tool-text",
+      "cache_mode": "cold",
+      "pairs": 21,
+      "measured_calls_per_observation": 1,
+      "stock": {
+        "mean_ns": 28419.095238095237,
+        "median_ns": 24162,
+        "min_ns": 23092,
+        "max_ns": 71024,
+        "stdev_ns": 13003.827209344032
+      },
+      "direct_backend_scalar": {
+        "mean_ns": 32186.666666666668,
+        "median_ns": 25492,
+        "min_ns": 24291,
+        "max_ns": 80435,
+        "stdev_ns": 16617.555871226472
+      },
+      "direct_backend_scalar_mean_change_percent": 13.257182880055506,
+      "direct_backend_scalar_slower_pairs": 18,
+      "stock_first_pairs": 10,
+      "mean_saved_ns": -3767.571428571431,
+      "median_paired_saved_ns": -890,
+      "direct_faster_pairs": 3
+    },
+    {
+      "name": "one-json-output",
+      "cache_mode": "cold",
+      "pairs": 21,
+      "measured_calls_per_observation": 1,
+      "stock": {
+        "mean_ns": 119411.80952380953,
+        "median_ns": 111717,
+        "min_ns": 106796,
+        "max_ns": 201271,
+        "stdev_ns": 20584.74320612003
+      },
+      "direct_backend_scalar": {
+        "mean_ns": 99943.42857142857,
+        "median_ns": 93805,
+        "min_ns": 88605,
+        "max_ns": 152889,
+        "stdev_ns": 17789.095889255947
+      },
+      "direct_backend_scalar_mean_change_percent": -16.30356413659334,
+      "direct_backend_scalar_slower_pairs": 2,
+      "stock_first_pairs": 11,
+      "mean_saved_ns": 19468.38095238096,
+      "median_paired_saved_ns": 20051,
+      "direct_faster_pairs": 19
+    },
+    {
+      "name": "four-numbered-segments",
+      "cache_mode": "cold",
+      "pairs": 21,
+      "measured_calls_per_observation": 1,
+      "stock": {
+        "mean_ns": 292263.3333333333,
+        "median_ns": 279516,
+        "min_ns": 269725,
+        "max_ns": 445966,
+        "stdev_ns": 37625.5020741695
+      },
+      "direct_backend_scalar": {
+        "mean_ns": 246908.04761904763,
+        "median_ns": 237524,
+        "min_ns": 231334,
+        "max_ns": 281416,
+        "stdev_ns": 17264.25680553956
+      },
+      "direct_backend_scalar_mean_change_percent": -15.518636976112532,
+      "direct_backend_scalar_slower_pairs": 1,
+      "stock_first_pairs": 10,
+      "mean_saved_ns": 45355.28571428568,
+      "median_paired_saved_ns": 37812,
+      "direct_faster_pairs": 20
+    },
+    {
+      "name": "twelve-numbered-segments",
+      "cache_mode": "cold",
+      "pairs": 21,
+      "measured_calls_per_observation": 1,
+      "stock": {
+        "mean_ns": 623387.0952380953,
+        "median_ns": 607565,
+        "min_ns": 590744,
+        "max_ns": 735982,
+        "stdev_ns": 42536.04198665499
+      },
+      "direct_backend_scalar": {
+        "mean_ns": 552280.7142857143,
+        "median_ns": 537750,
+        "min_ns": 524830,
+        "max_ns": 602775,
+        "stdev_ns": 27141.066195237905
+      },
+      "direct_backend_scalar_mean_change_percent": -11.406456998475834,
+      "direct_backend_scalar_slower_pairs": 2,
+      "stock_first_pairs": 11,
+      "mean_saved_ns": 71106.38095238095,
+      "median_paired_saved_ns": 64613,
+      "direct_faster_pairs": 19
+    },
+    {
+      "name": "fortyeight-numbered-segments",
+      "cache_mode": "cold",
+      "pairs": 21,
+      "measured_calls_per_observation": 1,
+      "stock": {
+        "mean_ns": 2196807.5714285714,
+        "median_ns": 2171655,
+        "min_ns": 2084889,
+        "max_ns": 2445305,
+        "stdev_ns": 95528.4398891615
+      },
+      "direct_backend_scalar": {
+        "mean_ns": 1948915.0476190476,
+        "median_ns": 1944522,
+        "min_ns": 1883718,
+        "max_ns": 2019665,
+        "stdev_ns": 44153.74652107813
+      },
+      "direct_backend_scalar_mean_change_percent": -11.284216561959525,
+      "direct_backend_scalar_slower_pairs": 0,
+      "stock_first_pairs": 10,
+      "mean_saved_ns": 247892.5238095238,
+      "median_paired_saved_ns": 248564,
+      "direct_faster_pairs": 21
+    },
+    {
+      "name": "warm-view-cache",
+      "cache_mode": "warm",
+      "pairs": 21,
+      "measured_calls_per_observation": 3,
+      "stock": {
+        "mean_ns": 30731.333333333332,
+        "median_ns": 30472,
+        "min_ns": 28932,
+        "max_ns": 32652,
+        "stdev_ns": 1009.3853245086008
+      },
+      "direct_backend_scalar": {
+        "mean_ns": 31013.380952380954,
+        "median_ns": 30761,
+        "min_ns": 29712,
+        "max_ns": 34363,
+        "stdev_ns": 1192.2554875608866
+      },
+      "direct_backend_scalar_mean_change_percent": 0.9177851673024984,
+      "direct_backend_scalar_slower_pairs": 14,
+      "stock_first_pairs": 11,
+      "mean_saved_ns": -282.047619047622,
+      "median_paired_saved_ns": -341,
+      "direct_faster_pairs": 7
+    },
+    {
+      "name": "json-numbered-segments",
+      "cache_mode": "cold",
+      "pairs": 21,
+      "measured_calls_per_observation": 1,
+      "stock": {
+        "mean_ns": 500478.14285714284,
+        "median_ns": 485507,
+        "min_ns": 451116,
+        "max_ns": 612165,
+        "stdev_ns": 40715.36483231572
+      },
+      "direct_backend_scalar": {
+        "mean_ns": 452642.6666666667,
+        "median_ns": 430564,
+        "min_ns": 402723,
+        "max_ns": 569493,
+        "stdev_ns": 49284.52280009753
+      },
+      "direct_backend_scalar_mean_change_percent": -9.557955102173244,
+      "direct_backend_scalar_slower_pairs": 3,
+      "stock_first_pairs": 10,
+      "mean_saved_ns": 47835.476190476154,
+      "median_paired_saved_ns": 47753,
+      "direct_faster_pairs": 18
+    }
+  ],
+  "warmups_excluded": 16,
+  "measured_pairs": 168,
+  "stock_first_pairs": 84,
+  "direct_first_pairs": 84,
+  "output_hash_parity_all_pairs": true,
+  "direct_path_proof": {
+    "proven": true,
+    "actual_HF_wrapper_calls": {
+      "stock": 85,
+      "direct_backend_scalar": 0
+    },
+    "untimed_only": true,
+    "timing_profiler_used": false,
+    "candidate_namespace_enabled": true,
+    "actual_type_binding": true,
+    "bound_classes": [
+      "transformers.models.qwen2.tokenization_qwen2.Qwen2Tokenizer",
+      "tokenizers.Tokenizer",
+      "tokenizers.models.BPE"
+    ],
+    "meaning": "The same scalar native encodes bypass HF dispatch/attention-mask production; no reduction in native encoding calls is claimed"
+  },
+  "cache_state_scope": "Original harness checked complete cache state in memory per pair. Independent raw audit checks saved output hashes/counts and retains the runtime parity flags.",
+  "largest_mean_saved_ns": 247892.5238095238,
+  "interpretation": "A bounded CPU lookup-preparation saving in five cold tokenized tool cases; keep default off pending separate whole-request evidence.",
+  "full_Transformers_parity_passed": true,
+  "useful_CPU_component_gain_observed": true,
+  "native_prefill_decode_acceptance_gain_measured": false,
+  "new_tokenizer_or_performance_run": false
+}

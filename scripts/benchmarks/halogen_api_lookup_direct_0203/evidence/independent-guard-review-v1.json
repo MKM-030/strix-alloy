@@ -1,0 +1,37 @@
+{
+  "schema": "halogen0203.direct-backend-independent-guard-review.v1",
+  "utc": "2026-11-11T17:35:52Z",
+  "reviewer": "/root/refresh_20261110",
+  "verdict": "CLEAR_SOURCE_ONLY for the isolated default-off CPU candidate",
+  "adapter": {
+    "path": "direct_backend_adapter.py",
+    "bytes": 7858,
+    "sha256": "00172cbc3f245e3ea7c0130064712b7d6c9860275b2983ed98a8c1f04748546e"
+  },
+  "source_pins_verified": {
+    "tokenization_utils_base.py": "520a914d0dcc873f8c8788e60ad3007f7db032c82c0b2b2c44ee7f44f2cdad8e",
+    "tokenization_utils_tokenizers.py": "bf921a160f483c7a32973952ed82a08c7d8982f769726bd220933aae2df98de8",
+    "tokenization_qwen2.py": "fac4e6576bfe2369731be147a4e530f262bdf32f2ac50436f96f0d8bdd2fc628"
+  },
+  "findings": [
+    "No extra Qwen2 Python prefix/suffix preparation occurs on the qualified ordinary scalar string path; the loaded Rust pretokenizer/model/postprocessor retain their own behavior.",
+    "HF resolves split_special_tokens from the tokenizer default and uses encode_batch([segment], add_special_tokens=False, is_pretokenized=False). The candidate requires matching current backend special-token mode before scalar native encode.",
+    "Exact type/source/version, backend alias, deterministic BPE, no padding/truncation and no input/target hooks or instance-method overrides bound the proposed fast path.",
+    "Overlength IDs return to the original HF diagnostic/warning path. Unknown state, ordinary native exceptions or malformed IDs fall back; control-flow exceptions remain unmasked.",
+    "LOOK construction, separators, view-cache policy, LRU and limits remain original. The candidate defaults off and mutates no tokenizer setting or environment.",
+    "No concrete semantic defect identified within the stated isolated, unmodified-library scope."
+  ],
+  "execution_requirements_for_existing_protocol": [
+    "Use the genuine HF object for direct-path parity and timing. A counting facade fails the exact-type guard and would only qualify fallback behavior.",
+    "Explicitly enable the isolated candidate namespace; generated source defaults off.",
+    "Retain existing paired CPU timing/parity protocol; real tokenization parity and useful component time remain unmeasured."
+  ],
+  "limitations": [
+    "No arbitrary runtime class monkeypatches or concurrent tokenizer mutation are qualified; the source/version checks are not a universal production guarantee.",
+    "No native tokenizer/Transformers import, tokenization, container, WSL, HTTP, GPU/NPU, compiler or model action occurred in this review.",
+    "No new engine-prefill/decode/acceptance benefit is claimed. Earlier HF list batching remains rejected."
+  ],
+  "reviewed_fake_tests_source": true,
+  "reviewer_ran_tests": false,
+  "active_backend_changed": false
+}
