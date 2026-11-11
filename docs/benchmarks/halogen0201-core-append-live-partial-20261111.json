@@ -1,0 +1,507 @@
+{
+  "schema": "halogen0201.core-append-live-failed-partial-export.v1",
+  "session_id": 84304,
+  "exit_code": 1,
+  "terminal": true,
+  "completed": false,
+  "restored": true,
+  "stage": "BEFORE next-request entry admission, before first measured request or NPU startup",
+  "warmups_saved": 1,
+  "measured_requests_saved": 0,
+  "NPU_helper_started": false,
+  "candidate_started": false,
+  "after_started": false,
+  "qualified_three_run_means": null,
+  "workload": {
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "context_capacity": 32768,
+    "slots": 1,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "temperature": 0,
+    "seed": 1,
+    "cache": "Off/no_store",
+    "thinking": false,
+    "intended_warmups_per_arm": 1,
+    "intended_measured_per_arm": 3
+  },
+  "excluded_warmup": {
+    "arm": "stock_before",
+    "ordinal": 0,
+    "RAW_prefill_tok_s": 748.5344036287592,
+    "RAW_decode_tok_s": 32.707360315342456,
+    "API_prefill_tok_s": 748.538,
+    "API_decode_tok_s": 32.707,
+    "API_head": {
+      "rounds": 63,
+      "drafted": 104,
+      "accepted": 64
+    },
+    "API_head_acceptance": 0.6153846153846154,
+    "lookup": {
+      "rounds": 0,
+      "drafted": 0,
+      "accepted": 0
+    },
+    "lookup_acceptance": null,
+    "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+    "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+    "scope": "Excluded stock warmup only, not a NPU or qualified post value."
+  },
+  "failure": {
+    "reason": "120-second memory admission deadline reached on the same ready controller",
+    "maximum_seconds": 120,
+    "elapsed_seconds": 120,
+    "samples": 472,
+    "eligible_frames": 0,
+    "available_physical_min_gib": 21.29166030883789,
+    "available_physical_max_gib": 21.914161682128906,
+    "entry_reserve_gib": 22,
+    "runtime_reserve_gib": 18,
+    "failed_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1.admission-waits\\0004.json",
+      "bytes": 138309,
+      "sha256": "2d1a182bbf23e378002fe099cf2f23b8fa09528cd6f52f9aaa1c2ca1bb1025c2"
+    }
+  },
+  "NPU_prefill_tok_s": null,
+  "NPU_decode_tok_s": null,
+  "NPU_acceptance": null,
+  "head_skip_count": null,
+  "engine_benefit": null,
+  "separate_component": {
+    "mean_commit_time_reduction_percent": 37.51390122212426,
+    "exact_BF16_values": 20093670,
+    "qualified_scope": "Earlier native component only; no live engine rate implied",
+    "report": "docs/benchmarks/halogen0201-core-append-component-20261111.json"
+  },
+  "normal_server": {
+    "verified_utc": "2026-11-11T12:40:55.282072+00:00",
+    "version": {
+      "api": "0.20.1",
+      "engine": "0.20.1",
+      "match": true
+    },
+    "identities": {
+      "controller": {
+        "pid": 22152,
+        "creation_time_100ns": 134388740621466318,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 28860,
+        "creation_time_100ns": 134388740729047833,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      }
+    },
+    "controller_run_id": "5c2c87b7ef5d4213962731b6e87dd1cd",
+    "backend_run_id": "a3fb1c18135c41d4ad3068ec6d2c9929",
+    "ready": true,
+    "open": true,
+    "port": 8840,
+    "NPU_enabled": false,
+    "source_members_verified": 47,
+    "functional_smoke": "READY",
+    "functional_smoke_is_benchmark": false
+  },
+  "next_action": "No unchanged benchmark restart. Root awaits a changed memory-admission condition after requesting about2GiB free RAM; foreign applications are not stopped by this audit.",
+  "evidence_pins": [
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\Root-terminal-audit-v1.json",
+      "bytes": 3678,
+      "sha256": "c85f535b16497ed9d0dee20b424a2a01fbde176093675481332df615ac825a45"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\handle.json",
+      "bytes": 80146,
+      "sha256": "424a866fc25b714cb70544eeaa4ea0d9cbaee8a37141a8c38dd18e2f488fa5b2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\before\\natural8192\\handle.json",
+      "bytes": 1618,
+      "sha256": "1fc86a33520e990ef71377c2755414194e2f9606e898f51823aa2dff800c7c1c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\before\\natural8192\\sample-0.json",
+      "bytes": 2223,
+      "sha256": "d762e047828d7442f7f993667f40fa2bf8131b9fab5963ce4ab693935832cc3f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\before\\natural8192\\raw-sample-0.json",
+      "bytes": 1353,
+      "sha256": "d647f1fffff6444c34182700939b028edb3e55d608f7afceb871ba5c555f9984"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\before\\natural8192\\response-0.json",
+      "bytes": 1322,
+      "sha256": "fe761b8adc5a370748892a1ace30ac4cb1ea34294bd7c520068b52d7243efed9"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\before\\natural8192\\token-sample-0.json",
+      "bytes": 1939,
+      "sha256": "1c6db92ca8c58df2397417c4fececba93e215a25d68a6ac203ee8fd9a3090da6"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\before\\natural8192\\transport-0.json",
+      "bytes": 170,
+      "sha256": "cf1e7113d567e1c7bfee907d7be5024e9dfd456d8e18afa6cb793f7a20aa2a94"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\before\\natural8192\\journals\\capture-0201001200000001-0.bin",
+      "bytes": 8768,
+      "sha256": "8a3be39398557a9aa65a44bd01aad85ebdba08f829f3ebdd5df5d03e2e5d2fda"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\before\\natural8192\\token-ids\\request-4-f6368caeba1e4d48bacecf02c3499c18.json",
+      "bytes": 2247,
+      "sha256": "47c4340eb93f333de6f84b51d1c88f2014b1827ce823da03a5cd1497375c7aa0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1.admission-waits\\0004.json",
+      "bytes": 138309,
+      "sha256": "2d1a182bbf23e378002fe099cf2f23b8fa09528cd6f52f9aaa1c2ca1bb1025c2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\ready-left-online.json",
+      "bytes": 13954,
+      "sha256": "0d8f4d21903450a1d71f063e7c0f87549f7645980a8f616fbddd2bed380c4cef"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-serving-promotion-prep\\profile-8192.json",
+      "bytes": 1797,
+      "sha256": "750cb82c02d7e589ef0d02f0ef77ca42798d9e09dc0c4c8a8580226008c306c8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\profiles\\sources.json",
+      "bytes": 5024,
+      "sha256": "b73f5fa60d47b911a2c3d15caef2aaa1fdc55c50baeb7434544f4bf4500c38f8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\.gitattributes",
+      "bytes": 240,
+      "sha256": "790e26d97d187b57ce20328adc0e43b92045c7e2be226aceac657bbaed1dd687"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\.gitignore",
+      "bytes": 27,
+      "sha256": "d8974a1bd0952e55874013d796a654bfe6278147b832cc19879b3c5338ea85a3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\Install.ps1",
+      "bytes": 1218,
+      "sha256": "4fa0fb55c5faea48d42ac998b247de35883fdf741666b21e2f41a939aec1fb9d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\LICENSE",
+      "bytes": 1098,
+      "sha256": "7d7b3a69be9e85fce6fb2f55053180fad22327acc61b93194d30a601daa4b182"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\patches\\halogen-preflight-bridge.c",
+      "bytes": 14894,
+      "sha256": "e1db8e82c7469a373e2bd3ab7115cd1af1a2ad44a510e91f443311ee6d45ee6e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\patches\\halogen-preflight-trampoline.S",
+      "bytes": 1213,
+      "sha256": "8a75b3619c471297cb26dbbf2c2364c1778b26a2e1d97e301cae9189cf5e3356"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\patches\\hip-preflight-plan.h",
+      "bytes": 622,
+      "sha256": "bbf72a9dd29efd4a3c70caa9dc67b1393203ff412c140184eaee90c4bc25397b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\patches\\hip-register-hybrid.c",
+      "bytes": 24791,
+      "sha256": "b221403f8f016b41c1d6a4758e020a1c2d486027a2bfafe50da4d37ad1c62a15"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\patches\\hip-register-private-rw.c",
+      "bytes": 5838,
+      "sha256": "221bda2e00d346926357717bd55b52d022305986269d3a9348d4a3933551b90b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\portable-source-notes.md",
+      "bytes": 458,
+      "sha256": "092abf161be854f3eebfe7ff9f219b21cbd655bb85504c755fc1592d9798fa0b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\profiles\\preflight-sequences.json",
+      "bytes": 4,
+      "sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\profiles\\release.json",
+      "bytes": 7943,
+      "sha256": "836459be6e3382f836dcdb1738810f58a3372b61983cd85c390cefb85fbfa848"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\README.md",
+      "bytes": 548,
+      "sha256": "c1738f91fd7f7fd4c5b506b16d54918481570a2d1d3ede6e9664787b2eb836c1"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\api_defaults.py",
+      "bytes": 2112,
+      "sha256": "669da5d268be39737412fe45fcb1bfeefc8a5de867900d6a00c4b1e79a1aba0c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\auth_api.py",
+      "bytes": 7610,
+      "sha256": "449a3330a2762bce5d2087f383ef891dd30e9d44f21578af7d3a4d300cc0abe0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\bounded_hash.py",
+      "bytes": 1310,
+      "sha256": "047043c45539b50d3f56253849db3fcc2ea8f3d0dc87105c65a29558e2a0f6e2"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\bridge_adapter.py",
+      "bytes": 5547,
+      "sha256": "98a512d3236d1dc9b8bb69958ed243d24dce76450cac2399dcfee998ab204443"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\checkpoint_integrity.py",
+      "bytes": 2773,
+      "sha256": "aa25634534ba11865113403648b8c667eed65529d7f10f508787416d47ef30ea"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\entrypoint_adapter.py",
+      "bytes": 4850,
+      "sha256": "738b5b8731ed805e59b4e98d57407a9c00cd35e8f646ac4860dcfb212d3e0793"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\halogen0201_hip_probe.c",
+      "bytes": 1461,
+      "sha256": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\host_frames.py",
+      "bytes": 1479,
+      "sha256": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\kernel_controls.py",
+      "bytes": 2677,
+      "sha256": "1045d91d066d91f32577a3d4fa176263d4a5bfe1bbe2345b4cf356183496e230"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\lease_supervisor.py",
+      "bytes": 5129,
+      "sha256": "8c7c5f594e1b9ea0808f4546f877cbc38c3c636459268a8b8877df2328f885de"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\lookup_source.py",
+      "bytes": 22493,
+      "sha256": "a83569d941d2c4a2f7db9e8ace1fcf3bfba93699a55ef58649f427bab78e81e5"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\matmul_plan.py",
+      "bytes": 9508,
+      "sha256": "4baff6a9205688b052937d02e4dfaae8396668fbe416c5894bfea4dfe48667bd"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\matmul_tuning.py",
+      "bytes": 4929,
+      "sha256": "8e4b1aa275dab9d226745faed7b4fe36008f263d6044bbf97eca109ad488de37"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\memory_budget.py",
+      "bytes": 2479,
+      "sha256": "7028c17c93102ca4145e6383d89159fcfb32cc65ddca54a79e205ce0d4f9f1ca"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\portable.py",
+      "bytes": 18306,
+      "sha256": "ee9d1cd34dbcbf06911d4f7e1f66b87347d4a295ba32af8c891416a278cfd6ac"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\private_hsa.py",
+      "bytes": 11007,
+      "sha256": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\runner.py",
+      "bytes": 40576,
+      "sha256": "16e167fc5a837a0965ae2441ba22cb835580b7541f9c4412dc634b4232799b1c"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\sample.ps1",
+      "bytes": 10368,
+      "sha256": "f959c1528e002b94adfe3f01bf53693b62c9e09b70dfa363bbe1f38b0aaf414d"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\service.py",
+      "bytes": 53159,
+      "sha256": "c57315e27478891c243833d4e3dd355372019c36582dcb52e4e68b94af2b6c99"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\speculation_policy.py",
+      "bytes": 1934,
+      "sha256": "29507ba0f28f7904e8a0fc54c22a422f040734a455b202f4864f53ae8760de4e"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\startup_cache.py",
+      "bytes": 7384,
+      "sha256": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\startup_guard.py",
+      "bytes": 15435,
+      "sha256": "df23fb264da20c933af13518b76099e5026be79ecdfaf0d2b70dbac722713dc8"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\startup_monitor.py",
+      "bytes": 3048,
+      "sha256": "c45677fd83e30e722e7079a26584111802da99e711881b894ccf01f707ed54f0"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\state_io.py",
+      "bytes": 951,
+      "sha256": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\Start.ps1",
+      "bytes": 6086,
+      "sha256": "59345cca5252c699cd0dd02ec489dda867228dd764d81d343089fe2978b6bb9b"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\THIRD_PARTY_NOTICES.md",
+      "bytes": 3196,
+      "sha256": "9e606df7f4e78c1f7e396495534fd2a0c9593c0c10d41968b5e8433cb60a8464"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\Uninstall.ps1",
+      "bytes": 507,
+      "sha256": "97dce06a0905a1cc5285fd1db0e85d9f3f27d14598210966625fa60409c9ffb4"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\preparation.json",
+      "bytes": 657,
+      "sha256": "fe25f0d6fc9a7b6dda5c606ff01d5225a4c44c53e4787adfd654218ce7293e7a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\tests\\v2-vision-plan-fixture.c",
+      "bytes": 9033,
+      "sha256": "c485b45c48649b032fce0454a4566c8273df3681d0eb36df773fc42d407a1f4a"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\tests\\test_v2_vision_plan.py",
+      "bytes": 3626,
+      "sha256": "c6775fa24ea5d72be901b5ce3213faffd7f51c3b2b81f1b5f7af17a1bc1f0464"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\tests\\test_v2_vision_budget.py",
+      "bytes": 3364,
+      "sha256": "38848ded49dfed25b8ff9d8e81be4fadbe8242b154cb3aa217806e72d6bd62ca"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\scripts\\capacity_policy.py",
+      "bytes": 2613,
+      "sha256": "4df1d703d8b4e2916752bd68db18f1d4a055ec2783f5732a2d8309becb5864e3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\tests\\test_capacity_portable.py",
+      "bytes": 17519,
+      "sha256": "ea978e2e181e7e62059d8ef3351c54ae26c8948c1abbe8ccb93911c4a099bc41"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\tests\\fixtures\\halogen0201-capacity-default-environment.json",
+      "bytes": 1373,
+      "sha256": "5c2ae703858021adc114e5fe12d3e026d2a3be14cd4a6e33d303e61835a019c3"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\executed-bindings.json",
+      "bytes": 25429,
+      "sha256": "2ed454687a87f4200068f6b9a9d39b21830b1e5576551d19227a86d8d580bd71"
+    },
+    {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-component-v1\\Root-terminal-audit-v1.json",
+      "bytes": 2709,
+      "sha256": "ee79c9fccc1456c1911e3ff3470e0787d09a760d2bd9b5930adecb86e708115b"
+    }
+  ],
+  "verification": {
+    "passed": true,
+    "checks": 73,
+    "check_details": [
+      "Root actual session-terminal finalizer preserved",
+      "Pinned saved evidence bytes: C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\handle.json",
+      "Session84304 terminal exit1, coordinator confirmed dead",
+      "Failed campaign restored normal server, not completed",
+      "No new NPU helper or candidate/after arm started",
+      "Exactly one completed request in incomplete BEFORE collector",
+      "Only excluded warmup saved; zero measured requests",
+      "Excluded warmup has actual8192input/128output tokens",
+      "No cache or disk restore in warmup",
+      "Warmup API response paired with exact RAW report",
+      "Warmup original RAW journal hash verified",
+      "Pinned saved evidence bytes: C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-core-append-live-v1\\before\\natural8192\\token-ids\\request-4-f6368caeba1e4d48bacecf02c3499c18.json",
+      "All128 saved native target IDs and their hash verified",
+      "Exact output-text hash independently reconstructed",
+      "Causal API/native request identity and saved RAW qualification",
+      "prefill excluded-warmup RAW midpoint recomputed",
+      "decode excluded-warmup RAW midpoint recomputed",
+      "Failed next-request120-second entry wait preserved:472samples,no eligible frames",
+      "Every failed admission sample below22GiB and above18GiB floor",
+      "Original memory-entry error preserved consistently",
+      "Root confirms normal server open with NPU disabled",
+      "Restored normal identity and both run IDs reconcile",
+      "Fresh authenticated17/2token READY smoke is separate from benchmark",
+      "Pinned saved evidence bytes: C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-serving-promotion-prep\\profile-8192.json",
+      "Pinned saved evidence bytes: C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\profiles\\sources.json",
+      "Restored source manifest has47normal members",
+      "Restored normal source member: .gitattributes",
+      "Restored normal source member: .gitignore",
+      "Restored normal source member: Install.ps1",
+      "Restored normal source member: LICENSE",
+      "Restored normal source member: patches/halogen-preflight-bridge.c",
+      "Restored normal source member: patches/halogen-preflight-trampoline.S",
+      "Restored normal source member: patches/hip-preflight-plan.h",
+      "Restored normal source member: patches/hip-register-hybrid.c",
+      "Restored normal source member: patches/hip-register-private-rw.c",
+      "Restored normal source member: portable-source-notes.md",
+      "Restored normal source member: profiles/preflight-sequences.json",
+      "Restored normal source member: profiles/release.json",
+      "Restored normal source member: README.md",
+      "Restored normal source member: scripts/api_defaults.py",
+      "Restored normal source member: scripts/auth_api.py",
+      "Restored normal source member: scripts/bounded_hash.py",
+      "Restored normal source member: scripts/bridge_adapter.py",
+      "Restored normal source member: scripts/checkpoint_integrity.py",
+      "Restored normal source member: scripts/entrypoint_adapter.py",
+      "Restored normal source member: scripts/halogen0201_hip_probe.c",
+      "Restored normal source member: scripts/host_frames.py",
+      "Restored normal source member: scripts/kernel_controls.py",
+      "Restored normal source member: scripts/lease_supervisor.py",
+      "Restored normal source member: scripts/lookup_source.py",
+      "Restored normal source member: scripts/matmul_plan.py",
+      "Restored normal source member: scripts/matmul_tuning.py",
+      "Restored normal source member: scripts/memory_budget.py",
+      "Restored normal source member: scripts/portable.py",
+      "Restored normal source member: scripts/private_hsa.py",
+      "Restored normal source member: scripts/runner.py",
+      "Restored normal source member: scripts/sample.ps1",
+      "Restored normal source member: scripts/service.py",
+      "Restored normal source member: scripts/speculation_policy.py",
+      "Restored normal source member: scripts/startup_cache.py",
+      "Restored normal source member: scripts/startup_guard.py",
+      "Restored normal source member: scripts/startup_monitor.py",
+      "Restored normal source member: scripts/state_io.py",
+      "Restored normal source member: Start.ps1",
+      "Restored normal source member: THIRD_PARTY_NOTICES.md",
+      "Restored normal source member: Uninstall.ps1",
+      "Restored normal source member: preparation.json",
+      "Restored normal source member: tests/v2-vision-plan-fixture.c",
+      "Restored normal source member: tests/test_v2_vision_plan.py",
+      "Restored normal source member: tests/test_v2_vision_budget.py",
+      "Restored normal source member: scripts/capacity_policy.py",
+      "Restored normal source member: tests/test_capacity_portable.py",
+      "Restored normal source member: tests/fixtures/halogen0201-capacity-default-environment.json"
+    ],
+    "source_only": true,
+    "hardware_API_WSL_DLLload_or_compile": false
+  }
+}

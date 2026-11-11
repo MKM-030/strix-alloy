@@ -19,3 +19,9 @@ The planned experiment keeps the same 32K capacity, paired8192 settings, exact
 stock/NPU/stock arms, each with one excluded warmup plus three measured requests,
 exact target IDs/output and normal server restoration. Earlier incomplete series
 remain intact. Component time cannot be converted into engine token rates.
+
+The [first live attempt](../../../../docs/benchmarks/halogen0201-core-append-live-partial-20261111.md)
+contains only an excluded stock warmup: the next entry wait never reached
+22 GiB within 120 seconds. No measured request or NPU helper started. The normal
+server was restored and authenticated serving passed. This failed attempt is
+preserved and does not qualify live NPU tok/s or acceptance.
