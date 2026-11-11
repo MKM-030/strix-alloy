@@ -1,0 +1,97 @@
+{
+  "schema": "halogen0201.unused-NPU-head-component.plan.v1",
+  "created_utc": "2026-11-11T12:06:46.645271+00:00",
+  "prospective": true,
+  "native_execution_performed": false,
+  "normal_GPU_server_restart_planned": false,
+  "component_not_engine_throughput": true,
+  "source_archive": "scripts/benchmarks/halogen_flm_streaming_producer/core_append_v1",
+  "source_archive_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\scripts\\benchmarks\\halogen_flm_streaming_producer\\core_append_v1\\source-manifest.json",
+    "bytes": 2012,
+    "sha256": "06a869ae186f0d5e559ebdb7f82d9ec8a69bddb690f967491ae6d55d9a92a979"
+  },
+  "implementation_plan": {
+    "path": "C:\\Projects\\strix-alloy-clean\\docs\\superpowers\\plans\\2026-11-11-npu-unused-head.md",
+    "bytes": 5431,
+    "sha256": "eeac61c316a05efc94595f89d6c22305597900efea714743108f770bc57d66da"
+  },
+  "independent_review": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-v1\\final-implementation-independent-review-v1.json",
+    "bytes": 8049,
+    "sha256": "a8bd250dad92a34bb26211833f43357bb5cadd9672da3808b861387cc8fdb686"
+  },
+  "Root_runtime_preparation": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-v1\\runtime-preparation-root-v1.json",
+    "bytes": 66771,
+    "sha256": "63ee147231d53f3ac8a76fc82d5121f686137421384c45f7ee29ef8e310c4e07"
+  },
+  "Root_native_build": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-v1\\native-build-root-v1.json",
+    "bytes": 3364,
+    "sha256": "4e61dd675f29c65e90b7ea4000fe5417b37440d474f33beb5b3ec0044fc377aa"
+  },
+  "native_wrapper": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-v1\\build\\native_backend.dll",
+    "bytes": 173056,
+    "sha256": "063bb3f183bfb2d02304942f628950b80e815aa5f9cf4d15db7801304ae625dc"
+  },
+  "normal_GPU_baseline": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-core-append-v1\\current-normal-baseline-v1.json",
+    "bytes": 13381,
+    "sha256": "6987e8ee88455d4cdfbe57d53b0a38615072cd48a1fea9c74919034666d207a8"
+  },
+  "head_skip_sites": [
+    "0x58358",
+    "0x58393"
+  ],
+  "retained": [
+    "scalar recurrent forward",
+    "layer execution and wait",
+    "both BO synchronizations",
+    "context increment",
+    "row-producing seed/forwards",
+    "state ownership and exact criterion"
+  ],
+  "runs": {
+    "one_native_engine": true,
+    "timed_runs": 8,
+    "excluded_warmups_per_mode": 1,
+    "measured_runs_per_mode": 3,
+    "modes": [
+      "head_on",
+      "head_skip"
+    ],
+    "teacher_forced_true_IDs_per_run": 128,
+    "seed_tokens": 512,
+    "timed_commit_batches": "queued16 for both modes",
+    "unmeasured_mixed_batches": [
+      1,
+      2,
+      3,
+      4,
+      6
+    ],
+    "timed_endpoints": 72,
+    "unmeasured_correctness_endpoints": 9,
+    "total_BF16_values": 20093670,
+    "criterion": "original exact BF16 byte equality",
+    "future_IDs_supplied_to_live_engine": false
+  },
+  "policy": {
+    "entry_reserve_gib": 22,
+    "runtime_reserve_gib": 18,
+    "child_deadline_seconds": 120,
+    "worker_deadline_seconds": 110,
+    "automatic_retries": 0,
+    "NPU_children": 1,
+    "GPU_lifecycle_actions": false
+  },
+  "external_interference_check": "final gateway completed and cancelled counters must equal baseline; otherwise no valid component throughput interpretation",
+  "automatic_retries": 0,
+  "normal_NPU_enabled": false,
+  "engine_prefill_tok_s": null,
+  "engine_decode_tok_s": null,
+  "native_MTP_acceptance": null,
+  "full_goal_achieved": false
+}
