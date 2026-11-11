@@ -50,6 +50,7 @@ from pcm_denoise import StreamingPCM16Denoiser
 from native_duplex import (NativeDuplex, BackendTurnUnavailable, prepare_conversation_dependencies,
                            BackendConversationEnded, validate_conversation_url, presentation_history_module)
 from model_health import require_model_ready, validate_model_health
+from tts_health import TTS_MODEL, require_tts_ready
 from local_llm_socket import validate_local_conversation
 
 LOG = logging.getLogger('native-voice')
@@ -315,7 +316,7 @@ class Speech:
         elif self.config.auth_mode == 'servicenow':
             raise RuntimeError('Authorized TTS settings are unavailable')
         # 375 codec frames at 12.5 Hz fit the existing 30 s native drain window.
-        payload = {'model':'scc-native-qwen3', 'voice':voice_id, 'input':text,
+        payload = {'model':TTS_MODEL, 'voice':voice_id, 'input':text,
                    'response_format':'pcm', 'max_new_tokens':375}
         if language is not None:
             payload['language'] = language
@@ -2412,6 +2413,11 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         except RuntimeError:
             LOG.warning('Native create stage=asr_readiness outcome=unavailable')
             raise
+        try:
+            await require_tts_ready(app[HTTP_KEY], config.tts_url)
+        except RuntimeError:
+            LOG.warning('Native create stage=tts_readiness outcome=unavailable')
+            raise
     async def before_text_create():
         if responsive is not None and not responsive.available:
             raise web.HTTPServiceUnavailable(text=availability_notice)
@@ -2596,6 +2602,12 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         from sdk_sessions import _PendingCreate
         if stopping or active:
             raise web.HTTPServiceUnavailable(text=availability_notice)
+        try:
+            await before_create()
+        except RuntimeError:
+            raise web.HTTPServiceUnavailable(text=availability_notice) from None
+        if stopping or active:
+            raise web.HTTPServiceUnavailable(text=availability_notice)
         operation = asyncio.current_task()
         reservation = _PendingCreate(operation)
         active.add(reservation)
@@ -2609,10 +2621,6 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
         finally:
             active.discard(reservation)
             wss_creating.discard(operation)
-        try:
-            await before_create()
-        except RuntimeError:
-            raise web.HTTPServiceUnavailable(text=availability_notice) from None
         if stopping or active or responsive is not None and not responsive.available:
             LOG.info('Native signaling admission status=503 native_sessions=%d', len(active))
             raise web.HTTPServiceUnavailable(text=availability_notice if responsive is not None else 'Demo voice session is busy')
@@ -2731,6 +2739,12 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                 result.update(status='unavailable', asrReady=False)
             else:
                 result.update(asrReady=True, asrModel=QWEN_ASR_MODEL)
+        try:
+            await require_tts_ready(app[HTTP_KEY], config.tts_url)
+        except RuntimeError:
+            result.update(status='unavailable', ttsReady=False)
+        else:
+            result['ttsReady'] = True
         if request.query.get('assistant_settings') == '1':
             result['assistantSettingsSupport'] = {'version':1,'perCallLanguage':True,
                     'nativeCloudVoiceSelection':False,'nativeVadConfidenceAndVolume':False,
@@ -2749,6 +2763,7 @@ def create_app(config, speech_factory=None, dialog_factory=None, probe_backend=F
                 'capabilities':asdict(ExecutorCapabilities()),
                 'reservedContexts':int(not responsive.available),
                 'unresolvedContexts':int(responsive.store.has_unresolved())}
+        result['nativeSessions'] = len(active)
         return web.json_response(result, status=200 if result['status'] == 'ok' else 503)
     app.router.add_get('/launch', launch)
     app.router.add_get('/health', health)

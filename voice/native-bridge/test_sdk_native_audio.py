@@ -7,7 +7,7 @@ import array
 import json
 import math
 import unittest
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 from aiohttp.test_utils import TestClient, TestServer
 from aiortc import AudioStreamTrack, RTCConfiguration, RTCPeerConnection, RTCSessionDescription
 from native_bridge import Config, create_app
@@ -73,6 +73,7 @@ class SDKNativeAudioTests(unittest.IsolatedAsyncioTestCase):
         peer.addTrack(AudioStreamTrack())
         # Only the test substitutes host ICE. Deployed NativeCall keeps STUN.
         with patch('sdk_admission.admit_sdk_session',side_effect=granted), \
+                patch('native_bridge.require_tts_ready', AsyncMock()), \
                 patch('native_bridge.RTCConfiguration',side_effect=lambda **kw: RTCConfiguration(iceServers=[])):
             client = TestClient(TestServer(create_app(config,
                 speech_factory=lambda http: _Speech(), dialog_factory=_Dialog)))

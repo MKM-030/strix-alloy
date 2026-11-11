@@ -16,6 +16,7 @@ class NativeReadinessTests(unittest.IsolatedAsyncioTestCase):
     async def client(self, model_ready=True, sdk=False):
         self.model = self.enterContext(patch('native_bridge.require_model_ready', AsyncMock()))
         self.asr = self.enterContext(patch('native_bridge.require_asr_ready', AsyncMock()))
+        self.tts = self.enterContext(patch('native_bridge.require_tts_ready', AsyncMock()))
         self.dialog = Mock(side_effect=AssertionError('Health must not allocate a Dialog'))
         self.speech = Mock(side_effect=AssertionError('Health must not allocate Speech'))
         config = Config(model_health_url='http://127.0.0.1:8840/health',
