@@ -1,0 +1,56 @@
+{
+  "schema": "halogen0201.scalar-catchup-component-plan.v1",
+  "registered_utc": "2026-11-11T10:30:55.109477+00:00",
+  "runtime_preparation": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-v2\\runtime-preparation-v1.json",
+    "bytes": 59297,
+    "sha256": "da3b5c7f71dbbdef6c67a50b5c549ef0d12637a870da00e7cdd0b1c2cb1d54ac"
+  },
+  "DLL": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-v2\\build\\native_backend.dll",
+    "bytes": 166400,
+    "sha256": "8d997e0a9c7566c740ed7a754a59aaa7efed1af174c3a38ba8ad7a5c3e68f91a"
+  },
+  "normal_GPU_server_left_online": true,
+  "GPU_lifecycle_actions": false,
+  "NPU_children": 1,
+  "deadline_seconds": 120,
+  "entry_physical_and_commit_GiB": 22,
+  "runtime_physical_and_commit_GiB": 18,
+  "modes": [
+    "singleton",
+    "queued16"
+  ],
+  "runs": 8,
+  "warmups_excluded_per_mode": 1,
+  "measured_runs_per_mode": 3,
+  "endpoint_G": [
+    0,
+    16,
+    32,
+    48,
+    64,
+    80,
+    96,
+    112,
+    128
+  ],
+  "BF16_comparison": "Exact retained-reference bytes at9endpoints perrun; no tolerance relaxation; no claim to observe all129intermediate rows",
+  "feedback": "Same frozen128recorded true IDs, scalar model forwards; isolated correctness/overhead replay, never liveenginefuturefeed",
+  "timing": "Commit-loop WindowsQPC with seed/reset,row capture/comparison and disk work outside; includes actor/nativecopy/snapshot cost. Component milliseconds only.",
+  "expected_old_counts_per_run": {
+    "forward": 128,
+    "append_only": 0,
+    "state_read": 129
+  },
+  "expected_queued16_counts_per_run": {
+    "forward": 8,
+    "append_only": 120,
+    "state_read": 9
+  },
+  "output_directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-component-v1",
+  "prefill_tok_s": null,
+  "decode_tok_s": null,
+  "native_MTP_acceptance": null,
+  "engine_gain_qualified": false
+}

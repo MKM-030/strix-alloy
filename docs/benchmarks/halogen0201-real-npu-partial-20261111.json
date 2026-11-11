@@ -1,0 +1,242 @@
+{
+  "schema": "halogen0201.real-NPU-v3-partial-source-review.v1",
+  "utc": "2026-11-11T10:16:24.714756+00:00",
+  "source_only_review": true,
+  "terminal_campaign": true,
+  "complete_cohort": false,
+  "normal_restoration_recorded": true,
+  "normal_live_verification_owner": "Root; no live process/API/hardware access by this review",
+  "workload": {
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "temperature": 0,
+    "seed": 1,
+    "CacheOff": true,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "context_capacity": 32768
+  },
+  "before": {
+    "requests": 4,
+    "warmup_excluded": 1,
+    "measured_repetitions": 3,
+    "qualified_RAW_arm_complete": true,
+    "prefill_raw_tok_s_mean": 1553.9007467388321,
+    "decode_raw_tok_s_mean": 45.91524621442767,
+    "native_draft_accepted": 192,
+    "native_draft_proposed": 312,
+    "native_draft_acceptance": 0.6153846153846154
+  },
+  "candidate": {
+    "requests": 1,
+    "all_candidate_observations_are_excluded_warmup": true,
+    "measured_repetitions": 0,
+    "warmup_raw_prefill_tok_s": 809.5636572491857,
+    "warmup_raw_decode_tok_s": 34.52730579341139,
+    "native_draft_accepted": 64,
+    "native_draft_proposed": 106,
+    "native_draft_acceptance": 0.6037735849056604,
+    "native_head": {
+      "rounds": 62,
+      "drafted": 103,
+      "accepted": 64
+    },
+    "native_lookup": {
+      "rounds": 1,
+      "drafted": 3,
+      "accepted": 0
+    },
+    "HDO2_counter_delta": {
+      "queries": 63,
+      "lock_busy": 0,
+      "datagrams": 140,
+      "rejected_datagrams": 0,
+      "recv_errors": 0,
+      "begins": 1,
+      "authorities": 126,
+      "readies": 13,
+      "retirements": 0,
+      "sequence_failures": 0,
+      "stale_readies": 0,
+      "prefix_misses": 10,
+      "current_misses": 0,
+      "already_consumed": 0,
+      "hits": 1,
+      "proposed_ids": 3,
+      "native_fallbacks": 62
+    },
+    "exact_T_and_output_parity": true,
+    "qualified_NPU_prefill_tok_s": null,
+    "qualified_NPU_decode_tok_s": null,
+    "qualified_speed_gain": null
+  },
+  "after": {
+    "requests": 0,
+    "measured_repetitions": 0
+  },
+  "headline_qualified": false,
+  "NPU_gain_demonstrated": false,
+  "stopping_condition": {
+    "message": "120-second memory admission deadline reached on the same ready controller",
+    "admission_elapsed_seconds": 120.0,
+    "required_entry_GiB": 22,
+    "eligible_frames": 0,
+    "model_API_calls_during_wait": 0,
+    "post_warmup_admission_memory": {
+      "samples": 472,
+      "physical_available_GiB_min": 18.92845916748047,
+      "physical_available_GiB_max": 21.962352752685547,
+      "physical_available_GiB_first": 21.759769439697266,
+      "physical_available_GiB_last": 21.944679260253906,
+      "commit_headroom_GiB_min": 109.17619705200195
+    }
+  },
+  "helper": {
+    "exit_code": 1,
+    "stop_request_observed": true,
+    "native_closed": true,
+    "worker_thread_closed": true,
+    "native_cleanup_complete": true,
+    "request_context_active_at_shutdown": false,
+    "transport_errors_preserved": [
+      "OSError: [WinError 10038] An operation was attempted on something that is not a socket"
+    ],
+    "operation_counts": {
+      "startup": 1,
+      "seed": 1,
+      "state_read": 132,
+      "forward": 131,
+      "state_write": 1
+    },
+    "operation_costs_ms": {
+      "startup": {
+        "calls": 1,
+        "mean_ms": 922.8815999999999,
+        "sum_ms": 922.8815999999999
+      },
+      "seed": {
+        "calls": 1,
+        "mean_ms": 413.1397,
+        "sum_ms": 413.1397
+      },
+      "state_read": {
+        "calls": 132,
+        "mean_ms": 7.835367424242424,
+        "sum_ms": 1034.2685
+      },
+      "forward": {
+        "calls": 131,
+        "mean_ms": 27.743979389312976,
+        "sum_ms": 3634.4613
+      },
+      "state_write": {
+        "calls": 1,
+        "mean_ms": 8.661200000000001,
+        "sum_ms": 8.661200000000001
+      }
+    },
+    "all_recorded_operations_context_closed": true,
+    "request_context": 1,
+    "request_close_started_qpc_ns": 564147949451400,
+    "request_close_finished_qpc_ns": 564148030709700,
+    "request_close_duration_ms": 81.2583,
+    "request_close_finished_after_HTTP_response_ms": 1469.7205,
+    "helper_process_lifetime_seconds": 142.8598264,
+    "helper_finish_after_request_close_seconds": 122.0832176,
+    "system_memory_samples": {
+      "samples": 1295,
+      "physical_available_GiB_min": 18.925811767578125,
+      "physical_available_GiB_max": 22.258869171142578,
+      "physical_available_GiB_first": 22.24142837524414,
+      "physical_available_GiB_last": 21.947063446044922,
+      "commit_headroom_GiB_min": 109.1707534790039
+    }
+  },
+  "memory_interpretation": {
+    "proved": [
+      "One native request context was reported closed; all266 recorded operations carry its successful close marker.",
+      "The close finished about1.47seconds after the warmup HTTP response. The next-request admission check follows that response and failed over120seconds.",
+      "The helper remained alive during that wait, but no further model request was started."
+    ],
+    "not_proved": [
+      "No saved per-process/private-working-set/driver-allocation attribution isolates who retained physical memory.",
+      "Global available/commit telemetry cannot distinguish runtime/driver caching, GPU/WSL allocations, other processes or system page management.",
+      "Reported native closure does not prove immediate physical-page reclamation, and the low reserve alone does not establish a native context leak."
+    ],
+    "causal_attribution": null,
+    "new_diagnostic_requested": false
+  },
+  "clock_scope": "Close/HTTP comparisons use the shared Windows QPC domain only; no Windows/Linux timestamp subtraction.",
+  "rate_scope": "Before arm is a complete three-run RAW observation. Candidate rate is excluded warmup only; no NPU-on/off delta or speedup is computed.",
+  "inputs": {
+    "handle.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3\\handle.json",
+      "bytes": 141387,
+      "sha256": "b1c78b4377276cda57d39149c1e2def509df96d1ba41d9a780bedb728850b7f0"
+    },
+    "npu-helper/terminal.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3\\npu-helper\\terminal.json",
+      "bytes": 127547,
+      "sha256": "12bbe37e0af504b86212b8b89522285285472f1176d797fc91e44cf090a12258"
+    },
+    "npu-helper/handle.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3\\npu-helper\\handle.json",
+      "bytes": 245397,
+      "sha256": "0a1bae3fde83f81e3004d30f30a55f14c369c0a29a313db5eafe3a361df4285c"
+    },
+    "candidate/natural8192/sample-0.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3\\candidate\\natural8192\\sample-0.json",
+      "bytes": 2225,
+      "sha256": "948738d5ddbcd8618cce03d55cc75e2884a78d17f1ef5d967059902600fe7654"
+    },
+    "candidate/natural8192/raw-sample-0.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3\\candidate\\natural8192\\raw-sample-0.json",
+      "bytes": 1351,
+      "sha256": "cac949a4916109c6b6b3f5c1557a79e0bd8c520ee7967d7320e155db230a1af7"
+    },
+    "candidate/natural8192/HDO2-stats-0.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3\\candidate\\natural8192\\HDO2-stats-0.json",
+      "bytes": 815,
+      "sha256": "30951b5850dd22692c66036be83c1cb276bc12b849cd501cc2d734a9b21cd81c"
+    },
+    "before/natural8192/raw-report.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3\\before\\natural8192\\raw-report.json",
+      "bytes": 7654,
+      "sha256": "167f1d7e1408ca9c366c04e077b530680f44d7660fb43bd0074088b01b5d6b20"
+    }
+  },
+  "admission_wait_input": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3.admission-waits\\0010.json",
+    "bytes": 138293,
+    "sha256": "75076b5b744cf9e040c667471d6c6b4cad957e31b1fb0382a819bd2ecb618df5"
+  },
+  "root_terminal_observation": {
+    "tool_session": 37205,
+    "exit_code": 1,
+    "restored": true,
+    "normal_snapshot": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3\\ready-left-online.json",
+      "bytes": 13953,
+      "sha256": "ed1b1625898a064a288e807096bc4cdc1896ae04cfb0a7fd49fc113b43f90d9f"
+    },
+    "identities": {
+      "controller": {
+        "pid": 42908,
+        "creation_time_100ns": 134388647738765263,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 44720,
+        "creation_time_100ns": 134388647846709305,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      }
+    },
+    "recorded_utc": "2026-11-11T10:02:29.466816+00:00"
+  },
+  "source_partial_review": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-live-v3\\source-partial-review-v1\\partial-results.json",
+    "bytes": 8515,
+    "sha256": "ae0c6a18d73a46c2c886811796cccf404b537d930946a1e0a440800cea6b68c3"
+  },
+  "acceptance_scope": "API-reported counts; independent complete native head-acceptance reconstruction remains open; NPU lookup0/3 is one excluded warmup only."
+}
