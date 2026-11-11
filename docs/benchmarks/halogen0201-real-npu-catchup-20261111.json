@@ -1,0 +1,1390 @@
+{
+  "schema": "halogen0201.real-npu-catchup-live-audit.v1",
+  "audit_utc": "2026-11-11T11:22:20.133816+00:00",
+  "source": "Read-only saved-file audit; no new model, API, compiler, WSL or hardware calls",
+  "version": "0.20.1",
+  "campaign": {
+    "session_id": 33523,
+    "exit_code": 1,
+    "terminal": true,
+    "completed": false,
+    "restored": true,
+    "headline_qualified": false,
+    "ended_utc": "2026-11-11T11:11:48.029878+00:00",
+    "handle": {
+      "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/handle.json",
+      "bytes": 488320,
+      "sha256": "a79627814b2c755b07ab5cc55d2489c1facae03259d9ae59a66a4458a5f6980c"
+    },
+    "terminal_receipt": {
+      "path": "server/.local/halogen-update-20261110/primary0201/root-session33523-terminal.json",
+      "bytes": 1068,
+      "sha256": "057a73b22be14fc128aa5e9458344dc3014e92704a4bdec1fa5cc6efaf283942"
+    }
+  },
+  "workload": {
+    "actual_input_tokens": 8192,
+    "output_tokens": 128,
+    "context_capacity": 32768,
+    "slots": 1,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "cache": "Off/no_store",
+    "temperature": 0,
+    "seed": 1,
+    "thinking": false,
+    "mtp_gate_p": 0.9,
+    "pld": "3,3",
+    "intended_arms": [
+      "stock_before",
+      "real_NPU_candidate",
+      "stock_after"
+    ],
+    "excluded_warmups_per_arm": 1,
+    "intended_measured_requests_per_arm": 3,
+    "decode_phase_numerator": 128,
+    "initial_generated_count": 1,
+    "remaining_generated_delta": 127,
+    "rate_method": "RAW nanosecond-bracket midpoint; unweighted arithmetic mean of three per-request rates; no scaling/subtraction"
+  },
+  "arms": {
+    "before": {
+      "saved_requests": 4,
+      "measured_requests": 3,
+      "collector_completed": true,
+      "measured_arithmetic_means": {
+        "RAW_prefill_tok_s": 1523.2142151243006,
+        "RAW_decode_tok_s": 43.72810651327065,
+        "API_prefill_tok_s": 1523.2146666666667,
+        "API_decode_tok_s": 43.72833333333333,
+        "API_all_neural_head": {
+          "accepted": 192,
+          "drafted": 312,
+          "acceptance": 0.6153846153846154
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        }
+      },
+      "collector_handle": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/handle.json",
+        "bytes": 1562,
+        "sha256": "25c71de4d50ab0373b4e43aa63c0e1527ef648e87d2c2b5e516534c512cb7c26"
+      }
+    },
+    "candidate": {
+      "saved_requests": 4,
+      "measured_requests": 3,
+      "collector_completed": true,
+      "measured_arithmetic_means": {
+        "RAW_prefill_tok_s": 1429.6192637387287,
+        "RAW_decode_tok_s": 43.10135195176233,
+        "API_prefill_tok_s": 1429.616,
+        "API_decode_tok_s": 43.10066666666666,
+        "API_all_neural_head": {
+          "accepted": 192,
+          "drafted": 312,
+          "acceptance": 0.6153846153846154
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0,
+          "acceptance": null
+        }
+      },
+      "collector_handle": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/handle.json",
+        "bytes": 1562,
+        "sha256": "b411ee9a480299993d9d37c0d479ff0bb905d4235614ad7dd5c494ca53da29c4"
+      }
+    },
+    "after": {
+      "saved_requests": 1,
+      "measured_requests": 0,
+      "collector_completed": false,
+      "measured_arithmetic_means": null,
+      "collector_handle": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/handle.json",
+        "bytes": 1618,
+        "sha256": "8aa918f68c2151e75ccc28051acc68948e779719eac12042a9bfa42f66601d70"
+      }
+    }
+  },
+  "runs": [
+    {
+      "arm": "before",
+      "ordinal": 0,
+      "phase": "warmup_excluded",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "RAW_prefill_tok_s": 872.907181470218,
+      "RAW_decode_tok_s": 32.828706983622574,
+      "API_prefill_tok_s": 872.91,
+      "API_decode_tok_s": 32.829,
+      "API_all_neural_head": {
+        "rounds": 63,
+        "drafted": 104,
+        "accepted": 64,
+        "acceptance": 0.6153846153846154
+      },
+      "lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      },
+      "native_chain_subset": {
+        "rounds": 62,
+        "drafted": 103,
+        "accepted": 63
+      },
+      "independently_proven_all_neural_acceptance": null,
+      "HDO2_delta": null,
+      "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+      "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+      "minimum_observed_reserve_gib": 21.874710083007812,
+      "sample": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/sample-0.json",
+        "bytes": 2223,
+        "sha256": "2c5e3498517a74474195e2158ad66a48230dabbfe4be8c5d528b3aee32510d79"
+      },
+      "raw": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/raw-sample-0.json",
+        "bytes": 1346,
+        "sha256": "99c4b413badf1cb2a9be2cadbbbdfd0c8a9b19c19efbefbc83696cdee6f98884"
+      },
+      "native_T_capture": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-ids/request-4-d4698621f0a94a5fb91c690640c0595f.json",
+        "bytes": 2247,
+        "sha256": "ee45ee352d6f8b70506105909a83cd473cb751c1670b0695c6f0db50712a2266"
+      }
+    },
+    {
+      "arm": "before",
+      "ordinal": 1,
+      "phase": "measured",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "RAW_prefill_tok_s": 1372.651558889113,
+      "RAW_decode_tok_s": 40.8348891388876,
+      "API_prefill_tok_s": 1372.654,
+      "API_decode_tok_s": 40.835,
+      "API_all_neural_head": {
+        "rounds": 63,
+        "drafted": 104,
+        "accepted": 64,
+        "acceptance": 0.6153846153846154
+      },
+      "lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      },
+      "native_chain_subset": {
+        "rounds": 62,
+        "drafted": 103,
+        "accepted": 63
+      },
+      "independently_proven_all_neural_acceptance": null,
+      "HDO2_delta": null,
+      "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+      "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+      "minimum_observed_reserve_gib": 22.00214385986328,
+      "sample": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/sample-1.json",
+        "bytes": 2216,
+        "sha256": "13b2f3f61484b1992f8be9aba5c5bb9c75da88138d2e4a4063b7a50c908a6c64"
+      },
+      "raw": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/raw-sample-1.json",
+        "bytes": 1347,
+        "sha256": "ce9d09c5bc2cbc66354511b9411b08392e111e5cdac0bb081e9f42fad904998d"
+      },
+      "native_T_capture": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-ids/request-5-cf1f124d0f044822ade37977f0ab15b0.json",
+        "bytes": 2246,
+        "sha256": "b99f78d05cf6a77a9eb3872ade11e5b9e0dd510dc77920da7352bcc97d75f5f4"
+      }
+    },
+    {
+      "arm": "before",
+      "ordinal": 2,
+      "phase": "measured",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "RAW_prefill_tok_s": 1636.3577898057226,
+      "RAW_decode_tok_s": 42.474596019612626,
+      "API_prefill_tok_s": 1636.371,
+      "API_decode_tok_s": 42.474,
+      "API_all_neural_head": {
+        "rounds": 63,
+        "drafted": 104,
+        "accepted": 64,
+        "acceptance": 0.6153846153846154
+      },
+      "lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      },
+      "native_chain_subset": {
+        "rounds": 62,
+        "drafted": 103,
+        "accepted": 63
+      },
+      "independently_proven_all_neural_acceptance": null,
+      "HDO2_delta": null,
+      "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+      "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+      "minimum_observed_reserve_gib": 21.996021270751953,
+      "sample": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/sample-2.json",
+        "bytes": 2217,
+        "sha256": "8fa3b207025d04d0fd0a0d999f95378afb8899cf2e73bb662bd138f378e90a79"
+      },
+      "raw": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/raw-sample-2.json",
+        "bytes": 1351,
+        "sha256": "67588c7f7a88f5c79e9b69a20cc383edc7d860c6d11aafc201508f97ee0e50a3"
+      },
+      "native_T_capture": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-ids/request-6-998fdb169053442eaf3f718bb1aa7859.json",
+        "bytes": 2246,
+        "sha256": "c5bba098fef0aa380aab2881817408c3fb47ae5e7ac787502c3bdd354643bee6"
+      }
+    },
+    {
+      "arm": "before",
+      "ordinal": 3,
+      "phase": "measured",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "RAW_prefill_tok_s": 1560.6332966780667,
+      "RAW_decode_tok_s": 47.874834381311715,
+      "API_prefill_tok_s": 1560.619,
+      "API_decode_tok_s": 47.876,
+      "API_all_neural_head": {
+        "rounds": 63,
+        "drafted": 104,
+        "accepted": 64,
+        "acceptance": 0.6153846153846154
+      },
+      "lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      },
+      "native_chain_subset": {
+        "rounds": 62,
+        "drafted": 103,
+        "accepted": 63
+      },
+      "independently_proven_all_neural_acceptance": null,
+      "HDO2_delta": null,
+      "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+      "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+      "minimum_observed_reserve_gib": 22.140644073486328,
+      "sample": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/sample-3.json",
+        "bytes": 2217,
+        "sha256": "e0a6ad5b46e14a5047fa1318545b303ae69a527e1e010d291d079481868af351"
+      },
+      "raw": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/raw-sample-3.json",
+        "bytes": 1351,
+        "sha256": "22cb1065960e261a06ceedd72ee9a9e6d5c6b6cf1523e3ab3d4a55de989468df"
+      },
+      "native_T_capture": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-ids/request-7-0ea0b4ac8329472ebedd54c55139c621.json",
+        "bytes": 2246,
+        "sha256": "c1b2b13ad88c9cb2b0323f371e26883e1fee8d82b4cd885367b30351b75a2e1c"
+      }
+    },
+    {
+      "arm": "candidate",
+      "ordinal": 0,
+      "phase": "warmup_excluded",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "RAW_prefill_tok_s": 774.3160857614998,
+      "RAW_decode_tok_s": 30.615797550811397,
+      "API_prefill_tok_s": 774.313,
+      "API_decode_tok_s": 30.616,
+      "API_all_neural_head": {
+        "rounds": 62,
+        "drafted": 103,
+        "accepted": 64,
+        "acceptance": 0.6213592233009708
+      },
+      "lookup": {
+        "rounds": 1,
+        "drafted": 3,
+        "accepted": 0,
+        "acceptance": 0.0
+      },
+      "native_chain_subset": {
+        "rounds": 61,
+        "drafted": 102,
+        "accepted": 63
+      },
+      "independently_proven_all_neural_acceptance": null,
+      "HDO2_delta": {
+        "queries": 63,
+        "lock_busy": 0,
+        "datagrams": 149,
+        "rejected_datagrams": 0,
+        "recv_errors": 0,
+        "begins": 1,
+        "authorities": 126,
+        "readies": 22,
+        "retirements": 0,
+        "sequence_failures": 0,
+        "stale_readies": 0,
+        "prefix_misses": 11,
+        "current_misses": 0,
+        "already_consumed": 0,
+        "hits": 1,
+        "proposed_ids": 3,
+        "native_fallbacks": 62
+      },
+      "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+      "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+      "minimum_observed_reserve_gib": 20.612834930419922,
+      "sample": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/sample-0.json",
+        "bytes": 2225,
+        "sha256": "169146efc6274b139337570a3a71d4a5471e5008c52866d95253fd2c8181b50c"
+      },
+      "raw": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/raw-sample-0.json",
+        "bytes": 1351,
+        "sha256": "7a62c011af35bf4141585dfc857b62209706b6e9164e4857e630914e5a1680a4"
+      },
+      "native_T_capture": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-ids/request-4-da48a9331a5d42d098779b2a0f3b2e36.json",
+        "bytes": 2248,
+        "sha256": "4a207fe031fc12d57705a7eef1801983cfd9a06774f25d6961aa6482c3d31e74"
+      }
+    },
+    {
+      "arm": "candidate",
+      "ordinal": 1,
+      "phase": "measured",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "RAW_prefill_tok_s": 1258.1145313785505,
+      "RAW_decode_tok_s": 44.66360832073658,
+      "API_prefill_tok_s": 1258.12,
+      "API_decode_tok_s": 44.663,
+      "API_all_neural_head": {
+        "rounds": 63,
+        "drafted": 104,
+        "accepted": 64,
+        "acceptance": 0.6153846153846154
+      },
+      "lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      },
+      "native_chain_subset": {
+        "rounds": 62,
+        "drafted": 103,
+        "accepted": 63
+      },
+      "independently_proven_all_neural_acceptance": null,
+      "HDO2_delta": {
+        "queries": 63,
+        "lock_busy": 0,
+        "datagrams": 140,
+        "rejected_datagrams": 3,
+        "recv_errors": 0,
+        "begins": 1,
+        "authorities": 126,
+        "readies": 10,
+        "retirements": 1,
+        "sequence_failures": 0,
+        "stale_readies": 0,
+        "prefix_misses": 8,
+        "current_misses": 0,
+        "already_consumed": 0,
+        "hits": 0,
+        "proposed_ids": 0,
+        "native_fallbacks": 63
+      },
+      "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+      "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+      "minimum_observed_reserve_gib": 20.74338150024414,
+      "sample": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/sample-1.json",
+        "bytes": 2215,
+        "sha256": "a160f6d219f2af69f22b4a8f68de0253144f92614fcf6cb992bf47a1ea78cfd6"
+      },
+      "raw": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/raw-sample-1.json",
+        "bytes": 1348,
+        "sha256": "3c315d52d8502735f244dd480a2179cfdfa0fc6fc67ef3a4b993a8cbc7180c49"
+      },
+      "native_T_capture": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-ids/request-5-6c42a63b9d834cef81571e6954c5010d.json",
+        "bytes": 2247,
+        "sha256": "de2b55ebbc3f0e6f49cc64cb69ed0154f8ebfe0ff4b11ce8e98c4a817f308112"
+      }
+    },
+    {
+      "arm": "candidate",
+      "ordinal": 2,
+      "phase": "measured",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "RAW_prefill_tok_s": 1550.9887438792439,
+      "RAW_decode_tok_s": 44.874912189328384,
+      "API_prefill_tok_s": 1550.986,
+      "API_decode_tok_s": 44.874,
+      "API_all_neural_head": {
+        "rounds": 63,
+        "drafted": 104,
+        "accepted": 64,
+        "acceptance": 0.6153846153846154
+      },
+      "lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      },
+      "native_chain_subset": {
+        "rounds": 62,
+        "drafted": 103,
+        "accepted": 63
+      },
+      "independently_proven_all_neural_acceptance": null,
+      "HDO2_delta": {
+        "queries": 63,
+        "lock_busy": 0,
+        "datagrams": 140,
+        "rejected_datagrams": 3,
+        "recv_errors": 0,
+        "begins": 1,
+        "authorities": 126,
+        "readies": 10,
+        "retirements": 1,
+        "sequence_failures": 0,
+        "stale_readies": 0,
+        "prefix_misses": 5,
+        "current_misses": 0,
+        "already_consumed": 0,
+        "hits": 0,
+        "proposed_ids": 0,
+        "native_fallbacks": 63
+      },
+      "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+      "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+      "minimum_observed_reserve_gib": 20.6591796875,
+      "sample": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/sample-2.json",
+        "bytes": 2212,
+        "sha256": "84506a4591aa1d8c7c59d94308779e41b39a75d4c037891862ae32389e9e2dcb"
+      },
+      "raw": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/raw-sample-2.json",
+        "bytes": 1350,
+        "sha256": "f86aea3ecc050344266942f08c7184e0d55fb80ff694f192e750522fb8266f1e"
+      },
+      "native_T_capture": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-ids/request-6-358937863b194a1cb165717b03d84d09.json",
+        "bytes": 2247,
+        "sha256": "de1a0f27ab32132e0a479623a28f3981ece58d3cba9b4f4c8051a4d4e39e8ece"
+      }
+    },
+    {
+      "arm": "candidate",
+      "ordinal": 3,
+      "phase": "measured",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "RAW_prefill_tok_s": 1479.7545159583917,
+      "RAW_decode_tok_s": 39.76553534522205,
+      "API_prefill_tok_s": 1479.742,
+      "API_decode_tok_s": 39.765,
+      "API_all_neural_head": {
+        "rounds": 63,
+        "drafted": 104,
+        "accepted": 64,
+        "acceptance": 0.6153846153846154
+      },
+      "lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      },
+      "native_chain_subset": {
+        "rounds": 62,
+        "drafted": 103,
+        "accepted": 63
+      },
+      "independently_proven_all_neural_acceptance": null,
+      "HDO2_delta": {
+        "queries": 63,
+        "lock_busy": 0,
+        "datagrams": 143,
+        "rejected_datagrams": 3,
+        "recv_errors": 0,
+        "begins": 1,
+        "authorities": 126,
+        "readies": 13,
+        "retirements": 1,
+        "sequence_failures": 0,
+        "stale_readies": 0,
+        "prefix_misses": 5,
+        "current_misses": 0,
+        "already_consumed": 0,
+        "hits": 0,
+        "proposed_ids": 0,
+        "native_fallbacks": 63
+      },
+      "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+      "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+      "minimum_observed_reserve_gib": 20.784503936767578,
+      "sample": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/sample-3.json",
+        "bytes": 2217,
+        "sha256": "7fa7257b54a6d9a80efa168c8da7a45957635ca3951d597d82d19dd3f4bbde5b"
+      },
+      "raw": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/raw-sample-3.json",
+        "bytes": 1347,
+        "sha256": "2f23fd8c7beeacb8b48cc94c2d56f13a741cdb7f58d2e4036b63ff75bbfc0aa9"
+      },
+      "native_T_capture": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-ids/request-7-6d63d67dd8ab4000a972bbaa43524db2.json",
+        "bytes": 2247,
+        "sha256": "3228305addfe3e4c533d2468cb6906a7927ac7fcaace2fc0de244b037955f40f"
+      }
+    },
+    {
+      "arm": "after",
+      "ordinal": 0,
+      "phase": "warmup_excluded",
+      "actual_input_tokens": 8192,
+      "actual_output_tokens": 128,
+      "RAW_prefill_tok_s": 865.1853388494615,
+      "RAW_decode_tok_s": 36.18640068794441,
+      "API_prefill_tok_s": 865.185,
+      "API_decode_tok_s": 36.187,
+      "API_all_neural_head": {
+        "rounds": 63,
+        "drafted": 104,
+        "accepted": 64,
+        "acceptance": 0.6153846153846154
+      },
+      "lookup": {
+        "rounds": 0,
+        "drafted": 0,
+        "accepted": 0,
+        "acceptance": null
+      },
+      "native_chain_subset": null,
+      "independently_proven_all_neural_acceptance": null,
+      "HDO2_delta": null,
+      "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f",
+      "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+      "minimum_observed_reserve_gib": 21.80905532836914,
+      "sample": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/sample-0.json",
+        "bytes": 2223,
+        "sha256": "91b32c545e15e4c80428163f01a3d4f87fba6bd8b368021a2c767a7cc46aa977"
+      },
+      "raw": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/raw-sample-0.json",
+        "bytes": 1348,
+        "sha256": "0d0d4b9a654a2edff56850af5830a9d657d7b3b55cbcc4a6057c4d70a48c7906"
+      },
+      "native_T_capture": {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/token-ids/request-4-6eb4d5eaf66048e9beeecd4fc7dc9f57.json",
+        "bytes": 2247,
+        "sha256": "3065e8928d6d0840880d89a553f0cb2a22adc48a561603993a078ad5e90c5c16"
+      }
+    }
+  ],
+  "parity": {
+    "checked_requests": 9,
+    "all_exact_native_T_and_output": true,
+    "token_ID_sha256": "ce2947287e81f2b42de4f6d9d5848f29e3c58bd135869817a6b6e192246d3590",
+    "output_sha256": "2a5e1b664b5de8006309949f572393003ac8cc1612471f3971fa5e9be38b722f"
+  },
+  "acceptance_scope": {
+    "API_all_neural_head": "192/312 per completed measured arm,61.53846%; API scope, not independently proven native all-head accepted count",
+    "native_chain_subset": "189/309 per completed measured arm; narrower chain counter scope, not a replacement for API all-head acceptance",
+    "native_all_neural_acceptance_independently_qualified": false,
+    "measured_lookup": "0accepted/0drafted; undefined, not0%",
+    "excluded_candidate_warmup_lookup": "0accepted/3drafted=0%; one HDO2hit/proposed3; excluded from measured means"
+  },
+  "producer": {
+    "actual_request_contexts": 4,
+    "exit_code": 0,
+    "native_cleanup_complete": true,
+    "transport_threads_closed": true,
+    "expected_local_shutdown_observations": [
+      {
+        "type": "OSError",
+        "message": "[WinError 10038] An operation was attempted on something that is not a socket",
+        "os_error": true,
+        "errno": 10038,
+        "winerror": 10038,
+        "intentional_local_shutdown": true
+      }
+    ],
+    "fatal_transport_errors": [],
+    "operation_counts": {
+      "startup": 4,
+      "seed": 4,
+      "state_read": 114,
+      "forward": 110,
+      "state_write": 6,
+      "append_only": 418
+    },
+    "qualified_loaded_modules": {
+      "native_backend.dll": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\stateful1012-catchup-v2\\build\\native_backend.dll",
+        "bytes": 166400,
+        "sha256": "8d997e0a9c7566c740ed7a754a59aaa7efed1af174c3a38ba8ad7a5c3e68f91a"
+      },
+      "qwen3_5vl_npu.dll": {
+        "path": "C:\\AI\\runtimes\\flm-1.0.12-npu-probe\\portable\\qwen3_5vl_npu.dll",
+        "bytes": 2341376,
+        "sha256": "81b9349b5eb6cc7af277a41fad3a5dd7aa71321a82f8a484e7a980d80c334fad"
+      },
+      "q4_npu_eXpress.dll": {
+        "path": "C:\\AI\\runtimes\\flm-1.0.12-npu-probe\\portable\\q4_npu_eXpress.dll",
+        "bytes": 1103872,
+        "sha256": "c8a601860ba99f9a2191099c4b20f8229f7eb99e2048c744190099d34982ed9d"
+      },
+      "xrt_coreutil.dll": {
+        "path": "C:\\Windows\\System32\\xrt_coreutil.dll",
+        "bytes": 2010984,
+        "sha256": "d0dce13280a0d668b497d4fcabdcb43f1a7353e466af3acabd98c6df7607ed8e"
+      }
+    },
+    "minimum_observed_physical_gib": 20.61440658569336,
+    "minimum_observed_commit_headroom_gib": 110.89704513549805,
+    "module_observation_errors": []
+  },
+  "failed_after_admission": {
+    "receipt": {
+      "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0015.json",
+      "bytes": 138655,
+      "sha256": "ef332e9865122b18dcff79f5b980df949cdecd3d6002a5f404f4efe6be2180c6"
+    },
+    "maximum_seconds": 120,
+    "elapsed_seconds": 120.0,
+    "samples": 473,
+    "eligible_frames": 0,
+    "available_physical_min_gib": 21.590465545654297,
+    "available_physical_max_gib": 21.980701446533203,
+    "entry_reserve_gib": 22,
+    "runtime_floor_gib": 18,
+    "reason": "120-second memory admission deadline reached on the same ready controller"
+  },
+  "causal_conclusion": {
+    "complete_Stock_NPU_Stock_comparison": false,
+    "engine_speedup_qualified": false,
+    "causal_prefill_delta_tok_s": null,
+    "causal_decode_delta_tok_s": null,
+    "NPU_component_prefill_tok_s": null,
+    "NPU_component_decode_tok_s": null,
+    "normal_NPU_enabled": false,
+    "reason": "AFTER has only an excluded warmup; all three measured candidate requests have zero native lookup activity. Descriptive rates do not prove NPU acceleration."
+  },
+  "lifecycle_followup": {
+    "receipt": {
+      "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-catchup-v2/consumer-lifecycle-cpu/investigation-v1.json",
+      "bytes": 16368,
+      "sha256": "2b1589efd76fc01c116c09914f82f58fa27c19abdc90584c6133478537a89b01"
+    },
+    "conclusion": "Five actual frozen-C CPU lifecycle tests found no rearm bug; every live request had BEGIN1/AUTH126/sequence_failures0. Second predictedID14367 differs from actual29262; measured tail finishes0.50\u20130.73s afterHTTP. Exact per-query prefix/READY timeline absent, so exact zero-hit cause remains unproven; no source fix or further cohort justified by this audit."
+  },
+  "server_left_online": {
+    "verified_utc": "2026-11-11T11:19:14.198608+00:00",
+    "version": {
+      "api": "0.20.1",
+      "engine": "0.20.1",
+      "match": true
+    },
+    "ready": true,
+    "port": 8840,
+    "controller_pid": 32308,
+    "backend_pid": 41560,
+    "normal_NPU_enabled": false,
+    "source_members_verified": 47,
+    "functional_smoke": "READY",
+    "smoke_is_benchmark": false,
+    "receipt": {
+      "path": "server/.local/halogen-update-20261110/primary0201/online-after-catchup-verification-20261111.json",
+      "bytes": 2994,
+      "sha256": "5333a16178c7aa982975b2843b0465b9442c26b98a679a214536006b7c8caccd"
+    }
+  },
+  "verification": {
+    "passed": true,
+    "checks": 135,
+    "checks_detail": [
+      "Terminal incomplete campaign preserved, normal restored",
+      "Actual retained session33523 exit1 and terminal coordinator receipt preserved",
+      "Terminal receipt matches campaign handle bytes",
+      "Authenticated restored normal online with NPU disabled",
+      "Terminal and online receipt hash reconcile",
+      "AFTER request-entry timeout retained as failure",
+      "Root-sealed real producer binding with no oracle input",
+      "before saved request count is 4",
+      "before collector count matches saved requests",
+      "before/0 warmup classification retained",
+      "before/0 exact8192/128 no-cache request",
+      "before/0 response hash paired with RAW",
+      "before/0 raw journal hash verified",
+      "before/0 causal API/native request pairing",
+      "before/0 original phase numerators128 retained",
+      "before/0 RAW midpoint rate independently recomputed",
+      "before/0 original native-T capture hash verified",
+      "before/0 actual native-T and output hashes independently reconstructed",
+      "before/0 exact native-T sequence and text parity",
+      "before/0 unique mapped native MTP trace",
+      "before/0 API/native lookup counters agree",
+      "before/1 warmup classification retained",
+      "before/1 exact8192/128 no-cache request",
+      "before/1 response hash paired with RAW",
+      "before/1 raw journal hash verified",
+      "before/1 causal API/native request pairing",
+      "before/1 original phase numerators128 retained",
+      "before/1 RAW midpoint rate independently recomputed",
+      "before/1 original native-T capture hash verified",
+      "before/1 actual native-T and output hashes independently reconstructed",
+      "before/1 exact native-T sequence and text parity",
+      "before/1 unique mapped native MTP trace",
+      "before/1 API/native lookup counters agree",
+      "before/2 warmup classification retained",
+      "before/2 exact8192/128 no-cache request",
+      "before/2 response hash paired with RAW",
+      "before/2 raw journal hash verified",
+      "before/2 causal API/native request pairing",
+      "before/2 original phase numerators128 retained",
+      "before/2 RAW midpoint rate independently recomputed",
+      "before/2 original native-T capture hash verified",
+      "before/2 actual native-T and output hashes independently reconstructed",
+      "before/2 exact native-T sequence and text parity",
+      "before/2 unique mapped native MTP trace",
+      "before/2 API/native lookup counters agree",
+      "before/3 warmup classification retained",
+      "before/3 exact8192/128 no-cache request",
+      "before/3 response hash paired with RAW",
+      "before/3 raw journal hash verified",
+      "before/3 causal API/native request pairing",
+      "before/3 original phase numerators128 retained",
+      "before/3 RAW midpoint rate independently recomputed",
+      "before/3 original native-T capture hash verified",
+      "before/3 actual native-T and output hashes independently reconstructed",
+      "before/3 exact native-T sequence and text parity",
+      "before/3 unique mapped native MTP trace",
+      "before/3 API/native lookup counters agree",
+      "before complete saved RAW/QPC checks pass",
+      "before excluded-warmup arithmetic means independently recomputed",
+      "candidate saved request count is 4",
+      "candidate collector count matches saved requests",
+      "candidate/0 warmup classification retained",
+      "candidate/0 exact8192/128 no-cache request",
+      "candidate/0 response hash paired with RAW",
+      "candidate/0 raw journal hash verified",
+      "candidate/0 causal API/native request pairing",
+      "candidate/0 original phase numerators128 retained",
+      "candidate/0 RAW midpoint rate independently recomputed",
+      "candidate/0 original native-T capture hash verified",
+      "candidate/0 actual native-T and output hashes independently reconstructed",
+      "candidate/0 exact native-T sequence and text parity",
+      "candidate/0 unique mapped native MTP trace",
+      "candidate/0 API/native lookup counters agree",
+      "candidate/1 warmup classification retained",
+      "candidate/1 exact8192/128 no-cache request",
+      "candidate/1 response hash paired with RAW",
+      "candidate/1 raw journal hash verified",
+      "candidate/1 causal API/native request pairing",
+      "candidate/1 original phase numerators128 retained",
+      "candidate/1 RAW midpoint rate independently recomputed",
+      "candidate/1 original native-T capture hash verified",
+      "candidate/1 actual native-T and output hashes independently reconstructed",
+      "candidate/1 exact native-T sequence and text parity",
+      "candidate/1 unique mapped native MTP trace",
+      "candidate/1 API/native lookup counters agree",
+      "candidate/2 warmup classification retained",
+      "candidate/2 exact8192/128 no-cache request",
+      "candidate/2 response hash paired with RAW",
+      "candidate/2 raw journal hash verified",
+      "candidate/2 causal API/native request pairing",
+      "candidate/2 original phase numerators128 retained",
+      "candidate/2 RAW midpoint rate independently recomputed",
+      "candidate/2 original native-T capture hash verified",
+      "candidate/2 actual native-T and output hashes independently reconstructed",
+      "candidate/2 exact native-T sequence and text parity",
+      "candidate/2 unique mapped native MTP trace",
+      "candidate/2 API/native lookup counters agree",
+      "candidate/3 warmup classification retained",
+      "candidate/3 exact8192/128 no-cache request",
+      "candidate/3 response hash paired with RAW",
+      "candidate/3 raw journal hash verified",
+      "candidate/3 causal API/native request pairing",
+      "candidate/3 original phase numerators128 retained",
+      "candidate/3 RAW midpoint rate independently recomputed",
+      "candidate/3 original native-T capture hash verified",
+      "candidate/3 actual native-T and output hashes independently reconstructed",
+      "candidate/3 exact native-T sequence and text parity",
+      "candidate/3 unique mapped native MTP trace",
+      "candidate/3 API/native lookup counters agree",
+      "candidate complete saved RAW/QPC checks pass",
+      "candidate excluded-warmup arithmetic means independently recomputed",
+      "after saved request count is 1",
+      "after collector count matches saved requests",
+      "after/0 warmup classification retained",
+      "after/0 exact8192/128 no-cache request",
+      "after/0 response hash paired with RAW",
+      "after/0 raw journal hash verified",
+      "after/0 causal API/native request pairing",
+      "after/0 original phase numerators128 retained",
+      "after/0 RAW midpoint rate independently recomputed",
+      "after/0 original native-T capture hash verified",
+      "after/0 actual native-T and output hashes independently reconstructed",
+      "after/0 exact native-T sequence and text parity",
+      "All three measured NPU requests have no native lookup activity or HDO2 hits/proposals",
+      "Only excluded NPU warmup has one hit and three drafts, none accepted",
+      "NPU helper exits0 normally and closes all four request contexts",
+      "Genuine v3 native and transport cleanup succeeds",
+      "Every recorded native operation belongs to a normally closed request",
+      "native_backend.dll selected loaded-module bytes verified",
+      "qwen3_5vl_npu.dll selected loaded-module bytes verified",
+      "q4_npu_eXpress.dll selected loaded-module bytes verified",
+      "xrt_coreutil.dll selected loaded-module bytes verified",
+      "Exactly one failed memory admission receipt preserved",
+      "AFTER 120-second22-GiB entry timeout preserved without retry",
+      "All four selected DLL paths independently found in actual retained-helper module observations"
+    ],
+    "evidence_pins": [
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/handle.json",
+        "bytes": 488320,
+        "sha256": "a79627814b2c755b07ab5cc55d2489c1facae03259d9ae59a66a4458a5f6980c"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/root-session33523-terminal.json",
+        "bytes": 1068,
+        "sha256": "057a73b22be14fc128aa5e9458344dc3014e92704a4bdec1fa5cc6efaf283942"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/online-after-catchup-verification-20261111.json",
+        "bytes": 2994,
+        "sha256": "5333a16178c7aa982975b2843b0465b9442c26b98a679a214536006b7c8caccd"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/executed-bindings.json",
+        "bytes": 23279,
+        "sha256": "49144b5596723dcdd26647a48fe4b9c0bb71b86ed778a596db7fc3c210ad8e4e"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/handle.json",
+        "bytes": 1562,
+        "sha256": "25c71de4d50ab0373b4e43aa63c0e1527ef648e87d2c2b5e516534c512cb7c26"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/mtp-cost-trace.json",
+        "bytes": 8335,
+        "sha256": "1713a0e7da4bdb94b3e387c16ccab0e82126afaeadf4dccec7925ef260d45bf0"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/sample-0.json",
+        "bytes": 2223,
+        "sha256": "2c5e3498517a74474195e2158ad66a48230dabbfe4be8c5d528b3aee32510d79"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/raw-sample-0.json",
+        "bytes": 1346,
+        "sha256": "99c4b413badf1cb2a9be2cadbbbdfd0c8a9b19c19efbefbc83696cdee6f98884"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-sample-0.json",
+        "bytes": 1935,
+        "sha256": "6dafce0bb95cf4540241d7bf4a6d879d55ccfe5c9f11c37102fd7803ba68d54d"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/response-0.json",
+        "bytes": 1320,
+        "sha256": "3ce43ce6a2d2265e4822d12382cd52b804e91e49300bbef54a46d8f5a2845f1f"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/transport-0.json",
+        "bytes": 172,
+        "sha256": "0d4c847084350f4b6303c24bb760736801e30c73823456bfb9a8f71d4c17b08b"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/journals/capture-0201001200000001-0.bin",
+        "bytes": 8768,
+        "sha256": "06c05b22357b073664e9a5f42f85985f8173fbd9807c12555efc9d02e26324ca"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-ids/request-4-d4698621f0a94a5fb91c690640c0595f.json",
+        "bytes": 2247,
+        "sha256": "ee45ee352d6f8b70506105909a83cd473cb751c1670b0695c6f0db50712a2266"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/sample-1.json",
+        "bytes": 2216,
+        "sha256": "13b2f3f61484b1992f8be9aba5c5bb9c75da88138d2e4a4063b7a50c908a6c64"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/raw-sample-1.json",
+        "bytes": 1347,
+        "sha256": "ce9d09c5bc2cbc66354511b9411b08392e111e5cdac0bb081e9f42fad904998d"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-sample-1.json",
+        "bytes": 1935,
+        "sha256": "b8620dff5ba6e60a527cc1b6178d0f7fa13e156bd11071f5cfcb603291b69b9c"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/response-1.json",
+        "bytes": 1322,
+        "sha256": "aee368e5d86089f1e8b59dc6c4c6a0db4dd08c2c17377bcb5e2fd575a7f51700"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/transport-1.json",
+        "bytes": 170,
+        "sha256": "f159431fe10024beaf7a91a1fe6b1a6dddb32a7d455771219d04329bdf4fd219"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/journals/capture-0201001200000001-1.bin",
+        "bytes": 8768,
+        "sha256": "9554d74b15346cd76d4d3eafad9f12e512464b773d412298d21beb3b7f7f027c"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-ids/request-5-cf1f124d0f044822ade37977f0ab15b0.json",
+        "bytes": 2246,
+        "sha256": "b99f78d05cf6a77a9eb3872ade11e5b9e0dd510dc77920da7352bcc97d75f5f4"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/sample-2.json",
+        "bytes": 2217,
+        "sha256": "8fa3b207025d04d0fd0a0d999f95378afb8899cf2e73bb662bd138f378e90a79"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/raw-sample-2.json",
+        "bytes": 1351,
+        "sha256": "67588c7f7a88f5c79e9b69a20cc383edc7d860c6d11aafc201508f97ee0e50a3"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-sample-2.json",
+        "bytes": 1935,
+        "sha256": "700633e0841d6d14421bd63310a664aeb23f2381581f754186557b112f8c571b"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/response-2.json",
+        "bytes": 1322,
+        "sha256": "a993eb1ea5f395ac659f89efdda70e618e334bdf60eb0a1833de893a53078a85"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/transport-2.json",
+        "bytes": 171,
+        "sha256": "86270125496599186bfad8260a83cdddfc08e354d52e9a5fafae3d4e0312ce7a"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/journals/capture-0201001200000001-2.bin",
+        "bytes": 8768,
+        "sha256": "cef4704813f9824986bf3a442db3d37142f2736beff618f95f3e57c4fffc0480"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-ids/request-6-998fdb169053442eaf3f718bb1aa7859.json",
+        "bytes": 2246,
+        "sha256": "c5bba098fef0aa380aab2881817408c3fb47ae5e7ac787502c3bdd354643bee6"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/sample-3.json",
+        "bytes": 2217,
+        "sha256": "e0a6ad5b46e14a5047fa1318545b303ae69a527e1e010d291d079481868af351"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/raw-sample-3.json",
+        "bytes": 1351,
+        "sha256": "22cb1065960e261a06ceedd72ee9a9e6d5c6b6cf1523e3ab3d4a55de989468df"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-sample-3.json",
+        "bytes": 1935,
+        "sha256": "a1e79480e4e1013b9f42b51a2fdc2388b4a9faa69a9b7ad9cb1cc0ce57bfc75e"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/response-3.json",
+        "bytes": 1322,
+        "sha256": "76845df9795f04eeba7e646efd21070f71c02ea851215b6b361b394025a600f8"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/transport-3.json",
+        "bytes": 171,
+        "sha256": "2eafecb9af99bf624372ae5565b3970aa7c2684c075eac0adb92a08e1b44ef29"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/journals/capture-0201001200000001-3.bin",
+        "bytes": 8768,
+        "sha256": "89198d4419a94ed735757bb59378f473f0bf12e3d3a1b2b15599cb6d42aac0ac"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/token-ids/request-7-0ea0b4ac8329472ebedd54c55139c621.json",
+        "bytes": 2246,
+        "sha256": "c1b2b13ad88c9cb2b0323f371e26883e1fee8d82b4cd885367b30351b75a2e1c"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/raw-report.json",
+        "bytes": 7649,
+        "sha256": "2510a6b26a5899051ae307a1cedb066c08d61db61a115ddce088fdb2b4f91281"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/before/natural8192/qpc-audit.json",
+        "bytes": 6473,
+        "sha256": "4f7e641464d4efe0d227c23e0cab96eb981f738ab5d0c26c4677c65be92abb22"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/handle.json",
+        "bytes": 1562,
+        "sha256": "b411ee9a480299993d9d37c0d479ff0bb905d4235614ad7dd5c494ca53da29c4"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/mtp-cost-trace.json",
+        "bytes": 8533,
+        "sha256": "dd8b3d33337b7db592eecc2f986a8fb166a4a6d8061dc93cb794b7191af7c543"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/sample-0.json",
+        "bytes": 2225,
+        "sha256": "169146efc6274b139337570a3a71d4a5471e5008c52866d95253fd2c8181b50c"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/raw-sample-0.json",
+        "bytes": 1351,
+        "sha256": "7a62c011af35bf4141585dfc857b62209706b6e9164e4857e630914e5a1680a4"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-sample-0.json",
+        "bytes": 1938,
+        "sha256": "75a4426b43df7f089711ea948a936d61079c873b5e884b13b78896ea3ff7852f"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/response-0.json",
+        "bytes": 1322,
+        "sha256": "5090db3cf72ba3949572396a79cd78a9aec1119966e4a2245f5e2911c8164bdf"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/transport-0.json",
+        "bytes": 172,
+        "sha256": "a7c558f0257987c302f5c822e87d090a65a29f1c9d8657c6cdd3317358fe4a53"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/journals/capture-0201001200000002-0.bin",
+        "bytes": 8768,
+        "sha256": "46ef2627234081511774103895a9640f4636fb35e11804afbb83b805c65af449"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-ids/request-4-da48a9331a5d42d098779b2a0f3b2e36.json",
+        "bytes": 2248,
+        "sha256": "4a207fe031fc12d57705a7eef1801983cfd9a06774f25d6961aa6482c3d31e74"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/HDO2-stats-0.json",
+        "bytes": 815,
+        "sha256": "2d5f3106136d89565fbe1052baf6882f11efb554ecd5507ac9f5a0aceb169414"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/sample-1.json",
+        "bytes": 2215,
+        "sha256": "a160f6d219f2af69f22b4a8f68de0253144f92614fcf6cb992bf47a1ea78cfd6"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/raw-sample-1.json",
+        "bytes": 1348,
+        "sha256": "3c315d52d8502735f244dd480a2179cfdfa0fc6fc67ef3a4b993a8cbc7180c49"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-sample-1.json",
+        "bytes": 1938,
+        "sha256": "9d6ed9c099d4f26d6e2d61b682ec690c831472d28c0d68d5e34e2e7d80802a6f"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/response-1.json",
+        "bytes": 1321,
+        "sha256": "f4cc5408f029986a8c2b3fedc644082badeb5938821adeb3f0435c7a13cc493e"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/transport-1.json",
+        "bytes": 170,
+        "sha256": "f28fafa26434c25a72e92c8f639cba445b7af1d95010f57342ab9c6d90dea865"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/journals/capture-0201001200000002-1.bin",
+        "bytes": 8768,
+        "sha256": "19654b7e9acd77cb4437cbbd1ba6bc36e00187f31b3b8a36136e69ea9b3a31e9"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-ids/request-5-6c42a63b9d834cef81571e6954c5010d.json",
+        "bytes": 2247,
+        "sha256": "de2b55ebbc3f0e6f49cc64cb69ed0154f8ebfe0ff4b11ce8e98c4a817f308112"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/HDO2-stats-1.json",
+        "bytes": 816,
+        "sha256": "2bbc0769f7dfe0e6457f55a0816751d57c1317b719352825e4de57cccb92cf8a"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/sample-2.json",
+        "bytes": 2212,
+        "sha256": "84506a4591aa1d8c7c59d94308779e41b39a75d4c037891862ae32389e9e2dcb"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/raw-sample-2.json",
+        "bytes": 1350,
+        "sha256": "f86aea3ecc050344266942f08c7184e0d55fb80ff694f192e750522fb8266f1e"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-sample-2.json",
+        "bytes": 1938,
+        "sha256": "ddd794fd3c629d3628aaa0323893540b0c483de9a3633e5e9ae22fa9c57638ad"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/response-2.json",
+        "bytes": 1322,
+        "sha256": "6335d1a14d8fd476679d58698ba7414c822ed43a1745f5a1a6fb26dd0f522f0a"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/transport-2.json",
+        "bytes": 166,
+        "sha256": "0c839301f05a6a13f95ed70b401754ca8bdfc0444a599461d6e19cd7e48bff45"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/journals/capture-0201001200000002-2.bin",
+        "bytes": 8768,
+        "sha256": "585716121e3dc30e103e539359024912ea5f77b01a20d477e975838fd994fff8"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-ids/request-6-358937863b194a1cb165717b03d84d09.json",
+        "bytes": 2247,
+        "sha256": "de1a0f27ab32132e0a479623a28f3981ece58d3cba9b4f4c8051a4d4e39e8ece"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/HDO2-stats-2.json",
+        "bytes": 816,
+        "sha256": "2162aec13bc32273b31b208589e784bc679d81883e5d39310d459ddb1be89715"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/sample-3.json",
+        "bytes": 2217,
+        "sha256": "7fa7257b54a6d9a80efa168c8da7a45957635ca3951d597d82d19dd3f4bbde5b"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/raw-sample-3.json",
+        "bytes": 1347,
+        "sha256": "2f23fd8c7beeacb8b48cc94c2d56f13a741cdb7f58d2e4036b63ff75bbfc0aa9"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-sample-3.json",
+        "bytes": 1938,
+        "sha256": "2d34b95239da42daf7bf355ab8cea36b782f01971b930e5ff37574a6192a4f0b"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/response-3.json",
+        "bytes": 1322,
+        "sha256": "9a23873b28c1d882758d3bc516d3a1dced5e044a51a5176e598abd4eebb764a6"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/transport-3.json",
+        "bytes": 171,
+        "sha256": "9252554fca0ff932c0fb8b6f527c2c3d33afa90b3538d94f084c9ffa39b3f065"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/journals/capture-0201001200000002-3.bin",
+        "bytes": 8768,
+        "sha256": "2ac1a2a65a81e9a366f4d427c79218c7bdaf76380656cd2f50fd9a045a5a0469"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/token-ids/request-7-6d63d67dd8ab4000a972bbaa43524db2.json",
+        "bytes": 2247,
+        "sha256": "3228305addfe3e4c533d2468cb6906a7927ac7fcaace2fc0de244b037955f40f"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/HDO2-stats-3.json",
+        "bytes": 816,
+        "sha256": "54cea3aa0e549015c3fc6324781c6fd800fc68acfdb5c9104e68c2b9565c9ca9"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/raw-report.json",
+        "bytes": 7649,
+        "sha256": "20bec3e7701c97398ce26940d2e852160b2b933421d2851cd793b4bd2ff75e92"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/candidate/natural8192/qpc-audit.json",
+        "bytes": 6477,
+        "sha256": "15b2d51f2731470a20c4a883a58a77f0c5c3810fdc05eaf4e68351de48bd80d9"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/handle.json",
+        "bytes": 1618,
+        "sha256": "8aa918f68c2151e75ccc28051acc68948e779719eac12042a9bfa42f66601d70"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/sample-0.json",
+        "bytes": 2223,
+        "sha256": "91b32c545e15e4c80428163f01a3d4f87fba6bd8b368021a2c767a7cc46aa977"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/raw-sample-0.json",
+        "bytes": 1348,
+        "sha256": "0d0d4b9a654a2edff56850af5830a9d657d7b3b55cbcc4a6057c4d70a48c7906"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/token-sample-0.json",
+        "bytes": 1934,
+        "sha256": "69d367efd6d69dadc1399574d6056c8c42db4c755aaaeff913d3d0b834680fa3"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/response-0.json",
+        "bytes": 1321,
+        "sha256": "1dec76eb435220b0ad4ddee1d78c7ae631c4003c6cb899eac9b8ca9c1aab5b8f"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/transport-0.json",
+        "bytes": 171,
+        "sha256": "00c7d9c6ae649f26e9ca13997a10928fc80a61b9cc43ce2dab89b9c15d5f63ae"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/journals/capture-0201001200000003-0.bin",
+        "bytes": 8768,
+        "sha256": "c0c6b1880be9058db3d168833e43866da59eef87a409722a619350d49c30d06e"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/after/natural8192/token-ids/request-4-6eb4d5eaf66048e9beeecd4fc7dc9f57.json",
+        "bytes": 2247,
+        "sha256": "3065e8928d6d0840880d89a553f0cb2a22adc48a561603993a078ad5e90c5c16"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/npu-helper/handle.json",
+        "bytes": 268811,
+        "sha256": "1a7ff8e48cdafd7b439833e2e673989d17ef3919180218348e115ee8cad55b67"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1/npu-helper/terminal.json",
+        "bytes": 280001,
+        "sha256": "429b3454f3bedaa466ef7d17c258403bd1a5e16ef441d74a91ccbeb94bf0fac1"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-catchup-v2/build/native_backend.dll",
+        "bytes": 166400,
+        "sha256": "8d997e0a9c7566c740ed7a754a59aaa7efed1af174c3a38ba8ad7a5c3e68f91a"
+      },
+      {
+        "path": "C:\\AI\\runtimes\\flm-1.0.12-npu-probe\\portable\\qwen3_5vl_npu.dll",
+        "bytes": 2341376,
+        "sha256": "81b9349b5eb6cc7af277a41fad3a5dd7aa71321a82f8a484e7a980d80c334fad"
+      },
+      {
+        "path": "C:\\AI\\runtimes\\flm-1.0.12-npu-probe\\portable\\q4_npu_eXpress.dll",
+        "bytes": 1103872,
+        "sha256": "c8a601860ba99f9a2191099c4b20f8229f7eb99e2048c744190099d34982ed9d"
+      },
+      {
+        "path": "C:\\Windows\\System32\\xrt_coreutil.dll",
+        "bytes": 2010984,
+        "sha256": "d0dce13280a0d668b497d4fcabdcb43f1a7353e466af3acabd98c6df7607ed8e"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0001.json",
+        "bytes": 1504,
+        "sha256": "49314d68ee1be986feddecfd1941e8abc3a04cc9bcf38a36e33d9d2e5cb1e78a"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0002.json",
+        "bytes": 1504,
+        "sha256": "4d45a8274fb52495a8081a0430cf440a5472ce5ef6bdb459f173e745a5d9136c"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0003.json",
+        "bytes": 1504,
+        "sha256": "1fd85b1a42fbc4efa00cc89e58130bd60fb280e89f5edf145655db4797d67b13"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0004.json",
+        "bytes": 28863,
+        "sha256": "92096f8f7fffa5d4c8781680588da9d66b5d94c3440d5d03868b8d7152a79bc3"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0005.json",
+        "bytes": 1534,
+        "sha256": "c239bacee126d164050ccdb7dd3164913ac416cbe2c23d95cce2816828e530af"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0006.json",
+        "bytes": 1504,
+        "sha256": "fe5ae07f4f1c2a0cb1c641bfcaae340e4a4da25152696efe87f9a234242d1e6c"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0007.json",
+        "bytes": 1509,
+        "sha256": "74a2ba2787a72b916f86c691ca4045871712f85877faf49a701a7bbaeb5427a2"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0008.json",
+        "bytes": 1504,
+        "sha256": "0b6f5ba214a082cb868d2cd71c0282dd3d610725697e34a823fea021c2a6c9fb"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0009.json",
+        "bytes": 1518,
+        "sha256": "c4750d2b67700f9536330f950560f538797c43d99d382f29f6080264c549e2f3"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0010.json",
+        "bytes": 105257,
+        "sha256": "ce4fab0b3f160353824238ebff2df9c58e835f27eb5506ca6d078a1dc0ba217b"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0011.json",
+        "bytes": 1504,
+        "sha256": "7a1b25a9116778fa4aff36087024ebab43b68d7102e02e4a1ec5baa771c59a2b"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0012.json",
+        "bytes": 1504,
+        "sha256": "88c29db18f987035fd110dfcc57abcfb677ff16f86a228fb05ac9f6dfb079ad7"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0013.json",
+        "bytes": 1504,
+        "sha256": "3ec37a2e57c7bd7444b3d9406c95233926615b1d5dd5d3d37bd7d26ff4b1e0aa"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0014.json",
+        "bytes": 1504,
+        "sha256": "937c4e257f88419b82a6b2573a035d1d409529ae8b4094ece952691321cf75ac"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/real-npu-catchup-live-v1.admission-waits/0015.json",
+        "bytes": 138655,
+        "sha256": "ef332e9865122b18dcff79f5b980df949cdecd3d6002a5f404f4efe6be2180c6"
+      },
+      {
+        "path": "server/.local/halogen-update-20261110/primary0201/stateful1012-catchup-v2/consumer-lifecycle-cpu/investigation-v1.json",
+        "bytes": 16368,
+        "sha256": "2b1589efd76fc01c116c09914f82f58fa27c19abdc90584c6133478537a89b01"
+      }
+    ]
+  }
+}

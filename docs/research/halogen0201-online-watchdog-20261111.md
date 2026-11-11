@@ -30,3 +30,27 @@ ends with this recovered server still online and unchanged during both jobs.
 ## Performance scope
 
 This is a serving/reliability update, **not a new throughput benchmark**. The [last normal serving observations](../benchmarks/halogen0201-normal8192-20261111.md) remain 1475.04 prefill / 47.52 decode tok/s and 61.54% API neural-head acceptance at 8192 inputs; 1447.23 / 45.07 and 55.56% at 16384 inputs. Their phase-clock and acceptance limitations remain unchanged. No NPU producer is enabled; the completed [bulk NPU experiment](../benchmarks/halogen0201-bulk-npu-20261111.md) is rejected for both numerical failure and higher cost. The full acceleration goal remains open.
+
+## Latest online verification, 11:19 UTC
+
+The official package check at 11:07:18 UTC still identifies 0.20.1 and the same
+installed OCI digest. After the finite scalar catch-up comparison, the normal
+server was restored through its existing lifecycle. Fresh authenticated model
+discovery and a 17-input/2-output-token chat request returned `READY`; this
+functional check is not a throughput measurement. All 47 normal source members
+match manifest `b73f5fa60d47b911a2c3d15caef2aaa1fdc55c50baeb7434544f4bf4500c38f8`.
+
+The current controller/backend runs are
+`28f99c01e114418dbf103148e5bdec5b` / `4504311ca2714c209abf1d6608ec3420`,
+with exact process identities recorded in the appended
+[`latest_online_verification` snapshot](halogen0201-online-watchdog-20261111.json).
+These replace the historical identities above. The visible console, existing
+ServiceNow credential, `halogen-v2` alias, port 8840 and paired-8192 one-slot
+32K configuration remain available. The NPU helper has exited and its four
+native contexts are closed; the normal profile does not enable it.
+
+The [subsequent finite NPU comparison](../benchmarks/halogen0201-real-npu-catchup-20261111.md)
+completed three measured stock and three measured NPU requests, but its final
+stock arm stopped after an excluded warmup when request-entry memory remained
+below 22 GiB. No complete bracket or NPU speed gain is qualified. The normal
+server was left online; the full optimization goal remains unachieved.

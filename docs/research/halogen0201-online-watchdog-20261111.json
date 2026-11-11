@@ -173,5 +173,111 @@
       "bytes": 12475,
       "sha256": "b9a1da0ec40ca43f7c51d543e75e9e47d8264b6aced934b7aef2bc8f9f56a205"
     }
-  ]
+  ],
+  "latest_online_verification": {
+    "schema": "halogen0201.online-after-catchup-verification.v1",
+    "verified_utc": "2026-11-11T11:19:14.198608+00:00",
+    "version": {
+      "api": "0.20.1",
+      "engine": "0.20.1",
+      "match": true
+    },
+    "ready": true,
+    "endpoint": "http://127.0.0.1:8840/v1",
+    "identities": {
+      "controller": {
+        "pid": 32308,
+        "creation_time_100ns": 134388689107641037,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      },
+      "backend": {
+        "pid": 41560,
+        "creation_time_100ns": 134388689214430404,
+        "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+      }
+    },
+    "controller_run_id": "28f99c01e114418dbf103148e5bdec5b",
+    "backend_run_id": "4504311ca2714c209abf1d6608ec3420",
+    "container_id": "1f07772ece07e91b333d0625ec2ecbc2c91898f76847f1334da505ead72ecf3a",
+    "profile": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-serving-promotion-prep\\profile-8192.json",
+      "bytes": 1797,
+      "sha256": "750cb82c02d7e589ef0d02f0ef77ca42798d9e09dc0c4c8a8580226008c306c8"
+    },
+    "memory": {
+      "available_bytes": 25209446400,
+      "committed_bytes": 118059253760,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 122080186368
+    },
+    "gateway": {
+      "status": "ok",
+      "backend": "halogen-v2",
+      "checkpoint": "v2",
+      "context": 32768,
+      "active_requests": 0,
+      "queued_requests": 0,
+      "draining": false,
+      "completed": 1,
+      "cancelled": 0,
+      "request_admission_ready": null,
+      "request_admission": {
+        "version": 1,
+        "policy": "not_required",
+        "ready": null,
+        "reason": "not_required",
+        "required_available_bytes": null,
+        "required_commit_headroom_bytes": null,
+        "available_bytes": null,
+        "commit_headroom_bytes": null,
+        "sample_age_ms": null
+      }
+    },
+    "source_manifest_sha256": "b73f5fa60d47b911a2c3d15caef2aaa1fdc55c50baeb7434544f4bf4500c38f8",
+    "source_members_verified": 47,
+    "authenticated_models": true,
+    "functional_smoke": {
+      "sent": true,
+      "response": "READY",
+      "usage": {
+        "prompt_tokens": 17,
+        "completion_tokens": 2,
+        "total_tokens": 19,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "is_benchmark": false
+    },
+    "launcher_identity": {
+      "pid": 45976,
+      "creation_time_100ns": 134388689103748303,
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    },
+    "visible_launcher_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\real-npu-catchup-live-v1\\restore-normal-launch.json",
+    "console_trace": true,
+    "left_online": true,
+    "normal_NPU_enabled": false,
+    "restart_performed_this_verification": false,
+    "campaign_session": 33523,
+    "campaign_exit_code": 1,
+    "campaign_terminal": true,
+    "raw_receipt": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\online-after-catchup-verification-20261111.json",
+      "bytes": 2994,
+      "sha256": "5333a16178c7aa982975b2843b0465b9442c26b98a679a214536006b7c8caccd"
+    },
+    "official_refresh": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\source-refresh-20261111T110718Z-complete.json",
+      "bytes": 4655,
+      "sha256": "05dd3272e01eb1b0e39998743066fbe06ee33dcc601ac7049aa676ca558ba40d",
+      "completed_utc": "2026-11-11T11:07:18Z",
+      "next_due_utc": "2026-11-11T13:07:18Z",
+      "latest_available": "0.20.1",
+      "official_package_url": "https://github.com/peonist-ai/halogen-flash-server/pkgs/container/halogen-flash-server/versions"
+    },
+    "historical_snapshots_preserved": true,
+    "functional_check_is_benchmark": false,
+    "full_optimization_goal_achieved": false
+  }
 }
