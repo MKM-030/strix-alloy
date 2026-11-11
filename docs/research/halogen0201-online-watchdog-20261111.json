@@ -1,0 +1,177 @@
+{
+  "schema": "halogen0201.latest-online-watchdog-20261111.v1",
+  "verified_utc": "2026-11-11T06:07:30.436024+00:00",
+  "latest_version": "0.20.1",
+  "official_version_url": "https://github.com/peonist-ai/halogen-flash-server/releases/tag/v0.20.1",
+  "tag_date_utc": "2026-11-09T15:11:59Z",
+  "official_commit": "d2f4286fc97fd1f75cd765714dbc50524004356f",
+  "image_digest": "sha256:66dac8dac25bf15f2b63a684bbe3953036045172d881525600ea41d45e5acc73",
+  "api_engine_version": {
+    "api": "0.20.1",
+    "engine": "0.20.1",
+    "match": true
+  },
+  "public_port": 8840,
+  "request_model": "halogen-v2",
+  "response_model": "halogen-qwen3.8-flash-next",
+  "profile": {
+    "context": 32768,
+    "kv_pool_positions": 32768,
+    "slots": 1,
+    "concurrency": 1,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "cache": "Off",
+    "thinking": false,
+    "vision": false,
+    "gate": 0.9,
+    "PLD": "3,3",
+    "prefetch": 0
+  },
+  "controller_run": "aecb7de9e2a6404eb61ec6156607f088",
+  "backend_run": "e91e96ba3ac043b4afce62f6edae91ba",
+  "identities": {
+    "controller": {
+      "pid": 12148,
+      "creation_time_100ns": 134388505513258879,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 36784,
+      "creation_time_100ns": 134388505618967816,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "container_id": "114f1417dd83ac13466358cd41860bb25768db90fdfc5bbdd47820b75a4f4dec",
+  "authenticated_health": true,
+  "authenticated_discovery": true,
+  "generated_response": "READY",
+  "visible_console": true,
+  "source_manifest": {
+    "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\profiles\\sources.json",
+    "bytes": 5024,
+    "sha256": "b73f5fa60d47b911a2c3d15caef2aaa1fdc55c50baeb7434544f4bf4500c38f8"
+  },
+  "generated_service": {
+    "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.1\\.local\\services\\e91e96ba3ac043b4afce62f6edae91ba\\entrypoint-service.sh",
+    "bytes": 94304,
+    "sha256": "9f088ea42992f9ebf44301c153c72f1f8267289e9626a49c2abfac91d79f8ab0"
+  },
+  "watchdog": {
+    "clock": "/proc/uptime integer boot seconds",
+    "wall_clock_fallback": false,
+    "timeout_seconds": 120,
+    "ping_seconds": 30,
+    "poll_seconds": 15,
+    "defer_seconds": 900,
+    "only_clock_changed": true,
+    "incident_root_cause_proven": false
+  },
+  "verification": {
+    "watchdog_tests_passed": 16,
+    "watchdog_tests_seconds": 10.963,
+    "initial_virtual_D_state_fixture_deadline_seconds": 10,
+    "initial_fixture_timeout_preserved": true,
+    "final_fixture_deadline_seconds": 30,
+    "production_timeouts_unchanged": true,
+    "startup_inspection_tests_passed": 7,
+    "backend_tests_passed": 19,
+    "backend_tests_skipped": 8,
+    "backend_skip_reason": "WSL GCC fixtures",
+    "initial_post_start_entry_guard_failed_before_inference": true,
+    "subsequent_smoke_entry_admission_gib": 22,
+    "second_server_launch": false
+  },
+  "admission": {
+    "startup_physical_gib": 30,
+    "startup_commit_gib": 131,
+    "entry_physical_gib": 22,
+    "entry_commit_gib": 22,
+    "runtime_physical_gib": 18,
+    "runtime_commit_gib": 18,
+    "smoke_entry_frame": {
+      "available_bytes": 24979996672,
+      "committed_bytes": 117246959616,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 122892480512
+    },
+    "final_frame": {
+      "available_bytes": 24973000704,
+      "committed_bytes": 117237309440,
+      "commit_limit_bytes": 240139440128,
+      "commit_headroom_bytes": 122902130688
+    }
+  },
+  "serving_online": true,
+  "own_measurement_helpers_remaining": false,
+  "new_throughput_benchmark": false,
+  "new_speedup_claim": false,
+  "full_optimization_goal_achieved": false,
+  "evidence": [
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/official-latest-direct-20261111T0549.json",
+      "bytes": 9506,
+      "sha256": "1023018c9624e1906e18d06920802ced18ffe565b38d087fa175656fa9e554be"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-prep/activation-plan-v1.json",
+      "bytes": 9178,
+      "sha256": "d58ebc173c85cf4f670ba2d0ecbb69a25e4991257a61e61741bc6f9725ca544e"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-independent-review/review-v1.json",
+      "bytes": 4489,
+      "sha256": "6dd5c66a34d90dc406482e40f50cb5527b83da83d482e6a0377beb3da99dcef0"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-independent-review/activation-root-review-v1.json",
+      "bytes": 4789,
+      "sha256": "c54c9b70509f8c40020758f680bd0d9c2c724d11ea23005a2628a2d6e18fbbc1"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-activation-v1/handle.json",
+      "bytes": 31672,
+      "sha256": "2c330762a02b56d814305b13352c66cac9ab07252128ace6788c2aac7401d999"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-activation-v1/launch.json",
+      "bytes": 2248,
+      "sha256": "66c68a87a0407c49a43ee0547280f62512dfca9be0b736090fd7693eb006c34d"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-activation-v1/old-normal-terminal.json",
+      "bytes": 2142,
+      "sha256": "29464a24515ff4db1317ccb0e9378ee8a9e70615efc194b4163a91714ee95990"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-activation-v1/ready-left-online.json",
+      "bytes": 13382,
+      "sha256": "e531d680f0e5f230dfdc1be76b21178fe3ec7b25e94011fca8b2481811ec1855"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-activation-v1/functional-smoke.json",
+      "bytes": 1848,
+      "sha256": "e4bdd59717e78bdc2932cf3b43529cde0cdb201d63d4c6acc050ecd7e2eb76aa"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-activation-v1/activation-admission-failure-preserved.json",
+      "bytes": 15432,
+      "sha256": "396a32353d8196701f2ce9ee6375baadde7f20c26db155dbb503ecbc367138e3"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-prep/canonical-regression-green.log",
+      "bytes": 4505,
+      "sha256": "4075f772afc8dd532d02cca3a84c42314130f0f70f3678117bc1abeadcf0d59c"
+    },
+    {
+      "path": "server/.local/halogen-update-20261110/primary0201/watchdog-monotonic-prep/canonical-regression-green-v2.log",
+      "bytes": 2807,
+      "sha256": "ca8ab44c75e915c23c36731d15588eb27b3fb1df5676c6543236411511802481"
+    },
+    {
+      "path": "tests/gufo/test_halogen0201_watchdog_monotonic.py",
+      "bytes": 12475,
+      "sha256": "b9a1da0ec40ca43f7c51d543e75e9e47d8264b6aced934b7aef2bc8f9f56a205"
+    }
+  ]
+}

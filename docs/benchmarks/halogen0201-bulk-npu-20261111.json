@@ -1,0 +1,296 @@
+{
+  "schema": "halogen0201.bulk-authoritative-NPU-public.v1",
+  "target_engine": "0.20.1",
+  "NPU_model": "Qwen3.5-0.8B-NPU2",
+  "FLM": "1.0.7",
+  "actual_GPU_teacher_input_tokens": 8192,
+  "teacher_source": "Excluded paired2048 target warmup; distinct from promoted paired8192 trajectory",
+  "NPU_seed_tail_tokens": 512,
+  "NPU_final_context": 640,
+  "authoritative_target_outputs": 128,
+  "speculative_inputs": 0,
+  "all_three_native_jobs_completed": true,
+  "all_227_full_snapshots_finite_greedy_reconstructed": true,
+  "numeric_candidate_qualified": false,
+  "numeric_tolerances_relaxed": false,
+  "numeric_criterion": "Original exact BF16 word equality at every complete bulk endpoint",
+  "scalar_component": {
+    "seed_owned_ms": 427.4484,
+    "append_batch_mean_ms": 22.36068515625,
+    "all_authoritative_append_ms": 2862.1677,
+    "scalar_append_calls": 128,
+    "vector_append_calls": 0,
+    "append_batch_min_ms": 22.0611,
+    "append_batch_max_ms": 23.0521
+  },
+  "candidates": {
+    "bulk2": {
+      "compared_endpoints": 65,
+      "compared_BF16_values": 16124550,
+      "failed_endpoints": 64,
+      "differing_words": 15560897,
+      "max_absolute_difference": 4.62109375,
+      "differing_greedy_endpoints": 13,
+      "exact_word_parity": false,
+      "numeric_candidate_qualified": false,
+      "tolerance_relaxed": false,
+      "component": {
+        "seed_owned_ms": 423.3782,
+        "append_batch_mean_ms": 328.9817296875,
+        "all_authoritative_append_ms": 21054.8307,
+        "scalar_append_calls": 0,
+        "vector_append_calls": 64,
+        "append_batch_min_ms": 325.5303,
+        "append_batch_max_ms": 336.9438
+      },
+      "append_time_ratio_to_scalar": 7.356253339033907,
+      "process": {
+        "identity": {
+          "pid": 42556,
+          "creation_time_100ns": 134388490013201945,
+          "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-build-v1\\bulk-authoritative.exe"
+        },
+        "exit_code": 0,
+        "elapsed_seconds": 24.641000000061467,
+        "started_utc": "2026-11-11T05:36:41.318920+00:00",
+        "ended_utc": "2026-11-11T05:37:05.956159+00:00",
+        "minimum_physical_gib": 21.335777282714844,
+        "minimum_commit_gib": 112.42437744140625,
+        "memory_observations": 242,
+        "actual_loaded_modules": {
+          "qwen3_5vl_npu.dll": {
+            "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\qwen3_5vl_npu.dll",
+            "bytes": 2316288,
+            "sha256": "d77388dcd21fcd7422005d0f780a044142d525e3afaafef3bcb9e980b8c18501"
+          },
+          "q4_npu_eXpress.dll": {
+            "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\q4_npu_eXpress.dll",
+            "bytes": 1103872,
+            "sha256": "83c93470e56b14856ce38c8550b2e0595355d59c3153dd51326cfc2745d7b038"
+          },
+          "xrt_coreutil.dll": {
+            "path": "C:\\Windows\\System32\\xrt_coreutil.dll",
+            "bytes": 2010984,
+            "sha256": "d0dce13280a0d668b497d4fcabdcb43f1a7353e466af3acabd98c6df7607ed8e"
+          }
+        }
+      }
+    },
+    "bulk4": {
+      "compared_endpoints": 33,
+      "compared_BF16_values": 8186310,
+      "failed_endpoints": 32,
+      "differing_words": 7779567,
+      "max_absolute_difference": 3.4921875,
+      "differing_greedy_endpoints": 3,
+      "exact_word_parity": false,
+      "numeric_candidate_qualified": false,
+      "tolerance_relaxed": false,
+      "component": {
+        "seed_owned_ms": 446.0214,
+        "append_batch_mean_ms": 333.02983125000003,
+        "all_authoritative_append_ms": 10656.954600000001,
+        "scalar_append_calls": 0,
+        "vector_append_calls": 32,
+        "append_batch_min_ms": 328.579,
+        "append_batch_max_ms": 362.7159
+      },
+      "append_time_ratio_to_scalar": 3.723385809992895,
+      "process": {
+        "identity": {
+          "pid": 31724,
+          "creation_time_100ns": 134388490308062999,
+          "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-build-v1\\bulk-authoritative.exe"
+        },
+        "exit_code": 0,
+        "elapsed_seconds": 13.969000000040978,
+        "started_utc": "2026-11-11T05:37:10.805277+00:00",
+        "ended_utc": "2026-11-11T05:37:24.783017+00:00",
+        "minimum_physical_gib": 21.561683654785156,
+        "minimum_commit_gib": 112.77659606933594,
+        "memory_observations": 137,
+        "actual_loaded_modules": {
+          "qwen3_5vl_npu.dll": {
+            "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\qwen3_5vl_npu.dll",
+            "bytes": 2316288,
+            "sha256": "d77388dcd21fcd7422005d0f780a044142d525e3afaafef3bcb9e980b8c18501"
+          },
+          "q4_npu_eXpress.dll": {
+            "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\q4_npu_eXpress.dll",
+            "bytes": 1103872,
+            "sha256": "83c93470e56b14856ce38c8550b2e0595355d59c3153dd51326cfc2745d7b038"
+          },
+          "xrt_coreutil.dll": {
+            "path": "C:\\Windows\\System32\\xrt_coreutil.dll",
+            "bytes": 2010984,
+            "sha256": "d0dce13280a0d668b497d4fcabdcb43f1a7353e466af3acabd98c6df7607ed8e"
+          }
+        }
+      }
+    }
+  },
+  "CPU_tests": 9,
+  "minimum_observed_physical_gib": 21.335777282714844,
+  "minimum_observed_commit_gib": 112.42437744140625,
+  "native_MTP_acceptance": null,
+  "NPU_engine_prefill_tok_s": null,
+  "NPU_engine_decode_tok_s": null,
+  "target_readiness": null,
+  "full_engine_gain": null,
+  "live_producer_enabled": false,
+  "owned_jobs_closed": true,
+  "automatic_retries": 0,
+  "entry_physical_commit_gib": 22,
+  "runtime_physical_commit_gib": 18,
+  "deadline_seconds_per_process": 120,
+  "GPU_guards_passed": 6,
+  "old_server_failed_before_first_NPU_call": true,
+  "fresh_server_recovered_before_first_NPU_call": true,
+  "GPU_runtime_unchanged_during_actual_NPU_jobs": true,
+  "GPU_identity_at_terminal_snapshot": {
+    "controller": {
+      "pid": 42440,
+      "creation_time_100ns": 134388486579908501,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    },
+    "backend": {
+      "pid": 43816,
+      "creation_time_100ns": 134388486686170710,
+      "executable": "C:\\Users\\Marcel\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    }
+  },
+  "GPU_ready_on_port_at_terminal_snapshot": 8840,
+  "terminal_snapshot_utc": "2026-11-11T05:37:26.997630+00:00",
+  "functional_smoke_is_not_performance_benchmark": true,
+  "incident_wallclock_root_cause_claimed_proven": false,
+  "evidence": {
+    "handle.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-v1\\handle.json",
+      "bytes": 122416,
+      "sha256": "a6c3b4e677ccc09794fbd7f46270303f961bbf8ce928bd813299d0ca729e6af8"
+    },
+    "scalarreference.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-v1\\scalarreference.json",
+      "bytes": 170850,
+      "sha256": "c8ca343eefaac97d390b02c7794d30880962dfb8942337fdcfd0ffa6dcc52cf8"
+    },
+    "bulk2.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-v1\\bulk2.json",
+      "bytes": 98811,
+      "sha256": "d89ce6344b8d7f9d318577f1b9e87f836cb25a1c6d62ef011930f8ba1cb87722"
+    },
+    "bulk4.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-v1\\bulk4.json",
+      "bytes": 62359,
+      "sha256": "4478b1aa805437022f2e9aa7c532f030c9724f79b3ee4b2ff93a989278d5ab50"
+    },
+    "comparison-bulk2.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-v1\\comparison-bulk2.json",
+      "bytes": 99652,
+      "sha256": "5e030da8219b264690fa5ad7c2053d4c483439b7f35553937f2b0f0f59ecfcf8"
+    },
+    "comparison-bulk4.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-v1\\comparison-bulk4.json",
+      "bytes": 52573,
+      "sha256": "73e811d3d121c11d85dd0285ff0102ccd083f615c6368c9a4d1f931972373be7"
+    },
+    "audit-terminal-v1.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-v1\\audit-terminal-v1.json",
+      "bytes": 222561,
+      "sha256": "edec19de7b0782d3861ba2ef36a882ea8b5248ce0ae22794b6a928f005874f09"
+    },
+    "ready-left-online.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-v1\\ready-left-online.json",
+      "bytes": 13381,
+      "sha256": "2f160491724aaca1f6bc7b919f532a90cd368d29979bb0d3ce7896219c1f0d16"
+    },
+    "runtime-preparation.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-prep\\runtime-preparation.json",
+      "bytes": 10091,
+      "sha256": "167f66353a6a41165725f11fe3dfa97b5168a5cb0ed2079a32b206e3f363fb1d"
+    },
+    "independent-runtime-review-v1.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-npu-prep\\independent-runtime-review-v1.json",
+      "bytes": 13344,
+      "sha256": "44769543086eb1d39c56e42dded7568a2c981a5c219e69047e152af275e163fb"
+    },
+    "build/receipt.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-build-v1\\receipt.json",
+      "bytes": 484,
+      "sha256": "3413e9f5003497c5b5b189d25ec63cd13a57e7242b9e86bea6e168b973cfa436"
+    },
+    "build/pe-preflight.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-build-v1\\pe-preflight.json",
+      "bytes": 72369,
+      "sha256": "1cd8ce8771112f10824a103e98bd8830ac10765fb5542bf15a7d1e560b73716c"
+    }
+  },
+  "limits": [
+    "One8192teacher family,512tail,128recordedIDs; no16Kfamily",
+    "Finite exactbulk2/4authoritative batches; no arbitrary production queue qualification",
+    "Means are percall with different batch widths; totalappendtime covers identical128IDs",
+    "Native-to-owned timings include CPU copy/argmax and exclude rowwrites; no purekernel or engine tokenrate claim",
+    "Every nonseed bulk endpoint fails exactword comparison; matchinggreedy does not relax criterion",
+    "Initial failedserver preflight precedes all NPUcalls; actualjobs use freshrecovered baseline",
+    "No liveIPC, target-readiness or full-engine NPU-on/off comparison"
+  ],
+  "full_goal_achieved": false,
+  "scalar_process": {
+    "identity": {
+      "pid": 22924,
+      "creation_time_100ns": 134388489905560280,
+      "executable": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\bulk-authoritative-build-v1\\bulk-authoritative.exe"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 6.26500000001397,
+    "started_utc": "2026-11-11T05:36:30.554295+00:00",
+    "ended_utc": "2026-11-11T05:36:36.812239+00:00",
+    "minimum_physical_gib": 21.58102035522461,
+    "minimum_commit_gib": 112.71440505981445,
+    "memory_observations": 61,
+    "actual_loaded_modules": {
+      "qwen3_5vl_npu.dll": {
+        "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\qwen3_5vl_npu.dll",
+        "bytes": 2316288,
+        "sha256": "d77388dcd21fcd7422005d0f780a044142d525e3afaafef3bcb9e980b8c18501"
+      },
+      "q4_npu_eXpress.dll": {
+        "path": "C:\\AI\\runtimes\\flm-1.0.7-npu-probe\\portable\\q4_npu_eXpress.dll",
+        "bytes": 1103872,
+        "sha256": "83c93470e56b14856ce38c8550b2e0595355d59c3153dd51326cfc2745d7b038"
+      },
+      "xrt_coreutil.dll": {
+        "path": "C:\\Windows\\System32\\xrt_coreutil.dll",
+        "bytes": 2010984,
+        "sha256": "d0dce13280a0d668b497d4fcabdcb43f1a7353e466af3acabd98c6df7607ed8e"
+      }
+    }
+  },
+  "recovery_evidence": {
+    "paired8192-watchdog-recovery-v1/handle.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-watchdog-recovery-v1\\handle.json",
+      "bytes": 3123,
+      "sha256": "30ea387e5b0570d715253c89edb81152b56db61ce1f71461393539a539a0b926"
+    },
+    "paired8192-watchdog-recovery-v1/deliberate-terminal-lock-reclaim.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-watchdog-recovery-v1\\deliberate-terminal-lock-reclaim.json",
+      "bytes": 2263,
+      "sha256": "8bcb73b3bfda85f6376e829e510373de3d1c6db85acff08e363cb73348d10121"
+    },
+    "paired8192-watchdog-recovery-v2/handle.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-watchdog-recovery-v2\\handle.json",
+      "bytes": 16057,
+      "sha256": "83192da370a341d429c375dc48f92058ce7e730a19929eae9e67c30c64e29b6e"
+    },
+    "paired8192-watchdog-recovery-v2/functional-smoke.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\paired8192-watchdog-recovery-v2\\functional-smoke.json",
+      "bytes": 1663,
+      "sha256": "ef1f8d0210c81ff57ccf05102ebb2f55253f719b97d01ae4858e49cc02cfe977"
+    },
+    "watchdog-wallclock-source-audit/assessment-v1.json": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261110\\primary0201\\watchdog-wallclock-source-audit\\assessment-v1.json",
+      "bytes": 12296,
+      "sha256": "efc5684a593cf78abec46810bc20647fff8b209f7f6912fa15dcdb306cc0c7d5"
+    }
+  }
+}

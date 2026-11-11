@@ -243,11 +243,26 @@ are closed, and the same GPU server remains online.
 
 The existing future-trajectory oracle is unsuitable as an unchanged live
 count-one protocol. Real proposals need prefix-bound replacement, immediate
-fallback and demonstrated arrival before demand. The next independent candidate
-groups already queued authoritative tokens, followed by supported stateful
-lookahead if justified. No live NPU producer is enabled.
+fallback and demonstrated arrival before demand. Grouping already queued
+authoritative tokens was subsequently tested and rejected: both vector-prefill
+batch widths fail the unchanged exact BF16 criterion and are slower than
+sequential forwarding for the same 128 target IDs. The measured append costs
+are 7.36× and 3.72× the scalar reference. No live NPU producer is enabled.
+Supported stateful lookahead remains a separate unmeasured candidate.
+[Complete negative result](../benchmarks/halogen0201-bulk-npu-20261111.md).
 
 The bounded official refresh completed at 04:57 UTC: Halogen 0.20.1, both image
 tags and the checked AMD/Ryzen-AI/XRT release identities are unchanged. Reddit
 returned older discussions, with no verified new actionable November material.
 The next full source check is due at 06:57 UTC; no driver was installed.
+
+## Latest online verification and watchdog activation
+
+A direct official check at 05:49 UTC confirms 0.20.1 remains latest and both
+image tags retain the installed digest. The reviewed monotonic watchdog clock
+correction is now active after one normal restart. Authenticated health,
+model discovery and an actual `READY` chat response pass; the normal server
+remains online on port 8840 with its visible console. Earlier process identities
+above are historical; the new sealed runs and exact generated script are in the
+[current online snapshot](halogen0201-online-watchdog-20261111.md).
+This reliability change establishes no new throughput gain.
