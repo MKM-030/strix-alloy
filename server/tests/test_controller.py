@@ -9,9 +9,17 @@ import tempfile
 import unittest
 from unittest.mock import Mock
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from controller import atomic,read,lease,validate_engine,Engine,halogen_launch_command
+from controller import (atomic, read, lease, validate_engine, Engine,
+                        halogen_launch_command, readiness_timeout_seconds)
 
 class ControllerPolicyTests(unittest.TestCase):
+    def test_halogen_cold_integrity_checks_fit_inside_readiness_budget(self):
+        # A first install can hash v2, the 124 GB n-gram source and the r2
+        # head before the backend's bounded 900-second engine start.
+        self.assertGreaterEqual(readiness_timeout_seconds({'kind': 'halogen'}),
+                                3 * 3600 + 900)
+        self.assertEqual(readiness_timeout_seconds({'kind': 'native'}), 1200)
+
     def test_direct_service_preserves_managed_controls_without_powershell7(self):
         package=Path(__file__).resolve().parents[2]/'backends/halogen-wsl2-0.16.2'
         config={'kind':'halogen','launcher':'python','python_executable':sys.executable,

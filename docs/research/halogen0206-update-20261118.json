@@ -1,0 +1,459 @@
+{
+  "schema": "halogen0206.update-integration-qualified.v3",
+  "recorded_utc": "2026-11-18T14:01:25.076764+00:00",
+  "version": "0.20.6",
+  "status": "historical_f192_qualified_current_package_revision_unqualified",
+  "qualification": {
+    "passive_capture_complete": true,
+    "source_migration_ready": true,
+    "source_migration_status": "Current evolved 0.20.6 package is source-complete but was not runtime-requalified after bridge changes",
+    "runtime_qualified": false,
+    "production_bound": false,
+    "actual_engine_provider_binding_qualified": false,
+    "engine_started": true,
+    "model_loaded": true,
+    "accelerator_provider_invoked": true,
+    "local_inference_measurements": false,
+    "local_performance_claims": false,
+    "installation_complete": true,
+    "normal_ready_start_completed": false,
+    "functional_request_completed": false,
+    "historical_runtime_qualified": true,
+    "historical_qualified_run_id": "f19220518d3040368449a89b6a116b51",
+    "historical_functional_request_completed": true,
+    "current_package_runtime_qualified": false
+  },
+  "upstream": {
+    "public_tag": "v0.20.6",
+    "public_tag_object": "aabf3338ff3f53de456647ecbaf2e3410fa3a4e3",
+    "public_commit": "e4ef9b381dcdaa99cffb2ace709f8d3762dede97",
+    "tagger_utc": "2026-11-16T13:24:58Z",
+    "tag_signature": {
+      "verified": false,
+      "reason": "unsigned"
+    },
+    "formal_github_releases": [],
+    "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:f68892a56d8a1182645042574d702374bff402bb986ec4d49304cbe89483dbaf",
+    "latest_tag_matches": true,
+    "image_config_sha256": "3f5f2337842b8003f9826e226adcd4ad4a620dd3ed2e3f780dfb9f00dae4dfa6",
+    "image_created_utc": "2026-11-16T08:33:46.643028366Z",
+    "image_revision": "109f0b78e221",
+    "os": "linux",
+    "architecture": "amd64",
+    "rocm_version": "10.1.0",
+    "layer_count": 26,
+    "compressed_layer_bytes": 946110773,
+    "signatures_scope": "Annotated Git tag is unsigned; no formal GitHub Release checksum/signature assets. OCI signature availability was not established."
+  },
+  "capture": {
+    "directory": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture",
+    "contract": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\capture-contract.json",
+      "bytes": 4180,
+      "sha256": "55c5f53a2bc5ffc4598c49465be167761ed931dde4b5c986822c01d42939e9d7"
+    },
+    "handle": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\handle.json",
+      "bytes": 20221,
+      "sha256": "58206037ece95debd8863b177b0add241609c8359667f30f012c704eb4935041"
+    },
+    "manifest": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\manifest.raw.json",
+      "bytes": 4492,
+      "sha256": "f68892a56d8a1182645042574d702374bff402bb986ec4d49304cbe89483dbaf"
+    },
+    "config": {
+      "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\config.raw.json",
+      "bytes": 18887,
+      "sha256": "3f5f2337842b8003f9826e226adcd4ad4a620dd3ed2e3f780dfb9f00dae4dfa6"
+    },
+    "owner": "dec8eab72b49434f88313ed51a2ab624",
+    "container_name": "codex-extract0206-dec8eab72b49434f88313ed51a2ab624",
+    "container_id": "48129a3537beefc02c120522ee100e9bc8a2500f250a8318d91e5eb41eaf687d",
+    "started_utc": "2026-11-18T10:23:36.712309+00:00",
+    "ended_utc": "2026-11-18T10:27:46.636941+00:00",
+    "owned_never_started_container_removed": true,
+    "foreign_processes_untouched": true,
+    "preservation_before": {
+      "foreign_llama": [
+        {
+          "pid": 2928,
+          "name": "llama-server.exe",
+          "created": "/Date(1794475042136)/",
+          "executable": "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\bin\\Release\\llama-server.exe"
+        }
+      ],
+      "halogen_online": false
+    },
+    "preservation_after": {
+      "foreign_llama": [
+        {
+          "pid": 2928,
+          "name": "llama-server.exe",
+          "created": "/Date(1794475042136)/",
+          "executable": "C:\\AI\\build\\laurent-llamacpp-qwen4exp-rocmfpx\\build-vulkan\\bin\\Release\\llama-server.exe"
+        }
+      ],
+      "halogen_online": false
+    },
+    "minimum_physical_gib": 30.31049346923828,
+    "minimum_commit_gib": 154.1839256286621,
+    "artifacts": {
+      "flash_serve": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\flash_serve",
+        "bytes": 38092616,
+        "sha256": "3ed02d3fd6bda4851995e4295c1edd749655a095d997db03955da9052ee8647e"
+      },
+      "entrypoint-upstream.sh": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\entrypoint-upstream.sh",
+        "bytes": 100721,
+        "sha256": "20ae62fab27b73593d0c90246419279aa6aee2df5930071b2a4aadfecbabdebd"
+      },
+      "serve_api.py": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\serve_api.py",
+        "bytes": 346839,
+        "sha256": "71240612de5013fa49780de9243adbf60516afe81729f73aa67f98f9fde75c9f"
+      },
+      "request_records.py": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\request_records.py",
+        "bytes": 27388,
+        "sha256": "362abc02a847048333755804dc655ce5209eded9d0adcb0cc2d585ad43d7c672"
+      },
+      "halogen_tools.py": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\halogen_tools.py",
+        "bytes": 11953,
+        "sha256": "7d08616acbf45c88c9e47de32fc5a2b4ee327d23aa9b0486b654685587e0fd11"
+      },
+      "tool_parse.py": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\tool_parse.py",
+        "bytes": 23921,
+        "sha256": "e074fe67d847fe9e4d4aa0a0e89a8c1e7e618328fa08cd22f62e59c219c2e339"
+      },
+      "hip-include/hip/hip_runtime_api.h": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\hip-include\\hip\\hip_runtime_api.h",
+        "bytes": 482797,
+        "sha256": "e68c693da4838dc6e616e029583a6a812c7a8030246d3608dcd49812a9e4a836"
+      },
+      "providers/libamdhip64.so.7": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\providers\\libamdhip64.so.7",
+        "bytes": 28275305,
+        "sha256": "6d1dbee8cb3ad924e4c1bca7734e22f2c93026eb3bc871a7f64a916778d55e36"
+      },
+      "providers/libcrypto.so.3": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\providers\\libcrypto.so.3",
+        "bytes": 6521408,
+        "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b"
+      },
+      "providers/libssl.so.3": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\providers\\libssl.so.3",
+        "bytes": 1109952,
+        "sha256": "9592038e92d1f41affcbb625334d0b6e788714c889104fa6d5b107cf9fd657f2"
+      },
+      "providers/libstdc++.so.6.0.33": {
+        "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\providers\\libstdc++.so.6.0.33",
+        "bytes": 2497768,
+        "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00"
+      }
+    }
+  },
+  "comparison_to_0203": {
+    "reference_profile": {
+      "path": "C:\\Projects\\strix-alloy-clean\\backends\\halogen-wsl2-0.20.3\\profiles\\release.json",
+      "bytes": 8143,
+      "sha256": "85889f99a5ee4d36a6b965e8880b5f8886564e80b545c951b497de49edec7520"
+    },
+    "same_sha256": {
+      "flash_serve": false,
+      "entrypoint-upstream.sh": false,
+      "serve_api.py": false,
+      "hip-include/hip/hip_runtime_api.h": true,
+      "request_records.py": true,
+      "halogen_tools.py": true,
+      "tool_parse.py": true,
+      "providers/libamdhip64.so.7": true,
+      "providers/libcrypto.so.3": true,
+      "providers/libssl.so.3": true,
+      "providers/libstdc++.so.6.0.33": true
+    },
+    "interpretation": "File equality is passive identity evidence only; it does not prove transitive ABI equivalence or actual loaded provider binding."
+  },
+  "r2_drafter": {
+    "name": "qwen38-flash-next-drafter-r2.hgn",
+    "bytes": 1523568192,
+    "sha256": "07a7b5b358cb02737ecf85043db0d30b4938aed06ae6311772ea4e40b939696b",
+    "hf_revision": "5c72aeff67617168b2a10e707e1477de6a1adb47",
+    "verification": "Publisher and installed identities match; normal runtime selected r2 and completed both preflight copy phases without rejection",
+    "downloaded_by_this_task": true,
+    "activation": "HALOGEN_CK_OVERLAY selects it; none keeps the embedded head; entrypoint auto-selects a valid adjacent file and may fetch with HALOGEN_DOWNLOAD",
+    "installed": true,
+    "local_bytes": 1523568192,
+    "local_sha256": "07a7b5b358cb02737ecf85043db0d30b4938aed06ae6311772ea4e40b939696b",
+    "normal_runtime_selection_qualified": "historical_f192_revision_only",
+    "gate_policy": {
+      "HALOGEN_MTP_GATE_RULE": "cost",
+      "HALOGEN_SAMPLED_GATE": "cost",
+      "HALOGEN_MTP_GATE_P": "0.90",
+      "scope": "Confirmed by the qualified one-slot 32K text runtime"
+    }
+  },
+  "upstream_claims_not_locally_measured": {
+    "0.20.4": [
+      "Cached short follow-up prompt processing 15-50% faster",
+      "16 concurrent requests: about 10-20% higher total throughput",
+      "tool_choice none respected after prior tool calls"
+    ],
+    "0.20.5": [
+      "Faster concurrent decode and smaller saved state; previous disk cache rebuilt",
+      "Native checkpoint tokenization for combining-mark scripts",
+      "Structured-output, dynamic-tool, model-name and named-state fixes",
+      "XRT 2.27 and NPU execution changes"
+    ],
+    "0.20.6": [
+      "New draft head: about 4% faster single-request decode",
+      "Vision encoding about four times faster",
+      "Opt-in concurrency mode improves busy-server throughput but slows one or two requests",
+      "Fix shared-prefix boundary recomputation and rare reuse of another conversation context"
+    ]
+  },
+  "platform_and_integration": {
+    "official_wsl_supported": false,
+    "official_platform": "Linux KFD/DRI, gfx1151",
+    "hipfire_compatibility_contract_found": false,
+    "stable_bridge_abi_published": false,
+    "pending": [
+      "Qualify capacity opt-in and two-slot operation separately",
+      "Qualify vision separately because the normal profile disables it",
+      "Run a frozen benchmark cohort before making local 0.20.6 performance claims"
+    ]
+  },
+  "sources": {
+    "tag": "https://api.github.com/repos/peonist-ai/halogen-flash-server/git/tags/aabf3338ff3f53de456647ecbaf2e3410fa3a4e3",
+    "release_collection": "https://api.github.com/repos/peonist-ai/halogen-flash-server/releases",
+    "changelog": "https://github.com/peonist-ai/halogen-flash-server/blob/e4ef9b381dcdaa99cffb2ace709f8d3762dede97/CHANGELOG.md",
+    "comparison": "https://github.com/peonist-ai/halogen-flash-server/compare/v0.20.3...v0.20.6",
+    "entrypoint": "https://github.com/peonist-ai/halogen-flash-server/blob/e4ef9b381dcdaa99cffb2ace709f8d3762dede97/deploy/entrypoint.sh",
+    "flags": "https://github.com/peonist-ai/halogen-flash-server/blob/e4ef9b381dcdaa99cffb2ace709f8d3762dede97/docs/FLAGS.md",
+    "npu": "https://github.com/peonist-ai/halogen-flash-server/blob/e4ef9b381dcdaa99cffb2ace709f8d3762dede97/docs/NPU.md",
+    "package": "https://github.com/peonist-ai/halogen-flash-server/pkgs/container/halogen-flash-server",
+    "manifest": "https://ghcr.io/v2/peonist-ai/halogen-flash-server/manifests/0.20.6",
+    "weights": "https://huggingface.co/peonist-ai/halogen-qwen3.8-flash-next/tree/5c72aeff67617168b2a10e707e1477de6a1adb47"
+  },
+  "integration": {
+    "package": "backends/halogen-wsl2-0.20.6",
+    "installed": true,
+    "managed_default_selected_by_source": true,
+    "normal_server_online": false,
+    "diagnostic_runs_only": false,
+    "diagnostic_outcome": "Historical f192 run qualified its exact revision; current evolved 0.20.6 package was not rerun and 0.20.7 is the active release",
+    "temporary_pre_final_pins": {
+      "hip_register_hybrid_source_sha256": "440a8e8a79223f4799dfe328bb05450fd8978d9936fe255e9d0c336102464820",
+      "installed_v2_bridge_sha256": "43957b6e5e1eb9e021fdcc9278ac9007f0edb1a26701de6b3f8f74a01f7ffa05",
+      "sources_json_sha256": "12b733b2780bfd83cde219908d36d8ff56243b0f48dd610fab2002073ed86397",
+      "must_be_replaced_after_final_state_machine": false
+    },
+    "observed_external_r2_layout": {
+      "main_phase": {
+        "mapping_bytes": 66687678432,
+        "range": [
+          319488,
+          65164120064
+        ],
+        "aggregate_bytes": 65163800576
+      },
+      "r2_phase": {
+        "mapping_bytes": 1523568192,
+        "range": [
+          4096,
+          1523568192
+        ],
+        "aggregate_bytes": 1523564096
+      },
+      "combined_device_copy_bytes": 66687364672,
+      "device_copy_cap_bytes": 68719476736,
+      "phase_order_qualified": true,
+      "immutable_r2_mapping_qualified": true
+    },
+    "excluded_diagnostic_service_directories": [
+      "backends/halogen-wsl2-0.20.6/.local/services/8d08eabf9bf540ff978cdf9c520c4fa4",
+      "backends/halogen-wsl2-0.20.6/.local/services/6cc06d1e325a444b9c10a4647e10a362",
+      "backends/halogen-wsl2-0.20.6/.local/services/6e7141e1a17c413c9cbd8bb5b63c37a5"
+    ],
+    "historical_qualified_pins": {
+      "run_id": "f19220518d3040368449a89b6a116b51",
+      "hip_register_hybrid_source_sha256": "010b7bc61befa30bff5cde0b4685cc8bf683208ad27f949b4c1d9c7cbe530548",
+      "installed_v2_bridge_sha256": "23ef2eea91cb2ce448925cc254812269c9520a42da1feb4882143bedeb040c97",
+      "installed_v2_bridge_bytes": 35192
+    },
+    "current_package_unqualified_pins": {
+      "hip_register_hybrid_source_sha256": "946f1885350d5b6575df73ce3271cfbac4b709b23c0971d570cbb4673e26e201",
+      "installed_v2_bridge_sha256": "56e0c4ac18bcf839d3c41c88bc64caabdf3251c557fb3fb3e194c3e43031b031",
+      "installed_v2_bridge_bytes": 35400
+    }
+  },
+  "final_runtime_evidence": {
+    "status": "historical_f192_qualified_and_stopped_current_package_revision_unqualified",
+    "final_hybrid_source_sha256": "010b7bc61befa30bff5cde0b4685cc8bf683208ad27f949b4c1d9c7cbe530548",
+    "final_v2_bridge_sha256": "23ef2eea91cb2ce448925cc254812269c9520a42da1feb4882143bedeb040c97",
+    "source_manifest": {
+      "path": "backends/halogen-wsl2-0.20.6/profiles/sources.json",
+      "bytes": 5153,
+      "sha256": "8d928fae01fa22ca7c20b82e3dc4266ddcad1ed0dbd1184c824225f6d193fb0d",
+      "member_count": 50
+    },
+    "installation_receipt": {
+      "path": "backends/halogen-wsl2-0.20.6/.local/install-manifest.json",
+      "bytes": 18211,
+      "sha256": "0b8941d9fbcfec5b393acc64b026fbc476a8ffc56b289cf94db3ddf9e8786720",
+      "member_count": 161,
+      "hash_mismatches": 0
+    },
+    "runtime_service_manifest": {
+      "path": "backends/halogen-wsl2-0.20.6/.local/services/f19220518d3040368449a89b6a116b51/manifest.json",
+      "bytes": 6660,
+      "sha256": "52c56b771f1ef4cb1cd8c357074df1f79fd1784e455ad9ff9e8724e491d21c60",
+      "loaded_provider_identities_proven": false
+    },
+    "version": {
+      "api": "0.20.6",
+      "engine": "0.20.6",
+      "match": true
+    },
+    "r2_selected": true,
+    "health": {
+      "context": 32768,
+      "slot_ctx": 32768,
+      "slots": 1,
+      "kv_pool_positions": 32768,
+      "prefill_chunk": 8192,
+      "max_prefill_tokens": 8192,
+      "prompt_cache": "Off",
+      "vision": false,
+      "pld": "3,3",
+      "mtp_gate_rule": "cost",
+      "sampled_gate": "cost",
+      "mtp_gate_p": "0.90"
+    },
+    "authenticated_models": {
+      "status": 200,
+      "model_alias": "halogen-v2"
+    },
+    "authenticated_smoke": {
+      "status": 200,
+      "reply": "HALOGEN_0206_READY",
+      "finish_reason": "stop",
+      "prompt_tokens": 25,
+      "completion_tokens": 10,
+      "not_benchmark": true
+    },
+    "reserve_minimum_GiB": {
+      "physical": 20.16350555419922,
+      "physical_scope": "managed server current.json minimum_available_gib",
+      "commit": 117.94,
+      "commit_scope": "minimum sampled by backend service log through the bounded qualification request",
+      "backend_service_log_samples": 13
+    },
+    "identities": {
+      "controller": {
+        "pid": 1256,
+        "creation_time_100ns": 134394753766623624,
+        "executable": "python.exe",
+        "python": "3.12"
+      },
+      "backend": {
+        "pid": 4344,
+        "creation_time_100ns": 134394753873114825,
+        "executable": "python.exe",
+        "python": "3.12"
+      },
+      "controller_run_id": "1b9895d48df1418b9f12cc4ca6ce6b06",
+      "backend_run_id": "f19220518d3040368449a89b6a116b51",
+      "container_id": "865b780e63ae37c07b3d5ffd43699b2e655cdc4244570329cbea14bc117e0db4"
+    },
+    "ready_receipt": {
+      "path": "backends/halogen-wsl2-0.20.6/.local/services/f19220518d3040368449a89b6a116b51/ready.json",
+      "bytes": 936,
+      "sha256": "274dcf6fea2127909fa18be184866bd7217a7bd4a87e6f6eacd75dc090651da6"
+    },
+    "visible_console": true,
+    "new_benchmark_qualified": false,
+    "tests": {
+      "backend_python_passed": 43,
+      "backend_python_skipped": 11,
+      "linux_gcc_fixture_passed": 11,
+      "managed_server_passed": true,
+      "powershell51_launcher_passed": true,
+      "full_practical_suite": {
+        "server_tests_passed": 251,
+        "failures": 0
+      },
+      "git_diff_check_passed": true,
+      "independent_review_complete": true
+    },
+    "security_review": {
+      "secrets_staged": false,
+      "local_runtime_files_staged": false,
+      "native_binaries_staged": false,
+      "model_files_staged": false,
+      "logs_staged": false,
+      "final_staged_name_audit_pending": false
+    },
+    "preflight": {
+      "phase1_copied_bytes": 65163800576,
+      "phase2_copied_bytes": 66687364672,
+      "host_bytes": 0,
+      "reject_observed": false
+    },
+    "post_request_observation_GiB": {
+      "physical": 26.88,
+      "commit": 118.96
+    },
+    "gateway_session_receipt": {
+      "path": "server/.local/servicenow-sessions/d00cc3cbd5154099b5c6cd6bee89c4b3.json",
+      "bytes": 2994,
+      "sha256": "637c52f208e92e75f3e8c042d0c1f48c0a9c2ac3ffe2241b85a9525a3aeade2f"
+    },
+    "gateway": {
+      "port": 8840,
+      "listener_count": 1
+    },
+    "unqualified_modes": [
+      "capacity_opt_in",
+      "two_slot",
+      "vision",
+      "performance"
+    ],
+    "health_receipt": {
+      "path": "backends/halogen-wsl2-0.20.6/.local/services/f19220518d3040368449a89b6a116b51/health.json",
+      "bytes": 7726,
+      "sha256": "26815613256669f9b85a59af34a80f0dbb7df202792347c8db8fd427205c0cac"
+    },
+    "managed_current_receipt": {
+      "path": "server/.local/current.json",
+      "bytes": 676,
+      "sha256": "3fd85bcca52086320ed3eec2e487488ef31a7a9cfd6bb642c41fd76142fdad15",
+      "phase": "ready",
+      "profile_sha256": "637c52f208e92e75f3e8c042d0c1f48c0a9c2ac3ffe2241b85a9525a3aeade2f"
+    },
+    "server_left_ready_after_qualification": false,
+    "server_currently_online": false,
+    "lifecycle_after_qualification": {
+      "stopped": true,
+      "reason": "Historical qualified instance stopped after managed physical-memory reserve enforcement; 0.20.7 now serves the current profile",
+      "bridge_or_engine_failure": false,
+      "evidence_preserved": true
+    },
+    "historical_qualification": true,
+    "applies_to_current_package_revision": false,
+    "qualified_revision": {
+      "run_id": "f19220518d3040368449a89b6a116b51",
+      "hip_register_hybrid_source_sha256": "010b7bc61befa30bff5cde0b4685cc8bf683208ad27f949b4c1d9c7cbe530548",
+      "installed_v2_bridge_sha256": "23ef2eea91cb2ce448925cc254812269c9520a42da1feb4882143bedeb040c97",
+      "installed_v2_bridge_bytes": 35192
+    },
+    "current_unqualified_revision": {
+      "hip_register_hybrid_source_sha256": "946f1885350d5b6575df73ce3271cfbac4b709b23c0971d570cbb4673e26e201",
+      "installed_v2_bridge_sha256": "56e0c4ac18bcf839d3c41c88bc64caabdf3251c557fb3fb3e194c3e43031b031",
+      "installed_v2_bridge_bytes": 35400
+    }
+  }
+}

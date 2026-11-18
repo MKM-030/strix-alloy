@@ -48,6 +48,14 @@ def atomic(path, value):
     finally:
         temporary.unlink(missing_ok=True)
 
+
+def readiness_timeout_seconds(engine):
+    """Bound cold Halogen verification without weakening its inner timeouts."""
+    # A new Halogen package can hash the checkpoint, N-gram table and draft
+    # head (each individually bounded at one hour) before its bounded engine
+    # start. Native backends retain the historical 20-minute readiness cap.
+    return 4 * 3600 if engine.get('kind') == 'halogen' else 1200
+
 async def publish_heartbeat(path, state):
     snapshot=copy.deepcopy(state)
     try:
@@ -167,7 +175,7 @@ def halogen_speculation_module(directory):
     supported = Path(__file__).resolve().parents[1] / 'backends'
     allowed = tuple((supported / name).resolve() for name in
                     ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1',
-                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16', 'halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3'))
+                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16', 'halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3', 'halogen-wsl2-0.20.6', 'halogen-wsl2-0.20.7'))
     if directory.resolve() not in allowed:
         raise ValueError('Speculation policy requires a pinned Halogen 0.16.2 or 0.17.x backend')
     source = directory / 'scripts/speculation_policy.py'
@@ -194,7 +202,7 @@ def halogen_api_defaults_arguments(engine, directory):
         return []
     supported = ROOT.parent / 'backends'
     allowed = tuple((supported / name).resolve() for name in
-                    ('halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16', 'halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3'))
+                    ('halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16', 'halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3', 'halogen-wsl2-0.20.6', 'halogen-wsl2-0.20.7'))
     if directory.resolve() not in allowed:
         raise ValueError('API defaults require a pinned Halogen 0.17.2 or newer managed backend')
     source = directory / 'scripts/api_defaults.py'
@@ -278,7 +286,7 @@ def halogen_vision_arguments(engine,directory):
         raise ValueError('disable_vision must be a boolean')
     if not engine['disable_vision']: return []
     supported=tuple((ROOT.parent/'backends'/name).resolve() for name in
-                    ('halogen-wsl2-0.18.1','halogen-wsl2-0.18.5','halogen-wsl2-0.18.7','halogen-wsl2-0.18.8','halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16', 'halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3'))
+                    ('halogen-wsl2-0.18.1','halogen-wsl2-0.18.5','halogen-wsl2-0.18.7','halogen-wsl2-0.18.8','halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16', 'halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3', 'halogen-wsl2-0.20.6', 'halogen-wsl2-0.20.7'))
     if (engine.get('kind')!='halogen' or engine.get('launcher','powershell')!='python' or
             engine.get('checkpoint')!='v2' or directory.resolve() not in supported):
         raise ValueError('Text-only vision control requires a pinned 0.18.1 or newer managed v2 Python service')
@@ -290,9 +298,9 @@ def halogen_vision_arguments(engine,directory):
 
 def halogen_capacity_module(directory):
     supported = tuple((ROOT.parent / 'backends' / name).resolve() for name in
-                      ('halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3'))
+                      ('halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3', 'halogen-wsl2-0.20.6', 'halogen-wsl2-0.20.7'))
     if directory.resolve() not in supported:
-        raise ValueError('Capacity controls require a pinned Halogen 0.18.22, 0.19.1, 0.20.0, 0.20.1, 0.20.2 or 0.20.3 backend')
+        raise ValueError('Capacity controls require a pinned Halogen 0.18.22, 0.19.1, 0.20.0, 0.20.1, 0.20.2, 0.20.3, 0.20.6 or 0.20.7 backend')
     source = directory / 'scripts/capacity_policy.py'
     if source.is_symlink() or not source.is_file():
         raise ValueError('Selected backend has no bounded capacity policy')
@@ -334,7 +342,7 @@ def validate_halogen_capacity_profile(configuration, repo):
         return
     directory = (repo / engine.get('directory', '')).resolve()
     capacity_backends = tuple((ROOT.parent / 'backends' / name).resolve() for name in
-                              ('halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3'))
+                              ('halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3', 'halogen-wsl2-0.20.6', 'halogen-wsl2-0.20.7'))
     if not explicit and directory not in capacity_backends:
         return  # Historical backends retain their existing gateway policy.
     if type(concurrency) is not int or concurrency not in (1, 2):
@@ -483,7 +491,7 @@ def halogen_launch_command(engine, directory):
     supported = ROOT.parent / 'backends'
     allowed = tuple((supported / name).resolve() for name in
                     ('halogen-wsl2-0.16.2', 'halogen-wsl2-0.17.0', 'halogen-wsl2-0.17.1',
-                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16', 'halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3'))
+                     'halogen-wsl2-0.17.2', 'halogen-wsl2-0.17.3', 'halogen-wsl2-0.17.4', 'halogen-wsl2-0.18.0', 'halogen-wsl2-0.18.1', 'halogen-wsl2-0.18.5', 'halogen-wsl2-0.18.7', 'halogen-wsl2-0.18.8', 'halogen-wsl2-0.18.10', 'halogen-wsl2-0.18.11', 'halogen-wsl2-0.18.15', 'halogen-wsl2-0.18.16', 'halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3', 'halogen-wsl2-0.20.6', 'halogen-wsl2-0.20.7'))
     executable = Path(engine.get('python_executable', ''))
     if (directory.resolve() not in allowed or not executable.is_absolute() or
             not executable.is_file() or executable.resolve() != Path(sys.executable).resolve()):
@@ -692,7 +700,7 @@ async def run(config_path, port):
                     raise RuntimeError(f'Windows physical/commit reserve crossed {reserve:g} GiB')
                 await asyncio.sleep(.5)
         guard_task=asyncio.create_task(memory_guard())
-        deadline=time.monotonic()+1200
+        deadline=time.monotonic()+readiness_timeout_seconds(engine.config)
         import aiohttp
         async with aiohttp.ClientSession(trust_env=False,auto_decompress=False) as client:
             gateway.client=client

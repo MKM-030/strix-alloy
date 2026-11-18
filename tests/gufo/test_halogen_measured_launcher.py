@@ -58,10 +58,10 @@ class MeasuredLauncherTest(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn('Measured32K requires', result.stdout + result.stderr)
 
-    def test_existing_current4k_defaults_are_preserved(self):
+    def test_current4k_uses_the_latest_default_version(self):
         result = self.invoke(profile='Current4K')
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn('Halogen 0.18.10 v2; MTP policy Fixed2; PLD 3,3; cache Off', result.stdout)
+        self.assertIn('Halogen 0.20.7 v2; MTP policy Fixed2; PLD 3,3; cache Off', result.stdout)
         self.assertIn('Context capacity: 262144', result.stdout)
         self.assertIn('Thinking default: On; medium effort', result.stdout)
         self.assertIn('Prefill chunk / token arena: 4096 / 4096', result.stdout)
@@ -110,18 +110,18 @@ class MeasuredLauncherTest(unittest.TestCase):
         self.assertEqual({path.name for path in sessions.glob('*.json')}, before)
 
     @unittest.skipUnless(TEXT_BASELINE.is_file() and
-                         (ROOT / 'backends/halogen-wsl2-0.18.22/.local/machine.json').is_file(),
-                         'Installed 0.18.22 and frozen 0.18.16 text configuration required')
+                         (ROOT / 'backends/halogen-wsl2-0.20.7/.local/machine.json').is_file(),
+                         'Installed 0.20.7 and frozen 0.18.16 text configuration required')
     def test_current_text32k_print_only_reproduces_exact_configuration_without_session_write(self):
         sessions = ROOT / 'server/.local/servicenow-sessions'
         before = {path.name for path in sessions.glob('*.json')}
         reference = json.loads(TEXT_BASELINE.read_text(encoding='utf-8-sig'))
-        reference['backend_token_file'] = str(ROOT / 'backends/halogen-wsl2-0.18.22/.local/api-token.txt')
-        reference['backend']['expected']['version.api'] = '0.18.22'
-        reference['backend']['expected']['version.engine'] = '0.18.22'
-        reference['engine']['directory'] = 'backends/halogen-wsl2-0.18.22'
+        reference['backend_token_file'] = str(ROOT / 'backends/halogen-wsl2-0.20.7/.local/api-token.txt')
+        reference['backend']['expected']['version.api'] = '0.20.7'
+        reference['backend']['expected']['version.engine'] = '0.20.7'
+        reference['engine']['directory'] = 'backends/halogen-wsl2-0.20.7'
         for arguments, trace in (((), False),
-                                 (('-HalogenVersion', '0.18.22', '-Thinking', 'Off',
+                                 (('-HalogenVersion', '0.20.7', '-Thinking', 'Off',
                                    '-MtpPolicy', 'Auto', '-PromptCache', 'Off', '-ConsoleTrace'), True)):
             with self.subTest(arguments=arguments):
                 result = self.invoke(*arguments, profile='CurrentText32K')
@@ -145,7 +145,7 @@ class MeasuredLauncherTest(unittest.TestCase):
             with self.subTest(arguments=arguments):
                 result = self.invoke(*arguments, profile='CurrentText32K')
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn('CurrentText32K requires Halogen 0.18.22', result.stdout + result.stderr)
+                self.assertIn('CurrentText32K requires Halogen 0.20.7', result.stdout + result.stderr)
         self.assertEqual({path.name for path in sessions.glob('*.json')}, before)
 
 

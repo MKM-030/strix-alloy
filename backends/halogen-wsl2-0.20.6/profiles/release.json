@@ -1,0 +1,320 @@
+{
+  "schema": 1,
+  "version": "0.20.6",
+  "upstream_commit": "109f0b78e221",
+  "image": "ghcr.io/peonist-ai/halogen-flash-server@sha256:f68892a56d8a1182645042574d702374bff402bb986ec4d49304cbe89483dbaf",
+  "engine_sha256": "3ed02d3fd6bda4851995e4295c1edd749655a095d997db03955da9052ee8647e",
+  "entrypoint_sha256": "20ae62fab27b73593d0c90246419279aa6aee2df5930071b2a4aadfecbabdebd",
+  "adapted_entrypoint_sha256": "d22f579b623c5e60e6bd0eb1c3a158c7f5828d96cbf97cf01588d33ebd895861",
+  "bridge_sha256": "0b9f46033cee5a0adc8cc68a7b4d5046d63712c072a1320d14ce249fa4ad2402",
+  "private_sha256": "3b1acfe223f6c77a522473b441a74515fc223d65a35c3fe592922fa7ab7ebf16",
+  "probe_sha256": "cbc284684f7db8076a303a7d461f518d63f04f1be19af66f05e2e535ab6d59a2",
+  "hip_header_sha256": "e68c693da4838dc6e616e029583a6a812c7a8030246d3608dcd49812a9e4a836",
+  "profiles": [
+    "Trace4k",
+    "Single4k",
+    "Serve4k"
+  ],
+  "context": 4096,
+  "slots": 1,
+  "windows_admission_physical_gib": 45,
+  "windows_admission_commit_gib": 117,
+  "windows_runtime_physical_gib": 18,
+  "windows_runtime_commit_gib": 18,
+  "serve_seconds_range": [
+    30,
+    300
+  ],
+  "status": "Current evolved 0.20.6 package revision is installed but not runtime-requalified; historical f192 one-slot 32K text qualification is retained with its exact source and bridge pins",
+  "service": {
+    "default_context": 32768,
+    "context_range": [
+      4096,
+      262144
+    ],
+    "slots": 1,
+    "default_serve_seconds": 0,
+    "checkpoint": "qwen38-flash-next-v2.hgn",
+    "v2_checkpoint_qualified": false,
+    "checkpoint_options": [
+      "w4b",
+      "v2"
+    ],
+    "v2_expected_sha256": "71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687",
+    "default_checkpoint": "v2",
+    "runtime_qualified": false,
+    "windows_admission_physical_gib": 30,
+    "windows_admission_commit_gib": 124,
+    "windows_runtime_physical_gib": 18,
+    "windows_runtime_commit_gib": 18,
+    "capacity_opt_in": {
+      "context": 32768,
+      "checkpoints": [
+        "v2"
+      ],
+      "text_only": true,
+      "slots": [
+        1,
+        2
+      ],
+      "kv_pool_positions": [
+        32768,
+        65536
+      ],
+      "gateway_concurrency": [
+        1,
+        2
+      ],
+      "default_unchanged": true,
+      "runtime_qualified": false
+    }
+  },
+  "v2_bridge_sha256": "56e0c4ac18bcf839d3c41c88bc64caabdf3251c557fb3fb3e194c3e43031b031",
+  "v2_bridge_source_sha256": "946f1885350d5b6575df73ce3271cfbac4b709b23c0971d570cbb4673e26e201",
+  "v2_bridge_bytes": 35400,
+  "upstream_api_sha256": "71240612de5013fa49780de9243adbf60516afe81729f73aa67f98f9fde75c9f",
+  "runtime_qualified": false,
+  "production_bound": false,
+  "stock_rocroller_sha256": null,
+  "public_release_commit": "e4ef9b381dcdaa99cffb2ace709f8d3762dede97",
+  "full_transitive_helper_equivalence_proven": false,
+  "unqualified_artifact_pins": [
+    "current_package_runtime",
+    "normal_startup",
+    "actual_engine_provider_binding"
+  ],
+  "entrypoint_runtime_qualified": false,
+  "runtime_pin_receipt": null,
+  "preflight_mapping_ready": true,
+  "preflight_mapping_scope": "Fresh complete 0.20.6 FDE decoding and semantic assertions plus a fail-closed embedded/r2/optional-vision planner bound to complete-file receipts and post-hash filesystem generations before and after GPU copy; supported frame and native comparison retained; indirect target closure unproven",
+  "preflight_audit_sha256": "f7a6d1a0ddc06793f8536b470e24a9e09ab6afd0c98907f9d133f41f1c1b697c",
+  "source_migration_ready": true,
+  "cpu_build_pending": false,
+  "image_config_sha256": "3f5f2337842b8003f9826e226adcd4ad4a620dd3ed2e3f780dfb9f00dae4dfa6",
+  "engine_bytes": 38092616,
+  "service_entrypoint_preview_sha256": null,
+  "upstream_tool_sha256": {
+    "serve_api.py": "71240612de5013fa49780de9243adbf60516afe81729f73aa67f98f9fde75c9f",
+    "request_records.py": "362abc02a847048333755804dc655ce5209eded9d0adcb0cc2d585ad43d7c672",
+    "halogen_tools.py": "7d08616acbf45c88c9e47de32fc5a2b4ee327d23aa9b0486b654685587e0fd11",
+    "tool_parse.py": "e074fe67d847fe9e4d4aa0a0e89a8c1e7e618328fa08cd22f62e59c219c2e339"
+  },
+  "actual_runtime_providers": {
+    "qualified": false,
+    "scope": "Historical f192 runtime manifest only; the evolved current 0.20.6 package revision and loaded provider identities are not qualified",
+    "run_id": "f19220518d3040368449a89b6a116b51",
+    "receipt": {
+      "path": "backends/halogen-wsl2-0.20.6/.local/services/f19220518d3040368449a89b6a116b51/manifest.json",
+      "bytes": 6660,
+      "sha256": "52c56b771f1ef4cb1cd8c357074df1f79fd1784e455ad9ff9e8724e491d21c60"
+    }
+  },
+  "normal_candidate_policy": {
+    "ngram_source_bytes": 124068083904,
+    "runtime_commit_gib": 18,
+    "experimental_hooks": [],
+    "checkpoint": "v2",
+    "reasoning_effort": "low",
+    "pld": "3,3",
+    "slots": 1,
+    "startup_physical_gib": 30,
+    "runtime_physical_gib": 18,
+    "slot_ctx": 32768,
+    "huge_asset_identity_policy": "Reuse established complete-file receipts after exact file identity gate; no rehash or download",
+    "prompt_cache": "Off",
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "context": 32768,
+    "mtp_depth": 2,
+    "startup_commit_gib": 124,
+    "capacity_opt_in_startup_commit_gib": 131,
+    "sdma": 1,
+    "request_entry_physical_gib": 22,
+    "max_thinking_tokens": 2048,
+    "kv_pool_positions": 32768,
+    "thinking_enabled": false,
+    "checkpoint_bytes": 66687678432,
+    "recovery_frames": 5,
+    "request_entry_commit_gib": 22,
+    "recovery_physical_rule": "max(24 GiB, before_available - 2 GiB)",
+    "recovery_commit_gib": 18,
+    "startup_stable_seconds": 10,
+    "draft_head": "exact qwen38-flash-next-drafter-r2.hgn is receipt-verified before the upstream empty-HALOGEN_CK_OVERLAY auto-selection",
+    "mtp_gate_p": "0.90",
+    "mtp_gate_rule": "cost",
+    "sampled_gate": "cost"
+  },
+  "cpu_image_provider_binding_qualified": false,
+  "actual_engine_provider_binding_qualified": false,
+  "r2_drafter": {
+    "path": "/models/qwen38-flash-next-drafter-r2.hgn",
+    "bytes": 1523568192,
+    "sha256": "07a7b5b358cb02737ecf85043db0d30b4938aed06ae6311772ea4e40b939696b",
+    "mapping_range": [
+      4096,
+      1523568192
+    ],
+    "registered_bytes": 1523564096,
+    "shortened_main_range": [
+      319488,
+      65164120064
+    ],
+    "shortened_main_registered_bytes": 65163800576,
+    "total_device_copy_bytes": 66687364672,
+    "phase_order": [
+      "main",
+      "external_r2",
+      "optional_vision"
+    ],
+    "mapping_identity_rule": "Exact canonical path and file size; read-only private mapping at file offset 0; mapping device and inode must match the stat identity during planning and registration",
+    "selection": "Historically live-selected by run f19220518d3040368449a89b6a116b51; the evolved current 0.20.6 package revision was not rerun"
+  },
+  "vision_preflight": {
+    "status": "retained_source_live_qualification_pending",
+    "tower_path": "/models/qwen38-flash-next-vision.hgn",
+    "tower_bytes": 897916416,
+    "tower_sha256": "d62e0ae553fe88afd3833733d4a4c669f34d20fd8dfce4b9610525bed2134b10",
+    "tower_range": [
+      53248,
+      897916416
+    ],
+    "tower_registered_bytes": 897863168,
+    "layouts": {
+      "embedded_drafter": {
+        "main_registered_bytes": 66687358944,
+        "total_device_copy_bytes": 67585222112
+      },
+      "external_r2": {
+        "main_registered_bytes": 65163800576,
+        "drafter_registered_bytes": 1523564096,
+        "total_device_copy_bytes": 67585227840
+      }
+    },
+    "device_copy_cap_bytes": 68719476736,
+    "windows_vision_admission_increment_gib": 1,
+    "windows_runtime_reserve_gib": 18,
+    "guest_copy_reserve_gib": 12,
+    "transfer_chunk_bytes": 67108864
+  },
+  "cpu_image_providers": {
+    "libamdhip64.so.7": {
+      "path": "/usr/local/lib/python3.12/site-packages/_rocm_sdk_core/lib/libamdhip64.so.7",
+      "bytes": 28275305,
+      "sha256": "6d1dbee8cb3ad924e4c1bca7734e22f2c93026eb3bc871a7f64a916778d55e36"
+    },
+    "libcrypto.so.3": {
+      "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+      "bytes": 6521408,
+      "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b"
+    },
+    "libssl.so.3": {
+      "path": "/usr/lib/x86_64-linux-gnu/libssl.so.3",
+      "bytes": 1109952,
+      "sha256": "9592038e92d1f41affcbb625334d0b6e788714c889104fa6d5b107cf9fd657f2"
+    },
+    "libstdc++.so.6.0.33": {
+      "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+      "bytes": 2497768,
+      "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00"
+    }
+  },
+  "cpu_image_provider_binding_scope": "Passive payload hashes only; no library or engine was loaded",
+  "bridge_evidence": {
+    "package": "server/.local/halogen-update-20261118/primary0206/passive-audit",
+    "static_map_sha256": "f7a6d1a0ddc06793f8536b470e24a9e09ab6afd0c98907f9d133f41f1c1b697c",
+    "frame_contract": {
+      "range_begin_offset": 8,
+      "object_offset": 40,
+      "range_end_offset": 88,
+      "aggregate_offset": 168,
+      "floor_offset": 184,
+      "frame_bytes": 552,
+      "range_end_register": "rbx",
+      "available_register": "r15",
+      "result_register": "rax",
+      "no_live_AVX_YMM_ZMM_opmask": true
+    },
+    "old_function_equivalence_claimed": false,
+    "normal_runtime_proven": false,
+    "historical_runtime_proven": true,
+    "historical_run_id": "f19220518d3040368449a89b6a116b51"
+  },
+  "cpu_build_receipt": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\cpu-build-r2\\cpu-build.json",
+  "cpu_build_receipt_sha256": "533d0c01e253682dd8785b5756a37e35902dd4e530efc7255b25c6b4964ed7d0",
+  "cpu_image_provider_receipt": {
+    "path": "C:\\Projects\\strix-alloy-clean\\server\\.local\\halogen-update-20261118\\primary0206\\capture\\capture-contract.json",
+    "bytes": 4180,
+    "sha256": "55c5f53a2bc5ffc4598c49465be167761ed931dde4b5c986822c01d42939e9d7",
+    "completed": true,
+    "engine_started": false,
+    "actual_engine_provider_binding_qualified": false
+  },
+  "qualified_runtime": {
+    "scope": "CurrentText32K v2, one slot, 32768 context/KV positions, text only",
+    "run_id": "f19220518d3040368449a89b6a116b51",
+    "container_id": "865b780e63ae37c07b3d5ffd43699b2e655cdc4244570329cbea14bc117e0db4",
+    "gateway_port": 8840,
+    "gateway_listener_count": 1,
+    "engine_port": 8731,
+    "api_version": "0.20.6",
+    "engine_version": "0.20.6",
+    "version_match": true,
+    "model_alias": "halogen-v2",
+    "r2_selected": true,
+    "preflight": {
+      "phase1_copied_bytes": 65163800576,
+      "phase2_copied_bytes": 66687364672,
+      "host_bytes": 0,
+      "reject_observed": false
+    },
+    "health": {
+      "context": 32768,
+      "slot_ctx": 32768,
+      "kv_pool_positions": 32768,
+      "slots": 1,
+      "vision": false,
+      "prompt_cache": "Off",
+      "prefill_chunk": 8192,
+      "max_prefill_tokens": 8192,
+      "pld": "3,3",
+      "mtp_gate_p": "0.90",
+      "mtp_gate_rule": "cost",
+      "sampled_gate": "cost"
+    },
+    "smoke_reply": "HALOGEN_0206_READY",
+    "server_left_ready_online": false,
+    "capacity_opt_in_qualified": false,
+    "two_slot_qualified": false,
+    "vision_qualified": false,
+    "performance_benchmark_qualified": false,
+    "gateway_controller": {
+      "pid": 1256,
+      "creation_time_100ns": 134394753766623624,
+      "executable": "python.exe",
+      "python": "3.12",
+      "run_id": "1b9895d48df1418b9f12cc4ca6ce6b06"
+    },
+    "backend_controller": {
+      "pid": 4344,
+      "creation_time_100ns": 134394753873114825,
+      "executable": "python.exe",
+      "python": "3.12",
+      "run_id": "f19220518d3040368449a89b6a116b51"
+    },
+    "minimum_available_physical_gib": 20.16350555419922,
+    "minimum_backend_service_log_commit_gib": 117.94,
+    "historical_qualification": true,
+    "applies_to_current_package_revision": false,
+    "qualified_revision": {
+      "run_id": "f19220518d3040368449a89b6a116b51",
+      "hybrid_source_sha256": "010b7bc61befa30bff5cde0b4685cc8bf683208ad27f949b4c1d9c7cbe530548",
+      "v2_bridge_sha256": "23ef2eea91cb2ce448925cc254812269c9520a42da1feb4882143bedeb040c97",
+      "v2_bridge_bytes": 35192
+    },
+    "current_unqualified_revision": {
+      "hybrid_source_sha256": "946f1885350d5b6575df73ce3271cfbac4b709b23c0971d570cbb4673e26e201",
+      "v2_bridge_sha256": "56e0c4ac18bcf839d3c41c88bc64caabdf3251c557fb3fb3e194c3e43031b031",
+      "v2_bridge_bytes": 35400
+    }
+  }
+}

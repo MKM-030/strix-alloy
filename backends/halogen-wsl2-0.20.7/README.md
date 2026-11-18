@@ -1,0 +1,7 @@
+# Halogen 0.20.7 WSL2 backend
+
+The exact image, engine, API, entrypoint and finite memory bridge are pinned. Four GCC 13.3 CPU products are bound to a complete build receipt. The installed one-slot 32K text profile passed a managed ready start, exact preflight-phase checks, authenticated model discovery and an authenticated functional request. No model, provider or engine was executed during source preparation or the CPU build; the later runtime qualification is recorded separately.
+
+The default one-slot service retains 30/124 GiB startup admission; explicit capacity opt-in retains 30/131 GiB. The 18/18 GiB runtime reserves, text capacity policy and bearer authentication remain. The unchanged 59-field cached wire and CacheOff correction are retained. The preferred `qwen38-flash-next-drafter-r2-ht4.hgn` is verified before start. `HALOGEN_CONC_MODE` remains unset so the pinned 0.20.7 entrypoint owns its compatible v2 default. The qualified run selected both paths, registered `65,163,800,576` main bytes and then `1,488,268,672` HT4 bytes, and returned `HALOGEN_0207_READY`. This is functional runtime evidence, not a performance benchmark. Capacity opt-in, two slots and vision remain separately unqualified.
+
+Run CPU checks with `python -m unittest discover -s backends/halogen-wsl2-0.20.7/tests`. Set HALOGEN0207_CAPTURE to a passive extracted image directory for the exact ELF/API/entrypoint cases; absent captures are explicit skips. Linux compilation fixtures are separate and may skip on Windows.

@@ -7,26 +7,29 @@ model execution, transfer a live KV cache between engines, or silently switch mo
 
 ## Current availability
 
-The Windows PowerShell 5.1 integration launcher offers the explicitly selected
-**Halogen 0.18.16 `MeasuredText32K`** preset: v2, 32768 context positions,
-8192-token prefill chunk/arena, adaptive MTP gate 0.90, PLD `3,3`, Cache Off,
-Thinking Off/low, Vision Off and prefetch off. It preserves the stable public
-API token and supports visible request/response trace. Follow the
+The Windows PowerShell 5.1 integration launcher defaults to the qualified
+**Halogen 0.20.7 `CurrentText32K`** preset: v2, one 32768-position slot and KV
+pool, paired 8192 prefill controls, the external `r2-ht4` draft head, adaptive
+MTP gate 0.90, PLD `3,3`, Cache Off, Thinking Off/low, Vision Off and prefetch
+off. The 0.20.7 entrypoint owns its compatible automatic concurrency mode; the
+launcher does not force its internal scheduler settings. It preserves the stable
+public API token and supports visible request/response trace. Follow the
 [foreground integration guide](../docs/integrations/halogen-servicenow.md):
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile MeasuredText32K -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -ConsoleTrace
 ```
 
-Without an explicit preset the script retains `Current4K`, installed 0.18.10,
-fixed MTP depth 2 and Thinking On/medium/2048. `Measured32K` separately selects
-the 0.18.15 vision-capable configuration with Flexible cache. These presets
-must not be combined into one performance claim. `HistoricalStock` requires
-explicit `-HalogenVersion 0.16.2`. Historical rates belong to their recorded
-runtime and workload; they are not throughput promises for a new request.
-The generic PowerShell 7 launcher and `manage.py` default below retain the
-[0.16.2 WSL package](../backends/halogen-wsl2-0.16.2/README.md), while the profile
-generator also supports explicitly selected installed versions through 0.18.16.
+`CurrentCachedText32K` selects the same 0.20.7 engine with Flexible cache and
+paired 2048 prefill controls. `MeasuredText32K` retains the historical 0.18.16
+measurement profile, and `Measured32K` retains the 0.18.15 vision-capable
+configuration. These presets must not be combined into one performance claim.
+`HistoricalStock` requires explicit `-HalogenVersion 0.16.2`. Historical rates
+belong to their recorded runtime and workload; they are not throughput promises
+for a new request. The generic PowerShell 7 launcher and `manage.py` default
+below retain the [0.16.2 WSL package](../backends/halogen-wsl2-0.16.2/README.md),
+while the profile generator supports explicitly selected installed Halogen
+versions through 0.20.7.
 Historical upgrade evidence is retained in the
 [0.16.2 report](../docs/benchmarks/halogen0162-upgrade-20261003.md).
 A locally qualified GUFO Windows profile is also implemented.
@@ -107,7 +110,7 @@ The backend keeps its own rotating engine logs and independent memory/lease guar
 
 ```powershell
 .\server\.local\venv\Scripts\python.exe -B -m unittest discover -s server/tests -v
-python -B -m unittest discover -s backends/halogen-wsl2-0.16.2/tests -v
+python -B -m unittest discover -s backends/halogen-wsl2-0.20.7/tests -v
 python .\server\check_updates.py
 ```
 
