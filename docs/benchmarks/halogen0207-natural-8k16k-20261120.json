@@ -1,0 +1,671 @@
+{
+  "schema": "halogen0207.natural-8k16k-public-observations.v1",
+  "version": "0.20.7",
+  "actual_inputs": [
+    8192,
+    16384
+  ],
+  "output_tokens": 128,
+  "reported_observations": {
+    "complete_cohorts": true,
+    "native_reported_observations_only": true,
+    "api_phase_clock_qualified": false,
+    "RAW_observer_used": false,
+    "cases": {
+      "natural8192": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "warmup_excluded": 1,
+        "measured_repetitions": 3,
+        "prefill_native_reported_mean_tps": 951.0453333333334,
+        "decode_native_reported_mean_tps": 45.08766666666667,
+        "prefill_native_pooled_tps": 950.5097541731773,
+        "decode_native_pooled_tps": 45.08682736676491,
+        "http_qpc_mean_seconds": 10.463027866666668,
+        "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 186,
+            "drafted": 291,
+            "accepted": 192,
+            "acceptance_fraction": 0.6597938144329897
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      },
+      "natural16k": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "warmup_excluded": 1,
+        "measured_repetitions": 3,
+        "prefill_native_reported_mean_tps": 938.335,
+        "decode_native_reported_mean_tps": 43.544000000000004,
+        "prefill_native_pooled_tps": 938.3286402901732,
+        "decode_native_pooled_tps": 43.54383299125721,
+        "http_qpc_mean_seconds": 18.579665900000002,
+        "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 198,
+            "drafted": 279,
+            "accepted": 180,
+            "acceptance_fraction": 0.6451612903225806
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      }
+    }
+  },
+  "run_level_observations": {
+    "natural8192": {
+      "warmup_excluded": {
+        "case": "natural8192",
+        "ordinal": 0,
+        "phase": "warmup_excluded",
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "prefill_native_reported_tps": 596.007,
+        "decode_native_reported_tps": 29.307,
+        "prefill_native_reported_ms": 13744.8,
+        "decode_native_reported_ms": 4367.6,
+        "http_qpc_seconds": 16.5200163,
+        "API_phase_sum_seconds": 18.1124,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.5923836999999992,
+        "minimum_reserve_gib": 26.353050231933594,
+        "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 62,
+            "drafted": 97,
+            "accepted": 64,
+            "acceptance_fraction": 0.6597938144329897
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      },
+      "measured_runs": [
+        {
+          "case": "natural8192",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 972.564,
+          "decode_native_reported_tps": 44.856,
+          "prefill_native_reported_ms": 8423.1,
+          "decode_native_reported_ms": 2853.6,
+          "http_qpc_seconds": 10.3378133,
+          "API_phase_sum_seconds": 11.2767,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 0.9388866999999994,
+          "minimum_reserve_gib": 26.357948303222656,
+          "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 62,
+              "drafted": 97,
+              "accepted": 64,
+              "acceptance_fraction": 0.6597938144329897
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        },
+        {
+          "case": "natural8192",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 920.129,
+          "decode_native_reported_tps": 45.206,
+          "prefill_native_reported_ms": 8903.1,
+          "decode_native_reported_ms": 2831.5,
+          "http_qpc_seconds": 10.6957558,
+          "API_phase_sum_seconds": 11.7346,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 1.0388441999999998,
+          "minimum_reserve_gib": 26.326217651367188,
+          "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 62,
+              "drafted": 97,
+              "accepted": 64,
+              "acceptance_fraction": 0.6597938144329897
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        },
+        {
+          "case": "natural8192",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 960.443,
+          "decode_native_reported_tps": 45.201,
+          "prefill_native_reported_ms": 8529.4,
+          "decode_native_reported_ms": 2831.8,
+          "http_qpc_seconds": 10.3555145,
+          "API_phase_sum_seconds": 11.3612,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 1.0056855000000002,
+          "minimum_reserve_gib": 26.360557556152344,
+          "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 62,
+              "drafted": 97,
+              "accepted": 64,
+              "acceptance_fraction": 0.6597938144329897
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        }
+      ]
+    },
+    "natural16k": {
+      "warmup_excluded": {
+        "case": "natural16k",
+        "ordinal": 0,
+        "phase": "warmup_excluded",
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "prefill_native_reported_tps": 879.428,
+        "decode_native_reported_tps": 32.371,
+        "prefill_native_reported_ms": 18630.3,
+        "decode_native_reported_ms": 3954.2,
+        "http_qpc_seconds": 20.5680399,
+        "API_phase_sum_seconds": 22.5845,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 2.0164600999999998,
+        "minimum_reserve_gib": 26.106292724609375,
+        "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 66,
+            "drafted": 93,
+            "accepted": 60,
+            "acceptance_fraction": 0.6451612903225806
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      },
+      "measured_runs": [
+        {
+          "case": "natural16k",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 941.052,
+          "decode_native_reported_tps": 43.676,
+          "prefill_native_reported_ms": 17410.3,
+          "decode_native_reported_ms": 2930.7,
+          "http_qpc_seconds": 18.5248741,
+          "API_phase_sum_seconds": 20.341,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 1.8161258999999994,
+          "minimum_reserve_gib": 26.093154907226562,
+          "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 66,
+              "drafted": 93,
+              "accepted": 60,
+              "acceptance_fraction": 0.6451612903225806
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 935.133,
+          "decode_native_reported_tps": 43.45,
+          "prefill_native_reported_ms": 17520.5,
+          "decode_native_reported_ms": 2945.9,
+          "http_qpc_seconds": 18.6417261,
+          "API_phase_sum_seconds": 20.4664,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 1.8246739000000005,
+          "minimum_reserve_gib": 26.05841827392578,
+          "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 66,
+              "drafted": 93,
+              "accepted": 60,
+              "acceptance_fraction": 0.6451612903225806
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 938.82,
+          "decode_native_reported_tps": 43.506,
+          "prefill_native_reported_ms": 17451.7,
+          "decode_native_reported_ms": 2942.1,
+          "http_qpc_seconds": 18.5723975,
+          "API_phase_sum_seconds": 20.3938,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 1.8214024999999978,
+          "minimum_reserve_gib": 26.024242401123047,
+          "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 66,
+              "drafted": 93,
+              "accepted": 60,
+              "acceptance_fraction": 0.6451612903225806
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        }
+      ]
+    }
+  },
+  "comparison_to_0202": {
+    "natural8192": {
+      "causal_comparison": false,
+      "reference_version": "0.20.2",
+      "reference_prefill_reported_tps": 1460.3403333333333,
+      "reference_decode_reported_tps": 47.98533333333334,
+      "reference_http_qpc_mean_seconds": 8.371122933333334,
+      "reference_head_accepted": 192,
+      "reference_head_drafted": 312,
+      "reference_head_acceptance_fraction": 0.6153846153846154,
+      "new_head_accepted": 192,
+      "new_head_drafted": 291,
+      "new_head_acceptance_fraction": 0.6597938144329897,
+      "prefill_observed_change_percent": -34.875089619520196,
+      "decode_observed_change_percent": -6.038650698824643,
+      "HTTP_mean_observed_change_percent": 24.98953784328608,
+      "output_sha256_matches_reference": false
+    },
+    "natural16k": {
+      "causal_comparison": false,
+      "reference_version": "0.20.2",
+      "reference_prefill_reported_tps": 1414.6186666666665,
+      "reference_decode_reported_tps": 43.44566666666667,
+      "reference_http_qpc_mean_seconds": 14.606883266666667,
+      "reference_head_accepted": 180,
+      "reference_head_drafted": 324,
+      "reference_head_acceptance_fraction": 0.5555555555555556,
+      "new_head_accepted": 180,
+      "new_head_drafted": 279,
+      "new_head_acceptance_fraction": 0.6451612903225806,
+      "prefill_observed_change_percent": -33.66869658159936,
+      "decode_observed_change_percent": 0.22633634347883902,
+      "HTTP_mean_observed_change_percent": 27.198017269018226,
+      "output_sha256_matches_reference": false
+    }
+  },
+  "causal_comparison": false,
+  "acceptance_independently_reconciled": false,
+  "RAW_observer_used": false,
+  "real_NPU_prediction": false,
+  "controls": {
+    "checkpoint": "v2",
+    "context": 32768,
+    "kv_pool_positions": 32768,
+    "slots": 1,
+    "concurrency": 1,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "prompt_cache": "Off",
+    "thinking": "Off",
+    "vision": "Off",
+    "decode_prefetch": 0,
+    "MTP_gate": 0.9,
+    "MTP_gate_rule": "cost",
+    "PLD": "3,3",
+    "temperature": 0,
+    "seed": 1,
+    "output_tokens": 128,
+    "request_prompt_cache_policy": "no_store"
+  },
+  "profile": {
+    "logical_path": "profile/serving0207-text32k-8192.json",
+    "name": "serving0207-text32k-8192.json",
+    "bytes": 2994,
+    "sha256": "69d28caee11c0e23eb2e8dba4bc0910ffbbeef7bde9656186baa4abf7cac385d"
+  },
+  "runtime_seal": {
+    "schema": "halogen0207.natural-runtime-seal.v1",
+    "profile": {
+      "logical_path": "profile/serving0207-text32k-8192.json",
+      "name": "serving0207-text32k-8192.json",
+      "bytes": 2994,
+      "sha256": "69d28caee11c0e23eb2e8dba4bc0910ffbbeef7bde9656186baa4abf7cac385d"
+    },
+    "identities": {
+      "controller": {
+        "pid": 44128,
+        "creation_time_100ns": 134396686278873250,
+        "executable_name": "python.exe"
+      },
+      "backend": {
+        "pid": 40780,
+        "creation_time_100ns": 134396686384892157,
+        "executable_name": "python.exe"
+      }
+    },
+    "controller_run": "9baccc9a73ac49b3b115dff04233d47c",
+    "backend_run": "e25f6fe60c9c4173bbfb5fc1cc9cd087",
+    "port": 8840
+  },
+  "terminal_ready_snapshot": true,
+  "no_live_state_claim_beyond_snapshot": true,
+  "minimum_observed_runtime_reserve_gib": 26.024242401123047,
+  "QPC_phase_enclosure": {
+    "observations": [
+      {
+        "case": "natural8192",
+        "ordinal": 0,
+        "phase": "warmup_excluded",
+        "http_qpc_seconds": 16.5200163,
+        "API_phase_sum_seconds": 18.1124,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.5923836999999992
+      },
+      {
+        "case": "natural8192",
+        "ordinal": 1,
+        "phase": "measured",
+        "http_qpc_seconds": 10.3378133,
+        "API_phase_sum_seconds": 11.2767,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 0.9388866999999994
+      },
+      {
+        "case": "natural8192",
+        "ordinal": 2,
+        "phase": "measured",
+        "http_qpc_seconds": 10.6957558,
+        "API_phase_sum_seconds": 11.7346,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.0388441999999998
+      },
+      {
+        "case": "natural8192",
+        "ordinal": 3,
+        "phase": "measured",
+        "http_qpc_seconds": 10.3555145,
+        "API_phase_sum_seconds": 11.3612,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.0056855000000002
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 0,
+        "phase": "warmup_excluded",
+        "http_qpc_seconds": 20.5680399,
+        "API_phase_sum_seconds": 22.5845,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 2.0164600999999998
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 1,
+        "phase": "measured",
+        "http_qpc_seconds": 18.5248741,
+        "API_phase_sum_seconds": 20.341,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.8161258999999994
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 2,
+        "phase": "measured",
+        "http_qpc_seconds": 18.6417261,
+        "API_phase_sum_seconds": 20.4664,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.8246739000000005
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 3,
+        "phase": "measured",
+        "http_qpc_seconds": 18.5723975,
+        "API_phase_sum_seconds": 20.3938,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.8214024999999978
+      }
+    ],
+    "all_measured_API_phase_sums_within_HTTP": false,
+    "all_warmup_API_phase_sums_within_HTTP": false,
+    "failed_observations": 8,
+    "tolerance_seconds": 0.005,
+    "API_phase_clock_qualified": false,
+    "interpretation": "8 of 8 API phase sums exceeded whole-HTTP QPC; the API phase clock is unqualified and no scaling or subtraction was applied"
+  },
+  "evidence": {
+    "ready_before": {
+      "logical_path": "measurement/ready-before.json",
+      "name": "ready-before.json",
+      "bytes": 13324,
+      "sha256": "cf217db8e794cefafb6d0ad4ada9ba18823894151402cbf18c0a60151cfe5750"
+    },
+    "ready_after": {
+      "logical_path": "measurement/ready-after.json",
+      "name": "ready-after.json",
+      "bytes": 13324,
+      "sha256": "8a02865b53527ed7704a6f87049be6e380b3d994693cab131684ff5cf72cbe08"
+    },
+    "runtime_seal": {
+      "logical_path": "measurement/runtime-seal.json",
+      "name": "runtime-seal.json",
+      "bytes": 903,
+      "sha256": "65ed68b5c462e60917b182c6bb3f257a8820511ce9a92907b31d6be9d9c95fff"
+    },
+    "handle": {
+      "logical_path": "measurement/handle.json",
+      "name": "handle.json",
+      "bytes": 21142,
+      "sha256": "a2390735778fcf3e9780feaf17a1f4936ca71e2ec7585d44866cabac2f937d83"
+    },
+    "summary": {
+      "logical_path": "measurement/summary.json",
+      "name": "summary.json",
+      "bytes": 2332,
+      "sha256": "19dabb6f1771b4e07982e17883185e171a3d856f0b80f7844ab069b88e5d83c6"
+    },
+    "profile": {
+      "logical_path": "profile/serving0207-text32k-8192.json",
+      "name": "serving0207-text32k-8192.json",
+      "bytes": 2994,
+      "sha256": "69d28caee11c0e23eb2e8dba4bc0910ffbbeef7bde9656186baa4abf7cac385d"
+    },
+    "samples": [
+      {
+        "logical_path": "measurement/natural8192-0.sample.json",
+        "name": "natural8192-0.sample.json",
+        "bytes": 2188,
+        "sha256": "e2a41024984cb89ff6884a48e438c451a4a72fbabf2f8d146190de8999d7c440"
+      },
+      {
+        "logical_path": "measurement/natural8192-1.sample.json",
+        "name": "natural8192-1.sample.json",
+        "bytes": 2180,
+        "sha256": "acaacb5ab9a08fdd92131a48c8faef0d3e3fb1808692847ef3f54a8610f2e506"
+      },
+      {
+        "logical_path": "measurement/natural8192-2.sample.json",
+        "name": "natural8192-2.sample.json",
+        "bytes": 2180,
+        "sha256": "f2819ded139e60c9e55dc816b3f9a26ed64d24be068a422732d9b5e525aaaf52"
+      },
+      {
+        "logical_path": "measurement/natural8192-3.sample.json",
+        "name": "natural8192-3.sample.json",
+        "bytes": 2180,
+        "sha256": "1756c38c234817a01366a04de7e90acedf352e58180cc7af6fbbe273b5feb63f"
+      },
+      {
+        "logical_path": "measurement/natural16k-0.sample.json",
+        "name": "natural16k-0.sample.json",
+        "bytes": 2191,
+        "sha256": "cc01fb5db359b96370ac30379c08e4a860e40fc5433509cde764d99fac0a8a9c"
+      },
+      {
+        "logical_path": "measurement/natural16k-1.sample.json",
+        "name": "natural16k-1.sample.json",
+        "bytes": 2183,
+        "sha256": "f51e87dab62790a19189cef14bc8e707da3fa0363612e70925453a7acfc22ae9"
+      },
+      {
+        "logical_path": "measurement/natural16k-2.sample.json",
+        "name": "natural16k-2.sample.json",
+        "bytes": 2182,
+        "sha256": "ca621d7523ffcd3320e61ccffef11aa2f67c95afa05e1c9ab1d59bca8957f0a4"
+      },
+      {
+        "logical_path": "measurement/natural16k-3.sample.json",
+        "name": "natural16k-3.sample.json",
+        "bytes": 2183,
+        "sha256": "4fb5c928c1a3c281ef9bf023e7282d1938cf6ab474c3160479cd57fd09d90f58"
+      }
+    ]
+  },
+  "full_goal_achieved": false
+}

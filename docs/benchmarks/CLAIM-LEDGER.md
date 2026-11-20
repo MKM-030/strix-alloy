@@ -11,7 +11,34 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
-### Current Halogen 0.18.22: independently captured phase measurements
+### Current Halogen 0.20.7: completed natural 8K/16K API cohort
+
+The [20 November report](halogen0207-natural-8k16k-20261120.md) records one
+excluded warmup followed by three measured requests at each size. Every request
+uses 128 output tokens, temperature 0, seed 1, Cache Off/`no_store`, Thinking and
+Vision Off, cost-based native MTP gate 0.90 and PLD `3,3`. The server is 0.20.7 with one
+32K slot and paired 8192 prefill controls.
+
+| Version / actual input | API prefill tok/s | API decode tok/s | HTTP QPC seconds | Native head acceptance |
+| --- | ---: | ---: | ---: | ---: |
+| 0.20.7 / 8192 | 951.045333 | 45.087667 | 10.463028 | 192 / 291 = 65.9794% |
+| Matched 0.20.2 reference / 8192 | 1460.340333 | 47.985333 | 8.371123 | 192 / 312 = 61.538% |
+| 0.20.7 / 16384 | 938.335 | 43.544 | 18.579666 | 180 / 279 = 64.5161% |
+| Matched 0.20.2 reference / 16384 | 1414.618667 | 43.445667 | 14.606883 | 180 / 324 = 55.556% |
+
+The HTTP QPC durations and native accepted/drafted counters are retained
+measurements. Prefill and decode are native API phase-clock means; no RAW
+observer was present, so they are not qualified as absolute phase throughput.
+All eight API phase sums exceeded their whole-HTTP QPC durations, so the
+necessary enclosure check failed for every retained observation.
+The matched 0.20.2 rows freeze the same high-level request protocol but remain a
+non-causal cross-version reference. The deterministic 0.20.7 output hashes do
+not match the 0.20.2 references, so this is not an identical-completion speed
+comparison. No 0.20.7 speedup, regression cause, RAW
+phase result or verification of the upstream 4–6% decode claim is endorsed.
+[Machine-readable evidence](halogen0207-natural-8k16k-20261120.json).
+
+### Earlier Halogen 0.18.22: independently captured phase measurements
 
 The [RAW8K/16K report](halogen01822-raw-8k16k-20261101.md) qualifies
 **1917.24 prefill / 55.17 decode tok/s** at 8192 actual input tokens and

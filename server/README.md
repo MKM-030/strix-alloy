@@ -9,7 +9,7 @@ model execution, transfer a live KV cache between engines, or silently switch mo
 
 The Windows PowerShell 5.1 integration launcher defaults to the qualified
 **Halogen 0.20.7 `CurrentText32K`** preset: v2, one 32768-position slot and KV
-pool, paired 8192 prefill controls, the external `r2-ht4` draft head, adaptive
+pool, paired 8192 prefill controls, the external `r2-ht4` draft head, cost-based
 MTP gate 0.90, PLD `3,3`, Cache Off, Thinking Off/low, Vision Off and prefetch
 off. The 0.20.7 entrypoint owns its compatible automatic concurrency mode; the
 launcher does not force its internal scheduler settings. It preserves the stable
@@ -19,6 +19,14 @@ public API token and supports visible request/response trace. Follow the
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -ConsoleTrace
 ```
+
+The completed [0.20.7 natural 8K/16K cohort](../docs/benchmarks/halogen0207-natural-8k16k-20261120.md)
+uses this one-slot 32K profile with paired 8192 prefill controls. After one
+excluded warmup, three measured requests per size average 951.045333 prefill /
+45.087667 decode tok/s at 8192 input tokens and 938.335 / 43.544 at 16384;
+native-head acceptance is 65.9794% and 64.5161%. The API phase clocks are not
+RAW-qualified; all eight API phase sums exceeded their whole-HTTP QPC durations.
+The matched 0.20.2 rows do not establish a causal version gain.
 
 `CurrentCachedText32K` selects the same 0.20.7 engine with Flexible cache and
 paired 2048 prefill controls. `MeasuredText32K` retains the historical 0.18.16

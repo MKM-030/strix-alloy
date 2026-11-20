@@ -11,7 +11,7 @@
 | Authenticated model discovery and functional request | Qualified |
 | Loaded provider identities | Unqualified |
 | Capacity opt-in, two slots and vision | Unqualified |
-| Local 0.20.7 performance benchmark | Not measured |
+| Local 0.20.7 8K/16K cohort | Completed 20 November; API phase clocks remain unqualified without RAW observation |
 
 ## Official identity and upstream changes
 
@@ -23,7 +23,7 @@ The official `v0.20.7` tag object is [`b7c4c928f2dc908be37193cf9836d9ba18a51025`
 - API: 346,839 bytes, SHA-256 `71240612de5013fa49780de9243adbf60516afe81729f73aa67f98f9fde75c9f`.
 - Image platform: Linux amd64, ROCm 10.1.0, Python 3.12.15.
 
-The pinned upstream changelog says 0.20.7 makes the compatible concurrency path the v2 default, prefers `qwen38-flash-next-drafter-r2-ht4.hgn`, and improves single-request decode by about 4-6% relative to 0.20.6. Those speed figures are upstream claims. This update verifies path selection and functionality but does not present a local throughput benchmark.
+The pinned upstream changelog says 0.20.7 makes the compatible concurrency path the v2 default, prefers `qwen38-flash-next-drafter-r2-ht4.hgn`, and improves single-request decode by about 4-6% relative to 0.20.6. Those speed figures are upstream claims. The later local cohort below uses a matched 0.20.2 reference, not 0.20.6, and does not verify or refute that causal claim.
 
 ## Bridge correction
 
@@ -68,6 +68,33 @@ The installed manifest contains 161 members, is 18,211 bytes, and hashes to `2e8
 
 The final service manifest exactly matches the frozen package sources: `service.py` `7ea5cc4e...`, release profile `c74797d7...`, source manifest `3efff4c1...`, hybrid bridge source `4be0d14b...` and preflight source `e24d0bdb...`. Run-specific identities live only in the external JSON evidence. The release profile deliberately leaves its embedded runtime flags false; this avoids changing `sources.json` after qualification and invalidating the observed source revision.
 
+## Subsequent 8K/16K cohort - 20 November
+
+The [public benchmark report](../benchmarks/halogen0207-natural-8k16k-20261120.md)
+records one excluded warmup followed by three measured requests at each size.
+The frozen protocol uses 128 output tokens, temperature 0, seed 1, Cache
+Off/`no_store`, Thinking and Vision Off, cost-based native MTP gate 0.90 and PLD `3,3` on
+0.20.7 with one 32K slot and paired 8192 prefill controls.
+
+| Version / actual input | API prefill tok/s | API decode tok/s | HTTP QPC seconds | Native head acceptance |
+| --- | ---: | ---: | ---: | ---: |
+| 0.20.7 / 8192 | 951.045333 | 45.087667 | 10.463028 | 192 / 291 = 65.9794% |
+| Matched 0.20.2 reference / 8192 | 1460.340333 | 47.985333 | 8.371123 | 192 / 312 = 61.538% |
+| 0.20.7 / 16384 | 938.335 | 43.544 | 18.579666 | 180 / 279 = 64.5161% |
+| Matched 0.20.2 reference / 16384 | 1414.618667 | 43.445667 | 14.606883 | 180 / 324 = 55.556% |
+
+HTTP QPC duration and native accepted/drafted counters are direct measurements.
+Prefill and decode are native API phase-clock means. The RAW observer was absent,
+so absolute phase throughput remains unqualified and no correction factor is
+applied. All eight API phase sums exceeded their whole-HTTP QPC durations. The
+0.20.2 rows are a non-causal reference; the cohort does not isolate
+the engine version from environment, operating state or other release changes.
+The deterministic 0.20.7 output hashes differ from the 0.20.2 references, so
+the rows also do not constitute an identical-completion speed comparison.
+The dated runtime-qualification JSON beside this report remains unchanged; the
+[benchmark JSON](../benchmarks/halogen0207-natural-8k16k-20261120.json) carries
+the later measurement evidence.
+
 ## Operation and limits
 
 Use the normal profile without capacity selectors:
@@ -78,4 +105,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-
 
 Passing `-KvPoolPositions` explicitly selects the separate capacity policy and raises startup commit admission from 124 to 131 GiB. The normal one-slot profile uses 30/124 GiB startup admission and retains 18/18 GiB runtime reserves.
 
-The exact authenticated response is a functional check, not a benchmark. No new 0.20.7 prefill, decode or acceptance rate is published here. Capacity opt-in, two-slot operation, vision, performance and actual loaded-provider binding remain outside this qualification.
+The exact authenticated response remains a functional check separate from the
+later benchmark cohort. Capacity opt-in, two-slot operation, vision, RAW phase
+throughput, causal version performance and actual loaded-provider binding remain
+outside the runtime qualification.

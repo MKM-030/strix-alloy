@@ -116,6 +116,21 @@ serial advantage over his final engine — our earlier comparison did exactly th
 The `n-max 2` recommendation rests on **three prompt cells from one corpus family** — evidence for the current
 default, not proof of a universal mixed-workload optimum.
 
+### Local Halogen 0.20.7 API cohort
+
+| Workload / occupied input | Speculation | Decode (t/s) | HTTP QPC / native head acceptance |
+|---|---|---:|---|
+| Frozen natural input / 8,192 | HT4 MTP, cost gate 0.90, PLD `3,3` | **45.087667** | 10.463028 s / 192 of 291 = 65.9794% |
+| Frozen natural input / 16,384 | HT4 MTP, cost gate 0.90, PLD `3,3` | **43.544** | 18.579666 s / 180 of 279 = 64.5161% |
+
+These are means of three measured requests after one excluded warmup, with 128
+output tokens, temperature 0, seed 1, Cache Off/`no_store`, and Thinking and
+Vision Off. Decode is the native API phase clock; no RAW observer was present,
+so it is not qualified as absolute phase throughput. All eight API phase sums
+exceeded their whole-HTTP QPC durations. The
+[full report](halogen0207-natural-8k16k-20261120.md) retains matched 0.20.2
+references and treats them as non-causal.
+
 ### Others (each in its own category)
 
 | Publisher / version | Workload | Decode (t/s) | Statistic / condition |
@@ -145,6 +160,7 @@ time — and do not infer verification width from `n-max`, which is a maximum.
 
 | Publisher / configuration | Input | Prefill (t/s) | Timing / workload qualification |
 |---|---:|---:|---|
+| Local Halogen 0.20.7 `CurrentText32K` | 8,192 / 16,384 | 951.045333 / 938.335 | native API phase means; one warmup excluded plus three requests; no RAW observer, so absolute phase throughput is unqualified |
 | strix-alloy maximum-prefill setup | 16,384 / 65,536 / 131,072 / 251,904 | **1,031 / 993 / 925 / 812** | server-reported prompt timing, **no drafter**, ubatch 16384, warm reps |
 | olliehm updated serving config | ~8k–17k | ~660 | **drafter attached**; batch/ubatch 2048 |
 | **Halogen 0.5.3 internal prefill bench** | 8,192 / 32,768 / 131,072 | **~1,246 / ~1,424 / 1,358** | engine's own bench, cold single-call real text; **not an HTTP sweep** |
@@ -254,6 +270,7 @@ taken on trust from a previous summary.
 | Source | Revision |
 |---|---|
 | strix-alloy | `199b8ec` (this repository) |
+| Local Halogen 0.20.7 cohort | [20 November report and JSON](halogen0207-natural-8k16k-20261120.md) |
 | Halogen | `peonist-ai/halogen-flash-server@501dbcdd` |
 | olliehm | `olliehm/qwen-flash-next-windows@09b1b14e` |
 | CIRU IU4 | `ciru-ai/Qwen3.8-Flash-CIRU-STRIX-IU4@111a6638` |

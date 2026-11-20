@@ -15,6 +15,27 @@ the [10 November update](../research/halogen0201-update-20261110.md) retain the
 historical 0.20.1 evidence. The normal
 startup floor is 30 GiB physical / 124 GiB commit, with an 18/18 GiB
 runtime reserve. Explicit capacity opt-in retains a 30/131 GiB startup floor.
+
+The completed [20 November 0.20.7 cohort](../benchmarks/halogen0207-natural-8k16k-20261120.md)
+uses this normal one-slot 32K profile: paired 8192 prefill controls, Cache
+Off/`no_store`, Thinking and Vision Off, cost-based MTP gate 0.90 and PLD `3,3`. One warmup
+is excluded before three measured requests per size; each request uses 128 output
+tokens, temperature 0 and seed 1.
+
+| Version / actual input | API prefill tok/s | API decode tok/s | HTTP QPC seconds | Native head acceptance |
+| --- | ---: | ---: | ---: | ---: |
+| 0.20.7 / 8,192 | 951.045333 | 45.087667 | 10.463028 | 192 / 291 = 65.9794% |
+| Matched 0.20.2 reference / 8,192 | 1460.340333 | 47.985333 | 8.371123 | 192 / 312 = 61.538% |
+| 0.20.7 / 16,384 | 938.335 | 43.544 | 18.579666 | 180 / 279 = 64.5161% |
+| Matched 0.20.2 reference / 16,384 | 1414.618667 | 43.445667 | 14.606883 | 180 / 324 = 55.556% |
+
+The HTTP QPC values and accepted/drafted counters are direct measurements. The
+prefill/decode values come from the native API phase clocks; no RAW observer was
+present, so absolute phase throughput remains unqualified. All eight API phase
+sums exceeded their whole-HTTP QPC durations. The 0.20.2 rows are a
+non-causal reference and do not establish that the version change caused any
+difference. [Machine-readable evidence](../benchmarks/halogen0207-natural-8k16k-20261120.json).
+
 The [7 November update report](../research/halogen0191-update-20261107.md)
 and [8K/16K API observations](../benchmarks/halogen0191-natural-8k16k-20261107.md)
 retain historical 0.19.1 evidence; that API report uses two slots and a 2048 arena.
@@ -239,7 +260,7 @@ remain available for an explicit 0.17.2 selection.
 
 | Startup control | HistoricalStock | Current4K | Current8K | MeasuredText32K |
 | --- | --- | --- | --- | --- |
-| Halogen version | `0.16.2` | `0.20.2` | `0.20.2` | `0.18.16` |
+| Halogen version | `0.16.2` | `0.20.7` | `0.20.7` | `0.18.16` |
 | `HALOGEN_CTX` / `HALOGEN_KV_POOL_POSITIONS` | `262144` / `262144` | `262144` / `262144` | `262144` / `262144` | `32768` / `32768` |
 | `HALOGEN_KV_SLOTS` | `1` | `1` | `1` | `1` |
 | `HALOGEN_MTP_DEPTH` / `HALOGEN_PLD` | `2` / `3,3` | `2` / `3,3` | `2` / `3,3` | Depth unset / `3,3` |
