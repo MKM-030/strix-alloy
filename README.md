@@ -43,11 +43,16 @@ its compatible automatic concurrency mode. The launcher keeps the existing
 ServiceNow token and endpoint on port 8840. The bounded qualification checks
 API/engine 0.20.7, exact `r2-ht4` selection, both bridge copy phases,
 authenticated `halogen-v2` discovery and the exact `HALOGEN_0207_FINAL_READY` reply.
-The completed [20 November 8K/16K cohort](docs/benchmarks/halogen0207-natural-8k16k-20261120.md)
+The completed [20 November OEM Performance 8K/16K cohort](docs/benchmarks/halogen0207-performance-natural-8k16k-20261120.md)
 excludes one warmup and averages three requests per size. At 8,192 actual input
-tokens it records 951.045333 prefill / 45.087667 decode tok/s, 10.463028 seconds
+tokens it records 1210.161667 prefill / 49.209667 decode tok/s, 8.555664 seconds
 HTTP QPC and 192/291 = 65.9794% native-head acceptance; at 16,384 it records
-938.335 / 43.544 tok/s, 18.579666 seconds and 180/279 = 64.5161%.
+1216.505 / 49.717 tok/s, 14.611266 seconds and 180/279 = 64.5161%.
+The deterministic outputs and acceptance totals match the
+[earlier same-release cohort](docs/benchmarks/halogen0207-natural-8k16k-20261120.md);
+observed prefill/decode changes are +27.25%/+9.14% at 8K and +29.65%/+14.18%
+at 16K. The OEM transition, restart and separate collection window make this an
+observational comparison rather than an isolated power-mode effect.
 These prefill/decode values are API phase-clock observations: no RAW observer was
 present, so absolute phase throughput remains unqualified; all eight API phase
 sums exceeded their whole-HTTP QPC durations. The adjacent matched

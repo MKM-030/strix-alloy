@@ -1,0 +1,731 @@
+{
+  "schema": "halogen0207.natural-8k16k-public-observations.v1",
+  "version": "0.20.7",
+  "actual_inputs": [
+    8192,
+    16384
+  ],
+  "output_tokens": 128,
+  "reported_observations": {
+    "complete_cohorts": true,
+    "native_reported_observations_only": true,
+    "api_phase_clock_qualified": false,
+    "RAW_observer_used": false,
+    "cases": {
+      "natural8192": {
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "warmup_excluded": 1,
+        "measured_repetitions": 3,
+        "prefill_native_reported_mean_tps": 1210.1616666666666,
+        "decode_native_reported_mean_tps": 49.20966666666667,
+        "prefill_native_pooled_tps": 1210.1038948249545,
+        "decode_native_pooled_tps": 48.90660621266732,
+        "http_qpc_mean_seconds": 8.5556641,
+        "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 186,
+            "drafted": 291,
+            "accepted": 192,
+            "acceptance_fraction": 0.6597938144329897
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      },
+      "natural16k": {
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "warmup_excluded": 1,
+        "measured_repetitions": 3,
+        "prefill_native_reported_mean_tps": 1216.505,
+        "decode_native_reported_mean_tps": 49.717,
+        "prefill_native_pooled_tps": 1216.492140765802,
+        "decode_native_pooled_tps": 49.71581713901009,
+        "http_qpc_mean_seconds": 14.6112658,
+        "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 198,
+            "drafted": 279,
+            "accepted": 180,
+            "acceptance_fraction": 0.6451612903225806
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      }
+    }
+  },
+  "run_level_observations": {
+    "natural8192": {
+      "warmup_excluded": {
+        "case": "natural8192",
+        "ordinal": 0,
+        "phase": "warmup_excluded",
+        "actual_input_tokens": 8192,
+        "actual_output_tokens": 128,
+        "prefill_native_reported_tps": 724.808,
+        "decode_native_reported_tps": 42.314,
+        "prefill_native_reported_ms": 11302.3,
+        "decode_native_reported_ms": 3025.0,
+        "http_qpc_seconds": 13.1177009,
+        "API_phase_sum_seconds": 14.3273,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.2095990999999984,
+        "minimum_reserve_gib": 27.832958221435547,
+        "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 62,
+            "drafted": 97,
+            "accepted": 64,
+            "acceptance_fraction": 0.6597938144329897
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      },
+      "measured_runs": [
+        {
+          "case": "natural8192",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 1200.381,
+          "decode_native_reported_tps": 51.904,
+          "prefill_native_reported_ms": 6824.5,
+          "decode_native_reported_ms": 2466.1,
+          "http_qpc_seconds": 8.4681346,
+          "API_phase_sum_seconds": 9.2906,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 0.8224653999999987,
+          "minimum_reserve_gib": 27.761432647705078,
+          "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 62,
+              "drafted": 97,
+              "accepted": 64,
+              "acceptance_fraction": 0.6597938144329897
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        },
+        {
+          "case": "natural8192",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 1220.792,
+          "decode_native_reported_tps": 43.897,
+          "prefill_native_reported_ms": 6710.4,
+          "decode_native_reported_ms": 2915.9,
+          "http_qpc_seconds": 8.774682,
+          "API_phase_sum_seconds": 9.626299999999999,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 0.8516179999999984,
+          "minimum_reserve_gib": 27.82740020751953,
+          "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 62,
+              "drafted": 97,
+              "accepted": 64,
+              "acceptance_fraction": 0.6597938144329897
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        },
+        {
+          "case": "natural8192",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 8192,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 1209.312,
+          "decode_native_reported_tps": 51.828,
+          "prefill_native_reported_ms": 6774.1,
+          "decode_native_reported_ms": 2469.7,
+          "http_qpc_seconds": 8.4241757,
+          "API_phase_sum_seconds": 9.243799999999998,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 0.8196242999999992,
+          "minimum_reserve_gib": 27.764205932617188,
+          "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 62,
+              "drafted": 97,
+              "accepted": 64,
+              "acceptance_fraction": 0.6597938144329897
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        }
+      ]
+    },
+    "natural16k": {
+      "warmup_excluded": {
+        "case": "natural16k",
+        "ordinal": 0,
+        "phase": "warmup_excluded",
+        "actual_input_tokens": 16384,
+        "actual_output_tokens": 128,
+        "prefill_native_reported_tps": 1190.628,
+        "decode_native_reported_tps": 43.879,
+        "prefill_native_reported_ms": 13760.8,
+        "decode_native_reported_ms": 2917.1,
+        "http_qpc_seconds": 15.1974091,
+        "API_phase_sum_seconds": 16.677899999999998,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.4804908999999977,
+        "minimum_reserve_gib": 27.413578033447266,
+        "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+        "native_scoped_acceptance": {
+          "head": {
+            "rounds": 66,
+            "drafted": 93,
+            "accepted": 60,
+            "acceptance_fraction": 0.6451612903225806
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0,
+            "acceptance_fraction": null
+          }
+        },
+        "api_phase_clock_qualified": false,
+        "RAW_observer_used": false
+      },
+      "measured_runs": [
+        {
+          "case": "natural16k",
+          "ordinal": 1,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 1221.237,
+          "decode_native_reported_tps": 49.703,
+          "prefill_native_reported_ms": 13415.9,
+          "decode_native_reported_ms": 2575.3,
+          "http_qpc_seconds": 14.5647287,
+          "API_phase_sum_seconds": 15.991200000000001,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 1.426471300000001,
+          "minimum_reserve_gib": 27.329933166503906,
+          "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 66,
+              "drafted": 93,
+              "accepted": 60,
+              "acceptance_fraction": 0.6451612903225806
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 2,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 1211.521,
+          "decode_native_reported_tps": 49.977,
+          "prefill_native_reported_ms": 13523.5,
+          "decode_native_reported_ms": 2561.2,
+          "http_qpc_seconds": 14.6493578,
+          "API_phase_sum_seconds": 16.0847,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 1.435342200000001,
+          "minimum_reserve_gib": 27.40817642211914,
+          "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 66,
+              "drafted": 93,
+              "accepted": 60,
+              "acceptance_fraction": 0.6451612903225806
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        },
+        {
+          "case": "natural16k",
+          "ordinal": 3,
+          "phase": "measured",
+          "actual_input_tokens": 16384,
+          "actual_output_tokens": 128,
+          "prefill_native_reported_tps": 1216.757,
+          "decode_native_reported_tps": 49.471,
+          "prefill_native_reported_ms": 13465.3,
+          "decode_native_reported_ms": 2587.4,
+          "http_qpc_seconds": 14.6197109,
+          "API_phase_sum_seconds": 16.052699999999998,
+          "API_phase_sum_within_HTTP": false,
+          "native_minus_HTTP_seconds": 1.4329890999999986,
+          "minimum_reserve_gib": 27.315433502197266,
+          "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+          "native_scoped_acceptance": {
+            "head": {
+              "rounds": 66,
+              "drafted": 93,
+              "accepted": 60,
+              "acceptance_fraction": 0.6451612903225806
+            },
+            "lookup": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            },
+            "grammar": {
+              "rounds": 0,
+              "drafted": 0,
+              "accepted": 0,
+              "acceptance_fraction": null
+            }
+          },
+          "api_phase_clock_qualified": false,
+          "RAW_observer_used": false
+        }
+      ]
+    }
+  },
+  "comparison_to_0202": {
+    "natural8192": {
+      "causal_comparison": false,
+      "reference_version": "0.20.2",
+      "reference_prefill_reported_tps": 1460.3403333333333,
+      "reference_decode_reported_tps": 47.98533333333334,
+      "reference_http_qpc_mean_seconds": 8.371122933333334,
+      "reference_head_accepted": 192,
+      "reference_head_drafted": 312,
+      "reference_head_acceptance_fraction": 0.6153846153846154,
+      "new_head_accepted": 192,
+      "new_head_drafted": 291,
+      "new_head_acceptance_fraction": 0.6597938144329897,
+      "prefill_observed_change_percent": -17.13153166807464,
+      "decode_observed_change_percent": 2.551474061518788,
+      "HTTP_mean_observed_change_percent": 2.20449715213038,
+      "output_sha256_matches_reference": false
+    },
+    "natural16k": {
+      "causal_comparison": false,
+      "reference_version": "0.20.2",
+      "reference_prefill_reported_tps": 1414.6186666666665,
+      "reference_decode_reported_tps": 43.44566666666667,
+      "reference_http_qpc_mean_seconds": 14.606883266666667,
+      "reference_head_accepted": 180,
+      "reference_head_drafted": 324,
+      "reference_head_acceptance_fraction": 0.5555555555555556,
+      "new_head_accepted": 180,
+      "new_head_drafted": 279,
+      "new_head_acceptance_fraction": 0.6451612903225806,
+      "prefill_observed_change_percent": -14.00474002887938,
+      "decode_observed_change_percent": 14.434888021053105,
+      "HTTP_mean_observed_change_percent": 0.030003206387863024,
+      "output_sha256_matches_reference": false
+    }
+  },
+  "causal_comparison": false,
+  "acceptance_independently_reconciled": false,
+  "RAW_observer_used": false,
+  "real_NPU_prediction": false,
+  "controls": {
+    "checkpoint": "v2",
+    "context": 32768,
+    "kv_pool_positions": 32768,
+    "slots": 1,
+    "concurrency": 1,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "prompt_cache": "Off",
+    "thinking": "Off",
+    "vision": "Off",
+    "decode_prefetch": 0,
+    "MTP_gate": 0.9,
+    "MTP_gate_rule": "cost",
+    "PLD": "3,3",
+    "temperature": 0,
+    "seed": 1,
+    "output_tokens": 128,
+    "request_prompt_cache_policy": "no_store"
+  },
+  "profile": {
+    "logical_path": "profile/serving0207-text32k-8192.json",
+    "name": "serving0207-text32k-8192.json",
+    "bytes": 2994,
+    "sha256": "69d28caee11c0e23eb2e8dba4bc0910ffbbeef7bde9656186baa4abf7cac385d"
+  },
+  "runtime_seal": {
+    "schema": "halogen0207.natural-runtime-seal.v1",
+    "profile": {
+      "logical_path": "profile/serving0207-text32k-8192.json",
+      "name": "serving0207-text32k-8192.json",
+      "bytes": 2994,
+      "sha256": "69d28caee11c0e23eb2e8dba4bc0910ffbbeef7bde9656186baa4abf7cac385d"
+    },
+    "identities": {
+      "controller": {
+        "pid": 5724,
+        "creation_time_100ns": 134396775807467893,
+        "executable_name": "python.exe"
+      },
+      "backend": {
+        "pid": 5500,
+        "creation_time_100ns": 134396775913131842,
+        "executable_name": "python.exe"
+      }
+    },
+    "controller_run": "cb6ebb4ce518444293ac1c8f53f1b000",
+    "backend_run": "e4f88075e86d4b29985e05efc9872feb",
+    "port": 8840
+  },
+  "terminal_ready_snapshot": true,
+  "no_live_state_claim_beyond_snapshot": true,
+  "minimum_observed_runtime_reserve_gib": 27.315433502197266,
+  "QPC_phase_enclosure": {
+    "observations": [
+      {
+        "case": "natural8192",
+        "ordinal": 0,
+        "phase": "warmup_excluded",
+        "http_qpc_seconds": 13.1177009,
+        "API_phase_sum_seconds": 14.3273,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.2095990999999984
+      },
+      {
+        "case": "natural8192",
+        "ordinal": 1,
+        "phase": "measured",
+        "http_qpc_seconds": 8.4681346,
+        "API_phase_sum_seconds": 9.2906,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 0.8224653999999987
+      },
+      {
+        "case": "natural8192",
+        "ordinal": 2,
+        "phase": "measured",
+        "http_qpc_seconds": 8.774682,
+        "API_phase_sum_seconds": 9.626299999999999,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 0.8516179999999984
+      },
+      {
+        "case": "natural8192",
+        "ordinal": 3,
+        "phase": "measured",
+        "http_qpc_seconds": 8.4241757,
+        "API_phase_sum_seconds": 9.243799999999998,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 0.8196242999999992
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 0,
+        "phase": "warmup_excluded",
+        "http_qpc_seconds": 15.1974091,
+        "API_phase_sum_seconds": 16.677899999999998,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.4804908999999977
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 1,
+        "phase": "measured",
+        "http_qpc_seconds": 14.5647287,
+        "API_phase_sum_seconds": 15.991200000000001,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.426471300000001
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 2,
+        "phase": "measured",
+        "http_qpc_seconds": 14.6493578,
+        "API_phase_sum_seconds": 16.0847,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.435342200000001
+      },
+      {
+        "case": "natural16k",
+        "ordinal": 3,
+        "phase": "measured",
+        "http_qpc_seconds": 14.6197109,
+        "API_phase_sum_seconds": 16.052699999999998,
+        "API_phase_sum_within_HTTP": false,
+        "native_minus_HTTP_seconds": 1.4329890999999986
+      }
+    ],
+    "all_measured_API_phase_sums_within_HTTP": false,
+    "all_warmup_API_phase_sums_within_HTTP": false,
+    "failed_observations": 8,
+    "tolerance_seconds": 0.005,
+    "API_phase_clock_qualified": false,
+    "interpretation": "8 of 8 API phase sums exceeded whole-HTTP QPC; the API phase clock is unqualified and no scaling or subtraction was applied"
+  },
+  "evidence": {
+    "ready_before": {
+      "logical_path": "measurement/ready-before.json",
+      "name": "ready-before.json",
+      "bytes": 13322,
+      "sha256": "de996ac5a0be7dabf1595edb43714352f0145a18f6a9f1dd157efd01525ee395"
+    },
+    "ready_after": {
+      "logical_path": "measurement/ready-after.json",
+      "name": "ready-after.json",
+      "bytes": 13322,
+      "sha256": "59931cdc93eed72dbaa35f3ba4f54c512e9d17424527c4f30fde6ff17db496f7"
+    },
+    "runtime_seal": {
+      "logical_path": "measurement/runtime-seal.json",
+      "name": "runtime-seal.json",
+      "bytes": 901,
+      "sha256": "45da0c888c091440d11bb27aeeac2e77ea1fa02659a71423304fcb83f7015ee6"
+    },
+    "handle": {
+      "logical_path": "measurement/handle.json",
+      "name": "handle.json",
+      "bytes": 21721,
+      "sha256": "6794ff2231532b121018002e1908f9249daf05b8f82dbe592a975a4663cbe6c2"
+    },
+    "summary": {
+      "logical_path": "measurement/summary.json",
+      "name": "summary.json",
+      "bytes": 2306,
+      "sha256": "78ae10980624d29c71cf3bc9135ff307a23b0a6b97aa6672a8a3990e7661eb5f"
+    },
+    "profile": {
+      "logical_path": "profile/serving0207-text32k-8192.json",
+      "name": "serving0207-text32k-8192.json",
+      "bytes": 2994,
+      "sha256": "69d28caee11c0e23eb2e8dba4bc0910ffbbeef7bde9656186baa4abf7cac385d"
+    },
+    "samples": [
+      {
+        "logical_path": "measurement/natural8192-0.sample.json",
+        "name": "natural8192-0.sample.json",
+        "bytes": 2188,
+        "sha256": "38c4d6045d0e4bcbc39492461e4e2969ed298316c2cb3b2a329f7997a3e55559"
+      },
+      {
+        "logical_path": "measurement/natural8192-1.sample.json",
+        "name": "natural8192-1.sample.json",
+        "bytes": 2179,
+        "sha256": "d9d82f544901b20eb57ccbce4068994a35bbc70f2f6c9d6b727f74ff59c487e0"
+      },
+      {
+        "logical_path": "measurement/natural8192-2.sample.json",
+        "name": "natural8192-2.sample.json",
+        "bytes": 2188,
+        "sha256": "925c31cb13cb511df60c769e0a43af310174ff5cfad4930a0e833c876d581bea"
+      },
+      {
+        "logical_path": "measurement/natural8192-3.sample.json",
+        "name": "natural8192-3.sample.json",
+        "bytes": 2190,
+        "sha256": "efaf41c99e9ce11a0a41de4bcb9d126ead5fea0a85bda6bd416fee8f6878a733"
+      },
+      {
+        "logical_path": "measurement/natural16k-0.sample.json",
+        "name": "natural16k-0.sample.json",
+        "bytes": 2203,
+        "sha256": "ff6f8313f76d7e0d5b23066dc5f1daa18304ca58660ba9ca20dbc884e4d0ffb3"
+      },
+      {
+        "logical_path": "measurement/natural16k-1.sample.json",
+        "name": "natural16k-1.sample.json",
+        "bytes": 2196,
+        "sha256": "22b4575f0f180ecf54b68cee35365a5cca36da005d6af3bfa14fdfffd4ef260d"
+      },
+      {
+        "logical_path": "measurement/natural16k-2.sample.json",
+        "name": "natural16k-2.sample.json",
+        "bytes": 2184,
+        "sha256": "b39ac267926f961d98b7497341047300f170a4c85b2da0ae541a9c840ed6cb22"
+      },
+      {
+        "logical_path": "measurement/natural16k-3.sample.json",
+        "name": "natural16k-3.sample.json",
+        "bytes": 2196,
+        "sha256": "493bba3ed1dadc3ba67b360c1197bf8502cc8bf509aa961f51806577770fd509"
+      }
+    ],
+    "performance_transition_receipt": {
+      "logical_path": "private/oem-performance/transition.json",
+      "name": "transition.json",
+      "bytes": 2453,
+      "sha256": "85daf9384d015bbb129a2864adfd0201b0fe706c201ce1b2197ecfdcd652c18f"
+    }
+  },
+  "full_goal_achieved": false,
+  "performance_profile": {
+    "oem_reported_mode": 1,
+    "oem_mode_name": "Performance",
+    "oem_transition_ended_utc": "2026-11-20T19:45:36.0030274Z",
+    "windows_power_scheme_guid": "fea6225e-2fb8-45d3-9f7a-c0d73b827f52",
+    "windows_power_scheme_name": "REV:N Performance",
+    "transition_receipt": {
+      "logical_path": "private/oem-performance/transition.json",
+      "name": "transition.json",
+      "bytes": 2453,
+      "sha256": "85daf9384d015bbb129a2864adfd0201b0fe706c201ce1b2197ecfdcd652c18f"
+    },
+    "scope": "The reviewed provider receipt records a fresh mode-2 read, one setter call and a mode-1 readback before this server run; it does not independently measure package wattage or clocks."
+  },
+  "comparison_to_previous_0207": {
+    "natural8192": {
+      "causal_comparison": false,
+      "reference_report": "halogen0207-natural-8k16k-20261120.json",
+      "reference_prefill_reported_tps": 951.0453333333334,
+      "new_prefill_reported_tps": 1210.1616666666666,
+      "prefill_observed_change_percent": 27.245423982593174,
+      "reference_decode_reported_tps": 45.08766666666667,
+      "new_decode_reported_tps": 49.20966666666667,
+      "decode_observed_change_percent": 9.142189660143574,
+      "reference_http_qpc_mean_seconds": 10.463027866666668,
+      "new_http_qpc_mean_seconds": 8.5556641,
+      "HTTP_mean_observed_change_percent": -18.22955831689207,
+      "reference_head_accepted": 192,
+      "reference_head_drafted": 291,
+      "new_head_accepted": 192,
+      "new_head_drafted": 291,
+      "head_acceptance_matches": true,
+      "output_sha256_matches_reference": true
+    },
+    "natural16k": {
+      "causal_comparison": false,
+      "reference_report": "halogen0207-natural-8k16k-20261120.json",
+      "reference_prefill_reported_tps": 938.335,
+      "new_prefill_reported_tps": 1216.505,
+      "prefill_observed_change_percent": 29.645062797401778,
+      "reference_decode_reported_tps": 43.544000000000004,
+      "new_decode_reported_tps": 49.717,
+      "decode_observed_change_percent": 14.176465184640819,
+      "reference_http_qpc_mean_seconds": 18.579665900000002,
+      "new_http_qpc_mean_seconds": 14.6112658,
+      "HTTP_mean_observed_change_percent": -21.3588345525632,
+      "reference_head_accepted": 180,
+      "reference_head_drafted": 279,
+      "new_head_accepted": 180,
+      "new_head_drafted": 279,
+      "head_acceptance_matches": true,
+      "output_sha256_matches_reference": true
+    }
+  }
+}

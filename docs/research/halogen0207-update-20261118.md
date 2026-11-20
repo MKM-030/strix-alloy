@@ -68,9 +68,9 @@ The installed manifest contains 161 members, is 18,211 bytes, and hashes to `2e8
 
 The final service manifest exactly matches the frozen package sources: `service.py` `7ea5cc4e...`, release profile `c74797d7...`, source manifest `3efff4c1...`, hybrid bridge source `4be0d14b...` and preflight source `e24d0bdb...`. Run-specific identities live only in the external JSON evidence. The release profile deliberately leaves its embedded runtime flags false; this avoids changing `sources.json` after qualification and invalidating the observed source revision.
 
-## Subsequent 8K/16K cohort - 20 November
+## Subsequent OEM Performance 8K/16K cohort - 20 November
 
-The [public benchmark report](../benchmarks/halogen0207-natural-8k16k-20261120.md)
+The [public benchmark report](../benchmarks/halogen0207-performance-natural-8k16k-20261120.md)
 records one excluded warmup followed by three measured requests at each size.
 The frozen protocol uses 128 output tokens, temperature 0, seed 1, Cache
 Off/`no_store`, Thinking and Vision Off, cost-based native MTP gate 0.90 and PLD `3,3` on
@@ -78,21 +78,28 @@ Off/`no_store`, Thinking and Vision Off, cost-based native MTP gate 0.90 and PLD
 
 | Version / actual input | API prefill tok/s | API decode tok/s | HTTP QPC seconds | Native head acceptance |
 | --- | ---: | ---: | ---: | ---: |
-| 0.20.7 / 8192 | 951.045333 | 45.087667 | 10.463028 | 192 / 291 = 65.9794% |
+| 0.20.7 Performance / 8192 | 1210.161667 | 49.209667 | 8.555664 | 192 / 291 = 65.9794% |
+| Earlier 0.20.7 / 8192 | 951.045333 | 45.087667 | 10.463028 | 192 / 291 = 65.9794% |
 | Matched 0.20.2 reference / 8192 | 1460.340333 | 47.985333 | 8.371123 | 192 / 312 = 61.538% |
-| 0.20.7 / 16384 | 938.335 | 43.544 | 18.579666 | 180 / 279 = 64.5161% |
+| 0.20.7 Performance / 16384 | 1216.505 | 49.717 | 14.611266 | 180 / 279 = 64.5161% |
+| Earlier 0.20.7 / 16384 | 938.335 | 43.544 | 18.579666 | 180 / 279 = 64.5161% |
 | Matched 0.20.2 reference / 16384 | 1414.618667 | 43.445667 | 14.606883 | 180 / 324 = 55.556% |
 
 HTTP QPC duration and native accepted/drafted counters are direct measurements.
 Prefill and decode are native API phase-clock means. The RAW observer was absent,
 so absolute phase throughput remains unqualified and no correction factor is
 applied. All eight API phase sums exceeded their whole-HTTP QPC durations. The
+deterministic outputs and accepted/drafted totals match the earlier 0.20.7
+cohort. Prefill/decode increased by 27.25%/9.14% at 8K and 29.65%/14.18% at
+16K, while HTTP means fell 18.23% and 21.36%. The OEM transition, server restart
+and separate collection window prevent treating those observed changes as an
+isolated causal power-mode effect. The
 0.20.2 rows are a non-causal reference; the cohort does not isolate
 the engine version from environment, operating state or other release changes.
 The deterministic 0.20.7 output hashes differ from the 0.20.2 references, so
 the rows also do not constitute an identical-completion speed comparison.
 The dated runtime-qualification JSON beside this report remains unchanged; the
-[benchmark JSON](../benchmarks/halogen0207-natural-8k16k-20261120.json) carries
+[benchmark JSON](../benchmarks/halogen0207-performance-natural-8k16k-20261120.json) carries
 the later measurement evidence.
 
 ## Operation and limits

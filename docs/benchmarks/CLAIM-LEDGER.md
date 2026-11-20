@@ -11,32 +11,40 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
-### Current Halogen 0.20.7: completed natural 8K/16K API cohort
+### Current Halogen 0.20.7: completed OEM Performance natural 8K/16K API cohort
 
-The [20 November report](halogen0207-natural-8k16k-20261120.md) records one
+The [20 November Performance report](halogen0207-performance-natural-8k16k-20261120.md) records one
 excluded warmup followed by three measured requests at each size. Every request
 uses 128 output tokens, temperature 0, seed 1, Cache Off/`no_store`, Thinking and
 Vision Off, cost-based native MTP gate 0.90 and PLD `3,3`. The server is 0.20.7 with one
-32K slot and paired 8192 prefill controls.
+32K slot and paired 8192 prefill controls; the collector binds OEM mode `1`
+(Performance) and the `REV:N Performance` Windows scheme.
 
 | Version / actual input | API prefill tok/s | API decode tok/s | HTTP QPC seconds | Native head acceptance |
 | --- | ---: | ---: | ---: | ---: |
-| 0.20.7 / 8192 | 951.045333 | 45.087667 | 10.463028 | 192 / 291 = 65.9794% |
+| 0.20.7 Performance / 8192 | 1210.161667 | 49.209667 | 8.555664 | 192 / 291 = 65.9794% |
+| Earlier 0.20.7 / 8192 | 951.045333 | 45.087667 | 10.463028 | 192 / 291 = 65.9794% |
 | Matched 0.20.2 reference / 8192 | 1460.340333 | 47.985333 | 8.371123 | 192 / 312 = 61.538% |
-| 0.20.7 / 16384 | 938.335 | 43.544 | 18.579666 | 180 / 279 = 64.5161% |
+| 0.20.7 Performance / 16384 | 1216.505 | 49.717 | 14.611266 | 180 / 279 = 64.5161% |
+| Earlier 0.20.7 / 16384 | 938.335 | 43.544 | 18.579666 | 180 / 279 = 64.5161% |
 | Matched 0.20.2 reference / 16384 | 1414.618667 | 43.445667 | 14.606883 | 180 / 324 = 55.556% |
 
 The HTTP QPC durations and native accepted/drafted counters are retained
 measurements. Prefill and decode are native API phase-clock means; no RAW
 observer was present, so they are not qualified as absolute phase throughput.
-All eight API phase sums exceeded their whole-HTTP QPC durations, so the
+All eight Performance API phase sums exceeded their whole-HTTP QPC durations, so the
 necessary enclosure check failed for every retained observation.
+The deterministic outputs and accepted/drafted totals match the earlier 0.20.7
+cohort. Observed prefill/decode changes are +27.25%/+9.14% at 8K and
++29.65%/+14.18% at 16K, while HTTP means fell 18.23% and 21.36%. These are
+endorsed as observed same-release differences only: the OEM transition, server
+restart and separate window were not an isolated causal experiment.
 The matched 0.20.2 rows freeze the same high-level request protocol but remain a
 non-causal cross-version reference. The deterministic 0.20.7 output hashes do
 not match the 0.20.2 references, so this is not an identical-completion speed
-comparison. No 0.20.7 speedup, regression cause, RAW
+comparison. No causal power-mode speedup, regression cause, RAW
 phase result or verification of the upstream 4–6% decode claim is endorsed.
-[Machine-readable evidence](halogen0207-natural-8k16k-20261120.json).
+[Machine-readable evidence](halogen0207-performance-natural-8k16k-20261120.json).
 
 ### Earlier Halogen 0.18.22: independently captured phase measurements
 
