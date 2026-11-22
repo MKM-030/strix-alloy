@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import sys
 import tempfile
+import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -70,6 +71,27 @@ class CapacityTests(unittest.TestCase):
             '[preflight] complete phase=2 copied=66652069248 host=0',
         ))
         service.validate_v2_runtime_log(text_only, disable_vision=True)
+        concurrency_off = '\n'.join(text_only.splitlines()[1:])
+        service.validate_v2_runtime_log(
+            concurrency_off, disable_vision=True, concurrency_mode=0)
+        explicit_on = text_only.replace(
+            '(the default; HALOGEN_CONC_MODE=0 turns it off)',
+            '(HALOGEN_CONC_MODE=1)')
+        service.validate_v2_runtime_log(
+            explicit_on, disable_vision=True, concurrency_mode=1)
+        both_on = text_only + '\n' + explicit_on.splitlines()[0]
+        with self.assertRaises(ValueError):
+            service.validate_v2_runtime_log(
+                both_on, disable_vision=True, concurrency_mode=None)
+        with self.assertRaises(ValueError):
+            service.validate_v2_runtime_log(
+                both_on, disable_vision=True, concurrency_mode=1)
+        with self.assertRaises(ValueError):
+            service.validate_v2_runtime_log(
+                text_only, disable_vision=True, concurrency_mode=0)
+        with self.assertRaises(ValueError):
+            service.validate_v2_runtime_log(
+                concurrency_off, disable_vision=True, concurrency_mode=1)
         vision = text_only + '\n[preflight] complete phase=3 copied=67549932416 host=0'
         service.validate_v2_runtime_log(vision, disable_vision=False)
         for bad in (
@@ -101,6 +123,68 @@ class CapacityTests(unittest.TestCase):
                     service.validate_options(options)
         for cache in ('Off', 'Exact', 'Flexible'):
             self.assertEqual(service.options(['--prompt-cache', cache]).prompt_cache, cache)
+
+    def test_explicit_concurrency_requires_the_current_checkpoint_format(self):
+        with self.assertRaises(ValueError):
+            service.options([
+                '--checkpoint', 'w4b', '--kernel-controls-json',
+                '{"HALOGEN_CONC_MODE":1}',
+            ])
+
+    def test_live_guard_revalidates_a_short_stall_without_weakening_the_floor(self):
+        with tempfile.TemporaryDirectory() as folder:
+            attempt = Path(folder)
+            guard_log = attempt / 'host-guard.jsonl'
+            guard_log.write_text('{}\n', encoding='utf-8')
+            process = SimpleNamespace(poll=lambda: None)
+            safe = {'available_bytes': 19 * service.r.GIB,
+                    'commit_headroom_bytes': 19 * service.r.GIB}
+            host = SimpleNamespace(frame=lambda: safe)
+            with patch.object(service.r, 'guard_alive',
+                              side_effect=RuntimeError('stale')):
+                now = time.time()
+                os.utime(guard_log, (now - 16, now - 16))
+                service.guard_alive(process, attempt, host=host)
+                def refresh_guard_frame():
+                    os.utime(guard_log, None)
+                    return safe
+                os.utime(guard_log, (now - 16, now - 16))
+                service.guard_alive(
+                    process, attempt, host=SimpleNamespace(frame=refresh_guard_frame))
+                polls = iter((None, 1))
+                exiting = SimpleNamespace(poll=lambda: next(polls))
+                os.utime(guard_log, (now - 16, now - 16))
+                with self.assertRaises(RuntimeError):
+                    service.guard_alive(exiting, attempt, host=host)
+                failure = attempt / 'guard-failure.json'
+                def publish_failure_frame():
+                    failure.write_text('{"error":"guard stopped"}\n', encoding='utf-8')
+                    return safe
+                os.utime(guard_log, (now - 16, now - 16))
+                with self.assertRaisesRegex(RuntimeError, 'guard stopped'):
+                    service.guard_alive(
+                        process, attempt, host=SimpleNamespace(frame=publish_failure_frame))
+                failure.unlink()
+                os.utime(guard_log, (now - 31, now - 31))
+                with self.assertRaises(RuntimeError):
+                    service.guard_alive(process, attempt, host=host)
+                os.utime(guard_log, (984, 984))
+                with patch.object(service.time, 'time', side_effect=(1000, 1031)), \
+                        self.assertRaises(RuntimeError):
+                    service.guard_alive(process, attempt, host=host)
+                low = SimpleNamespace(frame=lambda: {
+                    'available_bytes': 18 * service.r.GIB - 1,
+                    'commit_headroom_bytes': 19 * service.r.GIB,
+                })
+                os.utime(guard_log, (now - 16, now - 16))
+                with self.assertRaises(ValueError):
+                    service.guard_alive(process, attempt, host=low)
+                dead = SimpleNamespace(poll=lambda: 1)
+                with self.assertRaises(RuntimeError):
+                    service.guard_alive(dead, attempt, host=host)
+                guard_log.unlink()
+                with self.assertRaises(RuntimeError):
+                    service.guard_alive(process, attempt, host=host)
 
     def test_capacity_requires_cacheoff_in_direct_environment(self):
         for slots, pool in ((2, None), (1, 32768), (1, 65536), (2, 65536)):

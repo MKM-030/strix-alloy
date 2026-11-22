@@ -54,6 +54,30 @@ class ManagedKernelControlsTests(unittest.TestCase):
         self.assertEqual(module.environment(controls),{'HALOGEN_DRAFT_VOCAB_Q8':'1'})
         self.assertNotIn('HALOGEN_DRAFT_VOCAB_Q8',module.environment({}))
 
+    def test_0207_concurrency_mode_control_is_forwarded_and_bounded(self):
+        source=self.profile('0.20.7')
+        controls={'HALOGEN_CONC_MODE':0}
+        result=self.tune(source,kernel_controls=controls)
+        directory=controller.validate_engine(result['engine'],self.repo)
+        args=controller.halogen_kernel_arguments(result['engine'],directory)
+        self.assertEqual(json.loads(args[1]),controls)
+        module=controller.halogen_kernel_module(directory)
+        self.assertEqual(module.environment(controls),{'HALOGEN_CONC_MODE':'0'})
+        self.assertNotIn('HALOGEN_CONC_MODE',module.environment({}))
+        with self.assertRaises(ValueError):
+            module.environment({'HALOGEN_CONC_MODE':2})
+
+    def test_0207_draft_vocab_q8_uses_the_same_exact_integer_route(self):
+        source=self.profile('0.20.7')
+        controls={'HALOGEN_DRAFT_VOCAB_Q8':1}
+        result=self.tune(source,kernel_controls=controls)
+        directory=controller.validate_engine(result['engine'],self.repo)
+        args=controller.halogen_kernel_arguments(result['engine'],directory)
+        self.assertEqual(json.loads(args[1]),controls)
+        module=controller.halogen_kernel_module(directory)
+        self.assertEqual(module.environment(controls),
+                         {'HALOGEN_DRAFT_VOCAB_Q8':'1'})
+
     def test_tuning_copies_validated_kernel_controls(self):
         source=self.profile(); before=copy.deepcopy(source)
         controls={'HALOGEN_DN_SCAN':0}; result=self.tune(source,kernel_controls=controls)

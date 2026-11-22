@@ -155,7 +155,11 @@ def validate_options(o):
     qualified_lookup = getattr(o, 'qualified_lookup', None)
     if qualified_lookup is not None:
         raise ValueError('Private lookup overrides are not rebound to 0.20.7; use the stock runtime')
-    kc.validate(getattr(o, 'kernel_controls_json', None) or {})
+    kernel_controls = getattr(o, 'kernel_controls_json', None) or {}
+    kc.validate(kernel_controls)
+    if (getattr(o, 'checkpoint', 'v2') != 'v2'
+            and kernel_controls.get(kc.CONCURRENCY_MODE) == 1):
+        raise ValueError('Explicit concurrency mode requires the v2 checkpoint')
     if getattr(o, 'speculation_policy_json', None) is not None:
         sp.validate(o.speculation_policy_json)
     if getattr(o, 'api_defaults_json', None) is not None:
@@ -327,13 +331,25 @@ def checkpoint_receipt_environment(receipts, disable_vision=False):
     return result
 
 
-def validate_v2_runtime_log(text, disable_vision):
+def validate_v2_runtime_log(text, disable_vision, concurrency_mode=None):
     """Require the exact r2 mapping sequence before publishing readiness."""
     validate_disable_vision(disable_vision, 'v2')
     if not isinstance(text, str) or '[preflight] reject' in text:
         raise ValueError('V2 runtime log does not prove a clean r2 preflight')
+    if concurrency_mode not in (None, 0, 1):
+        raise ValueError('Invalid expected concurrency mode')
+    concurrency_on_count = text.count('halogen: concurrency mode ON (')
+    if ((concurrency_mode == 0 and concurrency_on_count != 0)
+            or (concurrency_mode in (None, 1) and concurrency_on_count != 1)):
+        raise ValueError('V2 runtime log contradicts the selected concurrency mode')
+    mode_line = None
+    if concurrency_mode is None:
+        mode_line = "halogen: concurrency mode ON (the default; HALOGEN_CONC_MODE=0 turns it off):"
+    elif concurrency_mode == 1:
+        mode_line = "halogen: concurrency mode ON (HALOGEN_CONC_MODE=1):"
+    elif 'halogen: concurrency mode ON (' in text:
+        raise ValueError('V2 runtime log enabled concurrency against the selected mode')
     required = (
-        "halogen: concurrency mode ON (the default; HALOGEN_CONC_MODE=0 turns it off):",
         "halogen: draft head qwen38-flash-next-drafter-r2-ht4.hgn "
         "(HALOGEN_CK_OVERLAY=none for the checkpoint's own)",
         'halogen: overlay '+DRAFTER_PATH,
@@ -341,6 +357,8 @@ def validate_v2_runtime_log(text, disable_vision):
         '[preflight] complete phase=1 copied=65163800576 host=0',
         '[preflight] complete phase=2 copied=66652069248 host=0',
     )
+    if mode_line is not None:
+        required = (mode_line,) + required
     if any(text.count(line) != 1 for line in required):
         raise ValueError('V2 runtime log does not prove the exact r2 mapping and registration')
     vision = '[preflight] complete phase=3 copied=67549932416 host=0'
@@ -674,12 +692,23 @@ def guard_exit_failed(code):
     return code is not None and code != 0
 
 
-def guard_alive(process, attempt):
+def guard_alive(process, attempt, host=None):
     try:
         r.guard_alive(process,attempt)
     except RuntimeError as exc:
+        guard_log=Path(attempt)/'host-guard.jsonl'
+        failure_path=Path(attempt)/'guard-failure.json'
+        if host is not None and process.poll() is None and guard_log.exists():
+            log_age=time.time()-guard_log.stat().st_mtime
+            if 12 < log_age <= 30:
+                started=time.monotonic(); frame=host.frame()
+                check_runtime_frame(frame,time.monotonic()-started)
+                final_log_age=time.time()-guard_log.stat().st_mtime
+                if (0 <= final_log_age <= 30 and process.poll() is None
+                        and not failure_path.exists()):
+                    return
         try:
-            detail=read(Path(attempt)/'guard-failure.json').get('error')
+            detail=read(failure_path).get('error')
         except (OSError,ValueError,AttributeError):
             detail=None
         if isinstance(detail,str) and detail:
@@ -829,7 +858,7 @@ def serve(o):
         while time.monotonic()<deadline:
             if cancelled(): raise InterruptedError('Startup cancelled')
             keepalive.check()
-            guard_alive(guard_proc,attempt)
+            guard_alive(guard_proc,attempt,host=host)
             try:
                 info=r.inspect(cid)
             except subprocess.TimeoutExpired as exc:
@@ -845,9 +874,12 @@ def serve(o):
             except (OSError,ValueError): health={}
             if health.get('status')=='ok':
                 if getattr(o,'checkpoint','v2') == 'v2':
+                    selected_concurrency=m['environment'].get(kc.CONCURRENCY_MODE)
                     validate_v2_runtime_log((attempt/'engine.log').read_text(
                         encoding='utf-8',errors='replace'),
-                        disable_vision=getattr(o,'disable_vision',False))
+                        disable_vision=getattr(o,'disable_vision',False),
+                        concurrency_mode=(None if selected_concurrency is None
+                                          else int(selected_concurrency)))
                 validate_health(health,o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o))
                 cache_worker.stop(); cache_stopped=True
                 log.info('Startup-cache worker stopped before inference; client cache is retained')
@@ -888,7 +920,7 @@ def serve(o):
         end=None if o.serve_seconds==0 else time.monotonic()+o.serve_seconds
         last_note=0
         while not cancelled() and (end is None or time.monotonic()<end):
-            guard_alive(guard_proc,attempt)
+            guard_alive(guard_proc,attempt,host=host)
             # The independent guard checks bounded-fresh ownership while its
             # memory sampler and lease continue through transient WSL stalls.
             if time.monotonic()-last_note>=30:
