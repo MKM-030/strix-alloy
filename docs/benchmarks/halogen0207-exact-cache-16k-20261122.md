@@ -1,9 +1,10 @@
 # Halogen 0.20.7 Exact-cache smoke at 16K
 
-Exact cache stored three states and reused zero tokens in the 32,768-position
-pool. The repeated prompt took 10.416 s with Exact and 10.445 and 10.455 s with
-Cache Off. Those are single requests. All 12 requests completed and each case
-matched the output hash, token counts and finish reason across the three arms.
+The first comparison used Exact in-place cache. It stored three states and
+reused zero tokens in the 32,768-position pool. The repeated prompt took
+10.416 s with Exact and 10.445 and 10.455 s with Cache Off. Each time is a
+single observation. All 12 requests completed and each case matched the output
+hash, token counts and finish reason across the three arms.
 
 The candidate reported native Exact mode 1, 8,192-token alignment and in-place
 KV storage. For both the identical request and the changed-suffix request, the
@@ -42,13 +43,58 @@ one observation and the first request is shown separately. Phase rates are
 native API observations, with RAW observation disabled. Whole HTTP uses
 Windows QPC. The lowest request-sampled reserve was 24.85 GiB.
 
-## Disposition and evidence
+## Copied-KV smoke
 
-Cache Off remains the serving default. The next controlled cache candidate
-uses the documented [copied-KV mode](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/FLAGS.md#speed-levers)
-at the same pool size. It can preserve a saved copy after the serving region
-is reassigned. Its cache hits, transfer overhead and output parity require
-runtime verification.
+The follow-up comparison enabled the documented [copied-KV mode](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/FLAGS.md#speed-levers)
+at the same pool size. The candidate log reports 916 MiB each way at context
+32,768. The two in-place region eviction messages were absent. The copied
+mode still reported 0 hits, 7 misses and 3 stores. The API confirmed zero
+reused tokens in every request. Region eviction therefore cannot explain all
+the misses observed across the two campaigns.
+
+All 12 requests completed with 16,384 input and 128 output tokens and exact
+output parity per case. The identical request took 10.668 s with copied-KV,
+versus 10.520 and 10.241 s in the Off controls. The changed-suffix request took
+11.149 s, versus 10.765 and 10.696 s. Each row is one observation. The lowest
+request-sampled reserve was 24.16 GiB.
+
+| Arm | Request | Cached input tokens | API prefill tok/s | API decode tok/s | MTP head accepted/drafted | Whole HTTP (s) |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Off before | First, no store | 0 | 1,342.236 | 46.921 | 60/93 | 14.974 |
+| Off before | Seed | 0 | 2,069.732 | 55.580 | 60/93 | 10.247 |
+| Off before | Identical | 0 | 2,000.024 | 55.589 | 60/93 | 10.520 |
+| Off before | Changed suffix | 0 | 2,032.048 | 48.693 | 68/101 | 10.765 |
+| Exact copied-KV | First, no store | 0 | 1,312.358 | 47.402 | 60/93 | 15.282 |
+| Exact copied-KV | Seed | 0 | 1,958.192 | 55.708 | 60/93 | 10.693 |
+| Exact copied-KV | Identical | 0 | 1,963.284 | 55.722 | 60/93 | 10.668 |
+| Exact copied-KV | Changed suffix | 0 | 1,918.681 | 49.614 | 68/101 | 11.149 |
+| Off after | First, no store | 0 | 1,327.618 | 44.579 | 60/93 | 15.294 |
+| Off after | Seed | 0 | 2,030.386 | 55.337 | 60/93 | 10.407 |
+| Off after | Identical | 0 | 2,068.243 | 55.795 | 60/93 | 10.241 |
+| Off after | Changed suffix | 0 | 2,027.346 | 49.430 | 68/101 | 10.696 |
+
+The copied-KV receipts are under
+`server/.local/halogen-update-20261122/primary0207/exact-cache-copy-prep-v1/exact-cache-copy-run-v1`.
+
+| Copied-KV evidence | SHA-256 |
+| --- | --- |
+| `before-summary.json` | `6e73d178caa943f570d98f9992645016089421e07439d4eaa2546fce610d7881` |
+| `candidate-summary.json` | `dc267c0d869d0715ccbdccc7441d20dcf8d4e92850b9d254030064e855fdd73d` |
+| `after-summary.json` | `602069f8ef20174f2cd621388e26f69d81b70b3e4cd88c136f16fbfd21a1246a` |
+| Candidate `engine.log` | `76b03f83e34b8c75ea12e2f1910cf2262d98b881e1cd6ddf33b2daad587fafbc` |
+| `handle.json` | `c1180555cc4c325603fb6936346cadff647a65556ce7782d048e69a8150b6237` |
+| `restore-stock-launch.ready.json` | `d5cd4285a5acb2d2a47ab03de656fbb92664e8d1977e2758929e9418f95966da` |
+
+The copied-KV campaign ended at 20:49:52 UTC. The restored stock controller
+`247f9379332843ee9ae01ae769bc3f6e` and backend
+`83978d0355be44b8b47928d416447409` passed readiness on port 8840, with Cache
+Off. The local router on port 8831 confirmed that upstream was ready. The
+gateway reported zero active requests at the readiness check.
+
+## Disposition and original in-place evidence
+
+Cache Off remains the serving default. Neither Exact mode qualified a speed
+gain for these raw completion requests.
 
 The first attempt preserved one real response and ended with a collector schema
 error. The corrected collector uses the field locations confirmed in that
