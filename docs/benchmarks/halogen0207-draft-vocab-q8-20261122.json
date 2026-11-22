@@ -1,0 +1,203 @@
+{
+  "schema": "halogen0207.q4-q8-q4-public.v1",
+  "date": "2026-11-22",
+  "classification": "qualified_bracketed_single_variable_campaign",
+  "version": "0.20.7",
+  "candidate_change": {
+    "name": "draft_vocab_q8",
+    "environment": "HALOGEN_DRAFT_VOCAB_Q8=1",
+    "controls": "setting_absent"
+  },
+  "protocol": {
+    "arm_order": ["before", "candidate", "after"],
+    "actual_input_tokens": [8192, 16384],
+    "warmups_excluded_per_arm_per_size": 1,
+    "measured_requests_per_arm_per_size": 3,
+    "completed_requests": 24,
+    "output_tokens": 128,
+    "temperature": 0,
+    "seed": 1,
+    "cache": "off_no_store",
+    "thinking": false,
+    "vision": false,
+    "mtp_gate": 0.9,
+    "pld": [3, 3],
+    "decode_prefetch": false,
+    "raw_observer_used": false,
+    "api_phase_clock_qualified_as_absolute": false,
+    "whole_http_boundary": "immediately_before_dispatch_through_eof"
+  },
+  "runtime": {
+    "checkpoint": "v2",
+    "slots": 1,
+    "context": 32768,
+    "kv_pool_positions": 32768,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "drafter": "qwen38-flash-next-drafter-r2-ht4.hgn",
+    "power_profile": "REV:N Performance",
+    "stock_profile_sha256": "69d28caee11c0e23eb2e8dba4bc0910ffbbeef7bde9656186baa4abf7cac385d",
+    "candidate_profile_sha256": "d5cf920b70583dbd5d1b525bffa46994a7e9b585825f5a2f053b54a9ffed9c87",
+    "source_manifest_sha256": "574bfad341728635b13457cbdb1eb769f9f55be32a4d868f7ea1bad90e0970e0"
+  },
+  "arms": {
+    "before": {
+      "q8": false,
+      "cases": {
+        "8192": {
+          "prefill_tps": 1973.2783333333334,
+          "prefill_pooled_tps": 1973.1517759650587,
+          "decode_tps": 57.51433333333333,
+          "decode_pooled_tps": 57.51430368750562,
+          "whole_http_mean_seconds": 6.423520866666666,
+          "accepted": 192,
+          "drafted": 291,
+          "acceptance_percent": 65.97938144329896,
+          "head_rounds": 186,
+          "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd"
+        },
+        "16384": {
+          "prefill_tps": 1948.6656666666665,
+          "prefill_pooled_tps": 1948.334568747845,
+          "decode_tps": 55.645,
+          "decode_pooled_tps": 55.644915880537326,
+          "whole_http_mean_seconds": 10.742251266666665,
+          "accepted": 180,
+          "drafted": 279,
+          "acceptance_percent": 64.51612903225806,
+          "head_rounds": 198,
+          "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b"
+        }
+      }
+    },
+    "candidate": {
+      "q8": true,
+      "cases": {
+        "8192": {
+          "prefill_tps": 2024.4323333333334,
+          "prefill_pooled_tps": 2024.4322347339719,
+          "decode_tps": 58.324999999999996,
+          "decode_pooled_tps": 58.32143616536557,
+          "whole_http_mean_seconds": 6.261488133333334,
+          "accepted": 198,
+          "drafted": 279,
+          "acceptance_percent": 70.96774193548387,
+          "head_rounds": 180,
+          "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd"
+        },
+        "16384": {
+          "prefill_tps": 1986.2886666666666,
+          "prefill_pooled_tps": 1986.2684323463684,
+          "decode_tps": 55.704,
+          "decode_pooled_tps": 55.70384124405245,
+          "whole_http_mean_seconds": 10.571807466666668,
+          "accepted": 183,
+          "drafted": 273,
+          "acceptance_percent": 67.03296703296702,
+          "head_rounds": 195,
+          "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b"
+        }
+      }
+    },
+    "after": {
+      "q8": false,
+      "cases": {
+        "8192": {
+          "prefill_tps": 2035.0,
+          "prefill_pooled_tps": 2034.9424525958434,
+          "decode_tps": 57.763666666666666,
+          "decode_pooled_tps": 57.76347062185986,
+          "whole_http_mean_seconds": 6.269291233333334,
+          "accepted": 192,
+          "drafted": 291,
+          "acceptance_percent": 65.97938144329896,
+          "head_rounds": 186,
+          "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd"
+        },
+        "16384": {
+          "prefill_tps": 2008.363,
+          "prefill_pooled_tps": 2008.3189644605343,
+          "decode_tps": 55.72966666666667,
+          "decode_pooled_tps": 55.7297109021247,
+          "whole_http_mean_seconds": 10.482233333333333,
+          "accepted": 180,
+          "drafted": 279,
+          "acceptance_percent": 64.51612903225806,
+          "head_rounds": 198,
+          "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b"
+        }
+      }
+    }
+  },
+  "candidate_deltas": {
+    "8192": {
+      "vs_before": {
+        "prefill_percent": 2.592335766115106,
+        "decode_pooled_percent": 1.4033595577291003,
+        "acceptance_percentage_points": 4.98836049218491,
+        "http_improvement_percent": 2.5224909624589675
+      },
+      "vs_after": {
+        "prefill_percent": -0.5192956592956599,
+        "decode_pooled_percent": 0.9659487864888572,
+        "acceptance_percentage_points": 4.98836049218491,
+        "http_improvement_percent": 0.1244654253500288
+      }
+    },
+    "16384": {
+      "vs_before": {
+        "prefill_percent": 1.9307057461712684,
+        "decode_pooled_percent": 0.10589532319831285,
+        "acceptance_percentage_points": 2.516838000708958,
+        "http_improvement_percent": 1.586667410479281
+      },
+      "vs_after": {
+        "prefill_percent": -1.0991206934868547,
+        "decode_pooled_percent": -0.04641986770339557,
+        "acceptance_percentage_points": 2.516838000708958,
+        "http_improvement_percent": -0.8545329080634989
+      }
+    }
+  },
+  "activation": {
+    "before": {"manifest_q8_present": false, "head_rounds": 384},
+    "candidate": {"manifest_q8_present": true, "manifest_q8_value": "1", "head_rounds": 375},
+    "after": {"manifest_q8_present": false, "head_rounds": 384},
+    "positive_head_counters_all_arms": true
+  },
+  "promotion": {
+    "promote": false,
+    "acceptance_used_for_promotion": false,
+    "exact_output_parity": {"8192": true, "16384": true},
+    "candidate_decode_beats_both_controls": {"8192": true, "16384": false},
+    "candidate_whole_http_beats_both_controls": {"8192": true, "16384": false}
+  },
+  "restoration": {
+    "completed": true,
+    "restored": true,
+    "pending": null,
+    "ended_utc": "2026-11-22T17:08:55.402173+00:00",
+    "port": 8840,
+    "profile_sha256": "69d28caee11c0e23eb2e8dba4bc0910ffbbeef7bde9656186baa4abf7cac385d",
+    "controller_run": "9b73b4f365b84b8d85baf106cecaf3f0",
+    "backend_run": "ce8976b3130f4a42aa7a339b0265c02a",
+    "ready": true
+  },
+  "comparability": {
+    "prior_20261122_deployment_confirmation_is_a_control": false,
+    "manufacturer_benchmark_is_matched": false,
+    "manufacturer_scope": "different synthetic sweep and selected English prose workloads"
+  },
+  "evidence": {
+    "local_root": "server/.local/halogen-update-20261122/primary0207/q8-cohort-prep-v1/q8-campaign-run-v3",
+    "files": {
+      "handle.json": "3f7b8c65e639895306952b8a6f3bccf9ebedb76250ad7a1cee02fbaa616e89e6",
+      "before/summary.json": "e2b3d2b7cfa54611c9c098753993cea445da4777eeb736cb4702a8f640917f12",
+      "candidate/summary.json": "dfacc0447bf8789106bb7da01fc1b812d75aa9f5f09755a2b7de1c669cc6f783",
+      "after/summary.json": "691f41f8dfa88c70161d7901004feb43b2775e714c44db523a54a2e73c504db7"
+    },
+    "actor_sha256": "fd8da2201672284e955f2d9a6d2afdf18316a515c388ba8dc3fdb643e49220c4",
+    "tests_sha256": "840ba18e04cdd65f6e05e48639bd6e7c96cee93ea65a1bc41e237642037058b1",
+    "offline_contract_tests_passed": 92
+  }
+}

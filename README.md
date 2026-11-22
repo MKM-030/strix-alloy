@@ -43,22 +43,29 @@ its compatible automatic concurrency mode. The launcher keeps the existing
 ServiceNow token and endpoint on port 8840. The bounded qualification checks
 API/engine 0.20.7, exact `r2-ht4` selection, both bridge copy phases,
 authenticated `halogen-v2` discovery and the exact `HALOGEN_0207_FINAL_READY` reply.
-The completed [22 November deployment-confirmation cohort](docs/benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
-excludes one warmup and averages three requests per size. At 8,192 actual input
-tokens it records **1618.895333 prefill / 51.575 decode tok/s**, 7.567984 seconds
-HTTP QPC and 192/291 = 65.9794% native-head acceptance; at 16,384 it records
-**1534.869667 / 49.656333 tok/s**, 13.283862 seconds and 180/279 = 64.5161%.
-Deterministic outputs and acceptance totals match the preserved
-[20 November Performance cohort](docs/benchmarks/halogen0207-performance-natural-8k16k-20261120.md).
-The observed 20→22 November changes are +33.775%/+4.807% prefill/decode at 8K
-and +26.170%/-0.122% at 16K. The separate collection window and uncontrolled
-runtime state make this a deployment confirmation, not a causal optimization result.
-These prefill/decode values are native API phase-clock observations: no RAW observer
-was present, so absolute phase throughput remains unqualified. All eight phase
-sums now fit inside whole-HTTP QPC, which is necessary but does not independently
-qualify the phase boundaries. The adjacent matched 0.20.2 rows in the preserved
-20 November report remain a non-causal reference, not a version-speedup claim. Capacity
-opt-in, two-slot and vision remain separate. The previous [0.20.6 qualification](docs/research/halogen0206-update-20261118.md),
+The completed [22 November bracketed Q4/Q8/Q4 campaign](docs/benchmarks/halogen0207-draft-vocab-q8-20261122.md)
+is the current controlled 8K/16K result. Each arm excludes one warmup and
+averages three requests per size. Q8 raises native-head acceptance from
+65.9794% to 70.9677% at 8K and from 64.5161% to 67.0330% at 16K. It records
+**2024.432333 prefill / 58.325 decode tok/s** at 8K and
+**1986.288667 / 55.704 tok/s** at 16K. The Q4 bookends record
+1973.278333/57.514333 then 2035.000000/57.763667 at 8K, and
+1948.665667/55.645000 then 2008.363000/55.729667 at 16K. Q8 beats both
+controls on pooled decode and whole-request time at 8K, but loses narrowly to
+the 16K after-control on both metrics. It therefore remains disabled
+(`promote=false`); acceptance alone is not a promotion gate. Exact outputs and
+token counts match across all arms, and the stock server was restored ready on
+8840.
+
+The earlier [22 November deployment-confirmation cohort](docs/benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
+retains its separate 1618.895333/51.575000 and 1534.869667/49.656333 API
+observations. It is not a control for the later bracketed campaign. Separate
+runtime windows prevent attributing their difference to one optimization.
+All these prefill/decode values are native API phase-clock observations: no RAW
+observer was present, so absolute phase throughput remains unqualified. The
+manufacturer's synthetic-sweep and selected-prose figures use different
+workloads and are not matched comparisons. Capacity opt-in, two-slot and vision
+remain separate. The previous [0.20.6 qualification](docs/research/halogen0206-update-20261118.md),
 [0.20.3 online verification](docs/research/halogen0203-update-20261111.md),
 [0.20.2 installation](docs/research/halogen0202-update-20261111.md) and
 [8K/16K API observations](docs/benchmarks/halogen0202-normal8192-20261111.md)

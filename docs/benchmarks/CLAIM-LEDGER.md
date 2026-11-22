@@ -11,7 +11,34 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
-### Current Halogen 0.20.7: 22 November natural 8K/16K deployment confirmation
+### Current Halogen 0.20.7: bracketed draft-vocabulary Q8 campaign
+
+The [Q4/Q8/Q4 report](halogen0207-draft-vocab-q8-20261122.md) records a
+single-variable campaign on the frozen 8K/16K workloads. Each arm excludes one
+warmup and retains three measured requests per size; all 24 requests completed.
+Q8 changes only `HALOGEN_DRAFT_VOCAB_Q8=1` and preserves output hashes, token
+counts and finish reasons.
+
+| Arm / actual input | API prefill tok/s | API decode tok/s | HTTP seconds | Native-head acceptance |
+| --- | ---: | ---: | ---: | ---: |
+| Q4 before / 8192 | 1973.278333 | 57.514333 | 6.423521 | 192/291 = 65.9794% |
+| Q8 / 8192 | 2024.432333 | 58.325000 | 6.261488 | 198/279 = 70.9677% |
+| Q4 after / 8192 | 2035.000000 | 57.763667 | 6.269291 | 192/291 = 65.9794% |
+| Q4 before / 16384 | 1948.665667 | 55.645000 | 10.742251 | 180/279 = 64.5161% |
+| Q8 / 16384 | 1986.288667 | 55.704000 | 10.571807 | 183/273 = 67.0330% |
+| Q4 after / 16384 | 2008.363000 | 55.729667 | 10.482233 | 180/279 = 64.5161% |
+
+The acceptance gain is endorsed for these frozen workloads: +4.9884 percentage
+points at 8K and +2.5168 points at 16K versus either Q4 control. Q8 passes the
+pooled-decode and whole-HTTP gates against both controls at 8K. At 16K it is
+0.0464% below the after-control in pooled decode and 0.8545% slower in whole
+HTTP time. The campaign therefore rejects promotion and leaves Q8 disabled.
+Prefill/decode remain native API phase-clock observations rather than qualified
+absolute RAW throughput. The within-campaign comparison, whole-HTTP durations,
+output parity and native counters retain their bracketed scope. Normal stock
+serving was restored ready on port 8840. [Machine-readable evidence](halogen0207-draft-vocab-q8-20261122.json).
+
+### Earlier Halogen 0.20.7: 22 November natural 8K/16K deployment confirmation
 
 The [22 November report](halogen0207-performance-natural-8k16k-20261122.md) records one
 excluded warmup followed by three measured requests at each size. Every request
