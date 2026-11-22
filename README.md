@@ -64,6 +64,14 @@ output and MTP-counter parity. Warm 8K/16K results were similar across both
 storage paths. The native lookup path is an opt-in for the retained,
 verified standalone table.
 
+The [post-recovery Performance cohort](docs/benchmarks/halogen0207-performance-after-recovery-20261122.md)
+measured the stock server at 2,020.56 prefill and 57.44 decode tok/s for
+8,192 input tokens, and 2,012.24 prefill and 55.24 decode tok/s for 16,384.
+Native MTP-head acceptance was 65.98% and 64.52%, respectively. The Keep
+Trunk comparison stopped before its first request when post-stop memory
+recovery fell short of the saved baseline. Halogen was restored on 8840 and
+the local Responses route through 8831 was verified.
+
 The earlier [22 November deployment-confirmation cohort](docs/benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
 retains its separate 1618.895333/51.575000 and 1534.869667/49.656333 API
 observations. It is not a control for the later bracketed campaign. Separate
