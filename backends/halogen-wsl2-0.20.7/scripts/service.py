@@ -150,11 +150,19 @@ def validate_options(o):
     lookup_sha = getattr(o, 'lookup_receipt_sha256', None)
     if (lookup_path is None) != (lookup_sha is None):
         raise ValueError('Lookup receipt and independent receipt SHA-256 must be supplied together')
+    lookup_configuration = None
     if lookup_path is not None:
-        raise ValueError('Private lookup receipts are not rebound to 0.20.7; use the stock runtime')
+        if getattr(o, 'checkpoint', 'v2') != 'v2':
+            raise ValueError('Canonical native lookup requires the pinned v2 checkpoint')
+        lookup_configuration = lookup.validate_configuration(
+            {'receipt': lookup_path, 'receipt_sha256': lookup_sha})
     qualified_lookup = getattr(o, 'qualified_lookup', None)
     if qualified_lookup is not None:
-        raise ValueError('Private lookup overrides are not rebound to 0.20.7; use the stock runtime')
+        if lookup_configuration is None:
+            raise ValueError('A qualified native lookup must retain its explicit receipt configuration')
+        lookup.validate_seal(qualified_lookup)
+        if qualified_lookup['configuration'] != lookup_configuration:
+            raise ValueError('Native lookup seal and requested configuration differ')
     kernel_controls = getattr(o, 'kernel_controls_json', None) or {}
     kc.validate(kernel_controls)
     if (getattr(o, 'checkpoint', 'v2') != 'v2'
@@ -331,7 +339,7 @@ def checkpoint_receipt_environment(receipts, disable_vision=False):
     return result
 
 
-def validate_v2_runtime_log(text, disable_vision, concurrency_mode=None):
+def validate_v2_runtime_log(text, disable_vision, concurrency_mode=None, *, native_lookup=False):
     """Require the exact r2 mapping sequence before publishing readiness."""
     validate_disable_vision(disable_vision, 'v2')
     if not isinstance(text, str) or '[preflight] reject' in text:
@@ -361,6 +369,10 @@ def validate_v2_runtime_log(text, disable_vision, concurrency_mode=None):
         required = (mode_line,) + required
     if any(text.count(line) != 1 for line in required):
         raise ValueError('V2 runtime log does not prove the exact r2 mapping and registration')
+    if native_lookup:
+        selected_table = f'n-gram table: 47.68 GiB from {lookup.NATIVE_MOUNT} (HALOGEN_NGRAM_TABLE)'
+        if text.count(selected_table) != 1:
+            raise ValueError('V2 runtime log does not prove native lookup selection')
     vision = '[preflight] complete phase=3 copied=67549932416 host=0'
     if (not disable_vision and text.count(vision) != 1) or (disable_vision and vision in text):
         raise ValueError('V2 runtime log does not match the selected vision phase count')
@@ -879,7 +891,8 @@ def serve(o):
                         encoding='utf-8',errors='replace'),
                         disable_vision=getattr(o,'disable_vision',False),
                         concurrency_mode=(None if selected_concurrency is None
-                                          else int(selected_concurrency)))
+                                          else int(selected_concurrency)),
+                        native_lookup='lookup_tuning' in m)
                 validate_health(health,o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o))
                 cache_worker.stop(); cache_stopped=True
                 log.info('Startup-cache worker stopped before inference; client cache is retained')

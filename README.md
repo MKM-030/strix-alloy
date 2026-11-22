@@ -44,7 +44,7 @@ ServiceNow token and endpoint on port 8840. The bounded qualification checks
 API/engine 0.20.7, exact `r2-ht4` selection, both bridge copy phases,
 authenticated `halogen-v2` discovery and the exact `HALOGEN_0207_FINAL_READY` reply.
 The completed [22 November bracketed Q4/Q8/Q4 campaign](docs/benchmarks/halogen0207-draft-vocab-q8-20261122.md)
-is the current controlled 8K/16K result. Each arm excludes one warmup and
+compares draft vocabulary settings at 8K and 16K. Each arm excludes one warmup and
 averages three requests per size. Q8 raises native-head acceptance from
 65.9794% to 70.9677% at 8K and from 64.5161% to 67.0330% at 16K. It records
 **2024.432333 prefill / 58.325 decode tok/s** at 8K and
@@ -56,6 +56,13 @@ the 16K after-control on both metrics. It therefore remains disabled
 (`promote=false`); acceptance alone is not a promotion gate. Exact outputs and
 token counts match across all arms, and the stock server was restored ready on
 8840.
+
+The [native WSL lookup placement comparison](docs/benchmarks/halogen0207-native-lookup-20261122.md)
+reduced the first natural 8,192-token request from 10.57–10.64 s to 9.26 s.
+Halogen's table-read time fell from 4.0 s to 2.9 s. All 24 responses preserved
+output and MTP-counter parity. Warm 8K/16K results were similar across both
+storage paths. The native lookup path is an opt-in for the retained,
+verified standalone table.
 
 The earlier [22 November deployment-confirmation cohort](docs/benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
 retains its separate 1618.895333/51.575000 and 1534.869667/49.656333 API

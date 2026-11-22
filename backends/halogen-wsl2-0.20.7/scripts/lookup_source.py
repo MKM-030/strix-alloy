@@ -25,9 +25,11 @@ TRUSTED_CACHE_KEY = 'cad72bf989a3e695a74c64e83b5974ebd81dd9ee69483601a57243d67de
 TRUSTED_CACHE_SHA = 'f9f4c87a4e01eca7861221f19ccf7c3da87a7b45f602be29d4d0aa5d832d4d3d'
 ENGINE_BINDING = {
     'version': '0.20.7',
-    'image': 'ghcr.io/peonist-ai/halogen-flash-server@sha256:cde6ae91ab3497a470c848fd5c509b0f4af659a1dea7e74b8789df82cde0510e',
-    'engine_sha256': 'ce1c375eb2d92a4c7b2b0e1d969acd865bb72bb248c52498eedb170cbaea8a89',
-    'hgn_loader_function_sha256': '1c24f6ab85a7036a4a09cfd2ba711ffc9a02787c2bfdbdc8646f1a248be5c871',
+    'image': 'ghcr.io/peonist-ai/halogen-flash-server@sha256:773073448dc9ff4a8c6b6c278802e254fd5f1546764e27531aeb3b77cb13482e',
+    'engine_sha256': '523804e4aab8a6203f277fe3632663f91c0aa008bdb187413b6ef4f139415640',
+    'entrypoint_sha256': '71bfab8eaaea0bc10c9e5e8010af8ed8e537cbca7f61ddae7fc4a32f422a75d9',
+    'adapted_entrypoint_sha256': '2bb8c5124742bc2da4b7676019aa2c7987d10515593fd4f4cd4875ffcd9cf75a',
+    'service_entrypoint_preview_sha256': '6d4e4c3628fbdc2da709e994a74ec0d9878b411f5aff57abcbfcded73c4cd207',
 }
 NATIVE_MOUNT = '/candidate/ngram.hgn'
 STOCK_MOUNT = '/ngram-w4b.hgn'
@@ -331,8 +333,7 @@ def _trusted_payload_seal(configuration, receipt):
 def _engine_binding():
     import portable
     if (portable.IMAGE != ENGINE_BINDING['image'] or
-            portable.RELEASE.get('version') != ENGINE_BINDING['version'] or
-            portable.RELEASE.get('engine_sha256') != ENGINE_BINDING['engine_sha256']):
+            any(portable.RELEASE.get(key) != value for key, value in ENGINE_BINDING.items())):
         raise ValueError('Native lookup loader is bound only to the exact 0.20.7 engine')
     return dict(ENGINE_BINDING)
 

@@ -37,14 +37,70 @@ def bridge_receipts():
 
 
 class CapacityTests(unittest.TestCase):
-    def test_explicit_native_lookup_is_rejected_before_receipt_or_checkpoint_work(self):
-        with patch.object(service.lookup, 'validate_configuration') as validate, \
-                self.assertRaisesRegex(ValueError, 'not rebound to 0.20.7'):
-            service.options([
-                '--lookup-receipt', r'C:\fixture\lookup.json',
-                '--lookup-receipt-sha256', '0' * 64,
-            ])
-        validate.assert_not_called()
+    @unittest.skipUnless(os.name == 'nt', 'Managed lookup receipt needs a Windows drive path')
+    def test_canonical_lookup_builds_read_only_candidate_and_keeps_stock_bind(self):
+        lookup = service.lookup
+        config = {
+            'receipt': str(ROOT.parents[1] / lookup.CANONICAL_RECEIPT_RELATIVE),
+            'receipt_sha256': 'df0dc1e5d2de921b58c4f18f988624687191ec6f80e2336c90c7de454144c7fb',
+        }
+        flags = ['--lookup-receipt', config['receipt'],
+                 '--lookup-receipt-sha256', config['receipt_sha256']]
+        opts = service.options(['--disable-vision', *flags])
+        receipt = {'source': {'path': '/mnt/c/models/stock.hgn'},
+                   'tensor': {}, 'output': {'path': '/home/fixture/canonical.hgn'}}
+        reread_binding = {'cache_key': lookup.TRUSTED_CACHE_KEY,
+                          'cache_sha256': lookup.TRUSTED_CACHE_SHA}
+        with tempfile.TemporaryDirectory() as folder, \
+                patch.object(lookup, 'read_receipt', return_value=receipt), \
+                patch.object(lookup, '_trusted_payload_seal', return_value=reread_binding), \
+                patch.object(service.r, 'MACHINE', {'ngram_source': receipt['source']['path']}), \
+                patch.object(service.r, 'FIXED_MOUNTS', {'/ngram-w4b.hgn': receipt['source']['path']}):
+            attempt = Path(folder)
+            (attempt / 'entrypoint-service.sh').write_bytes(b'fixture')
+            opts.qualified_lookup = lookup._seal(config, receipt)
+            manifest = service.build_manifest(
+                opts, attempt, 'a' * 32, checkpoint_receipts=bridge_receipts())
+            self.assertEqual(manifest['mounts']['/ngram-w4b.hgn'], '/mnt/c/models/stock.hgn')
+            self.assertEqual(manifest['environment']['HALOGEN_NGRAM_TABLE'], '/candidate/ngram.hgn')
+            command = service.command(manifest)
+            self.assertIn('type=bind,src=/home/fixture/canonical.hgn,dst=/candidate/ngram.hgn,readonly',
+                          command)
+            self.assertIn('HALOGEN_NGRAM_TABLE=/candidate/ngram.hgn', command)
+            for change in ('reverse_mount', 'stale_binding', 'missing_seal'):
+                altered = deepcopy(manifest)
+                if change == 'reverse_mount':
+                    altered['mounts']['/candidate/ngram.hgn'] = '/home/fixture/other.hgn'
+                elif change == 'stale_binding':
+                    altered['lookup_tuning']['engine_binding']['engine_sha256'] = (
+                        'ce1c375eb2d92a4c7b2b0e1d969acd865bb72bb248c52498eedb170cbaea8a89')
+                else:
+                    del altered['lookup_tuning']
+                with self.subTest(change=change), self.assertRaises(ValueError):
+                    service.command(altered)
+
+    @unittest.skipUnless(os.name == 'nt', 'Managed lookup receipt needs a Windows drive path')
+    def test_native_lookup_requires_canonical_paired_receipt_and_v2(self):
+        lookup = service.lookup
+        canonical = str(ROOT.parents[1] / lookup.CANONICAL_RECEIPT_RELATIVE)
+        for args, message in (
+                (['--lookup-receipt', canonical], 'supplied together'),
+                (['--lookup-receipt', canonical, '--lookup-receipt-sha256', '0' * 64],
+                 'retained canonical'),
+                (['--checkpoint', 'w4b', '--lookup-receipt', canonical,
+                  '--lookup-receipt-sha256', lookup.CANONICAL_RECEIPT_SHA],
+                 'pinned v2 checkpoint')):
+            with self.subTest(args=args), self.assertRaisesRegex(ValueError, message):
+                service.options(args)
+
+    def test_native_lookup_engine_binding_covers_released_entrypoint(self):
+        lookup = service.lookup
+        expected = '71bfab8eaaea0bc10c9e5e8010af8ed8e537cbca7f61ddae7fc4a32f422a75d9'
+        self.assertEqual(lookup._engine_binding()['entrypoint_sha256'], expected)
+        stale = dict(service.portable.RELEASE, entrypoint_sha256='0' * 64)
+        with patch.object(service.portable, 'RELEASE', stale), \
+                self.assertRaisesRegex(ValueError, 'exact 0.20.7'):
+            lookup._engine_binding()
 
     def test_v2_checkpoint_verification_requires_the_official_r2_head(self):
         machine = {'models': '/models'}
@@ -71,6 +127,10 @@ class CapacityTests(unittest.TestCase):
             '[preflight] complete phase=2 copied=66652069248 host=0',
         ))
         service.validate_v2_runtime_log(text_only, disable_vision=True)
+        native = text_only + '\nn-gram table: 47.68 GiB from /candidate/ngram.hgn (HALOGEN_NGRAM_TABLE)'
+        service.validate_v2_runtime_log(native, disable_vision=True, native_lookup=True)
+        with self.assertRaisesRegex(ValueError, 'native lookup'):
+            service.validate_v2_runtime_log(text_only, disable_vision=True, native_lookup=True)
         concurrency_off = '\n'.join(text_only.splitlines()[1:])
         service.validate_v2_runtime_log(
             concurrency_off, disable_vision=True, concurrency_mode=0)
