@@ -16,30 +16,28 @@ historical 0.20.1 evidence. The normal
 startup floor is 30 GiB physical / 124 GiB commit, with an 18/18 GiB
 runtime reserve. Explicit capacity opt-in retains a 30/131 GiB startup floor.
 
-The completed [20 November 0.20.7 OEM Performance cohort](../benchmarks/halogen0207-performance-natural-8k16k-20261120.md)
+The completed [22 November 0.20.7 deployment-confirmation cohort](../benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
 uses this normal one-slot 32K profile: paired 8192 prefill controls, Cache
-Off/`no_store`, Thinking and Vision Off, cost-based MTP gate 0.90 and PLD `3,3`. One warmup
-is excluded before three measured requests per size; each request uses 128 output
-tokens, temperature 0 and seed 1.
+Off/`no_store`, Thinking and Vision Off, cost-based MTP gate 0.90 and PLD `3,3`.
+One warmup is excluded before three measured requests per size; each request uses
+128 output tokens, temperature 0 and seed 1.
 
 | Version / actual input | API prefill tok/s | API decode tok/s | HTTP QPC seconds | Native head acceptance |
 | --- | ---: | ---: | ---: | ---: |
-| 0.20.7 Performance / 8,192 | 1210.161667 | 49.209667 | 8.555664 | 192 / 291 = 65.9794% |
-| Earlier 0.20.7 / 8,192 | 951.045333 | 45.087667 | 10.463028 | 192 / 291 = 65.9794% |
-| Matched 0.20.2 reference / 8,192 | 1460.340333 | 47.985333 | 8.371123 | 192 / 312 = 61.538% |
-| 0.20.7 Performance / 16,384 | 1216.505 | 49.717 | 14.611266 | 180 / 279 = 64.5161% |
-| Earlier 0.20.7 / 16,384 | 938.335 | 43.544 | 18.579666 | 180 / 279 = 64.5161% |
-| Matched 0.20.2 reference / 16,384 | 1414.618667 | 43.445667 | 14.606883 | 180 / 324 = 55.556% |
+| 22 Nov 0.20.7 / 8,192 | 1618.895333 | 51.575000 | 7.567984 | 192 / 291 = 65.9794% |
+| 20 Nov 0.20.7 / 8,192 | 1210.161667 | 49.209667 | 8.555664 | 192 / 291 = 65.9794% |
+| 22 Nov 0.20.7 / 16,384 | 1534.869667 | 49.656333 | 13.283862 | 180 / 279 = 64.5161% |
+| 20 Nov 0.20.7 / 16,384 | 1216.505000 | 49.717000 | 14.611266 | 180 / 279 = 64.5161% |
 
 The HTTP QPC values and accepted/drafted counters are direct measurements. The
-prefill/decode values come from the native API phase clocks; no RAW observer was
-present, so absolute phase throughput remains unqualified. All eight API phase
-sums exceeded their whole-HTTP QPC durations. The 0.20.2 rows are a
-non-causal reference and do not establish that the version change caused any
-difference. The outputs and acceptance match the earlier 0.20.7 cohort, but the
-OEM transition, server restart and separate window prevent causal attribution of
-the observed same-release speed difference.
-[Machine-readable evidence](../benchmarks/halogen0207-performance-natural-8k16k-20261120.json).
+prefill/decode values come from native API phase clocks; no RAW observer was
+present, so absolute phase throughput remains unqualified. All eight 22 November
+phase sums fit inside whole-HTTP QPC, but enclosure alone does not qualify the
+individual phase boundaries. The output hashes and acceptance totals match the
+20 November cohort. The observed changes are +33.775%/+4.807% prefill/decode at
+8K and +26.170%/-0.122% at 16K; the separate collection window prevents causal
+attribution. The earlier report retains its matched 0.20.2 reference separately.
+[Machine-readable evidence](../benchmarks/halogen0207-performance-natural-8k16k-20261122.json).
 
 The [7 November update report](../research/halogen0191-update-20261107.md)
 and [8K/16K API observations](../benchmarks/halogen0191-natural-8k16k-20261107.md)

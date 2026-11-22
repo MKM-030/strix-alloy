@@ -1,0 +1,160 @@
+{
+  "schema": "halogen0207.performance-natural-8k16k-deployment-confirmation.v1",
+  "version": "0.20.7",
+  "recorded_utc": "2026-11-22T10:03:53.489410+00:00",
+  "classification": {
+    "deployment_confirmation": true,
+    "causal_comparison": false,
+    "lifecycle_actions": false,
+    "full_goal_achieved": false
+  },
+  "workload": {
+    "actual_input_tokens": [8192, 16384],
+    "actual_output_tokens": 128,
+    "temperature": 0,
+    "seed": 1,
+    "cache": "Off",
+    "prompt_cache_policy": "no_store",
+    "thinking": "Off",
+    "vision": "Off",
+    "mtp_gate": 0.9,
+    "pld": [3, 3],
+    "warmups_excluded_per_size": 1,
+    "measured_repetitions_per_size": 3
+  },
+  "runtime": {
+    "profile_sha256": "69d28caee11c0e23eb2e8dba4bc0910ffbbeef7bde9656186baa4abf7cac385d",
+    "source_manifest_sha256": "574bfad341728635b13457cbdb1eb769f9f55be32a4d868f7ea1bad90e0970e0",
+    "context": 32768,
+    "slots": 1,
+    "kv_pool_positions": 32768,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "drafter": "mtp",
+    "draft_head": "r2-ht4",
+    "windows_power_scheme": "REV:N Performance",
+    "controller": {
+      "run_id": "2cda5a066fa44b7db3cc2dce41f27cf6",
+      "pid": 24704
+    },
+    "backend": {
+      "run_id": "8a0dbfadefc04547afa6bbaee3387f46",
+      "pid": 23916
+    },
+    "port": 8840,
+    "ready_before": true,
+    "ready_after": true,
+    "active_requests_before": 0,
+    "active_requests_after": 0,
+    "minimum_request_sample_reserve_gib": 37.041324615478516
+  },
+  "qualification": {
+    "complete_cohorts": true,
+    "completed_requests": 8,
+    "native_reported_observations_only": true,
+    "api_phase_clock_qualified": false,
+    "RAW_observer_used": false,
+    "acceptance_independently_reconciled": false,
+    "api_phase_sum_enclosed_by_http_qpc": {
+      "observations": 8,
+      "passed": 8,
+      "failed": 0,
+      "qualifies_individual_phase_boundaries": false
+    }
+  },
+  "results": {
+    "natural8192": {
+      "actual_input_tokens": 8192,
+      "prefill_native_reported_mean_tps": 1618.8953333333334,
+      "decode_native_reported_mean_tps": 51.575,
+      "prefill_native_pooled_tps": 1618.8656873723735,
+      "decode_native_pooled_tps": 51.574776710764894,
+      "http_qpc_mean_seconds": 7.567983566666666,
+      "output_sha256": "58de6dc9de77c5c2adf6ae2ca69bdaff255cd06b277adfe73d664cd3c28c52cd",
+      "native_head_acceptance": {
+        "rounds": 186,
+        "drafted": 291,
+        "accepted": 192,
+        "fraction": 0.6597938144329897
+      },
+      "runs": [
+        {"ordinal": 0, "phase": "warmup_excluded", "prefill_tps": 839.473, "decode_tps": 34.217, "http_qpc_seconds": 13.5677212, "api_phase_sum_seconds": 13.4993, "accepted": 64, "drafted": 97},
+        {"ordinal": 1, "phase": "measured", "prefill_tps": 1624.301, "decode_tps": 51.652, "http_qpc_seconds": 7.5486569, "api_phase_sum_seconds": 7.5215, "accepted": 64, "drafted": 97},
+        {"ordinal": 2, "phase": "measured", "prefill_tps": 1609.114, "decode_tps": 51.412, "http_qpc_seconds": 7.6058522, "api_phase_sum_seconds": 7.5807, "accepted": 64, "drafted": 97},
+        {"ordinal": 3, "phase": "measured", "prefill_tps": 1623.271, "decode_tps": 51.661, "http_qpc_seconds": 7.5494416, "api_phase_sum_seconds": 7.5243, "accepted": 64, "drafted": 97}
+      ]
+    },
+    "natural16k": {
+      "actual_input_tokens": 16384,
+      "prefill_native_reported_mean_tps": 1534.8696666666667,
+      "decode_native_reported_mean_tps": 49.656333333333336,
+      "prefill_native_pooled_tps": 1534.8248996861778,
+      "decode_native_pooled_tps": 49.65602855221642,
+      "http_qpc_mean_seconds": 13.283861733333334,
+      "output_sha256": "6f40c008b2660bd680de19adf790061b9ec70e94b1df9edaeb3c32b7f0e9385b",
+      "native_head_acceptance": {
+        "rounds": 198,
+        "drafted": 279,
+        "accepted": 180,
+        "fraction": 0.6451612903225806
+      },
+      "runs": [
+        {"ordinal": 0, "phase": "warmup_excluded", "prefill_tps": 1237.425, "decode_tps": 36.893, "http_qpc_seconds": 16.7458225, "api_phase_sum_seconds": 16.7099, "accepted": 60, "drafted": 93},
+        {"ordinal": 1, "phase": "measured", "prefill_tps": 1526.891, "decode_tps": 49.782, "http_qpc_seconds": 13.3315267, "api_phase_sum_seconds": 13.3015, "accepted": 60, "drafted": 93},
+        {"ordinal": 2, "phase": "measured", "prefill_tps": 1531.401, "decode_tps": 49.682, "http_qpc_seconds": 13.3077689, "api_phase_sum_seconds": 13.2751, "accepted": 60, "drafted": 93},
+        {"ordinal": 3, "phase": "measured", "prefill_tps": 1546.317, "decode_tps": 49.505, "http_qpc_seconds": 13.2122896, "api_phase_sum_seconds": 13.1811, "accepted": 60, "drafted": 93}
+      ]
+    }
+  },
+  "comparison_to_20261120": {
+    "causal_comparison": false,
+    "same_profile": true,
+    "same_source_manifest": false,
+    "reference_source_manifest_sha256": "1462ebcabd4a63bf93b027b9d59c9b87ce59c02ca1c699e1f4a8f840c97578a2",
+    "current_source_manifest_sha256": "574bfad341728635b13457cbdb1eb769f9f55be32a4d868f7ea1bad90e0970e0",
+    "same_output_hashes": true,
+    "same_acceptance_totals": true,
+    "natural8192": {
+      "reference_prefill_tps": 1210.1616666666666,
+      "reference_decode_tps": 49.20966666666667,
+      "reference_http_qpc_seconds": 8.5556641,
+      "prefill_change_percent": 33.775129218272504,
+      "decode_change_percent": 4.80664368111956,
+      "http_change_percent": -11.544171461024666
+    },
+    "natural16k": {
+      "reference_prefill_tps": 1216.505,
+      "reference_decode_tps": 49.717,
+      "reference_http_qpc_seconds": 14.6112658,
+      "prefill_change_percent": 26.170436345651392,
+      "decode_change_percent": -0.12202398911169698,
+      "http_change_percent": -9.084798571432916
+    }
+  },
+  "evidence": {
+    "local_root": "server/.local/halogen-update-20261120/primary0207/natural8192-16384-performance-20261122-v2",
+    "files": {
+      "handle.json": {"bytes": 22053, "sha256": "47fc62b41f7703768410ae41b8508cec714932e7f85583e7705005de6e72605b"},
+      "summary.json": {"bytes": 2335, "sha256": "bf8f6289b3c83589fea1a45f0f50bde014d7861c56f1330127f9fc34f8b565c2"},
+      "runtime-seal.json": {"bytes": 903, "sha256": "d961c8cc0b51a83d40f4447e4c48cccc2f4ab73edee25af683f7a13e1c37d789"},
+      "ready-before.json": {"bytes": 13322, "sha256": "00cd2bd1cdc8f8407a08efdb35019371021a7eb21a18d2bc415b25d334c6c8f7"},
+      "ready-after.json": {"bytes": 13322, "sha256": "7e8a86ae869a639ffd1bf53f756293801d68ff8c2c1e9e5e54e072fea92e315d"},
+      "natural8192-0.response.json": {"bytes": 1291, "sha256": "9bb444012ebe3b6b9d3763ee91826140a591cbb28df12757110c4b12d10fe95a"},
+      "natural8192-0.sample.json": {"bytes": 2186, "sha256": "636e2618cdc20a4765b799909d3d4edfa3af5f41dc9947b745dc12083f22b085"},
+      "natural8192-1.response.json": {"bytes": 1292, "sha256": "e1592a7c6b88909e2d6794c18f4aa7c92fb5907ac1aaedb2c73d0a6e56b771a8"},
+      "natural8192-1.sample.json": {"bytes": 2178, "sha256": "4b316c82d2c959897b88607c0d79989bb128da8aef34da55de06e5365193c0a1"},
+      "natural8192-2.response.json": {"bytes": 1292, "sha256": "2b56274a074a9c7dc3efbbb711e247b031f59948a3877aaa127c8b0a904da5fc"},
+      "natural8192-2.sample.json": {"bytes": 2178, "sha256": "4800da38ab77f1f79e36d1c6e52004cb38cc0907fef91286c613cfe28133d31e"},
+      "natural8192-3.response.json": {"bytes": 1292, "sha256": "684fb2528b2f5206f8291be8793fa7b79b9c1a7f1b05f09470b24ce2be7bd43e"},
+      "natural8192-3.sample.json": {"bytes": 2179, "sha256": "814575b34e74270e893544b70311a979d961bb8d251c2d22ddaa05342a740085"},
+      "natural16k-0.response.json": {"bytes": 1315, "sha256": "ab1988ec2df28a185cba4cfae95179c1871b61100a836f64142c5be6fe7d50c6"},
+      "natural16k-0.sample.json": {"bytes": 2192, "sha256": "da6974f3dcfb6bb3892a0fb63d338ce8d21e6f67d4cd39a1a992c6b447341f04"},
+      "natural16k-1.response.json": {"bytes": 1315, "sha256": "ce5a3ec7166cf8a8928eccd1e4cf89bf1a993c4f307f593b952967cf64c20ed2"},
+      "natural16k-1.sample.json": {"bytes": 2185, "sha256": "960b54cb0d5dbbc37af848d6506e0e013427821500a0b7b0ceb47efb8f3c17a6"},
+      "natural16k-2.response.json": {"bytes": 1315, "sha256": "57f6f0b6e9b178df584021e10eafeb6f557711009baa517bb1b221b8db9ce958"},
+      "natural16k-2.sample.json": {"bytes": 2184, "sha256": "28dda338ff87ac0ce25629229c1caef3e4e73b4a19e9b0de1d63fcb220cc5183"},
+      "natural16k-3.response.json": {"bytes": 1315, "sha256": "83b8c7f6652aed73a5c2a724c0b55d71a71e9db9e4eee911762b4667779015f9"},
+      "natural16k-3.sample.json": {"bytes": 2184, "sha256": "e717345a9b4a9a9711e98a5244de5e70712a80d218384b520b3c76fe11953405"}
+    }
+  }
+}

@@ -1,7 +1,7 @@
 # Engine comparison without mixing benchmark modes
 
-This is a historical comparison. For the current measured Halogen configuration,
-see the [26 October 8K/16K report](halogen01816-natural-8k16k-20261026-evening.md)
+This is a historical cross-engine comparison. For the current local Halogen
+deployment observation, see the [22 November 0.20.7 report](halogen0207-performance-natural-8k16k-20261122.md)
 and its clock caveat; the publisher observations below retain their original scope.
 
 **Source review: 2026-09-17.** strix-alloy snapshot: `199b8ec`. Every third-party figure below was
@@ -116,22 +116,21 @@ serial advantage over his final engine — our earlier comparison did exactly th
 The `n-max 2` recommendation rests on **three prompt cells from one corpus family** — evidence for the current
 default, not proof of a universal mixed-workload optimum.
 
-### Local Halogen 0.20.7 OEM Performance API cohort
+### Local Halogen 0.20.7 deployment-confirmation API cohort
 
 | Workload / occupied input | Speculation | Decode (t/s) | HTTP QPC / native head acceptance |
 |---|---|---:|---|
-| Frozen natural input / 8,192 | HT4 MTP, cost gate 0.90, PLD `3,3` | **49.209667** | 8.555664 s / 192 of 291 = 65.9794% |
-| Frozen natural input / 16,384 | HT4 MTP, cost gate 0.90, PLD `3,3` | **49.717** | 14.611266 s / 180 of 279 = 64.5161% |
+| Frozen natural input / 8,192 | HT4 MTP, cost gate 0.90, PLD `3,3` | **51.575000** | 7.567984 s / 192 of 291 = 65.9794% |
+| Frozen natural input / 16,384 | HT4 MTP, cost gate 0.90, PLD `3,3` | **49.656333** | 13.283862 s / 180 of 279 = 64.5161% |
 
 These are means of three measured requests after one excluded warmup, with 128
 output tokens, temperature 0, seed 1, Cache Off/`no_store`, and Thinking and
 Vision Off. Decode is the native API phase clock; no RAW observer was present,
-so it is not qualified as absolute phase throughput. All eight API phase sums
-exceeded their whole-HTTP QPC durations. The
-[full report](halogen0207-performance-natural-8k16k-20261120.md) retains the
-earlier same-release cohort and matched 0.20.2 references. Outputs and acceptance
-match the earlier 0.20.7 cohort, but the OEM transition, restart and separate
-window keep the observed speed difference non-causal.
+so it is not qualified as absolute phase throughput. All eight phase sums fit
+inside whole-HTTP QPC, but enclosure does not independently qualify the phase
+boundaries. The [full report](halogen0207-performance-natural-8k16k-20261122.md)
+retains the 20 November same-profile comparison. Outputs and acceptance match,
+but the separate collection window keeps the observed speed difference non-causal.
 
 ### Others (each in its own category)
 
@@ -162,7 +161,7 @@ time — and do not infer verification width from `n-max`, which is a maximum.
 
 | Publisher / configuration | Input | Prefill (t/s) | Timing / workload qualification |
 |---|---:|---:|---|
-| Local Halogen 0.20.7 `CurrentText32K`, OEM Performance | 8,192 / 16,384 | 1210.161667 / 1216.505 | native API phase means; one warmup excluded plus three requests; no RAW observer, so absolute phase throughput is unqualified |
+| Local Halogen 0.20.7 `CurrentText32K`, OEM Performance | 8,192 / 16,384 | **1618.895333 / 1534.869667** | native API phase means; one warmup excluded plus three requests; no RAW observer, so absolute phase throughput is unqualified |
 | strix-alloy maximum-prefill setup | 16,384 / 65,536 / 131,072 / 251,904 | **1,031 / 993 / 925 / 812** | server-reported prompt timing, **no drafter**, ubatch 16384, warm reps |
 | olliehm updated serving config | ~8k–17k | ~660 | **drafter attached**; batch/ubatch 2048 |
 | **Halogen 0.5.3 internal prefill bench** | 8,192 / 32,768 / 131,072 | **~1,246 / ~1,424 / 1,358** | engine's own bench, cold single-call real text; **not an HTTP sweep** |
@@ -170,10 +169,10 @@ time — and do not infer verification width from `n-max`, which is a maximum.
 | CIRU IU4 v4.4 incident replay | 12,960 | 889.13 | qualified MTP3 config; matched against its own control |
 | CIRU IU4 v4.4 deep cold | 245,760 | 761.25 | separate workload, limited repetition scope |
 
-**Halogen reaches substantially higher prefill than we do** — ~1,424 vs our 1,031 at 32k — and that is the
-honest headline of this table. It is measured with a different instrument (their engine bench vs our server
-timing), on a differently configured machine, so a matched comparison is still missing; but the gap is far too
-large to be instrument noise and we should not imply otherwise.
+The local 0.20.7 API observations now exceed the older published ~1,424 internal
+bench value at these two input sizes. This is not a matched win: the instruments,
+input sizes, machine configuration, release and timing boundaries differ, and the
+local phase clock lacks a RAW observer. Keep both rows in their stated scope.
 
 Our maximum-prefill row **excludes the drafter** while olliehm's cited update **includes it**, so those two are
 not comparable either. Do not combine our fastest no-draft prefill with the 45.31 short-chat MTP rate and

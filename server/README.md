@@ -20,16 +20,15 @@ public API token and supports visible request/response trace. Follow the
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -ConsoleTrace
 ```
 
-The completed [0.20.7 OEM Performance natural 8K/16K cohort](../docs/benchmarks/halogen0207-performance-natural-8k16k-20261120.md)
+The completed [22 November 0.20.7 deployment-confirmation cohort](../docs/benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
 uses this one-slot 32K profile with paired 8192 prefill controls. After one
-excluded warmup, three measured requests per size average 1210.161667 prefill /
-49.209667 decode tok/s at 8192 input tokens and 1216.505 / 49.717 at 16384;
+excluded warmup, three measured requests per size average 1618.895333 prefill /
+51.575 decode tok/s at 8192 input tokens and 1534.869667 / 49.656333 at 16384;
 native-head acceptance is 65.9794% and 64.5161%. Deterministic outputs and
-acceptance match the [earlier 0.20.7 cohort](../docs/benchmarks/halogen0207-natural-8k16k-20261120.md),
-while the separate restart and collection window keep the speed difference observational.
-The API phase clocks are not
-RAW-qualified; all eight API phase sums exceeded their whole-HTTP QPC durations.
-The matched 0.20.2 rows do not establish a causal version gain.
+acceptance match the [20 November Performance cohort](../docs/benchmarks/halogen0207-performance-natural-8k16k-20261120.md).
+The separate collection window keeps the observed changes non-causal. The API
+phase clocks are not RAW-qualified; all eight phase sums now fit their whole-HTTP
+QPC durations, but enclosure alone does not qualify individual phase boundaries.
 
 `CurrentCachedText32K` selects the same 0.20.7 engine with Flexible cache and
 paired 2048 prefill controls. `MeasuredText32K` retains the historical 0.18.16

@@ -11,7 +11,7 @@
 | Authenticated model discovery and functional request | Qualified |
 | Loaded provider identities | Unqualified |
 | Capacity opt-in, two slots and vision | Unqualified |
-| Local 0.20.7 8K/16K cohort | Completed 20 November; API phase clocks remain unqualified without RAW observation |
+| Local 0.20.7 8K/16K cohort | Latest deployment confirmation completed 22 November; API phase clocks remain unqualified without RAW observation |
 
 ## Official identity and upstream changes
 
@@ -101,6 +101,35 @@ the rows also do not constitute an identical-completion speed comparison.
 The dated runtime-qualification JSON beside this report remains unchanged; the
 [benchmark JSON](../benchmarks/halogen0207-performance-natural-8k16k-20261120.json) carries
 the later measurement evidence.
+
+## Deployment confirmation - 22 November
+
+The [22 November benchmark report](../benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
+records a fresh confirmation on the unchanged live `CurrentText32K` deployment.
+It again excludes one warmup and averages three requests for each frozen input.
+
+| Actual input | API prefill tok/s | API decode tok/s | HTTP QPC seconds | Native head acceptance |
+| ---: | ---: | ---: | ---: | ---: |
+| 8192 | 1618.895333 | 51.575000 | 7.567984 | 192 / 291 = 65.9794% |
+| 16384 | 1534.869667 | 49.656333 | 13.283862 | 180 / 279 = 64.5161% |
+
+The output hashes and accepted/drafted totals match the 20 November Performance
+cohort. Observed 20→22 November changes are +33.775%/+4.807% prefill/decode at
+8K and +26.170%/-0.122% at 16K; HTTP means fell 11.544% and 9.085%. The profile
+hash remained `69d28cae...385d`, but the source manifest changed from
+`1462ebca...78a2` to `574bfad3...0970e0` after runtime-control hardening. The
+collector itself performed no lifecycle action. The source change, separate
+window and uncontrolled machine/runtime state prevent causal attribution. This
+is a deployment confirmation, not proof of a particular optimization or of the
+upstream release-to-release claim.
+
+All eight API phase sums now fit inside their corresponding QPC whole-request
+durations. That removes the enclosure failure present in the 20 November cohort,
+but no RAW observer was present and enclosure alone does not qualify individual
+phase boundaries. `api_phase_clock_qualified=false` therefore remains correct.
+The [compact JSON](../benchmarks/halogen0207-performance-natural-8k16k-20261122.json)
+retains the eight run values, runtime seal, source/profile hashes and evidence-file
+hashes. The server stayed ready on port 8840 after collection.
 
 ## Operation and limits
 

@@ -11,9 +11,9 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
-### Current Halogen 0.20.7: completed OEM Performance natural 8K/16K API cohort
+### Current Halogen 0.20.7: 22 November natural 8K/16K deployment confirmation
 
-The [20 November Performance report](halogen0207-performance-natural-8k16k-20261120.md) records one
+The [22 November report](halogen0207-performance-natural-8k16k-20261122.md) records one
 excluded warmup followed by three measured requests at each size. Every request
 uses 128 output tokens, temperature 0, seed 1, Cache Off/`no_store`, Thinking and
 Vision Off, cost-based native MTP gate 0.90 and PLD `3,3`. The server is 0.20.7 with one
@@ -22,29 +22,26 @@ Vision Off, cost-based native MTP gate 0.90 and PLD `3,3`. The server is 0.20.7 
 
 | Version / actual input | API prefill tok/s | API decode tok/s | HTTP QPC seconds | Native head acceptance |
 | --- | ---: | ---: | ---: | ---: |
-| 0.20.7 Performance / 8192 | 1210.161667 | 49.209667 | 8.555664 | 192 / 291 = 65.9794% |
-| Earlier 0.20.7 / 8192 | 951.045333 | 45.087667 | 10.463028 | 192 / 291 = 65.9794% |
-| Matched 0.20.2 reference / 8192 | 1460.340333 | 47.985333 | 8.371123 | 192 / 312 = 61.538% |
-| 0.20.7 Performance / 16384 | 1216.505 | 49.717 | 14.611266 | 180 / 279 = 64.5161% |
-| Earlier 0.20.7 / 16384 | 938.335 | 43.544 | 18.579666 | 180 / 279 = 64.5161% |
-| Matched 0.20.2 reference / 16384 | 1414.618667 | 43.445667 | 14.606883 | 180 / 324 = 55.556% |
+| 22 Nov 0.20.7 / 8192 | 1618.895333 | 51.575000 | 7.567984 | 192 / 291 = 65.9794% |
+| 20 Nov 0.20.7 / 8192 | 1210.161667 | 49.209667 | 8.555664 | 192 / 291 = 65.9794% |
+| 22 Nov 0.20.7 / 16384 | 1534.869667 | 49.656333 | 13.283862 | 180 / 279 = 64.5161% |
+| 20 Nov 0.20.7 / 16384 | 1216.505000 | 49.717000 | 14.611266 | 180 / 279 = 64.5161% |
 
 The HTTP QPC durations and native accepted/drafted counters are retained
 measurements. Prefill and decode are native API phase-clock means; no RAW
 observer was present, so they are not qualified as absolute phase throughput.
-All eight Performance API phase sums exceeded their whole-HTTP QPC durations, so the
-necessary enclosure check failed for every retained observation.
-The deterministic outputs and accepted/drafted totals match the earlier 0.20.7
-cohort. Observed prefill/decode changes are +27.25%/+9.14% at 8K and
-+29.65%/+14.18% at 16K, while HTTP means fell 18.23% and 21.36%. These are
-endorsed as observed same-release differences only: the OEM transition, server
-restart and separate window were not an isolated causal experiment.
-The matched 0.20.2 rows freeze the same high-level request protocol but remain a
-non-causal cross-version reference. The deterministic 0.20.7 output hashes do
-not match the 0.20.2 references, so this is not an identical-completion speed
-comparison. No causal power-mode speedup, regression cause, RAW
-phase result or verification of the upstream 4–6% decode claim is endorsed.
-[Machine-readable evidence](halogen0207-performance-natural-8k16k-20261120.json).
+All eight API phase sums fit inside their whole-HTTP QPC durations. That necessary
+enclosure check now passes, but it does not independently qualify the phase clock
+or its individual boundaries. Deterministic outputs and accepted/drafted totals
+match the preserved 20 November Performance cohort. Observed changes are
++33.775%/+4.807% prefill/decode at 8K and +26.170%/-0.122% at 16K, while HTTP
+means fell 11.544% and 9.085%. These are endorsed as observed same-release
+differences only: the separate collection window and uncontrolled machine/runtime
+state were not a causal experiment. No causal optimization gain, RAW phase result,
+NPU gain or verification of the upstream 4–6% release claim is endorsed. The
+[20 November report](halogen0207-performance-natural-8k16k-20261120.md) retains
+the prior OEM observation and matched 0.20.2 references with their own caveats.
+[Machine-readable evidence](halogen0207-performance-natural-8k16k-20261122.json).
 
 ### Earlier Halogen 0.18.22: independently captured phase measurements
 
