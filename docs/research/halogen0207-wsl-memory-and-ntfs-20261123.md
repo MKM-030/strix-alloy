@@ -76,11 +76,26 @@ different I/O conditions.
 The managed reader reused the production receipt in **0.912 s** with the
 full-content reader disabled for verification. A separately copied receipt
 with a simulated older WSL device number also reused the verified generation.
-A full server startup with the new receipt remains unmeasured. The receipt
-applies to startup, and this test measured no Prefill, Decode or MTP rates.
+The receipt applies to startup. Prefill, Decode and MTP rates belong to the
+separate inference benchmarks.
 
 After both checks, the same Halogen instance on port 8840 was ready and idle.
 Native Voice, TTS and ASR also reported ready.
+
+## Managed launch with the production receipt
+
+The later [grouped INT4 campaign](../benchmarks/halogen0207-publisher-gap-and-i4r-20261123.md)
+used this receipt in all four launches. The launch intents and authenticated
+readiness records use Windows UTC timestamps. Their elapsed times include
+preflight, model loading and API readiness. The private stock controls
+took **152.38 s** and **150.67 s**. The private grouping trial took **154.08 s**.
+The ordinary service on port 8840 took **162.43 s** and remained online.
+
+All four manifests selected `ntfs_receipt` for the exact same source
+generation. The earlier **706.05 s** observation covered only full WSL
+content verification. The retained records give actual startup durations
+with receipt reuse. A matched complete launch with forced rehash is outside
+this comparison.
 
 | Local evidence | SHA-256 |
 | --- | --- |
@@ -95,5 +110,6 @@ Native Voice, TTS and ASR also reported ready.
 | Managed NTFS production receipt | `ea343d0c8c61a94fa12e3bba84d117a22dad25302f2c1ab0c6639899a7b88a97` |
 | Managed production receipt reuse verification | `61538db37489042bad46f709038e592b3d5d24547a9a78d4513d8ff1c861dd5a` |
 | Serving status after receipt verification | `7edc46693dbd84e231a8c1d4a67fd9004317a4e98aa3c9bae526d0aaff782493` |
+| Four managed launch observations and manifest bindings | `21ff7108f4ab0b8bde1fa4fd08f325f9b14eb3783cc6efa430f4f8dd92bc70e7` |
 | Managed synthetic seed, reuse and mount gate | `8deadb3765d4977fc40d174a92a857e5b8eea1411a60722eec4b2beb0c65b81c` |
 | Passive production NTFS metadata check | `8b4d8b3ed9db1bb5cc868c1d1e8756ab9dbd793c17299596e12d85fca459476e` |
