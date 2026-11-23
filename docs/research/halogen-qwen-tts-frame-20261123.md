@@ -71,10 +71,44 @@ CPU session passed with the three native inputs. All three selected the
 native `c1` value `1666`. The largest absolute logit difference against
 NumPy was `0.00002575`. This check covers the first acoustic decision.
 
-The NPU attempt stopped at VitisAI provider registration with Windows error
-126. The available VitisAI DLL depends on `onnxruntime_providers_shared.dll`,
-which is absent from the pinned runtime configuration. The Windows ML
-catalog reported VitisAI as `NOT_PRESENT` and returned no library path.
-The separate ONNX Runtime 1.29 installation contains a differently versioned
-shared DLL. The probe used the pinned local components and produced no NPU
-inference samples. The private runner exited and Halogen stayed online.
+## Measured first acoustic step on the NPU
+
+The initial registration attempt used the legacy ORT adapter and failed
+with Windows error 126 because its paired shared DLL was absent. The
+existing standalone `onnxruntime_vitisai_ep.dll` matched the hash of a prior
+working component probe and compiled the original graph. Its preliminary
+partition left the dynamic `c0` embedding lookup on the host. That attempt
+reached AIE scheduling and stopped at the three-minute compilation deadline.
+
+`export_first --host-embedding` accepts two FP32 rows, the Talker hidden
+row and the exact Q8_0 `c0` embedding decoded on the host. The rest of the
+first-step graph stays the same. The default export reproduces its original
+SHA-256. The two variants returned bit-identical CPU logits for six inputs
+covering three native hidden rows and two semantic IDs per row.
+
+The completed private run compiled the host-embedding graph in **179.7 s**.
+The compiler assigned 363 optimized operators to one BF16 partition. Its
+retained context reports `deviceName=stx` and `runnerType=hw`. All 12
+ONNX Runtime inference node events were attributed to VitisAI, with CPU
+fallback disabled. The optional EP-specific profiler reported no additional
+events at shutdown. Per-node attribution and the hardware context are
+the placement evidence.
+
+| First-step backend | Warm calls | Mean host latency | Observed range |
+| --- | ---: | ---: | ---: |
+| VitisAI NPU | 9 | 8.247 ms | 8.201–8.384 ms |
+| ORT CPU, one thread | 9 | 10.020 ms | 9.801–10.167 ms |
+
+Each group used the same ONNX graph and three pinned input fixtures, with
+one excluded warmup and three measured calls per fixture. Times include
+host embedding lookup, the provider call, visible logits and the host
+sampler. Every call selected native `c1=1666`. The three reference cases
+share that expected code. The test covers the first acoustic step before
+later codebooks and excludes live GPU hidden-state readback. The retained
+Vulkan controls cover an entire acoustic frame with 15 dependent steps.
+No result here establishes a gain in Halogen Prefill, Decode or MTP.
+
+Public Halogen stayed online throughout the probe. The minimum sampled
+physical or commit reserve was 25.06 GiB. The compiled context, raw
+results and runner logs are retained locally in the sibling
+`codepredictor-first-npu-run-v3-host-embedding` directory.

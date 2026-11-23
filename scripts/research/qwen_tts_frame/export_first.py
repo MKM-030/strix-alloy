@@ -28,14 +28,15 @@ class _Graph:
         return output
 
 
-def build_first_model(weights: FrameWeights) -> onnx.ModelProto:
+def build_first_model(weights: FrameWeights, *, host_embedding: bool = False) -> onnx.ModelProto:
     """Build a batch-1, two-token F32 graph that returns c1 logits before sampling."""
     reference = FramePredictor(weights)
     arch = reference.arch
     graph = _Graph()
     op = graph.apply
     const = graph.constant
-    token_axis = const("token_axis", [0], np.int64)
+    if not host_embedding:
+        token_axis = const("token_axis", [0], np.int64)
     last_token = const("last_token", 1, np.int64)
     half = arch.head_dim // 2
     left_columns = const("rope_left_columns", np.arange(half, dtype=np.int64))
@@ -69,9 +70,18 @@ def build_first_model(weights: FrameWeights) -> onnx.ModelProto:
         rotated_right = op("Add", op("Mul", right, cos), op("Mul", left, sin))
         return op("Concat", rotated_left, rotated_right, axis=-1)
 
-    embedding = const(TALKER_CODEC_EMBEDDING, weights.tensors[TALKER_CODEC_EMBEDDING])
-    c0_embedding = op("Gather", embedding, "c0", axis=0)
-    hidden = op("Concat", op("Unsqueeze", "hidden", token_axis), op("Unsqueeze", c0_embedding, token_axis), axis=0)
+    if host_embedding:
+        inputs = [helper.make_tensor_value_info("token_rows", TensorProto.FLOAT,
+                                                [2, arch.talker_hidden_size])]
+        hidden = "token_rows"
+    else:
+        inputs = [
+            helper.make_tensor_value_info("hidden", TensorProto.FLOAT, [arch.talker_hidden_size]),
+            helper.make_tensor_value_info("c0", TensorProto.INT64, []),
+        ]
+        embedding = const(TALKER_CODEC_EMBEDDING, weights.tensors[TALKER_CODEC_EMBEDDING])
+        c0_embedding = op("Gather", embedding, "c0", axis=0)
+        hidden = op("Concat", op("Unsqueeze", "hidden", token_axis), op("Unsqueeze", c0_embedding, token_axis), axis=0)
     for layer in range(arch.num_hidden_layers):
         prefix = f"code_pred.blk.{layer}."
         norm = rms(hidden, prefix + "attn_norm.weight")
@@ -101,10 +111,7 @@ def build_first_model(weights: FrameWeights) -> onnx.ModelProto:
     first_step = helper.make_graph(
         graph.nodes,
         "qwen3_tts_first_acoustic_step_f32",
-        [
-            helper.make_tensor_value_info("hidden", TensorProto.FLOAT, [arch.talker_hidden_size]),
-            helper.make_tensor_value_info("c0", TensorProto.INT64, []),
-        ],
+        inputs,
         [helper.make_tensor_value_info("c1_logits", TensorProto.FLOAT, [arch.vocab_size])],
         initializer=graph.initializers,
     )
@@ -121,8 +128,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--gguf", type=Path, default=MODEL_PATH)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--host-embedding", action="store_true",
+                        help="Accept F32 token_rows containing the Talker hidden row and exact c0 embedding row")
     args = parser.parse_args(argv)
-    model = build_first_model(load_weights(args.gguf))
+    model = build_first_model(load_weights(args.gguf), host_embedding=args.host_embedding)
     onnx.save_model(model, args.output)
 
 
