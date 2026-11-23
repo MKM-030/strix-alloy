@@ -344,3 +344,27 @@ requests. The assessment used retained Vulkan data and source files.
 The local receipt `sources-20261123/talker-npu-overlap-bounds-v1.json`
 binds the original overlap logs, timing arithmetic and source files.
 SHA-256 `41088cc8ee3a8e28d45ae035cd515663d54a53f4fe37c8867c6e552f0681f95d`.
+
+### Exact Q8_0 representation on CPU
+
+A CPU ONNX Runtime probe reconstructed **122,880** real FP32 weight
+values from the Talker file exactly, using either blocked dequantization
+or an explicit cast and multiply. The 84 sampled output rows required
+per-block scales for exact reconstruction. A BF16 conversion changed
+118,956 of those weight values.
+
+Encoding each signed Q8 value as two W4 components reconstructed the
+393,216 sampled weights exactly. Applying two separate matrix products
+changed 21,747 of 22,656 FP32 outputs on synthetic dense samples, with
+a maximum absolute difference of 6.44 × 10⁻⁶. Dense limb products also
+changed outputs, which isolates a difference in the order of
+accumulation. The sampled 64-way argmax values matched. The pinned
+batch-one Vulkan path uses FP32 input, groups products before scaling
+each Q8 block contribution and then reduces the lane partials.
+Exact reproduction of that order and native projection parity on the
+NPU remain open. [ONNX blocked dequantization](https://onnx.ai/onnx/operators/onnx__DequantizeLinear.html)
+· [AMD operator support](https://ryzenai.docs.amd.com/en/latest/ops_support.html)
+
+The local `sources-20261123/talker-q8-format-proof-v1.json` receipt
+binds the CPU reproduction, pinned original weights and test arithmetic.
+SHA-256 `0d167fcb13c148e3b2787c83303b623722a1fd9502db2cb281be38d54c825f74`.

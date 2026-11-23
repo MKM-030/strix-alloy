@@ -38,6 +38,11 @@ delivery speed. At 16K, rounds fell from 66 to 63 but first-text-to-EOF time
 rose **3.05–3.21%**. Full HTTP rose **0.35–0.40%**. All 24 requests
 reproduced the frozen output for their input size.
 
+Client delivery bursts in these retained streams provide a conditional
+screen for a third draft. The additional draft's actual proposal and
+acceptance remain unobserved.
+[Delivery-burst replay and sensitivity](../research/halogen0207-mtp-delivery-bursts-20261123.md)
+
 The lowest sampled request reserve was 28.59 GiB. Raw events, native
 completion logs and per-request QPC times are retained under
 `server/.local/halogen-update-20261122/primary0207/fixed-depth-two-campaign-prep-v1/fixed-depth-two-run-v1`.
