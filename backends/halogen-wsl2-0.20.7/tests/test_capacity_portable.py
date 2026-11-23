@@ -463,6 +463,17 @@ class CapacityTests(unittest.TestCase):
         self.assertNotIn('HALOGEN_PHASE_RAW',manifest['environment'])
         service.reject_unqualified_manifest_overrides(manifest)
 
+    def test_decode_page_prefault_is_a_bounded_opt_in(self):
+        key = 'HALOGEN_NGRAM_DECODE_PAR'
+        options = service.options(['--kernel-controls-json', json.dumps({key: 4})])
+        baseline = service.environment(32768)
+        candidate = service.environment(32768, kernel_controls=options.kernel_controls_json)
+        self.assertNotIn(key, baseline)
+        self.assertEqual(candidate, {**baseline, key: '4'})
+        for unsupported in (0, 2, 64, '4', True):
+            with self.subTest(unsupported=unsupported), self.assertRaises(ValueError):
+                service.environment(32768, kernel_controls={key: unsupported})
+
     def test_confidence_rule_is_a_bounded_opt_in(self):
         key = 'HALOGEN_MTP_GATE_RULE'
         policy = {'HALOGEN_MTP_GATE_P': '0.90', key: 'gate'}

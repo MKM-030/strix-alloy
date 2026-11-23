@@ -25,6 +25,7 @@ MODES={
     'HALOGEN_ATTN_QS_UNION':frozenset((1,)),  # explicit sparse-attention trial
 
     'HALOGEN_NGRAM_GATHER_THREADS':frozenset((32,64,128)),
+    'HALOGEN_NGRAM_DECODE_PAR':frozenset((4,)),  # bounded small-gather prefault trial
     'HALOGEN_FA_OPT':frozenset(range(8)),  # low-three-bit optimization mask
     'HALOGEN_I4R_DEC_GROUP':frozenset((2,)),  # explicit two-row decode trial
     'HALOGEN_ADMIT_NEST_MAX':frozenset((2048,)),  # explicit two-slot prefill trial
