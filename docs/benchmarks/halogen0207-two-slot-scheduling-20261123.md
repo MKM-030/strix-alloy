@@ -21,6 +21,12 @@ two-slot profile. The natural requests each produced 128 tokens. The
 publisher requests each produced 256. The aggregate rate includes
 prefill, response delivery and any waiting inside the pair.
 
+A follow-up started the short request when the long response first
+became visible. On 8,192- and 1,536-token inputs, this schedule finished
+both responses 8.23–8.30% earlier than sequential dispatch. The long
+response had larger gaps between streamed chunks.
+[Staggered arrival comparison](halogen0207-staggered-decode-20261123.md)
+
 ## Per-request measurements
 
 The latency range in the sequential column spans the two control means.
