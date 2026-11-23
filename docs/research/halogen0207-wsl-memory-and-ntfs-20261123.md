@@ -198,3 +198,35 @@ the trial.
 | Independent native completion | `2597d2878c4f953ceb18db782ba81ee6b01519466ad037280481fb3b874c84ef` |
 | Host file residency after the request | `f686395eea88aaa91c94bdba4fd6320f5c926dd4e1cb540b3f62fa3c1c4858f8` |
 | Regular Halogen readiness | `882c687776ac52feef6fb4c27e6b1bb2c09de4c08a2d3f261b135d54d30752ba` |
+
+## Bounded parallel reads on the native table
+
+Two host-side component comparisons used the same pinned ext4 table and
+separate, preassigned sets of 512 pages from held-out natural prompts.
+Each comparison had four pairs in alternating order. Every selected page
+was nonresident before its arm and resident afterward. Each arm read
+exactly 2 MiB. Across both comparisons, none of the 98,304 sampled neighbor
+observations changed from nonresident to resident. The test retained the
+regular Halogen owner throughout.
+
+| Comparison | Workers | Mean guest read interval | Range | Pages/s from mean |
+| --- | ---: | ---: | ---: | ---: |
+| Serial vs parallel | 1 | 246.88 ms | 227.07–260.70 ms | 2,074 |
+| Serial vs parallel | 4 | 143.98 ms | 141.17–147.32 ms | 3,556 |
+| Parallel depth | 4 | 135.26 ms | 131.91–139.09 ms | 3,785 |
+| Parallel depth | 8 | 133.39 ms | 120.87–166.13 ms | 3,838 |
+
+Four workers cut the first comparison's mean read interval by **41.68%**.
+Eight workers cut the second mean by **1.38%** and produced a wider range.
+At the observed eight-worker mean rate, an all-cold 24,531-page serving
+target would take about **6.39 s** before additional engine mapping and
+transport costs. That is a linear projection from 512-page components.
+The full five-second serving target and any improvement in token rates
+remain unverified. Port 8840 continues with its ordinary reader.
+
+| Local evidence | SHA-256 |
+| --- | --- |
+| Serial vs four-worker frozen fixture | `612cf208f10e67b7248a534ffc06fb2a65e0aed05d2fac874659a397b1e1c8d9` |
+| Serial vs four-worker result | `adec2c6c60827b813702657c6b87225a50b33f4d47fa437429920ea8eb6d99d3` |
+| Four vs eight-worker frozen fixture | `70ce01ea211378b80be259f3770de1c4bc311207b82b140b8595029b4147f8fa` |
+| Four vs eight-worker result | `071df764796b596c117a2227c1116a8667bdae99e25138853bccac12b30b92bb` |
