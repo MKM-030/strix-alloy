@@ -196,3 +196,47 @@ The installed TTS path has no compiled NPU graph for this Q8_0 predictor and
 sampler. AMD documents specific ONNX formats for its Windows NPU provider.
 Compiling a new graph and checking its exact codes and PCM would be necessary
 before a paired throughput test. [AMD Windows ML model support](https://ryzenai.docs.amd.com/projects/WinML/en/stable/model_support.html)
+
+## Native output codec as a separate NPU candidate
+
+The output codec consumes the acoustic IDs that the Windows TTS process
+already owns, after the CodePredictor has finished. Moving this stage
+would use the existing host-owned IDs and return PCM to the same process.
+The candidate's end-to-end budget is the **3.37–3.85 ms per acoustic
+frame** measured for Vulkan during Halogen overlap.
+
+An offline exporter built static ONNX versions of the first causal DAC
+transpose convolution for one, two, four and eight acoustic frames. It
+uses the installed tokenizer GGUF's 1,536-to-768 weights and a kernel
+width of 16, stride 8, with the original causal carry. CPU ONNX Runtime
+matched the pinned GGML formula within **9.54 × 10⁻⁷** on synthetic
+activations with nonzero carry. One-, two- and four-frame blocks matched
+serial ONNX calls bit for bit. The eight-frame block had rounding
+differences. This experiment evaluates one operation with FP32 operands.
+
+The complete streaming codec retains **8,954,496 bytes** of FP32 state
+per stream across 16 K/V buffers and 21 convolution or carry buffers.
+Reading state back and sending it again would move about 17.9 MB per
+call. If the provider can keep state device-resident, the interface needs
+588 bytes of IDs and control inputs per acoustic frame and returns 7,680
+bytes of FP32 PCM. Generating the RoPE sine and cosine tables on the host
+adds 256 bytes per frame and avoids the provider's BF16 Cos gap.
+[AMD supported operators](https://ryzenai.docs.amd.com/en/latest/ops_support.html)
+
+The retained 141-frame acoustic-ID fixture crosses the 128-row K/V ring
+boundary. The archived WAVs used buffered output. A full comparison
+requires a PCM reference from the streaming path for the same IDs,
+including the ring transition. WinML may convert a provided FP32 graph
+to BF16, so full PCM parity and the provider's state placement require
+their own measured proof. The component run used CPU, and the full NPU
+codec and its effect on Halogen throughput remain unmeasured.
+[AMD Windows ML model support](https://ryzenai.docs.amd.com/projects/WinML/en/stable/model_support.html)
+
+The local receipt `npu-tts-codec-carried-convtranspose-offline-v1/codec-carried-conv-receipt.json`
+has SHA-256 `cc895ea3fd0b53186dbd6f613ae5a8c97cab09389add420d27125a570b4767a5`.
+The full state and operator inventory in the same directory has SHA-256
+`79742edfa1475cbbbfa33ab5b85c6bff6bc68a686ed6560dd03bc7b808333d7d`.
+The separately prepared `npu-tts-codec-frozen-stream-reference-v1` runner
+links the retained native codec and covers both the production chunk
+schedule and one frame per step. Its preparation verified the fixture
+and runtime identities and passed 14 offline lifecycle and output checks.
