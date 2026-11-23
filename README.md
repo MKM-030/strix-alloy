@@ -68,6 +68,10 @@ With Flexible cache in all three arms, the [combined WSL lookup and prefix-cache
 reduced the first 8,221-token fixture from 8.201–8.327 s to 7.046 s.
 Both follow-ups retained 8,192 tokens of reuse and exact output parity.
 
+The [Responses system-prefix test](docs/benchmarks/halogen0207-responses-system-cache-20261123.md)
+reused 8,448 of 8,498 tokens on each follow-up with stable instructions.
+The full three-request sequence took 8.18 s versus 16.10–16.28 s with cache off.
+
 The [post-recovery Performance cohort](docs/benchmarks/halogen0207-performance-after-recovery-20261122.md)
 measured the stock server at 2,020.56 prefill and 57.44 decode tok/s for
 8,192 input tokens, and 2,012.24 prefill and 55.24 decode tok/s for 16,384.
