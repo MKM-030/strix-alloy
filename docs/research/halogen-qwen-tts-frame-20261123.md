@@ -154,6 +154,45 @@ captures the first two frames with `--dump`. For a captured directory,
 pass `--frame-index 0` or `1` and `--native-logits` to the replay command.
 The reader verifies the associated acoustic code row.
 
+## CodePredictor mixed-precision replay
+
+On the same six saved frames, the single-thread CPU replay with Q8_1
+activation rounding in the two-row prefill and FP16 attention operands
+matched **78/90 acoustic codes** and **5/6 complete frames**. The FP32
+replay matched 61/90 codes and 2/6 frames. With the native history held
+fixed, the mixed replay matched 89/90 decisions. The attention replay
+retains FP32 accumulation and approximates Vulkan's fused arithmetic.
+
+The remaining sampled decision was codebook 3 in seed 91, frame 0. The
+same Philox draw was 0.757421494. The upper bound of the native token's
+sampling interval was 0.756784499 in the mixed replay and 0.757438421 in
+Vulkan. Substituting the captured Vulkan logits at that decision made
+all six free-running frames exact. This substitution uses frozen logits
+and leaves the required live computation unresolved. Converting all
+matrix inputs to FP16 overflowed in the two-row prefill on all six frames.
+
+A follow-up replaced the dequantized two-row matmul with signed integer
+dot products on all 35 raw Q8_0 transformer matrices. It applies the
+native scale order and a fixed 64-lane reduction. Vulkan's subgroup
+sum may associate floats differently. This replay again matched 78/90
+free-running codes, 5/6 frames and 89/90 held-history decisions. The
+remaining sampling interval ended at 0.756995618, below the same draw.
+
+The existing VitisAI measurement of 8.247 ms covers the first decision,
+including the host-side handoff and sampler. Holding that cost constant
+would leave 15.22 ms for the other 14 decisions and handoffs against a
+separately measured 23.47 ms packed Vulkan frame. The mixed replay ran
+on CPU and supplies no NPU frame time or Halogen throughput delta.
+
+The retained source and fixture receipts are under
+`codepredictor-precision-split-offline-v1` and
+`codepredictor-integer-dot-offline-v1` in the local TTS evidence directory.
+The first receipt's verified FP32 and mixed rows have SHA-256
+`56d9d002cbadac18ea6e9796e160a8b2331c792fb7be081baed14f456c59b856`.
+Its optional CM1 rows have incomplete replay code. The follow-up reruns
+the verified comparison and records the integer-dot result in
+`3b6d8803ccbc3309733b3156b33cadff39be0f62914afc43ce9b4894e7a3ef97`.
+
 ## Acoustic prefix speculation
 
 An offline screen compared previous-frame copies, recent same-semantic-ID
