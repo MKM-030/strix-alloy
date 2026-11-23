@@ -4,6 +4,7 @@ Copies finite tracked Python sources into a temporary checkout; no live token,
 installed repo environment, model, API, WSL or lifecycle state is consumed.
 """
 import copy
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -110,6 +111,38 @@ class FollowupLauncherTests(unittest.TestCase):
     def test_current_text32k_exact_contract_stays_cacheoff(self):
         actual = self.decoded(self.invoke(profile="CurrentText32K"))
         self.assertEqual(self.normalize(actual), self.normalize(self.expected_current()))
+
+    def test_native_lookup_uses_only_the_reviewed_receipt(self):
+        relative = "server/.local/native-lookup-test.json"
+        receipt = self.root / relative
+        payload = b'{"synthetic":"native-lookup-test"}'
+        digest = hashlib.sha256(payload).hexdigest()
+        module = self.root / "backends/halogen-wsl2-0.20.7/scripts/lookup_source.py"
+        module.write_text(
+            "import hashlib\nfrom pathlib import Path\n"
+            f"CANONICAL_RECEIPT_RELATIVE = {relative!r}\n"
+            f"CANONICAL_RECEIPT_SHA = {digest!r}\n"
+            "def read_receipt(config):\n"
+            "    actual = hashlib.sha256(Path(config['receipt']).read_bytes()).hexdigest()\n"
+            "    if actual != config['receipt_sha256']:\n"
+            "        raise ValueError('Receipt hash mismatch')\n",
+            encoding="utf-8",
+        )
+        receipt.write_bytes(payload)
+        actual = self.decoded(self.invoke("-NativeLookup", profile="CurrentText32K"))
+        expected = self.expected_current()
+        expected["engine"]["lookup_tuning"] = dict(receipt=str(receipt), receipt_sha256=digest)
+        self.assertEqual(self.normalize(actual), self.normalize(expected))
+
+        receipt.write_bytes(b"changed receipt")
+        rejected = self.invoke("-NativeLookup", profile="CurrentText32K")
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("Receipt hash mismatch", rejected.stderr)
+
+    def test_native_lookup_requires_halogen_0207(self):
+        rejected = self.invoke("-NativeLookup", profile="FollowupText32K")
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("NativeLookup requires Halogen 0.20.7", rejected.stderr)
 
     def test_current_cached_text32k_preserves_its_explicit_2048_arena(self):
         current = self.decoded(self.invoke(profile="CurrentText32K"))

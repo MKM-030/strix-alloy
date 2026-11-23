@@ -28,6 +28,7 @@ change defaults or establish a measured two-request speed gain.
 CurrentCachedText32K opts into Flexible prefix caching on the same 0.20.7
 text preset with fixed one-slot capacity and paired 2048 prefill settings.
 Use -PrefillTokens 8192 for the measured shared-prefix configuration.
+With Halogen 0.20.7, -NativeLookup selects the locally qualified WSL lookup table.
 FollowupText32K retains the measured 0.18.22 text policy with Flexible
 prefix cache for follow-up latency on repeated stable context. This opt-in
 reduces repeated input work; it does not promise faster GPU kernel throughput.
@@ -77,6 +78,7 @@ param(
     [ValidateRange(1024, 65535)]
     [int]$Port = 8840,
     [switch]$ConsoleTrace,
+    [switch]$NativeLookup,
     [switch]$PrintOnly,
     [switch]$Status,
     [switch]$Stop,
@@ -153,6 +155,9 @@ if ($PSBoundParameters.ContainsKey('PrefillTokens') -and $Profile -ne 'CurrentTe
     -not ($Profile -eq 'CurrentCachedText32K' -and $PrefillTokens -eq 8192)) {
     throw 'PrefillTokens requires CurrentText32K, or 8192 with CurrentCachedText32K.'
 }
+if ($NativeLookup -and $HalogenVersion -ne '0.20.7') {
+    throw 'NativeLookup requires Halogen 0.20.7.'
+}
 
 if ($Profile -eq 'HistoricalStock' -and $HalogenVersion -ne '0.16.2') {
     throw 'HistoricalStock requires explicit -HalogenVersion 0.16.2 for the retained 2026-10-04 stock profile.'
@@ -181,6 +186,30 @@ if ($LASTEXITCODE -ne 0) {
     throw 'The installed Halogen profile could not be prepared; no engine was launched.'
 }
 $configuration = ($profileJson -join [Environment]::NewLine) | ConvertFrom-Json
+if ($NativeLookup) {
+    $lookupCode = @'
+import json
+from pathlib import Path
+import sys
+
+repo = Path(sys.argv[1])
+sys.path.insert(0, str(repo / 'backends/halogen-wsl2-0.20.7/scripts'))
+import lookup_source
+
+selection = {
+    'receipt': str(repo / lookup_source.CANONICAL_RECEIPT_RELATIVE),
+    'receipt_sha256': lookup_source.CANONICAL_RECEIPT_SHA,
+}
+lookup_source.read_receipt(selection)
+print(json.dumps(selection))
+'@
+    $selectionJson = & $python -u -B -c $lookupCode $repository
+    if ($LASTEXITCODE -ne 0) {
+        throw 'NativeLookup requires the verified local extraction receipt. No engine was launched.'
+    }
+    $selection = ($selectionJson -join [Environment]::NewLine) | ConvertFrom-Json
+    $configuration.engine | Add-Member -NotePropertyName 'lookup_tuning' -NotePropertyValue $selection
+}
 # Preserve the public ServiceNow credential across backend-version changes.
 # The backend's own token_file remains separately configured by make_profile.
 $stableApiToken = Join-Path $server '.local\servicenow-api-token.txt'
@@ -229,6 +258,9 @@ $configuration | Add-Member -NotePropertyName 'console_trace' `
 
 $capacityDescription = if ($configuration.concurrency -eq 1) { 'one request' } else { 'up to 2 requests' }
 Write-Host ('Profile: {0}; Halogen {1} v2; MTP policy {2}; PLD 3,3; cache {3}; {4}.' -f $Profile, $HalogenVersion, $MtpPolicy, $PromptCache, $capacityDescription)
+if ($NativeLookup) {
+    Write-Host 'Lookup source: qualified native WSL table.'
+}
 if ($configuration.concurrency -eq 2) {
     Write-Host ('Opt-in gateway concurrency: 2; native slots: {0}; KV pool: {1}. Aggregate performance is unqualified.' -f $configuration.engine.slots, $configuration.engine.kv_pool_positions)
 }

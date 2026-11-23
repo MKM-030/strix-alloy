@@ -127,25 +127,40 @@ wait for successful startup before sending requests.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -ConsoleTrace
 ```
 
-For an explicit trial of prefix caching on the current 0.20.7 release:
+For repeated questions about the same long input, select the measured
+0.20.7 shared-prefix configuration at a controlled restart.
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentCachedText32K -ConsoleTrace
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentCachedText32K -PrefillTokens 8192 -ConsoleTrace
 ```
 
-This profile retains one 32768-position slot/pool, concurrency one, paired
-2048 prefill settings, gate 0.90, PLD `3,3`, Thinking Off/low, Vision Off and
-prefetch 0. It uses Flexible cache and keeps its explicit 2048 prefill settings,
-separate from the default text profile's paired 8192 settings. It preserves the
-public credential and endpoint. Capacity and `PrefillTokens` selectors are
-rejected, including explicit values equal to the defaults. The current cached
-profile has no qualified latency or throughput gain; stable repeated context
-is required before reuse can reduce input work. Select it through a normal
-controlled restart after completing active requests. The default remains
-`CurrentText32K` with Cache Off.
+The command selects Flexible cache with one 32,768-position slot, paired
+8192 prefill settings and the existing public credential and endpoint.
+Use two text blocks in the first user message on `/v1/chat/completions`.
+Keep the long reference in the first block and place the changing question
+in the second. With this request shape, Halogen reused 8,192 of 8,227
+input tokens and reduced HTTP time from 4.24–4.37 s to 0.36–0.39 s
+on two follow-up questions. The initial request took 8.43 s. The pinned
+`/v1/responses` adapter joins plain text blocks before this cache boundary
+can be marked. Flexible cache can change warm output on other prompts.
+[Shared-prefix benchmark and JSON example](../benchmarks/halogen0207-shared-prefix-20261123.md)
 
-For repeated stable context and new follow-up questions, the optional measured
-cache configuration is:
+For the native WSL lookup table, start the current 0.20.7 text profile with
+the locally verified extraction receipt.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -NativeLookup -ConsoleTrace
+```
+
+The launcher checks the local receipt before starting. The backend
+revalidates the installed source and WSL lookup file during startup.
+The first 8,192-token request took 9.26 s in the native-lookup window
+and 10.57–10.64 s in the Windows-lookup controls. Warm results were
+similar. Each first-request value represents one launch. OS file-cache
+residency was unmeasured.
+[Native WSL lookup benchmark](../benchmarks/halogen0207-native-lookup-20261122.md)
+
+The historical measured 0.18.22 cache profile is available separately.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile FollowupText32K -ConsoleTrace
@@ -189,8 +204,8 @@ keep `reasoning_content` separate. The retained speed measurements used Thinking
 Off and do not qualify Thinking On throughput.
 
 `Current4K` pairs a 4,096-token prefill chunk with a 4,096-token arena;
-`Current8K` explicitly pairs 8,192 with 8,192. Their default installed version
-is 0.20.2. Use `-HalogenVersion` to select another supported installed backend.
+`Current8K` explicitly pairs 8,192 with 8,192. They default to installed
+0.20.7. Use `-HalogenVersion` to select another supported installed backend.
 For the retained 0.18.10 configuration, pass both `-Profile Current4K` and
 `-HalogenVersion 0.18.10` explicitly.
 The historical Stock A profile requires an explicit 0.16.2 selection; it rejects
@@ -231,10 +246,9 @@ ServiceNow's Authorization header. Credential values are never printed.
 The bare launcher selects **0.20.7 CurrentText32K**, one slot, one concurrent
 request and paired 8192 prefill settings. The command above uses these same
 one-slot settings; two slots require explicit capacity and concurrency options.
-`-PrefillTokens` applies only to `CurrentText32K` and sets both prefill controls.
-`CurrentCachedText32K` selects 0.20.7 with Flexible cache and
-fixed one-slot/paired-2048 settings; no capacity or prefill selectors are accepted.
-It is an unmeasured opt-in, separate from historical `FollowupText32K`.
+`-PrefillTokens` sets both prefill controls. `CurrentText32K` accepts the
+listed sizes. `CurrentCachedText32K` uses one slot with Flexible cache and
+paired 2048 by default. It accepts the measured `-PrefillTokens 8192` setting.
 
 `Current4K` and `Current8K` default to installed Halogen **0.20.7**;
 `HistoricalStock` requires explicitly selected **0.16.2**. All three retain
