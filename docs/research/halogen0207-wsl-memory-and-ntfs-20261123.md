@@ -205,7 +205,7 @@ Three host-side component comparisons used the same pinned ext4 table and
 separate, preassigned sets of 512 pages from held-out natural prompts.
 Each comparison had four pairs in alternating order. Every selected page
 was nonresident before its sample and resident afterward. Each sample read
-exactly 2 MiB. Across the comparisons, none of the 147,456 sampled neighbor
+exactly 2 MiB. Across the comparisons, none of the 147,455 sampled neighbor
 observations changed from nonresident to resident. The test retained the
 regular Halogen owner throughout.
 
