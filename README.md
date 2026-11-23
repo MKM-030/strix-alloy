@@ -107,7 +107,12 @@ The [fresh 0.20.2 NPU integration](scripts/benchmarks/halogen_flm_streaming_prod
 The subsequently rebound [0.20.3 private attempt](docs/benchmarks/halogen0203-real-npu-core-append-20261111.md) likewise stopped after one excluded stock warmup: the next 22 GiB entry wait failed over 470 samples at 21.492–21.722 GiB. No measured request or NPU producer ran, so no NPU prefill, decode, acceptance or speedup value is qualified. Normal 0.20.3 serving was restored online with experimental hooks disabled; the unchanged cohort is not repeated.
 The [inactive CPU tool-view batching adapter](scripts/benchmarks/halogen_api_lookup_batch_0203/README.md) preserves LOOK IDs and cache state in 17 parity/error tests. An existing eight-case Rust-tokenizer receipt records 85 encode calls reduced to 6. The complete Transformers wrapper and end-to-end latency benefit remain unqualified; no token-rate improvement is claimed and this adapter is not enabled in the serving backend.
 
-The opt-in `CurrentCachedText32K` profile selects 0.20.7 with one slot, Flexible prefix caching and its own paired 2048 prefill settings; invoke it without capacity or prefill selectors. Its workload benefit remains unqualified, and the default stays Cache Off with paired 8192 settings.
+The opt-in `CurrentCachedText32K` profile selects 0.20.7 with one slot
+and Flexible prefix caching. Add `-PrefillTokens 8192` to select the
+tested chunk and arena. This configuration reused 8,192 input tokens
+on two follow-up questions and reduced complete HTTP time by
+90.89–91.82% on that workload.
+[Shared-prefix benchmark and request format](docs/benchmarks/halogen0207-shared-prefix-20261123.md)
 Stop an existing managed session through its normal controls before changing
 profiles. See the [ServiceNow guide](docs/integrations/halogen-servicenow.md).
 

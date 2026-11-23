@@ -133,6 +133,13 @@ class FollowupLauncherTests(unittest.TestCase):
         expected["console_trace"] = True
         self.assertEqual(self.normalize(actual), self.normalize(expected))
 
+    def test_current_cached_text32k_accepts_measured_8192_pair(self):
+        cached = self.decoded(self.invoke("-PrefillTokens", "8192",
+                                          profile="CurrentCachedText32K"))
+        expected = self.expected_current(prefill=8192)
+        expected["engine"]["prompt_cache"] = "Flexible"
+        self.assertEqual(self.normalize(cached), self.normalize(expected))
+
     def test_current_cached_rejects_conflicting_policy_and_capacity_before_launch(self):
         for options in [("-PromptCache", "Off"), ("-PromptCache", "Exact"),
                         ("-HalogenVersion", "0.20.0"), ("-Thinking", "On"),

@@ -27,7 +27,7 @@ Opt-in private concurrency tests may add -Slots 1 or 2, -Concurrency 2 and
 change defaults or establish a measured two-request speed gain.
 CurrentCachedText32K opts into Flexible prefix caching on the same 0.20.7
 text preset with fixed one-slot capacity and paired 2048 prefill settings.
-It accepts no capacity or PrefillTokens selectors and implies no measured gain.
+Use -PrefillTokens 8192 for the measured shared-prefix configuration.
 FollowupText32K retains the measured 0.18.22 text policy with Flexible
 prefix cache for follow-up latency on repeated stable context. This opt-in
 reduces repeated input work; it does not promise faster GPU kernel throughput.
@@ -149,8 +149,9 @@ if ($isPinned32KProfile) {
     $thinkingEffort = 'low'
 }
 
-if ($PSBoundParameters.ContainsKey('PrefillTokens') -and $Profile -ne 'CurrentText32K') {
-    throw 'PrefillTokens requires CurrentText32K.'
+if ($PSBoundParameters.ContainsKey('PrefillTokens') -and $Profile -ne 'CurrentText32K' -and
+    -not ($Profile -eq 'CurrentCachedText32K' -and $PrefillTokens -eq 8192)) {
+    throw 'PrefillTokens requires CurrentText32K, or 8192 with CurrentCachedText32K.'
 }
 
 if ($Profile -eq 'HistoricalStock' -and $HalogenVersion -ne '0.16.2') {
