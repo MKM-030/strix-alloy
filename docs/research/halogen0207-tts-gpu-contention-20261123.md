@@ -288,3 +288,14 @@ closed. NPU placement and throughput remain unmeasured.
 
 The local `vulkan-seeded-42-v2-bdicvgwv/comparison.json` receipt has
 SHA-256 `389c1790f4c7d64851dd5688ad0cfc188e15a6c5a174d4f8544bf6e9ae2e9e42`.
+
+A private build captured the FP32 inputs immediately before the DAC on
+the normal chunk schedule. It produced **26 chunks and 2,850,816 bytes**,
+covering staging and generated audio. The final FP32 and PCM16 arrays
+matched the uninstrumented stock reference byte for byte. The captured
+rows provide the native input for the CPU exporter and its parity checks.
+The additional tensor readback alters the capture's timing, so the run
+qualifies the fixture for correctness.
+
+The captured feature data has SHA-256
+`a04c3a29d5306c1fb290d79db7695bb12e36428764566dbccf6021c1e8e4faf7`.
