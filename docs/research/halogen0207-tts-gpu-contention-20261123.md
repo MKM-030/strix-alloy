@@ -240,3 +240,29 @@ The separately prepared `npu-tts-codec-frozen-stream-reference-v1` runner
 links the retained native codec and covers both the production chunk
 schedule and one frame per step. Its preparation verified the fixture
 and runtime identities and passed 14 offline lifecycle and output checks.
+
+## DAC with finite input history
+
+The native GPU front can retain the codec transformer and its K/V ring
+while the NPU runs only the waveform decoder (DAC). An offline dependency
+check across all 480 output phases found that the DAC needs the last
+**20 actual rows** of its 1,024-wide input. The host can keep those rows in
+80 KiB per stream. Each invocation prepends them to the new rows and crops
+the first 9,600 samples. Six offline tests covered the tight history bound,
+the native start of stream, mixed widths and exact output on a synthetic
+causal graph.
+
+The one-frame call exchanges 105,984 bytes with the NPU provider. The
+eight-frame call exchanges 274,432 bytes and processes 1.625 times the
+number of new DAC input rows. The GPU front would also download 16 KiB
+per new frame. Preserve the 1/2/4/8 streaming schedule to avoid waiting
+for seven extra frames before the first audio chunk. The Vulkan budget
+for the whole eight-frame codec call during overlap was about 27–31 ms.
+
+The proposed capture reads the native FP32 tensor between the streaming
+upsampler and the DAC after graph completion. The captured rows can test
+explicit-state and cropped-history ONNX against the native streaming PCM.
+The dependency proof covers input history. Precision, VitisAI placement,
+transfer time and any effect on Halogen Decode still need measurement.
+The offline preparation receipt `npu-tts-codec-dac-overlap-prep-v1/preparation.json`
+has SHA-256 `456c13e9ee25ea0f6fba7c39db903905b7670aa5f92d8c91fc1b06ac9a204733`.
