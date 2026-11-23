@@ -13,6 +13,7 @@ POLICIES = {
     'HALOGEN_PLD': ('0', '3,3', '3,4'),
     'HALOGEN_SPEC_ADAPT': ('0', '32,0.35,64'),
     'HALOGEN_MTP_GATE_P': ('0', '0.90'),
+    'HALOGEN_MTP_GATE_RULE': ('gate',),
     'HALOGEN_GRAMMAR_DRAFT': ('0', '1'),
     'HALOGEN_SAMPLED_GATE': ('0.95,0.98', '0.95'),
 }

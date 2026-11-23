@@ -463,6 +463,18 @@ class CapacityTests(unittest.TestCase):
         self.assertNotIn('HALOGEN_PHASE_RAW',manifest['environment'])
         service.reject_unqualified_manifest_overrides(manifest)
 
+    def test_confidence_rule_is_a_bounded_opt_in(self):
+        key = 'HALOGEN_MTP_GATE_RULE'
+        policy = {'HALOGEN_MTP_GATE_P': '0.90', key: 'gate'}
+        options = service.options(['--speculation-policy-json', json.dumps(policy)])
+        baseline = service.environment(32768, speculation_policy={'HALOGEN_MTP_GATE_P': '0.90'})
+        candidate = service.environment(32768, speculation_policy=options.speculation_policy_json)
+        self.assertNotIn(key, baseline)
+        self.assertEqual(candidate, {**baseline, key: 'gate'})
+        for unsupported in ('cost', 'drop', 'ride', '0', 0):
+            with self.subTest(unsupported=unsupported), self.assertRaises(ValueError):
+                service.environment(32768, speculation_policy={key: unsupported})
+
     def test_default_admission_unchanged_opt_in_never_below_30_131(self):
         import memory_budget
         expected_commits={4096:123,4097:123,32768:124,262144:131}
