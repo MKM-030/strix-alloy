@@ -64,14 +64,23 @@ different selected engine path each stopped the supervisor before the child.
 Rewriting the fixture while preserving its size and last-write timestamp
 forced a full hash and that hash was rejected.
 
-The running stock instance predated this change. A passive check confirmed
-that the new native read lease and WSL file observation both work on the
-124 GB source. This file awaits a full hash under the lease to seed its NTFS
-receipt. The verification applies to startup. Prefill, Decode and MTP retain
-their existing measurements.
+The running stock instance predated this change. A background Windows verifier
+read all **124,068,083,904 bytes** directly from the NTFS source, using aligned,
+unbuffered reads under one native read lease. It matched the pinned SHA-256 and
+published the managed receipt after checking both the Windows and WSL file
+generations. The summed time inside `ReadFile` was **199.57 s**. The full
+verification took **793.41 s** with a 160 MiB/s cap and pauses for serving
+traffic. The earlier full WSL hash took **706.05 s**. These measurements use
+different I/O conditions.
 
-The normal service returned to port 8840. The gateway, TTS, ASR and Native
-reported ready, and the allocation probe exited.
+The managed reader reused the production receipt in **0.912 s** with the
+full-content reader disabled for verification. A separately copied receipt
+with a simulated older WSL device number also reused the verified generation.
+A full server startup with the new receipt remains unmeasured. The receipt
+applies to startup, and this test measured no Prefill, Decode or MTP rates.
+
+After both checks, the same Halogen instance on port 8840 was ready and idle.
+Native Voice, TTS and ASR also reported ready.
 
 | Local evidence | SHA-256 |
 | --- | --- |
@@ -82,5 +91,9 @@ reported ready, and the allocation probe exited.
 | Native NTFS witness smoke | `b7eec1aa4a2420ac4e4de749f72e9f84e91fe9e1cb5d7e2d6f0da4f8b8ad10ab` |
 | Cross-namespace synthetic receipt smoke | `4929e5a9818ac38dbc679ff9e5c1bae24b69db0ef760b6f08e0fafd17f9a79af` |
 | Read-only container-bind smoke | `855af54ca6e1b46113900d4c79167c7e44edfaa3991c9e243dd2550e66e901aa` |
+| Production direct-read terminal record | `a6226d39af29bcc637ad7fc0d9f55c13b1be0baf767f7322c119bbc3a397afe0` |
+| Managed NTFS production receipt | `ea343d0c8c61a94fa12e3bba84d117a22dad25302f2c1ab0c6639899a7b88a97` |
+| Managed production receipt reuse verification | `61538db37489042bad46f709038e592b3d5d24547a9a78d4513d8ff1c861dd5a` |
+| Serving status after receipt verification | `7edc46693dbd84e231a8c1d4a67fd9004317a4e98aa3c9bae526d0aaff782493` |
 | Managed synthetic seed, reuse and mount gate | `8deadb3765d4977fc40d174a92a857e5b8eea1411a60722eec4b2beb0c65b81c` |
 | Passive production NTFS metadata check | `8b4d8b3ed9db1bb5cc868c1d1e8756ab9dbd793c17299596e12d85fca459476e` |
