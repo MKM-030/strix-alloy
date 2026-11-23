@@ -1,0 +1,160 @@
+diff --git a/src/code-predictor-forward.h b/src/code-predictor-forward.h
+--- a/src/code-predictor-forward.h
++++ b/src/code-predictor-forward.h
+@@ -97,6 +97,7 @@
+ static struct ggml_tensor * code_predictor_layer_forward(struct ggml_context *        ctx,
+                                                          const CodePredictorWeights * cw,
+                                                          const TalkerLayer &          layer,
++                                                         struct ggml_tensor *         packed_gate_up,
+                                                          struct ggml_tensor *         x,
+                                                          struct ggml_tensor *         positions,
+                                                          struct ggml_tensor *         mask,
+@@ -190,12 +191,17 @@
+     struct ggml_tensor * h2 = ggml_rms_norm(ctx, x, eps);
+     h2                      = ggml_mul(ctx, h2, layer.post_attn_norm_w);
+ 
+-    // gate and up mul_mats adjacent to the GLU node: the CUDA backend
+-    // fuses the three into one kernel (ggml_cuda_should_fuse_mul_mat).
+-    struct ggml_tensor * gate = ggml_mul_mat(ctx, layer.mlp.gate_proj_w, h2);
+-    struct ggml_tensor * up   = ggml_mul_mat(ctx, layer.mlp.up_proj_w, h2);
+-    struct ggml_tensor * gu   = ggml_swiglu_split(ctx, gate, up);
+-    struct ggml_tensor * mlp  = ggml_mul_mat(ctx, layer.mlp.down_proj_w, gu);
++    struct ggml_tensor * gu;
++    if (packed_gate_up) {
++        struct ggml_tensor * gate_up = ggml_mul_mat(ctx, packed_gate_up, h2);
++        gu = ggml_swiglu(ctx, gate_up);
++    } else {
++        // Adjacent operations retain the existing CUDA fusion.
++        struct ggml_tensor * gate = ggml_mul_mat(ctx, layer.mlp.gate_proj_w, h2);
++        struct ggml_tensor * up   = ggml_mul_mat(ctx, layer.mlp.up_proj_w, h2);
++        gu = ggml_swiglu_split(ctx, gate, up);
++    }
++    struct ggml_tensor * mlp = ggml_mul_mat(ctx, layer.mlp.down_proj_w, gu);
+ 
+     x = ggml_add(ctx, x, mlp);
+     if (clamp_fp16) {
+@@ -337,9 +343,9 @@
+     }
+ 
+     for (int l = 0; l < n_layers; l++) {
+-        h = code_predictor_layer_forward(gctx, cw, cw->layers[(size_t) l], h, pos_in, mask_in, rows_in,
+-                                         kv->k4[(size_t) l], kv->v4[(size_t) l], T, N, n_kv_pad, use_flash_attn,
+-                                         clamp_fp16, gf);
++        h = code_predictor_layer_forward(gctx, cw, cw->layers[(size_t) l], cw->packed_gate_up[(size_t) l],
++                                         h, pos_in, mask_in, rows_in, kv->k4[(size_t) l], kv->v4[(size_t) l],
++                                         T, N, n_kv_pad, use_flash_attn, clamp_fp16, gf);
+     }
+ 
+     struct ggml_tensor * h_final = ggml_rms_norm(gctx, h, cw->rms_norm_eps);
+diff --git a/src/code-predictor-weights.h b/src/code-predictor-weights.h
+--- a/src/code-predictor-weights.h
++++ b/src/code-predictor-weights.h
+@@ -30,6 +30,7 @@
+ 
+ #include <cstdint>
+ #include <cstdio>
++#include <cstdlib>
+ #include <cstring>
+ #include <string>
+ #include <vector>
+@@ -61,10 +62,42 @@
+     // Layers reuse the same TalkerLayer struct since the per-layer
+     // tensor set is identical. Only the model-level wiring differs.
+     std::vector<TalkerLayer> layers;
++    std::vector<struct ggml_tensor *> packed_gate_up;
+ 
+     struct ggml_context * weight_ctx;
+     ggml_backend_buffer_t weight_buf;
+ };
++
++// A single allocation with the original gate rows followed by the original up rows.
++// The model mapping remains valid through wctx_alloc, which uploads both ranges.
++static struct ggml_tensor * code_predictor_pack_gate_up(WeightCtx *         wctx,
++                                                       const GGUFModel &   gf,
++                                                       const char *        gate_name,
++                                                       const char *        up_name,
++                                                       int                 hidden,
++                                                       int                 intermediate) {
++    const struct ggml_tensor * gate = ggml_get_tensor(gf.meta, gate_name);
++    const struct ggml_tensor * up   = ggml_get_tensor(gf.meta, up_name);
++    if (!gate || !up || gate->type != GGML_TYPE_Q8_0 || up->type != GGML_TYPE_Q8_0 ||
++        !ggml_is_matrix(gate) || !ggml_is_matrix(up) || hidden <= 0 || intermediate <= 0 ||
++        gate->ne[0] != hidden || up->ne[0] != hidden ||
++        gate->ne[1] != intermediate || up->ne[1] != intermediate) {
++        return nullptr;
++    }
++
++    const void * gate_data = gf_get_data(gf, gate_name);
++    const void * up_data   = gf_get_data(gf, up_name);
++    if (!gate_data || !up_data) {
++        return nullptr;
++    }
++
++    struct ggml_tensor * packed = ggml_new_tensor_2d(wctx->ctx, GGML_TYPE_Q8_0, gate->ne[0], 2 * gate->ne[1]);
++    ggml_format_name(packed, "%s.packed_gate_up", gate_name);
++    const size_t gate_bytes = ggml_nbytes(gate);
++    wctx->pending.push_back({ packed, gate_data, gate_bytes, 0 });
++    wctx->pending.push_back({ packed, up_data, ggml_nbytes(up), gate_bytes });
++    return packed;
++}
+ 
+ static bool code_predictor_weights_load(CodePredictorWeights * cw, const GGUFModel & gf, ggml_backend_t backend) {
+     cw->hidden_size         = (int) gf_get_u32(gf, "qwen3-tts.code_pred.embedding_length");
+@@ -91,6 +124,15 @@
+     }
+ 
+     cw->layers.resize((size_t) cw->num_hidden_layers);
++    cw->packed_gate_up.assign(cw->layers.size(), nullptr);
++    const char * packed_ffn_env = std::getenv("QWENTTS_CODEPRED_PACKED_FFN");
++    bool pack_ffn = false;
++    if (packed_ffn_env && strcmp(packed_ffn_env, "1") == 0) {
++        ggml_backend_dev_t device = ggml_backend_get_device(backend);
++        ggml_backend_reg_t reg = device ? ggml_backend_dev_backend_reg(device) : nullptr;
++        pack_ffn = reg && strcmp(ggml_backend_reg_name(reg), "Vulkan") == 0;
++    }
++    int packed_layers = 0;
+     cw->codec_embedding.resize((size_t) cw->num_acoustic_codebooks);
+     cw->lm_head.resize((size_t) cw->num_acoustic_codebooks);
+ 
+@@ -142,10 +184,19 @@
+         snprintf(name, sizeof(name), "code_pred.blk.%d.attn_k_norm.weight", l);
+         layer.attn.k_norm_w = gf_load_tensor(&wctx, gf, name);
+ 
+-        snprintf(name, sizeof(name), "code_pred.blk.%d.ffn_gate.weight", l);
+-        layer.mlp.gate_proj_w = gf_load_tensor(&wctx, gf, name);
++        char gate_name[160];
++        snprintf(gate_name, sizeof(gate_name), "code_pred.blk.%d.ffn_gate.weight", l);
+         snprintf(name, sizeof(name), "code_pred.blk.%d.ffn_up.weight", l);
+-        layer.mlp.up_proj_w = gf_load_tensor(&wctx, gf, name);
++        struct ggml_tensor * packed = pack_ffn ? code_predictor_pack_gate_up(&wctx, gf, gate_name, name,
++                                                                           cw->hidden_size, cw->intermediate_size)
++                                               : nullptr;
++        if (packed) {
++            cw->packed_gate_up[(size_t) l] = packed;
++            packed_layers++;
++        } else {
++            layer.mlp.gate_proj_w = gf_load_tensor(&wctx, gf, gate_name);
++            layer.mlp.up_proj_w   = gf_load_tensor(&wctx, gf, name);
++        }
+         snprintf(name, sizeof(name), "code_pred.blk.%d.ffn_down.weight", l);
+         layer.mlp.down_proj_w = gf_load_tensor(&wctx, gf, name);
+     }
+@@ -156,6 +207,10 @@
+     }
+     cw->weight_ctx = wctx.ctx;
+     cw->weight_buf = wctx.buffer;
++    if (pack_ffn) {
++        fprintf(stderr, "[CodePredictor] Packed Q8_0 gate/up on Vulkan: %d/%d layers\n",
++                packed_layers, cw->num_hidden_layers);
++    }
+ 
+     fprintf(stderr,
+             "[CodePredictor] Loaded: %d layers, hidden %d, heads %d/%d, head_dim %d, "
+@@ -176,6 +231,7 @@
+         cw->weight_ctx = NULL;
+     }
+     cw->layers.clear();
++    cw->packed_gate_up.clear();
+     cw->codec_embedding.clear();
+     cw->lm_head.clear();
+ }

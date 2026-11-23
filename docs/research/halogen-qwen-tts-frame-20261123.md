@@ -170,3 +170,47 @@ The private full-frame, native-logit and speculation receipts are in
 `codepredictor-full-frame-onnx-v1`, `codepredictor-native-logits-capture-v1`
 and `codepredictor-acoustic-speculation-offline-v1.json` in the same local
 evidence directory. Halogen and the voice services continued serving.
+
+## Packed Vulkan gate and up projections
+
+The [private Vulkan patch](../../scripts/research/qwen_tts_frame/native-packed-ffn-a8a7716.patch)
+stores the two Q8_0 matrices as consecutive output rows and uses one
+projection followed by packed SwiGLU. On the ordinary Vulkan matvec path
+this removes one dispatch per layer and codebook, or 75 per frame. The
+model still reads the same weight values. The option defaults to off.
+`QWENTTS_CODEPRED_PACKED_FFN=1` enables it on compatible Vulkan weights.
+
+The private CLI confirmed packing on all five layers. All six captured
+logit matrices and all three file-level code matrices and WAV files
+matched the split implementation byte for byte.
+
+The same private `a8a7716` HTTP server binary ran split, packed, then split
+again under Halogen 0.20.7 decode overlap. The Windows client sent the
+same 8,192-token non-repetitive novel prefix with cache off, thinking off
+and 128 generated tokens. Speech started at the first visible text.
+Each arm included a separate speech prime and one excluded warmup pair.
+The table averages three measured pairs per arm.
+
+| Vulkan TTS | TTS predictor ms/frame | TTS complete HTTP, s | Halogen API prefill tok/s | Halogen API decode tok/s | Native MTP | Halogen first text to EOF, s | Halogen complete HTTP, s |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Split before | 25.345 | 1.324 | 2,052.81 | 49.645 | 192/291 (65.98%) | 2.578 | 6.628 |
+| Packed | 25.229 | 1.303 | 2,064.96 | 49.864 | 192/291 (65.98%) | 2.567 | 6.602 |
+| Split after | 25.154 | 1.312 | 2,013.92 | 49.449 | 192/291 (65.98%) | 2.590 | 6.731 |
+
+Halogen text matched byte for byte across all twelve pairs. Speech PCM
+matched by trial index across the three arms, and all pairs overlapped
+from first PCM through part of text decode. The packed stage mean falls
+between both controls. Windows measured 0.45% and 0.89% shorter Halogen
+text delivery than the two control means, with overlapping trial ranges.
+The benchmark starts speech after prefill and the phase-clock rates are
+descriptive. The observed differences leave the option experimental.
+
+The first attempt stopped on a live-request guard during the packed
+warmup. The completed run verified gateway completion and cancellation
+counters around each owned request. The minimum sampled physical or
+commit reserve was 23.78 GiB. The private server was closed and the public
+Halogen, TTS, ASR and Native endpoints reported ready afterward.
+
+Raw evidence is under `tts-decode-overlap-packed-ffn-v2`. The paired
+analysis SHA-256 is
+`5f3d4ae9fce958c7c96a401f82f2763b840d9050c18de559588c1ff344a13570`.
