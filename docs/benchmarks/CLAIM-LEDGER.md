@@ -11,6 +11,14 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
+### Halogen 0.20.7 fixed MTP depth two
+
+The [fixed depth comparison](halogen0207-fixed-mtp-depth-two-20261123.md)
+reached 60.496 API Decode tok/s on the frozen 8K novel prefix with exact
+output parity. Windows first-text-to-EOF time improved by 4.50–4.70%.
+The 16K workload took 3.05–3.21% longer from first text to EOF with this
+setting. The regular profile uses the native MTP cost policy.
+
 ### Halogen 0.20.7 sparse-attention union
 
 On the frozen 8K novel prefix, the two stock windows averaged 57.350 and
