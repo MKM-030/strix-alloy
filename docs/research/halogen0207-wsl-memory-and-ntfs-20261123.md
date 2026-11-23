@@ -201,11 +201,11 @@ the trial.
 
 ## Bounded parallel reads on the native table
 
-Two host-side component comparisons used the same pinned ext4 table and
+Three host-side component comparisons used the same pinned ext4 table and
 separate, preassigned sets of 512 pages from held-out natural prompts.
 Each comparison had four pairs in alternating order. Every selected page
-was nonresident before its arm and resident afterward. Each arm read
-exactly 2 MiB. Across both comparisons, none of the 98,304 sampled neighbor
+was nonresident before its sample and resident afterward. Each sample read
+exactly 2 MiB. Across the comparisons, none of the 147,456 sampled neighbor
 observations changed from nonresident to resident. The test retained the
 regular Halogen owner throughout.
 
@@ -215,11 +215,14 @@ regular Halogen owner throughout.
 | Serial vs parallel | 4 | 143.98 ms | 141.17–147.32 ms | 3,556 |
 | Parallel depth | 4 | 135.26 ms | 131.91–139.09 ms | 3,785 |
 | Parallel depth | 8 | 133.39 ms | 120.87–166.13 ms | 3,838 |
+| Scheduling | 8 in waves | 127.00 ms | 125.14–129.48 ms | 4,031 |
+| Scheduling | 8 with immediate refill | 179.32 ms | 177.27–181.39 ms | 2,855 |
 
 Four workers cut the first comparison's mean read interval by **41.68%**.
 Eight workers cut the second mean by **1.38%** and produced a wider range.
-At the observed eight-worker mean rate, an all-cold 24,531-page serving
-target would take about **6.39 s** before additional engine mapping and
+Refilling freed slots immediately increased time in all four scheduling
+pairs. At the fastest observed wave mean, an all-cold 24,531-page serving
+target would take about **6.09 s** before additional engine mapping and
 transport costs. That is a linear projection from 512-page components.
 The full five-second serving target and any improvement in token rates
 remain unverified. Port 8840 continues with its ordinary reader.
@@ -230,3 +233,5 @@ remain unverified. Port 8840 continues with its ordinary reader.
 | Serial vs four-worker result | `adec2c6c60827b813702657c6b87225a50b33f4d47fa437429920ea8eb6d99d3` |
 | Four vs eight-worker frozen fixture | `70ce01ea211378b80be259f3770de1c4bc311207b82b140b8595029b4147f8fa` |
 | Four vs eight-worker result | `071df764796b596c117a2227c1116a8667bdae99e25138853bccac12b30b92bb` |
+| Wave vs immediate refill fixture | `6e076965b250a5d42a0d9c08772579694220f2bb41311b0f5419dd36c8b5ed54` |
+| Wave vs immediate refill result | `c41e054f106407d372a9d39fae1a9124eebdb446494a38b9b010b5d8e34c1703` |
