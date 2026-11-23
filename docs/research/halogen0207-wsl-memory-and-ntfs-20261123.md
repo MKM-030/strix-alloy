@@ -45,12 +45,30 @@ fixture. A CPU-only launch of the pinned image confirmed that the read-only
 container bind reported the same file identity and SHA-256 as the WSL source.
 [Windows file identity](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_id_info) · [Windows file USN](https://learn.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-fsctl_read_file_usn_data)
 
-The production path still verifies the whole file when its WSL identity
-changes. A production receipt would first have to bind the full pinned digest
-to the native Windows generation under a read lease and verify the fresh guest
-identity at the actual read-only container mount before model startup. The old
-Linux-only receipt is insufficient for that shortcut. This addresses repeat
-startup time. It has no demonstrated effect on Prefill, Decode or MTP acceptance.
+## Managed NTFS receipt
+
+The 0.20.7 managed startup now supports a second receipt for the stock v2 NTFS
+bind. A required full hash seeds the NTFS receipt under the same native read
+lease. A current Linux-only receipt keeps its original behavior. The approved
+NTFS path sends the fresh WSL file identity to the container and keeps the native
+lease until readiness. The supervisor checks the file bind before it launches
+the engine. If the native witness is unavailable and an NTFS receipt already
+exists, the service performs a full content check. A Windows file lock or
+write-sharing conflict refuses startup.
+
+The managed code was exercised with a small NTFS file in the pinned image,
+with CPU only. It read the fixture once to seed the receipt. After simulating an
+older WSL device number in the saved receipt, the metadata check took 0.32 s
+and reused the pinned hash. A wrong file identity, a writable bind and a
+different selected engine path each stopped the supervisor before the child.
+Rewriting the fixture while preserving its size and last-write timestamp
+forced a full hash and that hash was rejected.
+
+The running stock instance predated this change. A passive check confirmed
+that the new native read lease and WSL file observation both work on the
+124 GB source. This file awaits a full hash under the lease to seed its NTFS
+receipt. The verification applies to startup. Prefill, Decode and MTP retain
+their existing measurements.
 
 The normal service returned to port 8840. The gateway, TTS, ASR and Native
 reported ready, and the allocation probe exited.
@@ -64,3 +82,5 @@ reported ready, and the allocation probe exited.
 | Native NTFS witness smoke | `b7eec1aa4a2420ac4e4de749f72e9f84e91fe9e1cb5d7e2d6f0da4f8b8ad10ab` |
 | Cross-namespace synthetic receipt smoke | `4929e5a9818ac38dbc679ff9e5c1bae24b69db0ef760b6f08e0fafd17f9a79af` |
 | Read-only container-bind smoke | `855af54ca6e1b46113900d4c79167c7e44edfaa3991c9e243dd2550e66e901aa` |
+| Managed synthetic seed, reuse and mount gate | `8deadb3765d4977fc40d174a92a857e5b8eea1411a60722eec4b2beb0c65b81c` |
+| Passive production NTFS metadata check | `8b4d8b3ed9db1bb5cc868c1d1e8756ab9dbd793c17299596e12d85fca459476e` |

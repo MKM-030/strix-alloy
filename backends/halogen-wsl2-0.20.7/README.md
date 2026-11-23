@@ -42,4 +42,21 @@ workloads whose prompt state may be retained on disk. Use request-level `cache_c
 8,448 of 8,498 tokens restored with byte-identical output. The SSD and RAM latency samples
 were single observations. Cold Prefill, Decode and MTP performance need their own comparison.
 
+## N-Gram verification on Windows NTFS
+
+The stock v2 service can reuse a complete N-Gram SHA-256 result across changes to the
+projected WSL device number. This applies to the explicit local NTFS/DrvFS bind. The
+next required full hash can create `.local/ngram-ntfs-integrity.json` while holding a
+native read lease. An existing Linux-only receipt can still start the same WSL file
+generation. Building the NTFS receipt requires a full hash under the native lease.
+
+Reuse checks the NTFS file and volume identity, timestamps, size, journal and file USN,
+along with the current WSL filename, mount provenance and file identity. The native
+handle denies writes and replacement until readiness. Before launching Halogen, the
+container checks the current file identity and read-only mount. When the native witness
+is unavailable before verification, the existing SHA-256 policy applies. The separate
+native-lookup option retains its own source checks.
+
+[N-Gram verification evidence](../../docs/research/halogen0207-wsl-memory-and-ntfs-20261123.md)
+
 Run CPU checks with `python -m unittest discover -s backends/halogen-wsl2-0.20.7/tests`. Set HALOGEN0207_CAPTURE to a passive extracted image directory for the exact ELF/API/entrypoint cases; absent captures are explicit skips. Linux compilation fixtures are separate and may skip on Windows.

@@ -48,7 +48,7 @@ class CheckpointReceiptBindingTests(unittest.TestCase):
             actual = service.verify_checkpoint(machine, "v2", disable_vision=False)
         self.assertEqual(actual, self.receipts)
         main.assert_called_once_with(machine, service.LOCAL)
-        ngram.assert_called_once_with(machine, service.LOCAL)
+        ngram.assert_called_once_with(machine, service.LOCAL, startup_leases=None)
         r2.assert_called_once_with(machine, service.LOCAL)
         vision.assert_called_once_with(machine, service.LOCAL)
 

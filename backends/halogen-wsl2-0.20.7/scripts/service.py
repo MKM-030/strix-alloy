@@ -2,6 +2,7 @@
 import argparse
 import csv
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import ExitStack
 import hashlib
 import json
 import logging
@@ -27,6 +28,7 @@ import api_defaults as ad
 import capacity_policy as cp
 import disk_prompt_cache as disk_cache
 import lookup_source as lookup
+import ngram_ntfs
 from startup_monitor import StartupMonitor
 import runner as r
 import startup_guard as sg
@@ -310,7 +312,7 @@ def validate_disable_vision(value,checkpoint='v2'):
     return value
 
 
-def verify_checkpoint(machine, checkpoint, lookup_override=None, disable_vision=False):
+def verify_checkpoint(machine, checkpoint, lookup_override=None, disable_vision=False, *, startup_leases=None):
     validate_disable_vision(disable_vision,checkpoint)
     if lookup_override is not None:
         raise ValueError('Private lookup receipts are not rebound to 0.20.7')
@@ -318,7 +320,9 @@ def verify_checkpoint(machine, checkpoint, lookup_override=None, disable_vision=
     if checkpoint!='v2': raise ValueError('Unknown checkpoint')
     from checkpoint_integrity import verify, verify_drafter, verify_ngram, verify_vision
     receipts={'main':verify(machine,LOCAL)}
-    verify_ngram(machine,LOCAL)
+    ngram = verify_ngram(machine, LOCAL, startup_leases=startup_leases)
+    if isinstance(ngram, dict) and 'ntfs_mount_binding' in ngram:
+        receipts['ngram_ntfs_binding'] = ngram['ntfs_mount_binding']
     receipts['r2']=verify_drafter(machine,LOCAL)
     if not disable_vision:
         receipts['vision']=verify_vision(machine,LOCAL)
@@ -492,6 +496,9 @@ def build_manifest(o, attempt, run_id, checkpoint_receipts=None):
         result['api_defaults'] = ad.validate(o.api_defaults_json)
     if getattr(o, 'qualified_lookup', None) is not None:
         lookup.bind_manifest(result, o.qualified_lookup)
+    if checkpoint == 'v2' and 'ngram_ntfs_binding' in checkpoint_receipts:
+        result['ngram_ntfs_binding'] = checkpoint_receipts['ngram_ntfs_binding']
+        ngram_ntfs.binding_identity(result)
     if getattr(o, 'persist_prompt_cache', False):
         disk_cache.bind(result, r.MACHINE)
     return result
@@ -503,6 +510,7 @@ def reject_unqualified_manifest_overrides(m):
         if m.get(key) is not None:
             raise ValueError('Private runtime override is not rebound to 0.20.7: '+key)
     lookup.validate_manifest(m)
+    ngram_ntfs.binding_identity(m)
     return disk_cache.validate_manifest(m)
 
 
@@ -520,9 +528,12 @@ def command(m):
     if cache_source is not None:
         args += ['--mount', f'type=bind,src={cache_source},dst={disk_cache.DESTINATION},bind-recursive=disabled']
     for key,value in sorted(m['environment'].items()): args+=['--env',key+'='+value]
-    return args+['--entrypoint','python3',r.IMAGE,'/candidate/lease_supervisor.py',
-        '--lease','/service-state/lease.json','--run-id',m['run_id'],
-        '/bin/bash','/candidate/entrypoint-wsl-candidate.sh','all']
+    args += ['--entrypoint','python3',r.IMAGE,'/candidate/lease_supervisor.py',
+             '--lease','/service-state/lease.json','--run-id',m['run_id']]
+    if 'ngram_ntfs_binding' in m:
+        identity = m['ngram_ntfs_binding']['identity']
+        args += ['--ngram-identity', ','.join(str(identity[field]) for field in ngram_ntfs.IDENTITY_FIELDS)]
+    return args + ['/bin/bash','/candidate/entrypoint-wsl-candidate.sh','all']
 
 
 def owned(info,cid,m,running=False):
@@ -542,8 +553,8 @@ def owned(info,cid,m,running=False):
 
 def validate_created_container(info, cid, manifest):
     owned(info, cid, manifest)
-    if 'disk_prompt_cache' in manifest:
-        sg.validate_mounts(info, manifest['mounts'], manifest['disk_prompt_cache']['path'])
+    if 'disk_prompt_cache' in manifest or 'ngram_ntfs_binding' in manifest:
+        sg.validate_mounts(info, manifest['mounts'], manifest.get('disk_prompt_cache', {}).get('path'))
 
 
 def stop_owned(cid,m):
@@ -786,6 +797,11 @@ def main(argv=None):
 
 
 def serve(o):
+    with ExitStack() as startup_leases:
+        return _serve(o, startup_leases)
+
+
+def _serve(o, startup_leases):
     validate_options(o)
     resolved=resolve_capacity(o)
     r.configure()
@@ -795,7 +811,8 @@ def serve(o):
     # Retain both full stock checkpoint integrity checks even for a lookup-only
     # storage experiment. Only the extra canonical table mapping changes.
     checkpoint_receipts=verify_checkpoint(
-        machine,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False))
+        machine,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False),
+        startup_leases=None if getattr(o, 'lookup_receipt', None) is not None else startup_leases)
     if getattr(o, 'lookup_receipt', None) is not None:
         o.qualified_lookup = lookup.qualify(machine, LOCAL,
             {'receipt': o.lookup_receipt, 'receipt_sha256': o.lookup_receipt_sha256})
@@ -910,8 +927,11 @@ def serve(o):
             if health.get('status')=='ok':
                 if getattr(o,'checkpoint','v2') == 'v2':
                     selected_concurrency=m['environment'].get(kc.CONCURRENCY_MODE)
-                    validate_v2_runtime_log((attempt/'engine.log').read_text(
-                        encoding='utf-8',errors='replace'),
+                    runtime_log = (attempt/'engine.log').read_text(encoding='utf-8', errors='replace')
+                    if ('ngram_ntfs_binding' in m
+                            and '[lease] Verified the read-only N-Gram file bind' not in runtime_log):
+                        raise ValueError('Startup log lacks the N-Gram mount proof')
+                    validate_v2_runtime_log(runtime_log,
                         disable_vision=getattr(o,'disable_vision',False),
                         concurrency_mode=(None if selected_concurrency is None
                                           else int(selected_concurrency)),
@@ -951,6 +971,7 @@ def serve(o):
                     f['available_bytes']/r.GIB,f['commit_headroom_bytes']/r.GIB); last_note=time.monotonic()
             time.sleep(1)
         if not ready: raise TimeoutError('Startup timeout; model was not ready')
+        startup_leases.close()
         state.update(phase='ready',ready_at=time.time(),container_id=cid)
         atomic(STATE_PATH,state); atomic(attempt/'ready.json',state)
         log.info('READY: %s/v1 | model=%s | context=%s | serving=%s',API,MODEL,o.context_size,

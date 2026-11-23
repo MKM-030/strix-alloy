@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import stat
 import subprocess
 import time
 
@@ -61,10 +62,37 @@ class ProgressLease:
 def read_record(path):
     return json.loads(path.read_text(encoding="utf-8"))
 
+def verify_ngram_mount(encoded):
+    """Check the opened file's exact mount and generation before launching Halogen."""
+    path = '/ngram-w4b.hgn'
+    if os.environ.get('HALOGEN_NGRAM_TABLE') != path:
+        raise ValueError('Halogen is configured to open another N-Gram file')
+    parts = encoded.split(',')
+    if len(parts) != 5 or any(not value.isascii() or not value.isdecimal() or len(value) > 20 for value in parts):
+        raise ValueError('Invalid N-Gram generation argument')
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK)
+    try:
+        info = os.fstat(fd)
+        observed = (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+        if not stat.S_ISREG(info.st_mode) or observed != tuple(map(int, parts)):
+            raise ValueError('Mounted N-Gram file generation differs from the verified source')
+        if not os.fstatvfs(fd).f_flag & os.ST_RDONLY:
+            raise ValueError('N-Gram file mount is writable')
+        fdinfo = Path('/proc/self/fdinfo') / str(fd)
+        mount_ids = [line.split()[1] for line in fdinfo.read_text().splitlines() if line.startswith('mnt_id:\t')]
+        rows = (line.split() for line in Path('/proc/self/mountinfo').read_text().splitlines())
+        if (len(mount_ids) != 1 or not any(len(row) >= 6 and row[0] == mount_ids[0]
+                                          and row[4] == path and 'ro' in row[5].split(',') for row in rows)):
+            raise ValueError('N-Gram file is outside the selected read-only bind mount')
+    finally:
+        os.close(fd)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--lease", required=True, type=Path)
     p.add_argument("--run-id", required=True)
+    p.add_argument("--ngram-identity")
     p.add_argument("command", nargs=argparse.REMAINDER)
     args = p.parse_args(argv)
     if not args.command: p.error("Child command required")
@@ -95,6 +123,15 @@ def main(argv=None):
               + str(last_read_error),flush=True)
         return 2
     print("[lease] Guard progress confirmed; wall-clock offset is irrelevant",flush=True)
+    if args.ngram_identity is not None:
+        try:
+            verify_ngram_mount(args.ngram_identity)
+        except (OSError, ValueError) as exc:
+            print("[lease] Refusing model launch: " + str(exc), flush=True)
+            return 2
+        print("[lease] Verified the read-only N-Gram file bind", flush=True)
+    if stopping:
+        return 0
     child = subprocess.Popen(args.command, start_new_session=True)
     failure = None
     try:
