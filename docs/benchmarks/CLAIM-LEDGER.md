@@ -32,6 +32,12 @@ measured 57.00 API Decode tok/s at 58.62% native acceptance for Q8 at 8K.
 The Q4 controls reached 60.00 and 60.36 tok/s at 62.50% acceptance. Q8 lengthened
 Windows text delivery by 5.27–5.88%. All twelve responses were byte-identical.
 
+The [adaptive two-draft cap](halogen0207-adaptive-mtp-cap-two-20261123.md)
+raised the native acceptance percentage by 2.91 points at 8K and 2.15 at
+16K with the cost rule active. It accepted two fewer drafts per answer at
+both sizes. Windows text delivery took 1.18–1.41% longer across the two
+controls and both input sizes. All 24 responses matched byte for byte.
+
 ### Halogen 0.20.7 sparse-attention union
 
 On the frozen 8K novel prefix, the two stock windows averaged 57.350 and
