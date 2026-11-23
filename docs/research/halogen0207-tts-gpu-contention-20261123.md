@@ -94,3 +94,30 @@ The overlap run retained the per-trial SSE events, PCM, QPC timestamps,
 backend logs and summary in `tts-decode-overlap-run-v1` below the evidence
 directory above. The overlap summary SHA-256 is
 `c7f221456cee43707ab4f338ba8279d8241e7a95e4c7921b84e189f2e7e0a6f7`.
+
+## Candidate stage for NPU evaluation
+
+The matching native TTS logs identify the acoustic CodePredictor as the
+largest measured stage during Vulkan and Halogen overlap. The logged frame
+counts match the PCM lengths. The means below use the three measured pairs
+per backend and exclude both warmups. Stage times include native waits.
+
+| TTS backend | CodePredictor per frame | Audio codec per frame |
+| --- | ---: | ---: |
+| Vulkan before | 25.29 ms | 3.85 ms |
+| CPU | 34.27 ms | 21.82 ms |
+| Vulkan after | 25.28 ms | 3.37 ms |
+
+The pinned TTS build `9c37f4c` keeps the batch-one Talker output as 1,024
+FP32 values on the GPU. An independent predictor would receive those 4 KiB,
+the first token and existing sampler inputs, then return 15 acoustic IDs.
+The predictor would keep its own short KV state. The existing Vulkan
+readback also submits a queue operation and waits on a fence, even for
+host-visible memory. A candidate must include that cost, preserve all 15
+seeded decisions and beat approximately 25.3 ms per frame during overlap.
+The measured audio codec has a much smaller latency budget.
+
+The installed TTS path has no compiled NPU graph for this Q8_0 predictor and
+sampler. AMD documents specific ONNX formats for its Windows NPU provider.
+Compiling a new graph and checking its exact codes and PCM would be necessary
+before a paired throughput test. [AMD Windows ML model support](https://ryzenai.docs.amd.com/projects/WinML/en/stable/model_support.html)
