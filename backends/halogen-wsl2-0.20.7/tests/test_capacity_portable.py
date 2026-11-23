@@ -481,5 +481,63 @@ class CapacityTests(unittest.TestCase):
                         service.check_admission(bad,32768,disable_vision=True,slots=slots,kv_pool_positions=pool)
 
 
+class LookupSourceProjectionTests(unittest.TestCase):
+    def setUp(self):
+        self.machine = {'distro': 'fixture', 'user': 'fixture'}
+        self.source = '/mnt/e/models/qwen38-flash-next-w4b.hgn'
+        self.ext4 = '/home/fixture/service.lookup.hgn'
+        stock = dict(size=service.lookup.SOURCE_BYTES, device=71, inode=10, mtime_ns=20, ctime_ns=30)
+        ext4 = dict(size=service.lookup.OUTPUT_BYTES, device=100, inode=11, mtime_ns=21, ctime_ns=31)
+        self.receipt = {
+            'source': {'path': self.source, 'identity': stock, 'header_sha256': 'a' * 64},
+            'output': {'path': self.ext4, 'identity': ext4},
+        }
+        self.live = {'source': {**stock, 'device': 43}, 'output': ext4.copy(),
+                     'source_header_sha256': 'a' * 64}
+        self.integrity = {'source': self.source, 'sha256': service.lookup.SOURCE_SHA,
+                          'identity': self.live['source'].copy()}
+
+    def preflight(self, live, integrity):
+        with tempfile.TemporaryDirectory() as folder:
+            local = Path(folder)
+            (local / 'ngram-integrity.json').write_text(json.dumps(integrity), encoding='utf-8')
+            with patch.object(service.portable, 'LOCAL', local), \
+                    patch.object(service.portable, 'wsl', return_value=json.dumps(live)):
+                return service.lookup.metadata(self.machine, self.receipt, local=local)
+
+    def test_current_stock_receipt_allows_device_only_rebind(self):
+        self.assertEqual(self.preflight(self.live, self.integrity), self.live)
+
+    def test_stale_or_foreign_stock_receipt_cannot_rebind(self):
+        for wrong in (
+            {**self.integrity, 'identity': self.receipt['source']['identity']},
+            {**self.integrity, 'source': '/mnt/e/models/other.hgn'},
+            {**self.integrity, 'sha256': 'b' * 64},
+        ):
+            with self.subTest(wrong=wrong), self.assertRaisesRegex(ValueError, 'stock integrity receipt'):
+                self.preflight(self.live, wrong)
+
+    def test_new_inode_size_or_timestamp_still_fails(self):
+        for field in ('inode', 'size', 'mtime_ns', 'ctime_ns'):
+            observed = deepcopy(self.live)
+            observed['source'][field] += 1
+            newer = {**self.integrity, 'identity': observed['source']}
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'identity'):
+                self.preflight(observed, newer)
+
+    def test_rebind_cannot_admit_mutated_ext4_identity_or_header(self):
+        bad_ext4 = {**self.live, 'output': {**self.live['output'], 'device': 55}}
+        bad_header = {**self.live, 'source_header_sha256': 'c' * 64}
+        for observed in (bad_ext4, bad_header):
+            with self.subTest(observed=observed), self.assertRaisesRegex(ValueError, 'identity or source header'):
+                self.preflight(observed, self.integrity)
+
+    def test_standalone_metadata_call_stays_strict(self):
+        with patch.object(service.portable, 'wsl', return_value=json.dumps(self.live)):
+            with self.assertRaisesRegex(ValueError, 'identity or source header'):
+                service.lookup.metadata(self.machine, self.receipt)
+
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -170,14 +170,30 @@ print(json.dumps(dict(source=a,output=b,source_header_sha256=hashlib.sha256(h).h
 '''
 
 
-def metadata(machine, receipt):
+def metadata(machine, receipt, *, local=None):
     import portable
     result = json.loads(portable.wsl(machine['distro'], machine['user'], 'python3', '-B', '-c',
         METADATA_CODE, receipt['source']['path'], receipt['output']['path']))
-    if (result.get('source') != receipt['source']['identity'] or
+    observed = result.get('source')
+    original = receipt['source']['identity']
+    if (not identity(observed, SOURCE_BYTES) or
+            any(observed[key] != original[key] for key in IDENTITY_KEYS if key != 'device') or
+            (local is None and observed != original) or
             result.get('output') != receipt['output']['identity'] or
             result.get('source_header_sha256') != receipt['source']['header_sha256']):
         raise ValueError('Lookup source/output identity or source header changed')
+    if local is not None:
+        import checkpoint_integrity
+        # WSL can renumber the NTFS projection. Accept only a standard
+        # full-source receipt that already binds the exact observed device.
+        source_receipt = Path(local) / 'ngram-integrity.json'
+        portable.reject_links(source_receipt)
+        with source_receipt.open('rb') as stream:
+            content = stream.read(MAX_RECEIPT_BYTES + 1)
+        if len(content) > MAX_RECEIPT_BYTES or not checkpoint_integrity.receipt_matches(
+                json.loads(content, object_pairs_hook=unique_object), observed,
+                size=SOURCE_BYTES, sha=SOURCE_SHA, source=receipt['source']['path']):
+            raise ValueError('Lookup original source lacks a matching pinned stock integrity receipt')
     return result
 
 
@@ -386,31 +402,21 @@ def validate_manifest(manifest):
 
 
 def qualify(machine, local, configuration):
-    import checkpoint_integrity
     import portable
     configuration = validate_configuration(configuration)
     receipt = read_receipt(configuration)
     selected = machine.get('ngram_source') or machine['models'] + '/' + portable.MODELS[0][0]
     if receipt['source']['path'] != selected:
         raise ValueError('Lookup receipt source differs from the installed stock lookup')
-    # Require the already qualified full-source receipt; never write it or rehash it.
-    source_receipt = Path(local) / 'ngram-integrity.json'
-    portable.reject_links(source_receipt)
-    with source_receipt.open('rb') as stream:
-        content = stream.read(MAX_RECEIPT_BYTES + 1)
-    if len(content) > MAX_RECEIPT_BYTES or not checkpoint_integrity.receipt_matches(
-            json.loads(content, object_pairs_hook=unique_object), receipt['source']['identity'],
-            size=SOURCE_BYTES, sha=SOURCE_SHA, source=selected):
-        raise ValueError('Lookup original source lacks a matching pinned stock integrity receipt')
-    metadata(machine, receipt)
+    metadata(machine, receipt, local=local)
     # Payload correctness is inherited only from the pinned completed readback;
     # current file identities/header bytes above must still match it exactly.
     return _seal(configuration, receipt)
 
 
-def revalidate(machine, seal):
+def revalidate(machine, seal, *, local=None):
     if seal is None: return
     receipt = validate_seal(seal)
     if (machine.get('ngram_source') or machine['models'] + '/qwen38-flash-next-w4b.hgn') != receipt['source']['path']:
         raise ValueError('Installed stock lookup changed after qualification')
-    metadata(machine, receipt)
+    metadata(machine, receipt, local=local)

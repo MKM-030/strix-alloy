@@ -8,6 +8,16 @@ separate publisher measurements report **70.2 tok/s** over eight English
 essay prompts and **67.8 tok/s** over two examples explaining a long
 document. [Publisher methodology](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/performance.md)
 
+In the publisher's alternating 0.20.6/0.20.7 v2 comparison, drafted
+Decode rose from 71.20 to 74.57 tok/s, about 4.73%. The published serial
+figure rose from 40.73 to 41.07 tok/s, and cache-off 8K Prefill moved
+from 1,952 to 1,953 tok/s. The local ten-prompt serial replay averaged
+32.93 API Decode tok/s and 35.06 output tok/s over complete Windows HTTP
+requests. The retained harness omits the serial engine aggregate when
+the completion ledger has no named serial rounds. The published serial
+figure's timing scope remains unverified, and the contribution of the
+host and driver remains unresolved. [Publisher methodology](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/performance.md) · [Local replay](halogen0207-publisher-replay-20261123.md)
+
 Our WSL2 replay of the ten shipped prompts averaged **71.21 API Decode
 tok/s** and accepted **4,887/6,021 head drafts (81.17%)**. The per-request
 mean of output tokens divided by complete Windows HTTP time was 74.77

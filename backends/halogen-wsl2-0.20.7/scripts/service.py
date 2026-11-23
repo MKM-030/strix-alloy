@@ -873,7 +873,7 @@ def _serve(o, startup_leases):
         frame=host.frame(); check_admission(frame,o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o))
         atomic(attempt/'admission-create.json',frame)
         log.info('Creating Halogen 0.20.7: context=%s, slots=%s; no model download',o.context_size,resolved['slots'])
-        lookup.revalidate(machine, m.get('lookup_tuning'))
+        lookup.revalidate(machine, m.get('lookup_tuning'), local=LOCAL)
         disk_cache.revalidate(m, machine)
         keepalive.check()
         creation_attempted=True
@@ -895,7 +895,7 @@ def _serve(o, startup_leases):
         r.exclusive_host(); baseline=host.frame(); check_admission(baseline,o.context_size,getattr(o,"checkpoint","v2"),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o))
         atomic(attempt/'admission-start.json',baseline)
         if cancelled(): raise InterruptedError('Startup cancelled')
-        lookup.revalidate(machine, m.get('lookup_tuning'))
+        lookup.revalidate(machine, m.get('lookup_tuning'), local=LOCAL)
         disk_cache.revalidate(m, machine)
         keepalive.check()
         r.docker('start',cid)
