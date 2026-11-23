@@ -46,8 +46,10 @@ The lifecycle restored regular Halogen on port 8840. Authenticated
 controller and backend health and Voice, ASR and TTS readiness passed.
 Keep Trunk stays off in the regular profile. The earlier
 [paired 16K Prefill experiment](halogen0207-prefill16384-20261123.md)
-found output changes when changing the chunk and arena. A smaller arena
-would need to qualify as a separate change before any speed comparison.
+found output changes when changing the chunk and arena. A follow-up kept
+the Prefill arena at 8,192, lowered the BF16 KV pool to 10,240 positions
+and completed the paired 8K comparison.
+[Smaller-pool result](halogen0207-keep-trunk-small-pool-20261123.md)
 
 ## Evidence
 

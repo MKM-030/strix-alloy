@@ -313,3 +313,34 @@ The same FP32-to-PCM conversion reproduced the native PCM bytes from the
 recorded native FP32 samples. The exported computation failed exact PCM
 parity. The first-frame CPU result is retained as `width1-native-k463hna9/cpu-check.json`,
 SHA-256 `1ffd19bd661e3e8f7734b4d8ecbd6f237b5f6158e812bdbf384649096129e8bd`.
+
+## Talker timing and a resident NPU state
+
+The 28-layer Talker is a separate stage from CodePredictor and the DAC.
+In the three measured 8K Halogen overlap pairs it took 310.9, 283.3 and
+308.6 ms for 34, 31 and 34 audio frames. That is **301 ms per utterance**
+and **9.12 ms per frame**. The separate excluded Vulkan prime had 33
+frames at 4.45 ms each. The native stage times include waits. The
+342-ms difference in Halogen delivery time belongs to the comparison
+between idle speech and full synthesis.
+
+The pinned speech implementation loads the Talker and CodePredictor
+on the same backend and keeps their 4 KiB FP32 hidden row on the device.
+Its public interface exposes whole synthesis. The current 4,096-position
+FP32 Talker KV allocation is 896 MiB. Copying the active KV state out
+and back at each frame would move an estimated 66–81 MiB per frame on
+the observed trajectory. A resident external state would instead need
+the Talker's MRoPE, sampler, code feedback and a consumer for its hidden
+row. [Pinned speech API](https://github.com/ServeurpersoCom/qwentts.cpp/blob/9c37f4ce84c779930e1c1117ce6d8f71fca37433/src/qwen.h)
+
+AMD's documented WinML NPU transformer formats cover BF16 conversion
+and A16W8 QDQ. Exact execution of the native Q8_0 Talker and FP32
+state remains unqualified. Vision is disabled in the regular Halogen
+profile, ASR runs on CPU, and the NPU add-on model IDs handle separate
+requests. The assessment used retained Vulkan data and source files.
+[AMD model formats](https://ryzenai.docs.amd.com/projects/WinML/en/stable/model_support.html)
+· [Halogen NPU interfaces](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/NPU.md)
+
+The local receipt `sources-20261123/talker-npu-overlap-bounds-v1.json`
+binds the original overlap logs, timing arithmetic and source files.
+SHA-256 `41088cc8ee3a8e28d45ae035cd515663d54a53f4fe37c8867c6e552f0681f95d`.
