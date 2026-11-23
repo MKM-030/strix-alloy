@@ -266,3 +266,25 @@ The dependency proof covers input history. Precision, VitisAI placement,
 transfer time and any effect on Halogen Decode still need measurement.
 The offline preparation receipt `npu-tts-codec-dac-overlap-prep-v1/preparation.json`
 has SHA-256 `456c13e9ee25ea0f6fba7c39db903905b7670aa5f92d8c91fc1b06ac9a204733`.
+
+### Vulkan reference for the two chunk schedules
+
+A private Vulkan run decoded the same 141 reference frames and 33
+generated frames in each arm. Both arms produced 63,360 samples at 24 kHz
+and finished at cursor 174. Reconstructing PCM16 from the saved FP32 in
+each arm reproduced its native PCM bytes exactly. Comparing the two
+schedules gave different values in 41,111 PCM16 samples, with a maximum
+absolute difference of 525 and RMS difference of 27.62 sample units.
+All FP32 samples differed, with a maximum difference of 0.0160262.
+
+Use the stock chunk schedule as the production reference. The width-one
+stream supplies its own reference for a width-one graph. The first render
+attempt ended during a health check and produced no terminal audio. The
+completed run used the same native executable and fixtures with a
+three-second overall health deadline and stage-specific timing. The
+lowest physical reserve in either completed arm was 29.71 GiB. Halogen
+and the Voice services passed readiness after both renderer processes
+closed. NPU placement and throughput remain unmeasured.
+
+The local `vulkan-seeded-42-v2-bdicvgwv/comparison.json` receipt has
+SHA-256 `389c1790f4c7d64851dd5688ad0cfc188e15a6c5a174d4f8544bf6e9ae2e9e42`.

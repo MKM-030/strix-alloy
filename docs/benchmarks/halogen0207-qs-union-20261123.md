@@ -94,6 +94,14 @@ byte was at zero-based offset 102. The stock warmup had 66 verification
 rounds and 60/93 accepted head drafts. Mode 4 had 62 rounds and 64/104.
 The campaign stopped at that response. Candidate throughput is unqualified.
 
+The embedded gfx1151 code uses different FP32 partial-sum groupings
+for Q·K before softmax. Mode 4 has a chain of three additions at
+`0x20a48c`, `0x20a498` and `0x20a4a4`. Mode 5 uses paired additions
+at `0x2160fc` in its corresponding block. Both use the 1/16 scale.
+The instruction differences establish a change in arithmetic order.
+Attributing the first differing token to that order would require
+matching intermediary values from the two kernels.
+
 The two original SSE streams and request bytes are retained under
 `server/.local/halogen-update-20261122/primary0207/qsa-bt4-campaign-prep-v1/qsa-bt4-run-v1`.
 The stock warmup SSE has SHA-256 `f2538cd154c1328972e35a557bef095deb8e41ebb92002ceb25bbca85b6f4341`.
