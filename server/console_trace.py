@@ -1,12 +1,9 @@
-"""Opt-in, bounded console observation; never a response transform or file log.
-
-Decoding/display work is capped, but synchronous stdout can add transport
-latency when the console is slow. Keep tracing disabled for benchmarks.
-"""
+"""Opt-in, bounded console observation outside the gateway's stdout path."""
+from collections import deque
 from datetime import datetime, timezone
 import json
-import logging
 import sys
+from threading import Condition, Thread
 import time
 import unicodedata
 from uuid import uuid4
@@ -14,26 +11,80 @@ from uuid import uuid4
 MAX_EVENT_BYTES = 256 * 1024
 MAX_JSON_BYTES = 256 * 1024
 MAX_DISPLAY_CHARS = 64 * 1024
+MAX_PENDING_LINES = 32
+CONSOLE_DRAIN_SECONDS = 0.5
 _CREDENTIAL_FIELDS = {'authorization', 'apikey', 'xapikey', 'accesstoken',
                       'clientsecret', 'password', 'backendtoken'}
 
 
-class _StdoutHandler(logging.StreamHandler):
-    def handleError(self, record):
-        # A closed/broken console must never change an API response.
-        pass
-
-
 class ConsoleTrace:
-    """One console-only logger per gateway session; no root logger propagation."""
-    def __init__(self, *, secrets=(), stream=None):
+    """Render and redact on the caller, with optional background console writes."""
+    def __init__(self, *, secrets=(), stream=None, background=False):
         self.session = uuid4().hex
         self.secrets = tuple(secret for secret in secrets if secret)
-        self.logger = logging.Logger('alloy.console_trace', logging.INFO)
-        self.logger.propagate = False
-        self.handler = _StdoutHandler(sys.stdout if stream is None else stream)
-        self.handler.setFormatter(logging.Formatter('%(message)s'))
-        self.logger.addHandler(self.handler)
+        self.stream = sys.stdout if stream is None else stream
+        self._condition = Condition() if background else None
+        self._pending = deque()
+        self._dropped = 0
+        self._closed = False
+        self._writer = None
+
+    def start_writer(self):
+        if self._condition is None:
+            return
+        with self._condition:
+            if self._closed or self._writer is not None:
+                return
+            writer = Thread(target=self._write_pending, name='alloy-console-trace', daemon=True)
+            try:
+                writer.start()
+            except RuntimeError:
+                self._closed = True
+            else:
+                self._writer = writer
+
+    def close(self):
+        if self._condition is None:
+            return
+        with self._condition:
+            if self._closed:
+                return
+            self._closed = True
+            self._condition.notify()
+        if self._writer is not None:
+            self._writer.join(timeout=CONSOLE_DRAIN_SECONDS)
+        with self._condition:
+            self._pending.clear()
+            self._dropped = 0
+
+    def _write_pending(self):
+        while True:
+            with self._condition:
+                self._condition.wait_for(lambda: self._pending or self._dropped or self._closed)
+                # Report overflow before the next queued line, without taking up a queue slot.
+                dropped, self._dropped = self._dropped, 0
+                line = self._pending.popleft() if self._pending else None
+                if line is None and not dropped:
+                    return
+            if dropped:
+                row = self._row(None, 'trace_skipped')
+                row.update(reason='stdout_backlog', dropped_events=dropped)
+                self._write_stdout(json.dumps(row, separators=(',', ':')))
+            if line is not None:
+                self._write_stdout(line)
+
+    def _write_stdout(self, line):
+        try:
+            self.stream.write('[api] ' + line + '\n')
+            self.stream.flush()
+        except Exception:
+            # Console readiness does not affect the HTTP response.
+            pass
+
+    def _row(self, request_id, event):
+        return {'timestamp': datetime.now(timezone.utc).isoformat(timespec='milliseconds')
+                .replace('+00:00', 'Z'), 'session': self.session,
+                'request_id': request_id, 'event': event}
 
     def start(self, method, path, backend):
         request = RequestTrace(self)
@@ -73,9 +124,7 @@ class ConsoleTrace:
 
     def write(self, request_id, event, fields):
         try:
-            row = {'timestamp': datetime.now(timezone.utc).isoformat(timespec='milliseconds')
-                   .replace('+00:00', 'Z'), 'session': self.session,
-                   'request_id': request_id, 'event': event}
+            row = self._row(request_id, event)
             row.update(self._safe(fields, [MAX_DISPLAY_CHARS]))
             text = json.dumps(row, ensure_ascii=False, separators=(',', ':'))
             # JSON already escapes C0 characters; also escape C1, bidi/format
@@ -83,13 +132,23 @@ class ConsoleTrace:
             text = ''.join('\\u%04x' % ord(char)
                            if unicodedata.category(char) in ('Cc', 'Cf', 'Cs') else char
                            for char in text)
-            encoding = getattr(self.handler.stream, 'encoding', None)
+            encoding = getattr(self.stream, 'encoding', None)
             if encoding:
                 try:
                     text.encode(encoding)
                 except UnicodeError:
                     text = json.dumps(row, ensure_ascii=True, separators=(',', ':'))
-            self.logger.info('[api] %s', text)
+            if self._condition is None:
+                self._write_stdout(text)
+            else:
+                with self._condition:
+                    if self._closed:
+                        return
+                    if len(self._pending) >= MAX_PENDING_LINES:
+                        self._dropped += 1
+                    else:
+                        self._pending.append(text)
+                    self._condition.notify()
         except Exception:
             # Observation is best effort, including unusual payloads/stdio.
             pass

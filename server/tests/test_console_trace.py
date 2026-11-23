@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 import sys
 import tempfile
+import threading
 import unittest
 from unittest.mock import patch
 
@@ -23,6 +24,23 @@ HEADERS = {'Authorization': 'Bearer ' + KEY, 'x-api-key': KEY}
 def records(output):
     return [json.loads(line[6:]) for line in output.getvalue().splitlines()
             if line.startswith('[api] ')]
+
+
+class BlockingOutput(io.StringIO):
+    def __init__(self):
+        super().__init__()
+        self.entered = threading.Event()
+        self.release = threading.Event()
+        self.expired = threading.Event()
+        self.writer = None
+
+    def write(self, text):
+        if not self.entered.is_set():
+            self.writer = threading.current_thread()
+            self.entered.set()
+            if not self.release.wait(timeout=2):
+                self.expired.set()
+        return super().write(text)
 
 
 class ConsoleGatewayTests(unittest.IsolatedAsyncioTestCase):
@@ -84,6 +102,19 @@ class ConsoleGatewayTests(unittest.IsolatedAsyncioTestCase):
         await client.start_server()
         return gateway, client
 
+    async def wait_for_trace(self, predicate):
+        async with asyncio.timeout(2):
+            while True:
+                rows = records(self.output)
+                if predicate(rows):
+                    return rows
+                await asyncio.sleep(.01)
+
+    async def end_records(self, count):
+        rows = await self.wait_for_trace(
+            lambda rows: sum(row['event'] == 'end' for row in rows) >= count)
+        return [row for row in rows if row['event'] == 'end']
+
     async def test_default_does_not_emit_or_construct_trace(self):
         with patch('gateway.ConsoleTrace', side_effect=AssertionError('default must be cheap')):
             gateway, client = await self.client()
@@ -101,13 +132,14 @@ class ConsoleGatewayTests(unittest.IsolatedAsyncioTestCase):
             json={'model': 'fixture', 'stream': True,
                   'messages': [{'role': 'user', 'content': prompt}], 'api_key': KEY})
         first = await asyncio.wait_for(response.content.readuntil(b'\r\n\r\n'), 2)
-        before_end = records(self.output)
-        self.assertTrue(any(row['event'] == 'request' for row in before_end))
-        self.assertTrue(any(row.get('text') == 'Grüße 😀' for row in before_end))
+        before_end = await self.wait_for_trace(
+            lambda rows: any(row.get('text') == 'Grüße 😀' for row in rows))
+        self.assertEqual([row['event'] for row in before_end],
+                         ['request', 'payload', 'upstream', 'answer'])
         self.assertFalse(self.release.is_set())
         self.release.set()
         self.assertEqual(first + await response.read(), self.wire)
-        rows = records(self.output)
+        rows = await self.wait_for_trace(lambda rows: rows and rows[-1]['event'] == 'end')
         self.assertTrue(any(row['event'] == 'reasoning' and row['text'] == 'explicit thought'
                             for row in rows))
         self.assertTrue(any(row['event'] == 'tool_call' for row in rows))
@@ -127,6 +159,32 @@ class ConsoleGatewayTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.seen[0][1]['Authorization'], 'Bearer ' + BACKEND_KEY)
         self.assertEqual(gateway.completed, 1)
 
+    async def test_blocked_stdout_does_not_delay_response_and_writer_is_joined(self):
+        output = BlockingOutput()
+        with contextlib.redirect_stdout(output):
+            gateway, client = await self.client(console_trace=True)
+        self.release.set()
+        try:
+            async with asyncio.timeout(3):
+                response = await client.post('/v1/chat/completions', headers=HEADERS,
+                                             json={'model': 'fixture', 'stream': True})
+                body = await response.read()
+                while not output.entered.is_set():
+                    await asyncio.sleep(.01)
+            self.assertFalse(output.expired.is_set(),
+                             'the gateway waited for the blocked console before sending the response')
+            self.assertFalse(output.release.is_set())
+            self.assertEqual(response.status, 200)
+            self.assertEqual(body, self.wire)
+            self.assertEqual(self.seen[0][0]['model'], 'real-model')
+            self.assertEqual(gateway.completed, 1)
+        finally:
+            output.release.set()
+            await asyncio.wait_for(client.close(), 3)
+        self.assertIsNot(output.writer, threading.current_thread())
+        self.assertFalse(output.writer.is_alive())
+        self.assertEqual(records(output)[-1]['event'], 'end')
+
     async def test_rejections_have_unique_request_ids_and_actual_status(self):
         _, client = await self.client(console_trace=True)
         unauthorized = await client.post('/v1/chat/completions', json={'model': 'fixture'})
@@ -136,7 +194,7 @@ class ConsoleGatewayTests(unittest.IsolatedAsyncioTestCase):
         unsupported = await client.post('/v1/embeddings', headers=HEADERS,
                                         json={'model': 'fixture'})
         self.assertEqual(unsupported.status, 501)
-        ends = [row for row in records(self.output) if row['event'] == 'end']
+        ends = await self.end_records(3)
         self.assertEqual([row['status'] for row in ends], [401, 400, 501])
         self.assertEqual(len({row['request_id'] for row in ends}), 3)
         self.assertEqual(self.seen, [])
@@ -153,7 +211,7 @@ class ConsoleGatewayTests(unittest.IsolatedAsyncioTestCase):
             await asyncio.sleep(.01)
         self.assertEqual(gateway.active, 0)
         self.assertEqual(gateway.cancelled, 1)
-        ends = [row for row in records(self.output) if row['event'] == 'end']
+        ends = await self.end_records(1)
         self.assertEqual(len(ends), 1)
         self.assertEqual(ends[0]['outcome'], 'cancelled')
 
@@ -167,7 +225,7 @@ class ConsoleGatewayTests(unittest.IsolatedAsyncioTestCase):
         busy = await client.post('/v1/chat/completions', headers=HEADERS,
                                  json={'model': 'fixture'})
         self.assertEqual(busy.status, 429)
-        ends = [row for row in records(self.output) if row['event'] == 'end']
+        ends = await self.end_records(2)
         self.assertEqual([(row['status'], row['outcome']) for row in ends],
                          [(503, 'upstream_error'), (429, 'complete')])
 
@@ -332,6 +390,63 @@ class ConsoleDecoderTests(unittest.TestCase):
         trace.response(200, 'application/json')
         trace.feed(b'{}')
         trace.finish(200)
+
+
+class BackgroundConsoleTests(unittest.TestCase):
+    def test_blocked_console_bounds_the_backlog_and_reports_dropped_events(self):
+        from console_trace import ConsoleTrace, MAX_PENDING_LINES
+        output = BlockingOutput()
+        console = ConsoleTrace(stream=output, background=True)
+        console.start_writer()
+        try:
+            trace = console.start('POST', '/v1/chat/completions', 'fixture')
+            self.assertTrue(output.entered.wait(timeout=1))
+            for ordinal in range(MAX_PENDING_LINES + 3):
+                trace.emit('answer', ordinal=ordinal)
+            self.assertFalse(output.expired.is_set())
+        finally:
+            output.release.set()
+            console.close()
+        rows = records(output)
+        self.assertEqual(rows[0]['event'], 'request')
+        self.assertEqual([row['ordinal'] for row in rows if row['event'] == 'answer'],
+                         list(range(MAX_PENDING_LINES)))
+        drops = [row for row in rows if row['event'] == 'trace_skipped']
+        self.assertEqual(len(drops), 1)
+        self.assertIsNone(drops[0]['request_id'])
+        self.assertEqual(drops[0]['reason'], 'stdout_backlog')
+        self.assertEqual(drops[0]['dropped_events'], 3)
+        self.assertFalse(output.writer.is_alive())
+
+    def test_background_close_returns_while_console_is_still_blocked(self):
+        from console_trace import CONSOLE_DRAIN_SECONDS, ConsoleTrace
+        output = BlockingOutput()
+        console = ConsoleTrace(stream=output, background=True)
+        closed = threading.Event()
+
+        def close_console():
+            console.close()
+            closed.set()
+
+        closer = threading.Thread(target=close_console, daemon=True)
+        console.start_writer()
+        try:
+            console.start('POST', '/v1/chat/completions', 'fixture')
+            self.assertTrue(output.entered.wait(timeout=1))
+            closer.start()
+            self.assertTrue(closed.wait(timeout=CONSOLE_DRAIN_SECONDS + 1))
+            self.assertFalse(output.expired.is_set())
+            self.assertFalse(output.release.is_set())
+            self.assertTrue(output.writer.is_alive())
+        finally:
+            output.release.set()
+            if closer.ident is not None:
+                closer.join(timeout=2)
+            console.close()
+            if output.writer is not None:
+                output.writer.join(timeout=2)
+        self.assertFalse(closer.is_alive())
+        self.assertFalse(output.writer.is_alive())
 
 
 class ConsoleConfigTests(unittest.TestCase):

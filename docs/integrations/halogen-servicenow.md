@@ -535,9 +535,20 @@ escaped. Display values are capped at 65,536 characters and parsed response even
 backpressure still follow the normal gateway path. Content events are not sent
 to the rotating operational log handler.
 
-The trace's stdout writes are synchronous. A slow console can add API latency
-even when parsing and displayed values stay bounded. `console_trace` defaults
-to false; disable content tracing for throughput benchmarks.
+The gateway writes trace lines on a separate console thread. It queues up to
+32 redacted lines and continues serving the API if stdout is slow. If the queue
+fills, a `trace_skipped` event with reason `stdout_backlog` reports how many
+events were dropped once the console can write again. Shutdown allows up to
+half a second to drain pending lines, then discards any remaining backlog.
+Trace parsing still uses gateway CPU.
+`console_trace` defaults to false. Disable it for engine throughput benchmarks.
+
+In a loopback test with a fixed 16-event SSE response and an 8 ms delay per
+stdout write, the background writer delivered the complete response in
+10.83 ms on average, versus 181.96 ms and 183.59 ms in the synchronous controls.
+All responses matched byte for byte. Each group excluded one warmup and
+measured five requests. This test used a simulated sink and upstream. It
+measures gateway response delivery under stdout backpressure.
 
 For the ServiceNow `stream: false` example, arrival is visible immediately and
 answer content becomes visible when the upstream JSON response arrives. For

@@ -363,7 +363,7 @@ class Gateway:
         self.queue_limit=queue_limit; self.queue_seconds=queue_seconds; self.waiters=deque()
         self.completed=0; self.cancelled=0; self.client=None
         self.last_healthy=0.0; self.probe_lock=asyncio.Lock()
-        self.console_trace=ConsoleTrace(secrets=(secret,backend_secret)) if console_trace else None
+        self.console_trace=ConsoleTrace(secrets=(secret,backend_secret),background=True) if console_trace else None
         self.voice_contract_diagnostics=voice_contract_diagnostics
         self.native_sdk_proxy=native_sdk_proxy
         self.controller_consumer=controller_consumer
@@ -619,11 +619,14 @@ class Gateway:
             self.client=client
             self.last_healthy=0.0
             task=asyncio.create_task(self.health_monitor())
+            if self.console_trace is not None: self.console_trace.start_writer()
             try: yield
             finally:
                 task.cancel()
                 try: await task
                 except asyncio.CancelledError: pass
+                finally:
+                    if self.console_trace is not None: await asyncio.to_thread(self.console_trace.close)
 
     def upstream_headers(self):
         headers={'Accept-Encoding':'identity'}
