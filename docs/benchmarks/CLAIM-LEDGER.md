@@ -11,6 +11,14 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
+### Halogen 0.20.7 sparse-attention union
+
+On the frozen 8K novel prefix, the two stock windows averaged 57.350 and
+57.580 API Decode tok/s at 65.98% native-head acceptance. QS Union reached
+61.385 tok/s at 68.63%. Its 8K and 16K output bytes differed from stock,
+so the production profile uses stock sparse attention. [Bracketed comparison
+and Windows HTTP timings](halogen0207-qs-union-20261123.md).
+
 ### Current Halogen 0.20.7: bracketed draft-vocabulary Q8 campaign
 
 The [Q4/Q8/Q4 report](halogen0207-draft-vocab-q8-20261122.md) records a

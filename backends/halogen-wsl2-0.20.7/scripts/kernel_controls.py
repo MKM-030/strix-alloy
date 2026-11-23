@@ -22,6 +22,8 @@ COUNTER_MAX={
     'HALOGEN_CACHE_RESERVE_MB':4096,
 }
 MODES={
+    'HALOGEN_ATTN_QS_UNION':frozenset((1,)),  # explicit sparse-attention trial
+
     'HALOGEN_NGRAM_GATHER_THREADS':frozenset((32,64,128)),
     'HALOGEN_FA_OPT':frozenset(range(8)),  # low-three-bit optimization mask
     'HALOGEN_I4R_DEC_GROUP':frozenset((2,)),  # explicit two-row decode trial

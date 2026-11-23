@@ -106,6 +106,20 @@ class ManagedKernelControlsTests(unittest.TestCase):
             with self.subTest(value=invalid), self.assertRaises(ValueError):
                 module.environment({flag: invalid})
 
+    def test_0207_sparse_attention_union_requires_explicit_opt_in(self):
+        engine = self.profile('0.20.7')['engine']
+        flag = 'HALOGEN_ATTN_QS_UNION'
+        module = controller.halogen_kernel_module(self.repo / engine['directory'])
+        self.assertNotIn(flag, module.environment({}))
+        engine['kernel_controls'] = {flag: 1}
+        directory = controller.validate_engine(engine, self.repo)
+        args = controller.halogen_kernel_arguments(engine, directory)
+        self.assertEqual(json.loads(args[1]), {flag: 1})
+        self.assertEqual(module.environment({flag: 1}), {flag: '1'})
+        for invalid in (0, 2, True, '1'):
+            with self.subTest(value=invalid), self.assertRaises(ValueError):
+                module.environment({flag: invalid})
+
     def test_tuning_copies_validated_kernel_controls(self):
         source=self.profile(); before=copy.deepcopy(source)
         controls={'HALOGEN_DN_SCAN':0}; result=self.tune(source,kernel_controls=controls)
