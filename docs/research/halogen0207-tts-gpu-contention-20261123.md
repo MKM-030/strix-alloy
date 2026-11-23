@@ -368,3 +368,41 @@ NPU remain open. [ONNX blocked dequantization](https://onnx.ai/onnx/operators/on
 The local `sources-20261123/talker-q8-format-proof-v1.json` receipt
 binds the CPU reproduction, pinned original weights and test arithmetic.
 SHA-256 `0d167fcb13c148e3b2787c83303b623722a1fd9502db2cb281be38d54c825f74`.
+
+## Warm cloned-voice reference cache
+
+An opt-in qwentts.cpp cache reduced mean time to first PCM from
+**44.36 ms to 39.98 ms** and mean time to audio EOF from **610.95 ms to
+602.21 ms**. The cache reuses the original FP32 projection of a cloned
+voice's reference codes. The broader `PromptBuild` stage fell from a
+mean of 6.75 ms to 2.47 ms.
+
+| Mean latency | Off before | On | Off after | Change vs. mean Off |
+| --- | ---: | ---: | ---: | ---: |
+| Request to first PCM | 44.11 ms | 39.98 ms | 44.60 ms | −4.38 ms (−9.88%) |
+| Request to audio EOF | 615.03 ms | 602.21 ms | 606.86 ms | −8.74 ms (−1.43%) |
+| `PromptBuild` | 6.70 ms | 2.47 ms | 6.80 ms | −4.28 ms (−63.46%) |
+
+All three windows used the same rebuilt qwentts.cpp executable at
+`9c37f4c` and the Vulkan DLLs from the running TTS service. Each window
+registered the same 141-frame synthetic reference, excluded one warmup
+and measured three requests with identical text, seed 42 and a 96-token
+cap. All 12 PCM responses matched the corresponding historical Vulkan
+responses byte for byte. The lowest reported physical or commit
+reserve was 24.93 GiB. Halogen generation was idle throughout, and the
+regular Halogen, Voice, ASR and TTS listeners stayed online.
+
+The result measures speech latency for this fixture. In the earlier
+overlap test, the sample standard deviation for Halogen delivery was
+9.28 ms over three stock overlap runs. A Halogen Prefill, Decode or MTP
+effect from this cache remains unmeasured.
+
+The patch, build, protocol and raw evidence are retained under
+`server/.local/halogen-update-20261122/primary0207/tts-reference-projection-cache-prep-v1`.
+
+| Evidence | SHA-256 |
+| --- | --- |
+| Source patch | `b5500c27fee8e6e7e06674fe52231136d1bfaa5fbb305c7464e3756e86341ed7` |
+| Component measurement | `9884da2a14d119fede5cffec3093cb46cd3d133187dac090d54b83768ae7787e` |
+| Independent PCM and timing replay | `6bab2a27cf575eba0caceb5b370e01a6650f28508671f1fa5192f6ecfa32e46c` |
+| Post-test service readiness | `0d622033afeeb0d8353a94520d696eba31642aed427c21534468a32fc6e83b13` |
