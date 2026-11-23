@@ -406,3 +406,24 @@ The patch, build, protocol and raw evidence are retained under
 | Component measurement | `9884da2a14d119fede5cffec3093cb46cd3d133187dac090d54b83768ae7787e` |
 | Independent PCM and timing replay | `6bab2a27cf575eba0caceb5b370e01a6650f28508671f1fa5192f6ecfa32e46c` |
 | Post-test service readiness | `0d622033afeeb0d8353a94520d696eba31642aed427c21534468a32fc6e83b13` |
+
+## Native CPU codec parity
+
+An isolated qwentts.cpp render selected the native CPU codec and fed it
+the same 141 reference frames and 33 generated acoustic frames as the
+retained Vulkan control. It skipped the Talker and used the same packet
+schedule. The two renders both produced 63,360 samples at 24 kHz.
+
+The CPU backend changed **41,351 of 63,360 PCM16 samples** (65.26%).
+The first difference occurred at sample index 5, and the maximum
+absolute difference was 878 PCM16 units. The FP32 output also differed.
+An independent read of the two PCM files reproduced the difference
+count, first index, and maximum. This candidate fails exact PCM parity.
+The 3.375 s CPU observation includes process startup, model load,
+reference priming, rendering, and writing. Halogen serving rates were
+outside this component measurement.
+
+The regular Halogen and Voice listeners remained available. Raw
+evidence is in `tts-reference-projection-cache-prep-v1/native-cpu-codec-stock-v1`
+under the local evidence directory above. The comparison SHA-256 is
+`dc298708a8372eff77253d46f3497964d2719f6e2ce3a9865be6ffc5b0449dc1`.
