@@ -95,6 +95,81 @@ backend logs and summary in `tts-decode-overlap-run-v1` below the evidence
 directory above. The overlap summary SHA-256 is
 `c7f221456cee43707ab4f338ba8279d8241e7a95e4c7921b84e189f2e7e0a6f7`.
 
+## Halogen with the speech process idle or synthesizing
+
+In a separate paired run, one private Vulkan TTS process stayed loaded
+throughout. Starting its synthesis on the first visible Halogen token
+extended the interval from first text through response EOF by **342 ms**
+on average. The difference was 329–351 ms in each measured pair.
+
+| TTS state | Halogen input / output | API Prefill tok/s | API Decode tok/s | Native MTP | First text through EOF | Full HTTP |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Loaded and idle | 8,192 / 128 | 2,042.39 | 56.68 | 192/291 (65.98%) | 2.252 s | 6.312 s |
+| Synthesizing during text delivery | 8,192 / 128 | 2,016.82 | 49.20 | 192/291 (65.98%) | 2.594 s | 6.687 s |
+
+Both arms used the same Halogen 0.20.7 serving process, frozen novel
+request, greedy MTP, cache off and thinking off. One warmup pair was
+excluded. Three measured pairs alternated order. All eight Halogen
+responses matched the exact reference. Every synthesized PCM matched
+the corresponding ordinal in both earlier Vulkan runs. Those ordinals
+contain 37, 34, 31 and 34 frames. The separate speech warmup is outside
+the pairs. An initial attempt ended before sending a Halogen request
+because it applied a measured ordinal's audio hash to that warmup.
+
+Windows QPC measured both HTTP intervals. API rates retain the native
+phase clock's scope. Removing all synthesis work from this particular
+overlap window corresponded to **13.18% less delivery time**. The idle
+arm provides a reference for partial offload, whose actual effect still
+requires a paired measurement. The minimum sampled reserve was 26.99 GiB.
+The private TTS process closed and the normal services remained ready.
+
+Raw SSE, PCM, window timestamps and the terminal record are under
+`server/.local/halogen-update-20261122/primary0207/tts-cpu-offload-prep-v1/tts-idle-overlap-paired-v2`.
+The summary SHA-256 is
+`f337f1ed72c5e03bc1df8ebdb7a4697590080cc8983b56848030d88dbd2d0a8b`.
+
+## Packed Q/K/V under the same overlap
+
+An isolated `a8a7716` build packs the three Q8_0 projections in each of
+the five CodePredictor layers into one matrix. Q, K and V are views
+with the packed row stride. The original runtime DLLs and weight bytes
+are preserved. The private option is `QWENTTS_CODEPRED_PACKED_QKV=1`.
+The CPU layout test covered three input shapes. Both Vulkan modes
+reproduced six native logit matrices, complete acoustic codes and WAV
+files byte for byte across three synthetic voice fixtures.
+
+| Q/K/V projection | Predictor per frame | TTS HTTP | Halogen API Prefill tok/s | Halogen API Decode tok/s | Halogen first text through EOF | Halogen HTTP |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Split before | 25.28 ms | 1.324 s | 2,065.28 | 49.44 | 2.581 s | 6.599 s |
+| Packed | 23.47 ms | 1.257 s | 2,069.68 | 49.50 | 2.577 s | 6.585 s |
+| Split after | 25.39 ms | 1.319 s | 2,042.63 | 49.43 | 2.581 s | 6.641 s |
+
+Each arm excluded a warmup pair and measured three pairs on the same
+8,192-input, 128-output Halogen workload. All 12 Halogen streams had
+identical outputs and MTP counts. Each measured arm accepted
+192/291 head drafts (65.98%). PCM matched byte for byte at each ordinal.
+Verification checked private Vulkan startup, exact speech frames, raw
+response bytes and timestamps. The minimum sampled reserve was 27.07 GiB.
+
+Packing cut predictor time by **7.15–7.56%** and TTS HTTP time by
+**4.71–5.03%** against the two controls. The first-text delivery interval
+improved by **3.6–4.0 ms**, about 0.15%, and the average of API Decode
+changed by about 0.07 tok/s. This establishes a speech-stage speedup
+with a small measured change in Halogen delivery. Production uses its
+existing Vulkan build. Halogen, ServiceNow, Native, TTS and ASR passed
+readiness after the private processes closed.
+
+Local evidence is under
+`server/.local/halogen-update-20261122/primary0207/tts-cpu-offload-prep-v1`.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| Packed Q/K/V patch for the private build | `11994f16dc5f828b1429045dee8afff93826c1d0b06723c955e1dc77bc4041f9` |
+| Split Vulkan parity | `1b00cc08cf4cc04b596eb6d98843bc6dd405031d8d394a5b73d46be81220c52e` |
+| Packed Vulkan parity | `92e2c465e85d3ba8443ec3fbf052979299cd9be0ec64b382454c326dcaf879bb` |
+| Packed overlap raw summary | `d8c68e594750ab67ac1882b6eaa15741feb4a1a061d48be11f70439d5954ca1f` |
+| Packed overlap paired analysis | `972032857a931ae488781ee149ab4ac8bd6c2205994afa4a37367f8c02551e1f` |
+
 ## Candidate stage for NPU evaluation
 
 The matching native TTS logs identify the acoustic CodePredictor as the
