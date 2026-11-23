@@ -54,6 +54,12 @@ and its timestamp uses the same guest clock. Client-side QPC can independently
 measure time to the first text chunk and time through EOF. Those intervals
 measure delivery and include API and transport overhead.
 
+A separate read-only check after the [KV8 comparison](../benchmarks/halogen0207-kv8-natural-8k16k-20261123.md)
+bound the mapped libstdc++ inode and running engine to the same artifacts
+used in the static audit. The restored server passed readiness before and
+after this check. The provider check establishes the current runtime clock
+source. Historical phase intervals still lack contemporaneous validation.
+
 ## Local evidence
 
 The observations used the existing HT4 run on port 8840. They required
@@ -65,3 +71,4 @@ no inference, restart or clock setting changes. The local receipts are under
 | Native phase source audit | `2d91b13ad9684ca4013874c4397d988531fa9a387fe31a38e84ad3382094a1e8` |
 | Host and guest clock exchange | `cd01a7dc04f721942e4f34b9a3c1cbdab5a457b1e6496640a448ed788bbbd5ea` |
 | Read-only guest clock state | `11913bfaa825700274f17a03ff3d264886be883fba2a82bc7027e064d07bd879` |
+| Live provider binding after KV8 | `2cbe45ee051be16d295df2ca5078a640ab45bb7bcbb706d31fe0f0df14d21674` |
