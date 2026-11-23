@@ -299,3 +299,17 @@ qualifies the fixture for correctness.
 
 The captured feature data has SHA-256
 `a04c3a29d5306c1fb290d79db7695bb12e36428764566dbccf6021c1e8e4faf7`.
+
+### CPU execution of the first native frame
+
+The first width-one ONNX export used 20 retained staging rows and four
+new rows from the production trace. The full graph passed the ONNX checker
+and ran on one CPU thread with graph optimizations disabled. After the
+9,600-sample crop, 376 of the 1,920 PCM16 samples differed by one integer
+unit. The first difference was at zero-based index 5. The maximum FP32
+error was 2.74646 × 10⁻⁵ and the RMS error was 7.63838 × 10⁻⁶.
+
+The same FP32-to-PCM conversion reproduced the native PCM bytes from the
+recorded native FP32 samples. The exported computation failed exact PCM
+parity. The first-frame CPU result is retained as `width1-native-k463hna9/cpu-check.json`,
+SHA-256 `1ffd19bd661e3e8f7734b4d8ecbd6f237b5f6158e812bdbf384649096129e8bd`.
