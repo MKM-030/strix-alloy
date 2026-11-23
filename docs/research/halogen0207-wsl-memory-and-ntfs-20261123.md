@@ -113,3 +113,39 @@ this comparison.
 | Four managed launch observations and manifest bindings | `21ff7108f4ab0b8bde1fa4fd08f325f9b14eb3783cc6efa430f4f8dd92bc70e7` |
 | Managed synthetic seed, reuse and mount gate | `8deadb3765d4977fc40d174a92a857e5b8eea1411a60722eec4b2beb0c65b81c` |
 | Passive production NTFS metadata check | `8b4d8b3ed9db1bb5cc868c1d1e8756ab9dbd793c17299596e12d85fca459476e` |
+
+## Targeted reads before a known request
+
+The current 0.20.7 CPU lookup code computes 16 rows per token from the
+current token ID and the two preceding IDs. A frozen 2,048-token prefix
+produced 32,768 visits and 5,352 unique rows. The plan covers 5,516
+distinct 4 KiB pages on the native ext4 table, or 21.55 MiB. This is the
+planned file-page footprint. Filesystem read-ahead may add I/O.
+
+On the verified ext4 inode, all 5,516 planned pages initially reported
+nonresident in a read-free `mincore` sweep. A bounded test then sampled
+128 of those offsets across the file. It read **512 KiB** using
+`pread` in **58.99 ms** of guest wall time, including the reader's
+checks. All 128 pages reported resident afterward. A separate disposable
+ext4 fixture demonstrated that the same reader skipped the pages on its
+second pass. The model table and ordinary server configuration were
+preserved.
+
+This component test used the ext4 inode outside the serving container.
+The regular Halogen process maps its NTFS lookup source. Testing an
+engine speed change needs the private ext4 profile, proof that its
+mapping uses the same inode as the reader, and matched first requests
+with measured missing-page counts. The reader's NTFS mode validates only
+the page plan. Prefill, Decode and MTP changes remain unmeasured for
+pre-arrival reads.
+
+The bounded reader, offline calculations and raw receipts are under
+`server/.local/halogen-update-20261122/primary0207/ngram-prearrival-pages-prep-v1`.
+
+| Evidence | SHA-256 |
+| --- | --- |
+| Current native row formula | `42f6f92e30a4749a6987dc180494bf41625c73e5ce1d10f8df40e7471a91e16f` |
+| Frozen prefix page plan | `6203c4945df547021f4f89ffc017322a8a350895946e590219cbce3b2f9365d0` |
+| Disposable ext4 syscall proof | `19a9b59a5f6ab3646cc7f3b0a43f1db919aa86c065604be11c6b81190e7b9155` |
+| Full plan residency sweep | `f1d113a3da6553baa063faaffddb455a7673a47b1bc15c657b3a7756c6453eb3` |
+| Canonical ext4 128-page read | `532157385eb26d771dabcde9695235f6d1b9de3ab6577f867933538759ac55d9` |
