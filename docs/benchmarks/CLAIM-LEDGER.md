@@ -27,6 +27,11 @@ output parity. Windows first-text-to-EOF time improved by 4.50–4.70%.
 The 16K workload took 3.05–3.21% longer from first text to EOF with this
 setting. The regular profile uses the native MTP cost policy.
 
+The [fixed-depth Q4/Q8/Q4 comparison](halogen0207-fixed-depth-two-q8-20261123.md)
+measured 57.00 API Decode tok/s at 58.62% native acceptance for Q8 at 8K.
+The Q4 controls reached 60.00 and 60.36 tok/s at 62.50% acceptance. Q8 lengthened
+Windows text delivery by 5.27–5.88%. All twelve responses were byte-identical.
+
 ### Halogen 0.20.7 sparse-attention union
 
 On the frozen 8K novel prefix, the two stock windows averaged 57.350 and
