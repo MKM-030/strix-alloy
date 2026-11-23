@@ -37,6 +37,17 @@ measured first text and response EOF. At 8K full HTTP time fell
 **2.66–3.36%** relative to the controls. At 16K it fell **0.56–0.83%**
 and the first visible text arrived **28–46 ms later**.
 
+An offline analysis of the retained streams timed the identical visible
+prefix before the first differing frame. At 8K the first 50 common frames took **893.389 ms**
+with QS Union and **857.731/864.423 ms** in the stock windows. At 16K the
+first 24 took **451.379 ms** and **447.090/441.141 ms**, respectively.
+The shorter whole response coincided with six fewer head rounds at 8K
+and four fewer at 16K on the different continuation. The binary contains
+different softmax tile and BF16 accumulation schedules in the two kernel
+families. Static inspection leaves the exact cause of divergence open.
+The local audit is in `qs-union-oracle-v1/qs-union-numerics-audit.md`
+with SHA-256 `4a249a1663d84e7dd0629239606361c1b1bbbb91e4b4ed61185a5468490d416a`.
+
 The lowest sampled request reserve was 28.70 GiB. Raw streams, output bytes,
 request timings, launch settings and native completion logs are retained
 under `server/.local/halogen-update-20261122/primary0207/qs-union-campaign-prep-v1/qs-union-run-v1`.
