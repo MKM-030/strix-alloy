@@ -72,6 +72,13 @@ Trunk comparison stopped before its first request when post-stop memory
 recovery fell short of the saved baseline. Halogen was restored on 8840 and
 the local Responses route through 8831 was verified.
 
+The [publisher benchmark replay](docs/benchmarks/halogen0207-publisher-replay-20261123.md)
+averaged 71.21 API decode tok/s across ten short prompts and accepted
+81.17% of MTP-head drafts. The separate
+[JSON-format comparison](docs/benchmarks/halogen0207-json-format-20261123.md)
+returned identical 95-token extractions in both formats. The strict schema
+took 1.89–2.27% longer over HTTP than the broad JSON format on that fixture.
+
 The earlier [22 November deployment-confirmation cohort](docs/benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
 retains its separate 1618.895333/51.575000 and 1534.869667/49.656333 API
 observations. It is not a control for the later bracketed campaign. Separate
