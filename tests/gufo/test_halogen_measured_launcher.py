@@ -141,7 +141,7 @@ class MeasuredLauncherTest(unittest.TestCase):
         sessions = ROOT / 'server/.local/servicenow-sessions'
         before = {path.name for path in sessions.glob('*.json')}
         for arguments in (('-HalogenVersion', '0.18.16'), ('-Thinking', 'On'),
-                          ('-MtpPolicy', 'Fixed2'), ('-PromptCache', 'Flexible')):
+                          ('-PromptCache', 'Flexible')):
             with self.subTest(arguments=arguments):
                 result = self.invoke(*arguments, profile='CurrentText32K')
                 self.assertNotEqual(result.returncode, 0)

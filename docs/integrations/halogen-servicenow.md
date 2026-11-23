@@ -288,6 +288,23 @@ measured workloads. Each individual request took longer from its own dispatch
 than it did when submitted alone.
 [Two-slot throughput, latency and command](../benchmarks/halogen0207-two-slot-scheduling-20261123.md)
 
+### Fixed MTP depth for the measured 8K workload
+
+With the default one-slot capacity, this Windows PowerShell 5.1 command selects
+fixed depth two and pairs the prefill chunk and arena at 8,192 tokens.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -MtpPolicy Fixed2 -PrefillTokens 8192 -ConsoleTrace
+```
+
+At 8,192 actual input tokens, the fixed policy reached 60.496 API Decode tok/s
+against 57.659–57.779 with the stock policy. Windows first-text-to-EOF time fell
+by 4.50–4.70% and full HTTP time by 1.35–1.56%. At 16,384 input tokens the same
+policy raised those times by 3.05–3.21% and 0.35–0.40%, respectively. Output was
+byte-identical at each input size. Omitting `-MtpPolicy` or selecting `Auto`
+uses the stock cost policy for `CurrentText32K`.
+[Fixed-depth benchmark and controls](../benchmarks/halogen0207-fixed-mtp-depth-two-20261123.md)
+
 The retained historical **0.17.3** image was pinned as:
 
 ```text

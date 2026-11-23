@@ -109,8 +109,19 @@ class FollowupLauncherTests(unittest.TestCase):
         return value
 
     def test_current_text32k_exact_contract_stays_cacheoff(self):
-        actual = self.decoded(self.invoke(profile="CurrentText32K"))
-        self.assertEqual(self.normalize(actual), self.normalize(self.expected_current()))
+        for arguments in ((), ("-MtpPolicy", "Auto")):
+            with self.subTest(arguments=arguments):
+                actual = self.decoded(self.invoke(*arguments, profile="CurrentText32K"))
+                self.assertEqual(self.normalize(actual), self.normalize(self.expected_current()))
+
+    def test_current_text32k_explicit_fixed_mtp_uses_two_drafts(self):
+        result = self.invoke("-MtpPolicy", "Fixed2", "-PrefillTokens", "8192", profile="CurrentText32K")
+        actual = self.decoded(result)
+        expected = self.expected_current(prefill=8192)
+        expected["engine"]["draft_tokens"] = 2
+        expected["engine"]["speculation_policy"]["HALOGEN_MTP_GATE_P"] = "0"
+        self.assertEqual(self.normalize(actual), self.normalize(expected))
+        self.assertIn("MTP policy Fixed2", result.stdout)
 
     def test_native_lookup_uses_only_the_reviewed_receipt(self):
         relative = "server/.local/native-lookup-test.json"
@@ -301,7 +312,7 @@ class FollowupLauncherTests(unittest.TestCase):
     def test_current_text_rejects_conflicting_pinned_selectors(self):
         for options in [("-PromptCache", "Flexible"), ("-PromptCache", "Exact"),
                         ("-HalogenVersion", "0.18.22"), ("-Thinking", "On"),
-                        ("-MtpPolicy", "Fixed2")]:
+                        ("-MtpPolicy", "Fixed2", "-PromptCache", "Flexible")]:
             with self.subTest(options=options):
                 result = self.invoke(*options, profile="CurrentText32K")
                 self.assertNotEqual(result.returncode, 0)

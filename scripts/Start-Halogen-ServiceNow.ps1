@@ -19,9 +19,10 @@ MeasuredText32K selects the tested 0.18.16 text configuration with the same
 32K context/pool, 8K chunk/arena and adaptive gate, but Cache Off and Vision Off.
 Thinking remains Off/low and prefetch remains off. ConsoleTrace is opt-in.
 CurrentText32K selects the configured 0.20.7 text preset: 32K context/pool,
-8K chunk/arena, adaptive gate 0.90, Cache Off, Vision Off, Thinking Off/low
+8K chunk/arena, stock cost-based MTP, Cache Off, Vision Off, Thinking Off/low
 and prefetch off. It uses the existing stable ServiceNow token and rejects
 conflicting explicit settings. Performance qualification is documented separately.
+Use -MtpPolicy Fixed2 -PrefillTokens 8192 for the measured 8K fixed-depth option.
 Concurrency tests may add -Slots 1 or 2, -Concurrency 2 and
 -KvPoolPositions 32768 or 65536 to CurrentText32K. See the documented 0.20.7
 two-slot scheduling comparison for the measured 32768-position profile.
@@ -36,9 +37,10 @@ prefix cache for follow-up latency on repeated stable context. This opt-in
 reduces repeated input work; it does not promise faster GPU kernel throughput.
 HistoricalStock requires -HalogenVersion 0.16.2
 and retains the native prefill defaults used by the retained 2026-10-04 stock
-benchmark. All profiles select v2 and stock PLD 3,3. Fixed2 is the stable
-measured policy. Halogen 0.18.5, 0.18.7, 0.18.8, 0.18.10, 0.18.11, 0.18.15, 0.18.16, 0.18.22, 0.19.1, 0.20.0, 0.20.1, 0.20.2, 0.20.3, 0.20.6 and 0.20.7 also offer -MtpPolicy Confidence90; Auto
-selects the upstream confidence-gated behavior for those versions.
+benchmark. All profiles select v2 and stock PLD 3,3. Halogen 0.18.5, 0.18.7,
+0.18.8, 0.18.10, 0.18.11, 0.18.15, 0.18.16, 0.18.22, 0.19.1, 0.20.0,
+0.20.1, 0.20.2, 0.20.3, 0.20.6 and 0.20.7 offer -MtpPolicy Confidence90.
+Auto selects the upstream adaptive policy for those versions.
 Halogen 0.17.2, 0.17.3, 0.18.0 and 0.18.1 default to Thinking On, medium effort and a 2048-token thinking
 budget. Use -Thinking Off to select the supported server default explicitly.
 The historical 48.424 tok/s result is workload-specific, not a speed guarantee.
@@ -143,15 +145,19 @@ $isText32KProfile = ($Profile -in @('MeasuredText32K', 'CurrentText32K', 'Curren
 if ($isPinned32KProfile) {
     $presetVersion = if ($Profile -in @('CurrentText32K', 'CurrentCachedText32K')) { '0.20.7' } elseif ($Profile -eq 'FollowupText32K') { '0.18.22' } elseif ($isText32KProfile) { '0.18.16' } else { '0.18.15' }
     $presetCache = if ($Profile -in @('FollowupText32K', 'CurrentCachedText32K') -or -not $isText32KProfile) { 'Flexible' } else { 'Off' }
+    $fixedMtpOptIn = $Profile -eq 'CurrentText32K' -and $PSBoundParameters.ContainsKey('MtpPolicy') -and $MtpPolicy -eq 'Fixed2'
     if (($PSBoundParameters.ContainsKey('HalogenVersion') -and $HalogenVersion -ne $presetVersion) -or
         ($PSBoundParameters.ContainsKey('Thinking') -and $Thinking -ne 'Off') -or
-        ($PSBoundParameters.ContainsKey('MtpPolicy') -and $MtpPolicy -notin @('Auto', 'Confidence90')) -or
+        ($PSBoundParameters.ContainsKey('MtpPolicy') -and $MtpPolicy -notin @('Auto', 'Confidence90') -and -not $fixedMtpOptIn) -or
         ($PSBoundParameters.ContainsKey('PromptCache') -and $PromptCache -ne $presetCache)) {
-        throw ('{0} requires Halogen {1}, Thinking Off, adaptive MTP (Auto or Confidence90), and {2} cache.' -f $Profile, $presetVersion, $presetCache)
+        $mtpOptions = if ($Profile -eq 'CurrentText32K') { 'MTP (Auto, Confidence90 or Fixed2)' } else { 'adaptive MTP (Auto or Confidence90)' }
+        throw ('{0} requires Halogen {1}, Thinking Off, {2}, and {3} cache.' -f $Profile, $presetVersion, $mtpOptions, $presetCache)
     }
     $HalogenVersion = $presetVersion
     $Thinking = 'Off'
-    $MtpPolicy = 'Confidence90'
+    if (-not $fixedMtpOptIn) {
+        $MtpPolicy = 'Confidence90'
+    }
     $PromptCache = $presetCache
     $contextCapacity = 32768
     $thinkingEffort = 'low'
