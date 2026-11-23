@@ -28,6 +28,8 @@ two-slot scheduling comparison for the measured 32768-position profile.
 CurrentCachedText32K opts into Flexible prefix caching on the same 0.20.7
 text preset with fixed one-slot capacity and paired 2048 prefill settings.
 Use -PrefillTokens 8192 for the measured shared-prefix configuration.
+-PersistPromptCache on CurrentCachedText32K selects paired 8192 and saves
+reusable prompt state on native WSL storage for later starts.
 With Halogen 0.20.7, -NativeLookup selects the locally qualified WSL lookup table.
 FollowupText32K retains the measured 0.18.22 text policy with Flexible
 prefix cache for follow-up latency on repeated stable context. This opt-in
@@ -79,6 +81,7 @@ param(
     [int]$Port = 8840,
     [switch]$ConsoleTrace,
     [switch]$NativeLookup,
+    [switch]$PersistPromptCache,
     [switch]$PrintOnly,
     [switch]$Status,
     [switch]$Stop,
@@ -104,6 +107,9 @@ if (@($PrintOnly.IsPresent, $Status.IsPresent, $Stop.IsPresent |
 }
 if ($Port -eq 8731) {
     throw 'The public port must differ from the Halogen backend port 8731.'
+}
+if ($PersistPromptCache -and $Profile -ne 'CurrentCachedText32K') {
+    throw 'PersistPromptCache requires CurrentCachedText32K.'
 }
 if (($PSBoundParameters.ContainsKey('Slots') -or
      $PSBoundParameters.ContainsKey('KvPoolPositions') -or
@@ -235,9 +241,22 @@ if ($HalogenVersion -in @('0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0
     $configuration.engine.speculation_policy | Add-Member -NotePropertyName 'HALOGEN_MTP_GATE_P' -NotePropertyValue $gate -Force
 }
 if ($Profile -in @('Current8K', 'Current4K', 'Measured32K', 'MeasuredText32K', 'CurrentText32K', 'CurrentCachedText32K', 'FollowupText32K')) {
-    $resolvedPrefillTokens = if ($PSBoundParameters.ContainsKey('PrefillTokens')) { $PrefillTokens } elseif ($Profile -eq 'CurrentCachedText32K') { 2048 } elseif ($Profile -eq 'Current4K') { 4096 } else { 8192 }
+    $resolvedPrefillTokens = if ($PSBoundParameters.ContainsKey('PrefillTokens')) {
+        $PrefillTokens
+    } elseif ($PersistPromptCache) {
+        8192
+    } elseif ($Profile -eq 'CurrentCachedText32K') {
+        2048
+    } elseif ($Profile -eq 'Current4K') {
+        4096
+    } else {
+        8192
+    }
     $configuration.engine | Add-Member -NotePropertyName 'prefill_chunk' -NotePropertyValue $resolvedPrefillTokens -Force
     $configuration.engine | Add-Member -NotePropertyName 'max_prefill_tokens' -NotePropertyValue $resolvedPrefillTokens -Force
+}
+if ($PersistPromptCache) {
+    $configuration.engine | Add-Member -NotePropertyName 'persist_prompt_cache' -NotePropertyValue $true
 }
 if ($HalogenVersion -in @('0.17.2', '0.17.3', '0.18.0', '0.18.1', '0.18.5', '0.18.7', '0.18.8', '0.18.10', '0.18.11', '0.18.15', '0.18.16', '0.18.22', '0.19.1', '0.20.0', '0.20.1', '0.20.2', '0.20.3', '0.20.6', '0.20.7')) {
     $configuration.engine | Add-Member -NotePropertyName 'api_defaults' `
@@ -260,6 +279,9 @@ $capacityDescription = if ($configuration.concurrency -eq 1) { 'one request' } e
 Write-Host ('Profile: {0}; Halogen {1} v2; MTP policy {2}; PLD 3,3; cache {3}; {4}.' -f $Profile, $HalogenVersion, $MtpPolicy, $PromptCache, $capacityDescription)
 if ($NativeLookup) {
     Write-Host 'Lookup source: qualified native WSL table.'
+}
+if ($PersistPromptCache) {
+    Write-Host 'SSD prompt cache selected for this start.'
 }
 if ($configuration.concurrency -eq 2) {
     Write-Host ('Opt-in gateway concurrency: 2; native slots: {0}; KV pool: {1}.' -f $configuration.engine.slots, $configuration.engine.kv_pool_positions)

@@ -15,13 +15,14 @@
     "preparation.json": "8ace6789dbf882241d8418fd40874682e1504cf4d79fc271426c1c4c25bf0554",
     "profiles/preflight-sequences.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
     "profiles/release.json": "c74797d78b7ef56e95dbf8d8a5b6afbfe471c386f69e7177558c24117275698f",
-    "README.md": "8517ee5f7f4ca3520e8743b6f51cf36025812465d2d6386f505dfba481b09a39",
+    "README.md": "cca5546710092e87c7614956e6b94a88b9e342b298fa336339c9a44e734aabd4",
     "scripts/api_defaults.py": "eb387e065c6aaaa01983fd50cde3b77611e0833b723bd1ff74a872f258038d27",
     "scripts/auth_api.py": "794f0fbe6ac4a6ba76eff0b799ccc46b337a516c728fd3baee1ca3bdba3bc4db",
     "scripts/bounded_hash.py": "047043c45539b50d3f56253849db3fcc2ea8f3d0dc87105c65a29558e2a0f6e2",
     "scripts/bridge_adapter.py": "8ca06a35905e8fc586d66737391c32dd862ad5b3a7d1ac17c171b5564421b2d1",
     "scripts/capacity_policy.py": "4df1d703d8b4e2916752bd68db18f1d4a055ec2783f5732a2d8309becb5864e3",
     "scripts/checkpoint_integrity.py": "6ed0d6af0f5ce928b5ed62da9075559b4f35434f0b4c9791245591e9a08ece84",
+    "scripts/disk_prompt_cache.py": "4018588bdb98233e0d658815c8cf264d59b98663f08ffb535130ea71736b1db2",
     "scripts/entrypoint_adapter.py": "0647e418cf542c86de1f1120c8274c0cb702ed727fc412502b1b7a914b0db6e5",
     "scripts/halogen0207_hip_probe.c": "c9d39e16f87c990c7c3b93ece1c951704e9a24c551a14177537b805f7a4b6533",
     "scripts/host_frames.py": "07460f02449429d47652bb774900d639e27faebdee0255b10f412343cbaa546e",
@@ -35,10 +36,10 @@
     "scripts/private_hsa.py": "a06db99959de29ecb3414817b77e28315fbc98100aabbe33ce7624eaec200861",
     "scripts/runner.py": "6a2dca7dde0708f13fc05f0ef09546839e532bfd731a48494ee01ee017c6cd08",
     "scripts/sample.ps1": "f959c1528e002b94adfe3f01bf53693b62c9e09b70dfa363bbe1f38b0aaf414d",
-    "scripts/service.py": "24ad881c798f1b0105da2c7c1840a071345369dc7c592bf7f1fd9bd1df4c40c9",
+    "scripts/service.py": "cd798ee26d7500c588263df66c73d69ca2515932707964fe633975364c3bbf53",
     "scripts/speculation_policy.py": "7febdd3b0be2c71951168385e00ba27a4e7d7fe90bdc366bf7047e2ab3217493",
     "scripts/startup_cache.py": "a675031453e5eec9dfc6aae0d697b03bf74c2838a12f13ddafe76ebdb1c57977",
-    "scripts/startup_guard.py": "1220d349ad31a636f44109348e2a8ce8606732ff024cd7e068d94e4a40eac674",
+    "scripts/startup_guard.py": "37be8c33de26179519a8ea8adccadc920e348a6ba70acf564bd211a0e27372b3",
     "scripts/startup_monitor.py": "c45677fd83e30e722e7079a26584111802da99e711881b894ccf01f707ed54f0",
     "scripts/state_io.py": "12ce7b1fa75e1024087f1dadf90f4adeca19c7a79df62e71f595ce6f904f1347",
     "Start.ps1": "59345cca5252c699cd0dd02ec489dda867228dd764d81d343089fe2978b6bb9b",
@@ -46,6 +47,7 @@
     "tests/test_capacity_portable.py": "902a4d39fef44c33e2112c3f7bb7e59bf8aacd4261ec340b44a2bfe0995c0ab9",
     "tests/test_checkpoint_integrity_timeout.py": "dd8a8ca58f6492af29b1fc0bf2126a6b095102ad8d251db9b488fcd4bc03c90a",
     "tests/test_checkpoint_receipt_binding.py": "d8d6086efc45796b5b837712c79677b63f3f0edda12c61eac66d95f8b85fe614",
+    "tests/test_disk_prompt_cache.py": "147606c32fe12c6e3b220864499a59df1242f72876621fb6479590d6fc0487d8",
     "tests/test_release_compatibility.py": "1692162768a4d1358e3423e7321d7e73d714f5b09e0aeb8c5bd32eb00a01d3bd",
     "tests/test_v2_vision_budget.py": "38848ded49dfed25b8ff9d8e81be4fadbe8242b154cb3aa217806e72d6bd62ca",
     "tests/test_v2_vision_plan.py": "cf9c661f1190d640bfa6a683ad4951fbb12a28edcb7ea8ebf198b023a731fb49",
@@ -58,5 +60,5 @@
   "pending_integration": [
     "actual_engine_provider_binding"
   ],
-  "integration_status": "Exact 0.20.7/r2-ht4 source and bridge package; run-specific qualification is recorded externally to keep the package source immutable"
+  "integration_status": "Pinned 0.20.7/r2-ht4 engine and bridge with opt-in native WSL disk prompt cache"
 }

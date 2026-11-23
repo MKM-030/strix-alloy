@@ -19,4 +19,27 @@ unqualified as absolute phase throughput; all eight API phase sums exceeded
 their whole-HTTP QPC durations. The matched 0.20.2 rows are a
 non-causal reference rather than a measured version effect.
 
+## Persistent prompt cache
+
+In Windows PowerShell 5.1, start the opt-in text profile from the repository root.
+
+```powershell
+powershell.exe -NoProfile -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentCachedText32K -PersistPromptCache -ConsoleTrace
+```
+
+The switch selects Flexible cache and paired 8192 prefill controls for the single-slot 32K v2
+configuration. The controller setting is `engine.persist_prompt_cache` and the direct Python
+service flag is `--persist-prompt-cache`. Add `-PrintOnly` to preview the launcher configuration.
+
+Halogen stores reusable prompt state under `.strix-alloy-halogen-prompt-cache` in the configured
+WSL user's home. The directory must be on writable native ext4, owned by that user and set to
+mode `0700`. The backend verifies the live bind and cache path before readiness. The engine
+applies a 1 GiB cache budget. Cache state can persist across restarts, so enable it only for
+workloads whose prompt state may be retained on disk. Use request-level `cache_control` with
+`{"type":"no_store"}` for requests that must skip cache reuse and storage.
+
+[Restart evidence](../../docs/benchmarks/halogen0207-ssd-prompt-cache-20261123.md) records
+8,448 of 8,498 tokens restored with byte-identical output. The SSD and RAM latency samples
+were single observations. Cold Prefill, Decode and MTP performance need their own comparison.
+
 Run CPU checks with `python -m unittest discover -s backends/halogen-wsl2-0.20.7/tests`. Set HALOGEN0207_CAPTURE to a passive extracted image directory for the exact ELF/API/entrypoint cases; absent captures are explicit skips. Linux compilation fixtures are separate and may skip on Windows.

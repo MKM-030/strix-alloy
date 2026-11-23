@@ -89,7 +89,29 @@ def probe_fresh(good, completed_at, now):
     return bool(good and completed_at is not None and 0 <= now - completed_at <= 6)
 
 
-def validate_target(info, container_id):
+def validate_mounts(info, expected_readonly, cache_source=None):
+    mounts = info.get('Mounts', [])
+    if expected_readonly is None or len(mounts) != len(expected_readonly) + int(cache_source is not None):
+        raise ValueError('Expected exactly the admitted bindings')
+    for destination, source in expected_readonly.items():
+        matches = [m for m in mounts if m.get('Destination') == destination]
+        if (len(matches) != 1 or matches[0].get('RW') is not False or
+                matches[0].get('Type') != 'bind' or matches[0].get('Source') != source):
+            raise ValueError('Expected exact read-only binding: ' + destination)
+    if cache_source is not None:
+        from disk_prompt_cache import DESTINATION
+        matches = [m for m in mounts if m.get('Destination') == DESTINATION]
+        if (len(matches) != 1 or matches[0].get('RW') is not True or
+                matches[0].get('Type') != 'bind' or matches[0].get('Source') != cache_source
+                or matches[0].get('Propagation') != 'rprivate'):
+            raise ValueError('Persistent prompt cache binding changed')
+        configured = [m for m in info.get('HostConfig', {}).get('Mounts', [])
+                      if m.get('Target') == DESTINATION]
+        if len(configured) != 1 or configured[0].get('BindOptions', {}).get('NonRecursive') is not True:
+            raise ValueError('Persistent prompt cache requires a nonrecursive binding')
+
+
+def validate_target(info, container_id, *, cache_source=None):
     if not re.fullmatch('[0-9a-f]{64}', container_id) or info.get('Id') != container_id:
         raise ValueError('Requires an exact full container ID')
     if not info.get('Name', '').startswith('/halogen-flash-hybrid-'):
@@ -102,14 +124,7 @@ def validate_target(info, container_id):
         raise ValueError('Unrecognized test label or pinned image')
     if info.get('State', {}).get('Running') is not True:
         raise ValueError('Container must already be running')
-    mounts = info.get('Mounts', [])
-    if EXPECTED_MOUNTS is None or len(mounts) != len(EXPECTED_MOUNTS):
-        raise ValueError('Expected exactly the admitted read-only bindings')
-    for destination, source in EXPECTED_MOUNTS.items():
-        matches = [m for m in mounts if m.get('Destination') == destination]
-        if (len(matches) != 1 or matches[0].get('RW') is not False or
-                matches[0].get('Type') != 'bind' or matches[0].get('Source') != source):
-            raise ValueError('Expected exact read-only binding: ' + destination)
+    validate_mounts(info, EXPECTED_MOUNTS, cache_source)
     host = info.get('HostConfig', {})
     if host.get('Memory') != 47244640256 or host.get('MemorySwap') != 47244640256:
         raise ValueError('Expected 44 GiB cgroup limit without extra swap')

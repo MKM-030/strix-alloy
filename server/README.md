@@ -20,18 +20,20 @@ public API token and supports visible request/response trace. Follow the
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Start-Halogen-ServiceNow.ps1 -Profile CurrentText32K -ConsoleTrace
 ```
 
-The completed [22 November 0.20.7 deployment-confirmation cohort](../docs/benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
-uses this one-slot 32K profile with paired 8192 prefill controls. After one
-excluded warmup, three measured requests per size average 1618.895333 prefill /
-51.575 decode tok/s at 8192 input tokens and 1534.869667 / 49.656333 at 16384;
-native-head acceptance is 65.9794% and 64.5161%. Deterministic outputs and
-acceptance match the [20 November Performance cohort](../docs/benchmarks/halogen0207-performance-natural-8k16k-20261120.md).
-The separate collection window keeps the observed changes non-causal. The API
-phase clocks are not RAW-qualified; all eight phase sums now fit their whole-HTTP
-QPC durations, but enclosure alone does not qualify individual phase boundaries.
+The last stock controls in the paired prefill experiment averaged 1,904.26 API
+Prefill and 54.51 API Decode tok/s at 8,192 actual input tokens, with 65.98%
+native MTP acceptance. At 16,384 actual input tokens, the averages were
+1,994.26 Prefill and 55.16 Decode tok/s with 64.52% acceptance. Each size used
+three measurements after one excluded warmup. The independent HTTP clock
+and API phase timing caveats are in the benchmark report.
+[23 November prefill comparison](../docs/benchmarks/halogen0207-prefill16384-20261123.md)
 
 `CurrentCachedText32K` selects the same 0.20.7 engine with Flexible cache and
-paired 2048 prefill controls. `MeasuredText32K` retains the historical 0.18.16
+paired 2048 prefill controls. `-PersistPromptCache` selects paired 8192 and
+enables native WSL disk storage for prompt reuse after restart.
+[Persistent cache setup and restart evidence](../backends/halogen-wsl2-0.20.7/README.md#persistent-prompt-cache)
+
+`MeasuredText32K` retains the historical 0.18.16
 measurement profile, and `Measured32K` retains the 0.18.15 vision-capable
 configuration. These presets must not be combined into one performance claim.
 `HistoricalStock` requires explicit `-HalogenVersion 0.16.2`. Historical rates

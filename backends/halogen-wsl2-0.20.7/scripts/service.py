@@ -25,6 +25,7 @@ import kernel_controls as kc
 import speculation_policy as sp
 import api_defaults as ad
 import capacity_policy as cp
+import disk_prompt_cache as disk_cache
 import lookup_source as lookup
 from startup_monitor import StartupMonitor
 import runner as r
@@ -104,6 +105,8 @@ def options(argv=None):
     p = argparse.ArgumentParser(description='Halogen service: authenticated, logged, continuous by default')
     p.add_argument('--checkpoint',choices=['w4b','v2'],default='v2')
     p.add_argument('--prompt-cache',choices=['Off','Exact','Flexible'],default='Off')
+    p.add_argument('--persist-prompt-cache', action='store_true',
+                   help='Enable the native WSL ext4 cache for the reviewed 32K Flexible profile')
     p.add_argument('--disable-vision',action='store_true',help='Text-only serving; default v2 vision remains enabled')
     p.add_argument('--draft-tokens',type=int,choices=(1,2,3),default=None)
     p.add_argument('--prefill-chunk',type=int,choices=(2048,4096,8192,16384,32768),default=None)
@@ -177,6 +180,11 @@ def validate_options(o):
     if getattr(o, 'qualified_matmul_tuning', None) is not None:
         raise ValueError('Private matmul tuning receipts are not rebound to 0.20.7; use the stock image tuning')
     validate_prefill_limits(o.context_size,getattr(o,'prefill_chunk',None),getattr(o,'max_prefill_tokens',None))
+    if getattr(o, 'persist_prompt_cache', False):
+        disk_cache.validate_scope(getattr(o, 'checkpoint', 'v2'), o.context_size,
+                                  getattr(o, 'prompt_cache', 'Off'), getattr(o, 'disable_vision', False),
+                                  getattr(o, 'prefill_chunk', None), getattr(o, 'max_prefill_tokens', None),
+                                  explicit_capacity(o))
     if getattr(o,'prefill_keep_trunk',False) and getattr(o,'checkpoint','v2') != 'v2':
         raise ValueError('PREFILL_KEEP_TRUNK is supported only for the v2 checkpoint')
     if getattr(o,'admit_ticks',None) is not None and (type(o.admit_ticks) is not int or not 1 <= o.admit_ticks <= 1024):
@@ -484,6 +492,8 @@ def build_manifest(o, attempt, run_id, checkpoint_receipts=None):
         result['api_defaults'] = ad.validate(o.api_defaults_json)
     if getattr(o, 'qualified_lookup', None) is not None:
         lookup.bind_manifest(result, o.qualified_lookup)
+    if getattr(o, 'persist_prompt_cache', False):
+        disk_cache.bind(result, r.MACHINE)
     return result
 
 
@@ -493,10 +503,11 @@ def reject_unqualified_manifest_overrides(m):
         if m.get(key) is not None:
             raise ValueError('Private runtime override is not rebound to 0.20.7: '+key)
     lookup.validate_manifest(m)
+    return disk_cache.validate_manifest(m)
 
 
 def command(m):
-    reject_unqualified_manifest_overrides(m)
+    cache_source = reject_unqualified_manifest_overrides(m)
     name='halogen-flash-hybrid-service-'+m['run_id']
     args=['create','--name',name,'--restart=no','--device=/dev/dxg','--ipc=host','--shm-size=8g',
         '--cap-add=SYS_PTRACE','--security-opt=seccomp=unconfined','--security-opt=label=disable',
@@ -506,6 +517,8 @@ def command(m):
         '--label=strix-alloy.run='+name]
     for dest,src in sorted(m['mounts'].items()):
         args+=['--mount',f'type=bind,src={src},dst={dest},readonly']
+    if cache_source is not None:
+        args += ['--mount', f'type=bind,src={cache_source},dst={disk_cache.DESTINATION},bind-recursive=disabled']
     for key,value in sorted(m['environment'].items()): args+=['--env',key+'='+value]
     return args+['--entrypoint','python3',r.IMAGE,'/candidate/lease_supervisor.py',
         '--lease','/service-state/lease.json','--run-id',m['run_id'],
@@ -513,18 +526,24 @@ def command(m):
 
 
 def owned(info,cid,m,running=False):
-    reject_unqualified_manifest_overrides(m)
+    cache_source = reject_unqualified_manifest_overrides(m)
     name='halogen-flash-hybrid-service-'+m['run_id']
     r.owned(info,cid,name,{},running=False)
     if running:
         sg.IMAGE=r.IMAGE; sg.REVIEWED_IMAGES=frozenset([r.IMAGE]); sg.EXPECTED_MOUNTS=m['mounts']
-        sg.validate_target(info,cid)
+        sg.validate_target(info,cid,cache_source=cache_source)
         actual=info.get('Config',{}).get('Env',[])
         for key,value in m['environment'].items():
             if [s for s in actual if s.startswith(key+'=')]!=[key+'='+value]:
                 raise ValueError('Container environment changed: '+key)
         if info['HostConfig'].get('RestartPolicy',{}).get('Name') not in ('no',''):
             raise ValueError('Unexpected restart policy')
+
+
+def validate_created_container(info, cid, manifest):
+    owned(info, cid, manifest)
+    if 'disk_prompt_cache' in manifest:
+        sg.validate_mounts(info, manifest['mounts'], manifest['disk_prompt_cache']['path'])
 
 
 def stop_owned(cid,m):
@@ -653,7 +672,7 @@ def guard(attempt):
     frame=None; sample_age=None
     inspector=None
     try:
-        owned(r.inspect(cid),cid,m)
+        validate_created_container(r.inspect(cid), cid, m)
         def inspect_owned():
             info=r.inspect(cid)
             current=read(STATE_PATH)
@@ -760,6 +779,7 @@ def main(argv=None):
             continuous=o.serve_seconds==0,startup_timeout=o.startup_timeout,checkpoint=getattr(o,'checkpoint','v2'),
             endpoint=API+'/v1',token_file=str(TOKEN_PATH),admission_gib=floors(o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o)))
         if explicit_capacity(o): result['kv_pool_positions']=resolved['kv_pool_positions']
+        if o.persist_prompt_cache: result['persist_prompt_cache']=True
         print(json.dumps(result,indent=2))
         return 0
     return serve(o)
@@ -837,10 +857,12 @@ def serve(o):
         atomic(attempt/'admission-create.json',frame)
         log.info('Creating Halogen 0.20.7: context=%s, slots=%s; no model download',o.context_size,resolved['slots'])
         lookup.revalidate(machine, m.get('lookup_tuning'))
+        disk_cache.revalidate(m, machine)
         keepalive.check()
         creation_attempted=True
         cid=r.docker(*command(m),timeout=30)
-        owned(r.inspect(cid),cid,m); atomic(attempt/'container.json',{'id':cid})
+        validate_created_container(r.inspect(cid), cid, m)
+        atomic(attempt/'container.json',{'id':cid})
         flags=NO_WINDOW|getattr(subprocess,'CREATE_NEW_PROCESS_GROUP',0)
         with (attempt/'guard-process.log').open('a',encoding='utf-8') as guard_output:
             guard_proc=subprocess.Popen([sys.executable,'-B',str(Path(__file__)), '--guard',str(attempt)],
@@ -857,6 +879,7 @@ def serve(o):
         atomic(attempt/'admission-start.json',baseline)
         if cancelled(): raise InterruptedError('Startup cancelled')
         lookup.revalidate(machine, m.get('lookup_tuning'))
+        disk_cache.revalidate(m, machine)
         keepalive.check()
         r.docker('start',cid)
         cache_worker=StartupMonitor(r.WSL,cid,attempt,run_id,o.startup_timeout,atomic,
@@ -894,6 +917,10 @@ def serve(o):
                                           else int(selected_concurrency)),
                         native_lookup='lookup_tuning' in m)
                 validate_health(health,o.context_size,getattr(o,'checkpoint','v2'),disable_vision=getattr(o,'disable_vision',False),**capacity_options(o))
+                if 'disk_prompt_cache' in m:
+                    disk_cache.verify_binding(m, r.docker, cid)
+                    stats = disk_cache.check_cache_stats(http('/cache', secret))
+                    atomic(attempt/'disk-cache-ready.json', stats)
                 cache_worker.stop(); cache_stopped=True
                 log.info('Startup-cache worker stopped before inference; client cache is retained')
                 atomic(attempt/'health.json',health)
@@ -908,6 +935,8 @@ def serve(o):
                     body={'model':MODEL,'messages':[{'role':'user','content':prompt}],
                           'max_tokens':32,'stream':False,'temperature':0,
                           'drafter':'serial','enable_thinking':False,'reasoning_effort':'none'}
+                    if 'disk_prompt_cache' in m:
+                        body['cache_control'] = {'type': 'no_store'}
                     response=http('/v1/chat/completions',secret,body,timeout=60)
                     keepalive.check()
                     answer=response['choices'][0]['message']['content'].strip().strip('.!').casefold()

@@ -56,3 +56,17 @@ afterward, with ASR and TTS available.
 | Independent request and counter audit | `ddcfa5b7c05840fe9092c705d92f0af34db2cc62c5f374b9eb42db3dc13a8146` |
 | Final serving verification | `f363c2cebf16bef43cc9454c9951754b63877b855cd46392072edd0f6a1d5ba1` |
 | Direct I/O filesystem probe | `e401321891e5a63ba8d07f25cab48953bed427328df634f769890a59e84a6026` |
+
+## Managed launcher validation
+
+The [managed PowerShell option](../../backends/halogen-wsl2-0.20.7/README.md#persistent-prompt-cache)
+passed a separate startup on a private port. The service verified the mounted directory's
+device and inode, the native cache path and the 1 GiB budget. It passed both built-in
+functional requests and reported ready. The native cache contained zero persisted records
+after the startup smoke checks. The restore observation above came from the
+earlier two-process experiment.
+
+The first managed observation stopped before readiness when Windows temporarily denied
+access to the status file during its atomic replacement. The later run retried transient
+status reads and waited for both controller and backend readiness. Its verification receipt
+has SHA-256 `9468610b4b394d921a21f163f13c5daf3ece5d3a9f49d0ff9bcc29e6c7d85651`.

@@ -173,6 +173,27 @@ class FollowupLauncherTests(unittest.TestCase):
         expected["engine"]["prompt_cache"] = "Flexible"
         self.assertEqual(self.normalize(cached), self.normalize(expected))
 
+    def test_persistent_prompt_cache_uses_measured_8192_pair(self):
+        for arguments in (("-PersistPromptCache",), ("-PersistPromptCache", "-PrefillTokens", "8192")):
+            with self.subTest(arguments=arguments):
+                result = self.invoke(*arguments, profile="CurrentCachedText32K")
+                actual = self.decoded(result)
+                expected = self.expected_current(prefill=8192)
+                expected["engine"].update(prompt_cache="Flexible", persist_prompt_cache=True)
+                self.assertEqual(self.normalize(actual), self.normalize(expected))
+                self.assertIn("SSD prompt cache", result.stdout)
+
+    def test_persistent_prompt_cache_rejects_other_profile_or_prefill(self):
+        for profile in ("CurrentText32K", "FollowupText32K"):
+            with self.subTest(profile=profile):
+                rejected = self.invoke("-PersistPromptCache", profile=profile)
+                self.assertNotEqual(rejected.returncode, 0)
+                self.assertIn("PersistPromptCache requires CurrentCachedText32K", rejected.stderr)
+        rejected = self.invoke("-PersistPromptCache", "-PrefillTokens", "2048",
+                               profile="CurrentCachedText32K")
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("8192", rejected.stderr)
+
     def test_current_cached_rejects_conflicting_policy_and_capacity_before_launch(self):
         for options in [("-PromptCache", "Off"), ("-PromptCache", "Exact"),
                         ("-HalogenVersion", "0.20.0"), ("-Thinking", "On"),

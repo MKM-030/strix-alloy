@@ -297,6 +297,29 @@ def halogen_vision_arguments(engine,directory):
     return ['--disable-vision']
 
 
+def halogen_persist_prompt_cache_arguments(engine, directory=None):
+    enabled = engine.get('persist_prompt_cache', False)
+    if type(enabled) is not bool:
+        raise ValueError('persist_prompt_cache must be a boolean')
+    if not enabled:
+        return []
+    supported = (ROOT.parent / 'backends/halogen-wsl2-0.20.7').resolve()
+    if (engine.get('kind') != 'halogen' or engine.get('launcher') != 'python'
+            or directory is None or directory.resolve() != supported):
+        raise ValueError('Persistent prompt cache requires the Halogen 0.20.7 Python service')
+    if (engine.get('checkpoint') != 'v2' or engine.get('context') != 32768
+            or engine.get('prompt_cache') != 'Flexible' or engine.get('disable_vision') is not True
+            or engine.get('prefill_chunk') != 8192 or engine.get('max_prefill_tokens') != 8192
+            or 'slots' in engine or 'kv_pool_positions' in engine):
+        raise ValueError('Persistent prompt cache requires text-only v2, Flexible cache, '
+                         'default single-slot 32768 capacity and paired 8192 prefill')
+    service = directory / 'scripts/service.py'
+    if (service.is_symlink() or not service.is_file()
+            or '--persist-prompt-cache' not in service.read_text(encoding='utf-8-sig')):
+        raise ValueError('Selected service has no persistent prompt cache control')
+    return ['--persist-prompt-cache']
+
+
 def halogen_capacity_module(directory):
     supported = tuple((ROOT.parent / 'backends' / name).resolve() for name in
                       ('halogen-wsl2-0.18.22', 'halogen-wsl2-0.19.1', 'halogen-wsl2-0.20.0', 'halogen-wsl2-0.20.1', 'halogen-wsl2-0.20.2', 'halogen-wsl2-0.20.3', 'halogen-wsl2-0.20.6', 'halogen-wsl2-0.20.7'))
@@ -429,8 +452,10 @@ def validate_engine(engine, repo):
         halogen_matmul_arguments(engine,directory)
         halogen_lookup_arguments(engine,directory)
         halogen_private_hsa_arguments(engine,directory)
+        halogen_persist_prompt_cache_arguments(engine, directory)
         halogen_vision_arguments(engine,directory)
         return directory
+    halogen_persist_prompt_cache_arguments(engine)
     if any(key in engine for key in ('slots', 'kv_pool_positions')):
         raise ValueError('Managed capacity controls apply only to Halogen')
     if 'disable_vision' in engine:
@@ -473,6 +498,7 @@ def validate_engine(engine, repo):
 
 
 def halogen_launch_command(engine, directory):
+    persistent_cache = halogen_persist_prompt_cache_arguments(engine, directory)
     controls = halogen_draft_arguments(engine)
     controls += halogen_capacity_arguments(engine, directory)
     controls += halogen_kernel_arguments(engine, directory)
@@ -521,7 +547,7 @@ def halogen_launch_command(engine, directory):
     return [str(executable), '-u', '-B', str(directory / 'scripts/service.py'),
             '--checkpoint', engine['checkpoint'], '--context-size', str(engine['context']),
             '--prompt-cache', engine.get('prompt_cache', 'Off'),
-            '--serve-seconds', '0', '--startup-timeout', '900'] + translated + vision
+            '--serve-seconds', '0', '--startup-timeout', '900'] + translated + vision + persistent_cache
 
 
 class Engine:
