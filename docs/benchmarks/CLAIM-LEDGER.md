@@ -11,6 +11,14 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
+### Halogen 0.20.7 nested prefill
+
+In a two-slot comparison, nested admission moved first visible text for the
+1,536-token request from 9.04–9.05 s to 1.25 s during a 16,384-token
+prefill. The first quarter of its output arrived 0.22–0.23 s earlier.
+Pair completion took 3.05% longer and both outputs were byte-identical.
+[Trace and paired measurements](halogen0207-nested-prefill-20261123.md).
+
 ### Halogen 0.20.7 fixed MTP depth two
 
 The [fixed depth comparison](halogen0207-fixed-mtp-depth-two-20261123.md)
