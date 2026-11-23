@@ -64,6 +64,10 @@ output and MTP-counter parity. Warm 8K/16K results were similar across both
 storage paths. The native lookup path is an opt-in for the retained,
 verified standalone table.
 
+With Flexible cache in all three arms, the [combined WSL lookup and prefix-cache test](docs/benchmarks/halogen0207-flexible-native-lookup-20261123.md)
+reduced the first 8,221-token fixture from 8.201–8.327 s to 7.046 s.
+Both follow-ups retained 8,192 tokens of reuse and exact output parity.
+
 The [post-recovery Performance cohort](docs/benchmarks/halogen0207-performance-after-recovery-20261122.md)
 measured the stock server at 2,020.56 prefill and 57.44 decode tok/s for
 8,192 input tokens, and 2,012.24 prefill and 55.24 decode tok/s for 16,384.

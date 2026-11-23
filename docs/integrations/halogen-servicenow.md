@@ -160,6 +160,13 @@ similar. Each first-request value represents one launch. OS file-cache
 residency was unmeasured.
 [Native WSL lookup benchmark](../benchmarks/halogen0207-native-lookup-20261122.md)
 
+For repeated Chat Completions questions, the two options also work together.
+Use `CurrentCachedText32K -PrefillTokens 8192 -NativeLookup`. With Flexible
+cache in all three test arms, native lookup reduced the first 8,221-token
+fixture from 8.201–8.327 s to 7.046 s. Both follow-ups still reused 8,192
+of their 8,227 input tokens.
+[Combined configuration and benchmark](../benchmarks/halogen0207-flexible-native-lookup-20261123.md)
+
 The historical measured 0.18.22 cache profile is available separately.
 
 ```powershell
