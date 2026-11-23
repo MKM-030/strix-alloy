@@ -48,6 +48,17 @@ families. Static inspection leaves the exact cause of divergence open.
 The local audit is in `qs-union-oracle-v1/qs-union-numerics-audit.md`
 with SHA-256 `4a249a1663d84e7dd0629239606361c1b1bbbb91e4b4ed61185a5468490d416a`.
 
+Across five retained campaigns, all stock controls reproduced the same 16K
+answer. QS Union, the paired 16K prefill chunk and arena, and the INT8 KV
+cache all first diverged at byte 102. The three candidate outputs have
+distinct hashes. The 16K arena and QS Union candidates share 139 bytes with
+each other. The common divergence narrows where to compare verifier logits.
+The captured text alone cannot establish the probability margin or attribute
+the change to a particular operator. The other two candidates, fixed depth
+two and DN-Z streaming, preserved the stock bytes. The local receipt
+`qs-union-oracle-v1/parity-cross-campaign-v1.json` pins 90 original samples
+and has SHA-256 `0ab288c120ef6f4d4fe936e948697d5f5c1f550a7f6a35acc030a7ec3894ff7b`.
+
 The lowest sampled request reserve was 28.70 GiB. Raw streams, output bytes,
 request timings, launch settings and native completion logs are retained
 under `server/.local/halogen-update-20261122/primary0207/qs-union-campaign-prep-v1/qs-union-run-v1`.

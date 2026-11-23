@@ -28,6 +28,7 @@ MODES={
     'HALOGEN_FA_OPT':frozenset(range(8)),  # low-three-bit optimization mask
     'HALOGEN_I4R_DEC_GROUP':frozenset((2,)),  # explicit two-row decode trial
     'HALOGEN_ADMIT_NEST_MAX':frozenset((2048,)),  # explicit two-slot prefill trial
+    'HALOGEN_SERVE_TRACE':frozenset((1,)),  # explicit native trace for private comparisons
     # Mode zero does not disable every dispatch using the V2 getter.
     'HALOGEN_FLASH_MOE_V2':frozenset((0,1,2)),
 }
