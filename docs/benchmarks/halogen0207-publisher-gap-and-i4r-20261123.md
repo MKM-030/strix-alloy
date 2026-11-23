@@ -55,6 +55,27 @@ reduced acceptance and throughput. The saved 8K counts give aggregate
 acceptance. Third-draft acceptance remains unmeasured. The publisher's fixed-depth
 notes describe slower prose at depth three. [MTP options](https://github.com/peonist-ai/halogen-flash-server/blob/bfe1cee6117579a9876784bfea1ffdc79c902e27/docs/FLAGS.md#L188-L191)
 
+The two 516-byte cost tables in the pinned 0.20.7 executable are byte-identical
+to those in the retained 0.19.1 executable. The current greedy cost path
+selects one of those tables. The manifest and completion logs record the
+selected rule and aggregate head counts. Recalibrating for r2-HT4 would
+require per-position acceptance and per-round timing on held-out prompts.
+The local provenance receipt is `sources-20261123/ht4-cost-table-provenance-v1.json`
+under the 0.20.7 evidence root, SHA-256
+`f73f3d55ef2f29e495bc28caf4d511c5d052141fef1be32222be180f26f351d8`.
+
+The Gufo fork reports **2,128 / 2,142 / 2,109 Prefill tok/s** at 8K, 16K
+and 32K with joint GPU/NPU Flash-Next. It uses UD-IQ4_XS weights,
+Linux XRT and a held GPU fabric clock. Its runtime-M NPU path produced
+27 matching texts out of 28 against the previous build. Its DFlash2 confidence cut and long-copy
+verification use Gufo's own drafter, kernels and rollback. Halogen's
+public prompt-lookup limit is seven drafts per round, and its DFlash2
+support request is closed as not planned.
+[Gufo benchmark and prerequisites](https://github.com/mikealanni/gufo/blob/499cd1a866fbf43798b1070a2082bedb0040c71a/README.md#qwen38-flash-next)
+· [Gufo long-copy change](https://github.com/mikealanni/gufo/commit/27705d92c68a0679a3dcfa84789c7e7a065eca58)
+· [Halogen lookup controls](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/FLAGS.md#L94-L107)
+· [Halogen DFlash2 issue](https://github.com/peonist-ai/halogen-flash-server/issues/195)
+
 ## Two-row INT4 group experiment
 
 The pinned engine has grouped routed-INT4 GPU kernels for short
