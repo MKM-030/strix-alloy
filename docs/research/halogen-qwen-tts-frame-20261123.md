@@ -108,6 +108,16 @@ later codebooks and excludes live GPU hidden-state readback. The retained
 Vulkan controls cover an entire acoustic frame with 15 dependent steps.
 No result here establishes a gain in Halogen Prefill, Decode or MTP.
 
+The retained ONNX Runtime profile pairs each of the nine warm calls with
+one VitisAI provider event and one enclosing `model_run` event. The mean
+durations were 8.025 ms for the provider event and 8.041 ms for
+`model_run`, compared with 8.247 ms for the outer host call. The provider
+event measures host-observed execution of the partition. The 0.222 ms
+gap to the outer call bounds the measured overhead outside that event.
+The graph returns logits. Reusing its work for the remaining native
+Vulkan steps would require a compatible initialized KV cache or a
+second, native initialization.
+
 Public Halogen stayed online throughout the probe. The minimum sampled
 physical or commit reserve was 25.06 GiB. The compiled context, raw
 results and runner logs are retained locally in the sibling
