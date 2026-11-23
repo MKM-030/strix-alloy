@@ -132,12 +132,9 @@ second pass. The model table and ordinary server configuration were
 preserved.
 
 This component test used the ext4 inode outside the serving container.
-The regular Halogen process maps its NTFS lookup source. Testing an
-engine speed change needs the private ext4 profile, proof that its
-mapping uses the same inode as the reader, and matched first requests
-with measured missing-page counts. The reader's NTFS mode validates only
-the page plan. Prefill, Decode and MTP changes remain unmeasured for
-pre-arrival reads.
+The regular Halogen process maps its NTFS lookup source. The reader's
+NTFS mode validates only the page plan. The private ext4 trial below
+checks the engine's actual mapping and the residency of a known request.
 
 The bounded reader, offline calculations and raw receipts are under
 `server/.local/halogen-update-20261122/primary0207/ngram-prearrival-pages-prep-v1`.
@@ -149,3 +146,55 @@ The bounded reader, offline calculations and raw receipts are under
 | Disposable ext4 syscall proof | `19a9b59a5f6ab3646cc7f3b0a43f1db919aa86c065604be11c6b81190e7b9155` |
 | Full plan residency sweep | `f1d113a3da6553baa063faaffddb455a7673a47b1bc15c657b3a7756c6453eb3` |
 | Canonical ext4 128-page read | `532157385eb26d771dabcde9695235f6d1b9de3ab6577f867933538759ac55d9` |
+
+## Engine-mapped ext4 cold control
+
+A private Halogen 0.20.7 instance mapped the pinned 47.68 GiB N-Gram
+table through an exact read-only ext4 bind. The guest verified the
+engine's mapping for all 34,916 pages of the first frozen request.
+Immediately before dispatch, **34,711 pages (99.41%) were nonresident**.
+The reader observed residency in **1.95 s** of guest time and performed
+zero payload reads. The Windows observation took **2.79 s**. The gap
+from the end of that observation to HTTP dispatch was **0.149 s**.
+
+The non-streaming Responses API returned the expected answer `23` for
+the first 2,329-token *War and Peace* input. Greedy MTP, Cache Off and
+zero reused prompt tokens were observed. These are the rates from this
+one control request, without preload.
+
+| Input tokens | Output tokens | Prefill tok/s | Decode tok/s | MTP accepted / proposed | HTTP wall |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 2,329 | 3 | 959.90 | 63.16 | 2 / 2 | 2.311 s |
+
+The collector had required intermediate prefill progress lines for every
+request. This prompt fit within one 8,192-token chunk and emitted a
+native completion and Responses POST without an intermediate progress
+line. The collector stopped after that response and closed the guest
+staging directory. The revised collector replayed the original log bytes,
+HTTP response and gateway counters, and matched the request to one
+native completion. The subsequent host-only residency check found
+**34,916 of 34,916** control pages resident. The other seven plans still
+had at least 90.4% of pages missing. The prescribed four pairs and warm
+repeats therefore have no qualified effect estimate. TTFT and NPU token
+rate change are unmeasured.
+
+In a CPU-only test using the same image and WSL kernel, the read-only file
+belonged to UID 1000. That UID received `EACCES` on the root child's process
+mapping and mount namespace. The image's existing root credentials
+could prove the mapping and report a cold page accurately. A single
+4 KiB read changed the selected page from absent to resident while the
+last page stayed absent. The private reader used those existing rights
+and checked them again inside each operation. The regular Halogen
+server on port 8840, Native Voice, ASR and TTS were verified ready after
+the trial.
+
+| Local evidence | SHA-256 |
+| --- | --- |
+| Same-image CPU-only permission and residency check | `51c9fa67353690bab1aa0e8c5c853fd6d65a6b37e1deb26870095804a308e9a3` |
+| Private guest and runtime binding | `059124e469038346094be98950be5637e2837ab82589614f82f88162f2f7e9cb` |
+| Full cold residency observation | `afe73053d5bddcfc1b932b5633d3a70b5fc966b578364ab4ccf88147d264f678` |
+| HTTP clock and gateway counts | `2affda4e7f8b857c7a3199b926fc02ac7afbe2b47a1a1fc3bc0695546d037936` |
+| API response | `55d7c5ff2032d128d7d780e45b05a73007773b1ee0fb88cd8ba89061f94ea32f` |
+| Independent native completion | `2597d2878c4f953ceb18db782ba81ee6b01519466ad037280481fb3b874c84ef` |
+| Host file residency after the request | `f686395eea88aaa91c94bdba4fd6320f5c926dd4e1cb540b3f62fa3c1c4858f8` |
+| Regular Halogen readiness | `882c687776ac52feef6fb4c27e6b1bb2c09de4c08a2d3f261b135d54d30752ba` |
