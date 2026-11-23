@@ -206,11 +206,12 @@ class CapacityTests(unittest.TestCase):
                 os.utime(guard_log, (now - 16, now - 16))
                 service.guard_alive(process, attempt, host=host)
                 def refresh_guard_frame():
-                    os.utime(guard_log, None)
+                    os.utime(guard_log, (now, now))
                     return safe
                 os.utime(guard_log, (now - 16, now - 16))
-                service.guard_alive(
-                    process, attempt, host=SimpleNamespace(frame=refresh_guard_frame))
+                with patch.object(service.time, 'time', return_value=now + 1):
+                    service.guard_alive(
+                        process, attempt, host=SimpleNamespace(frame=refresh_guard_frame))
                 polls = iter((None, 1))
                 exiting = SimpleNamespace(poll=lambda: next(polls))
                 os.utime(guard_log, (now - 16, now - 16))
