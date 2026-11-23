@@ -72,3 +72,33 @@ readiness passed after restoration.
 | QS Union summary | `51086365b6cef2b21d82461d11d936ea3771ab50a088a23ab7a32eb18d1fcbcd` |
 | Stock after summary | `a848076fce96f50171a9cf98936e5acf9ea8c542e6f4c4bc00e17ee92478ffac` |
 | QS Union container activation | `15200e4a9ffe36acdfa133326bc68610baed18e84c208cd5b6b7309db3882022` |
+
+## Sparse attention mode 4
+
+A separate trial set `HALOGEN_ATTN_QS_BT=4` with QS Union unset. The
+stock sparse path defaults to mode 5. Mode 4 uses 143 VGPRs and 12,880
+bytes of fixed LDS, compared with 167 VGPRs and 14,928 bytes for mode 5.
+Those values come from the embedded gfx1151 kernels. The container
+confirmed the setting. GPU dispatch and occupancy were unmeasured.
+
+| Actual input | Stock API Prefill tok/s | Stock API Decode tok/s | Stock MTP accepted/drafted | Windows first text | Windows full HTTP |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 8,192 | 2,063.14 | 57.57 | 192/291 (65.98%) | 4.033 s | 6.257 s |
+| 16,384 | 2,054.97 | 54.50 | 180/279 (64.52%) | 8.045 s | 10.363 s |
+
+Each stock result uses one excluded warmup and three measured responses
+to a frozen novel prefix with 128 output tokens. The candidate failed the
+exact-output check on the first 16K warmup. The request bytes matched the
+stock warmup and both produced 128 tokens. The first differing output
+byte was at zero-based offset 102. The stock warmup had 66 verification
+rounds and 60/93 accepted head drafts. Mode 4 had 62 rounds and 64/104.
+The campaign stopped at that response. Candidate throughput is unqualified.
+
+The two original SSE streams and request bytes are retained under
+`server/.local/halogen-update-20261122/primary0207/qsa-bt4-campaign-prep-v1/qsa-bt4-run-v1`.
+The stock warmup SSE has SHA-256 `f2538cd154c1328972e35a557bef095deb8e41ebb92002ceb25bbca85b6f4341`.
+The candidate warmup SSE has SHA-256 `e7c12dc48a741d8e3f332bba27c6a3d6bf55be35ff516b1f5b3b46d1757f37f4`.
+
+The campaign restored mode 5 on port 8840. Authenticated gateway and
+native health checks confirmed the normal serving profile. The private
+listener closed. Native Voice, ASR and TTS reported ready.
