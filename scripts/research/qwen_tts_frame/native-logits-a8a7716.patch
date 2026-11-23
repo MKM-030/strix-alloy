@@ -1,0 +1,91 @@
+diff --git a/src/code-predictor-forward.h b/src/code-predictor-forward.h
+--- a/src/code-predictor-forward.h
++++ b/src/code-predictor-forward.h
+@@ -426,7 +426,7 @@
+ // seed and subseq_base index each slot's Philox stream, subseq_base[i]
+ // being the subsequence of slot i's c0 sample (the 15 acoustic samples
+ // consume subseq_base[i] + 1 .. subseq_base[i] + 15). Fills out->codes
+-// as [N * 16] slot major. dump_dir may be NULL and applies to slot 0.
++// as [N * 16] slot major. dump_dir may be NULL and dump_step names the capture.
+ static bool code_predictor_frame_step(const CodePredictorWeights * cw,
+                                       ggml_backend_t               backend,
+                                       CodePredGraph *              frame_graph,
+@@ -437,6 +437,7 @@
+                                       const int64_t *              seed,
+                                       const int64_t *              subseq_base,
+                                       const char *                 dump_dir,
++                                      int                          dump_step,
+                                       CodePredictorOutput *        out) {
+     const int n_acoustic = cw->num_acoustic_codebooks;
+     const int n_codes    = n_acoustic + 1;
+@@ -465,7 +466,40 @@
+         debug_init(&d, dump_dir);
+         std::vector<int32_t> codes32(out->codes.begin(), out->codes.begin() + n_codes);
+         int                  n = (int) codes32.size();
+-        debug_dump_i32_as_f32(&d, "codes-step0", codes32.data(), &n, 1);
++        char codes_name[32];
++        snprintf(codes_name, sizeof(codes_name), "codes-step%d", dump_step);
++        debug_dump_i32_as_f32(&d, codes_name, codes32.data(), &n, 1);
++
++        // The native graph already retains each named logits tensor as an output.
++        // Only read them after compute and the ordinary native code readback.
++        constexpr int steps = 15;
++        constexpr int vocab = 2048;
++        std::vector<struct ggml_tensor *> retained;
++        for (int i = 0; i < ggml_graph_n_nodes(frame_graph->gf); i++) {
++            struct ggml_tensor * node = ggml_graph_node(frame_graph->gf, i);
++            if (strcmp(ggml_get_name(node), "logits") == 0) {
++                retained.push_back(node);
++            }
++        }
++        bool valid = N == 1 && n_acoustic == steps && cw->vocab_size == vocab &&
++                     retained.size() == steps && retained.back() == frame_graph->logits;
++        for (const struct ggml_tensor * node : retained) {
++            valid = valid && (node->flags & GGML_TENSOR_FLAG_OUTPUT) &&
++                    node->type == GGML_TYPE_F32 && ggml_is_contiguous(node) &&
++                    node->ne[0] == vocab && ggml_nelements(node) == vocab;
++        }
++        if (valid) {
++            std::vector<float> native_logits(steps * vocab);
++            for (int g = 0; g < steps; g++) {
++                ggml_backend_tensor_get(retained[(size_t) g], native_logits.data() + g * vocab,
++                                        0, vocab * sizeof(float));
++            }
++            char logits_name[48];
++            snprintf(logits_name, sizeof(logits_name), "codepred-logits-step%d", dump_step);
++            debug_dump_2d(&d, logits_name, native_logits.data(), vocab, steps);
++        } else {
++            fprintf(stderr, "[Debug] step %d: native CodePredictor logits layout differs\n", dump_step);
++        }
+     }
+ 
+     return true;
+diff --git a/src/pipeline-tts.cpp b/src/pipeline-tts.cpp
+--- a/src/pipeline-tts.cpp
++++ b/src/pipeline-tts.cpp
+@@ -1227,6 +1227,7 @@
+             std::vector<int64_t> seeds((size_t) N, 0);
+             std::vector<int64_t> subseqs((size_t) N, 0);
+             const char *         cp_dump = NULL;
++            int                  cp_dump_step = -1;
+             for (int i = 0; i < N; i++) {
+                 TtsSlot & s = e->slots[(size_t) i];
+                 if (!s.has_frame) {
+@@ -1237,14 +1238,15 @@
+                 temps[(size_t) i]              = s.subtk_T;
+                 seeds[(size_t) i]              = s.job->resolved_seed;
+                 subseqs[(size_t) i]            = s.subseq_counter - 1;
+-                if (N == 1 && s.step == 0 && p->dump_dir) {
++                if (N == 1 && (s.step == 0 || s.step == 1) && p->dump_dir) {
+                     cp_dump = p->dump_dir;
++                    cp_dump_step = s.step;
+                 }
+             }
+             Timer t_pred;
+             bool  pred_ok =
+                 code_predictor_frame_step(&pt->code_predictor, pt->backend, &gs.frame, &gs.sampler, c0s.data(), N,
+-                                          temps.data(), seeds.data(), subseqs.data(), cp_dump, &cp);
++                                          temps.data(), seeds.data(), subseqs.data(), cp_dump, cp_dump_step, &cp);
+             if (!pred_ok) {
+                 for (TtsSlot & s : e->slots) {
+                     s.finished   = true;

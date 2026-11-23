@@ -1,4 +1,4 @@
-"""Compare an offline CPU acoustic frame with a qwentts.cpp first-frame dump."""
+"""Compare an offline CPU acoustic frame with a qwentts.cpp Vulkan dump."""
 
 import argparse
 import hashlib
@@ -7,8 +7,8 @@ from pathlib import Path
 
 import numpy as np
 
-from .fixtures import acoustic_sampler_inputs, load_first_frame
-from .frame import FramePredictor, ranked_cdf
+from .fixtures import acoustic_sampler_inputs, load_native_frame, load_native_logits
+from .frame import FramePredictor, FrameResult, ranked_cdf, sample_code
 from .weights import load_weights
 
 TOP_K = 50
@@ -54,8 +54,10 @@ def _compare(args):
     name = args.name.strip()
     if not name:
         raise ValueError('Provide a name for the local frame fixture')
-    temperature, uniforms = acoustic_sampler_inputs(args.seed, 0, args.temperature)
-    hidden, reference = load_first_frame(args.dump_dir)
+    subsequence_base = args.frame_index * 16
+    temperature, uniforms = acoustic_sampler_inputs(args.seed, subsequence_base, args.temperature)
+    hidden, reference = load_native_frame(args.dump_dir, args.frame_index)
+    native_logits = load_native_logits(args.dump_dir, args.frame_index, reference) if args.native_logits else None
     weights = load_weights(args.gguf)
     predictor = FramePredictor(weights)
     predicted = predictor.predict(hidden, int(reference[0]), temperature, uniforms, top_k=TOP_K)
@@ -63,6 +65,7 @@ def _compare(args):
     differences = np.flatnonzero(reference != predicted.codes)
     first_mismatch = None
     teacher_forced = None
+    native = None
     if differences.size:
         first = int(differences[0])
         first_mismatch = {
@@ -70,6 +73,7 @@ def _compare(args):
             'reference_code': int(reference[first]),
             'predicted_code': int(predicted.codes[first]),
         }
+    if differences.size or native_logits is not None:
         forced = predictor.predict(
             hidden, int(reference[0]), temperature, uniforms, top_k=TOP_K,
             forced_codes=reference[1:],
@@ -78,17 +82,28 @@ def _compare(args):
             'logits_f32_le_sha256': _digest(forced.logits, '<f4'),
             'heads': _head_diagnostics(reference, forced, temperature, uniforms),
         }
+    if native_logits is not None:
+        resampled = np.empty_like(reference)
+        resampled[0] = reference[0]
+        for head, logits in enumerate(native_logits):
+            resampled[head + 1] = sample_code(logits, temperature, uniforms[head], TOP_K)
+        native = {
+            'logits_f32_le_sha256': _digest(native_logits, '<f4'),
+            'host_sampler_matches': int(np.count_nonzero(resampled[1:] == reference[1:])),
+            'heads': _head_diagnostics(reference, FrameResult(resampled, native_logits), temperature, uniforms),
+            'max_abs_logit_delta_per_head': np.max(np.abs(forced.logits - native_logits), axis=1).tolist(),
+        }
 
     return {
         'schema': 'qwen_tts_frame.offline_replay.v1',
         'execution': 'offline_cpu_numpy',
         'fixture': {
             'name': name,
-            'frame_index': 0,
+            'frame_index': args.frame_index,
             'seed': args.seed,
             'temperature': args.temperature,
             'effective_temperature': float(temperature),
-            'subsequence_base': 0,
+            'subsequence_base': subsequence_base,
             'top_k': TOP_K,
             'hidden_f32_le_sha256': _digest(hidden, '<f4'),
             'uniforms_f32_le_sha256': _digest(uniforms, '<f4'),
@@ -101,16 +116,19 @@ def _compare(args):
         'predicted_codes_sha256': _digest(predicted.codes, '<i4'),
         'first_mismatch': first_mismatch,
         'teacher_forced': teacher_forced,
+        'native_logits': native,
     }
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--gguf', type=Path, required=True, help='Pinned Qwen3-TTS Base Q8_0 model')
-    parser.add_argument('--dump-dir', type=Path, required=True, help='Directory with the native first-frame dump')
+    parser.add_argument('--dump-dir', type=Path, required=True, help='Directory with the native frame dump')
     parser.add_argument('--name', required=True, help='Name for the captured frame in the JSON report')
     parser.add_argument('--seed', type=int, required=True, help='Resolved native request seed')
     parser.add_argument('--temperature', type=float, required=True, help='Native subtalker temperature, 0 for greedy')
+    parser.add_argument('--frame-index', type=int, choices=(0, 1), default=0)
+    parser.add_argument('--native-logits', action='store_true', help='Compare against private Vulkan logits dumps')
     args = parser.parse_args(argv)
 
     try:

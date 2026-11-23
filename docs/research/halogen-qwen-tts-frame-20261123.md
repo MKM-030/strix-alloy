@@ -112,3 +112,61 @@ Public Halogen stayed online throughout the probe. The minimum sampled
 physical or commit reserve was 25.06 GiB. The compiled context, raw
 results and runner logs are retained locally in the sibling
 `codepredictor-first-npu-run-v3-host-embedding` directory.
+
+## Full 15-step frame and native logit comparison
+
+The static `export_frame` graph keeps K/V state and all 15 sampler decisions
+inside one ONNX invocation. A single-thread ORT CPU run used the first two
+frames of each of the three captures. Each frame used one excluded warmup
+and three timed calls. ORT matched the NumPy free run on all 90 acoustic
+codes. Every tested frame reported a valid sampler result.
+
+| Native capture | Frame 0 exact codes | Frame 1 exact codes |
+| --- | ---: | ---: |
+| Greedy, seed 42 | 15/15 | 7/15 |
+| Sampling, seed 42 | 11/15 | 6/15 |
+| Sampling, seed 91 | 7/15 | 15/15 |
+
+The free run matched native Vulkan on **61/90** codes and **2/6** complete
+frames. With native history held at every step, NumPy matched **86/90**
+decisions. The CPU frame means ranged from **135.28 to 142.94 ms**.
+The earlier NPU measurement covers the first decision. The full graph
+remains experimental and has no NPU frame latency result.
+
+A private build at the same `a8a7716` source commit reads all 15 projection
+outputs after the Vulkan graph completes. For all three captures, both
+Talker inputs, the first code row, the complete code matrix and the WAV
+file were byte-identical to the prior capture. Minimum sampled physical or
+commit reserve was **24.47 GiB**. The added readbacks affect timing.
+
+The host sampler reproduced **90/90** native decisions using the captured
+Vulkan logits and native Philox draws. Each of the four NumPy comparisons
+with held history flipped when Vulkan logits replaced the CPU logits.
+Three sampled draws crossed different CDF boundaries. In the greedy
+second frame, codebook 5 ranked native code 819 ahead by 0.00141 in Vulkan
+and behind by 0.01875 in NumPy. Across the six frames the largest
+single-logit absolute delta was 0.40991. These discrepancies arise before
+token selection on the tested fixtures. The capture leaves the individual
+arithmetic operations responsible for the differences unresolved.
+
+The [private Vulkan tap](../../scripts/research/qwen_tts_frame/native-logits-a8a7716.patch)
+captures the first two frames with `--dump`. For a captured directory,
+pass `--frame-index 0` or `1` and `--native-logits` to the replay command.
+The reader verifies the associated acoustic code row.
+
+## Acoustic prefix speculation
+
+An offline screen compared previous-frame copies, recent same-semantic-ID
+copies and held-out same-semantic-ID candidates against 162 saved native
+frames. On the 66 frames at temperature 0.9, no candidate reproduced all
+15 codes. The held-out prompt candidate matched 11 leading codes in total,
+or 0.167 per frame. At a hypothetical linear cost of 25.3 ms per 15 codes,
+that represents about 0.28 ms per frame before verification and repair.
+The native runtime already evaluates a whole frame in one Vulkan graph.
+The greedy run yielded 56 full previous-frame hits in 96 frames, including
+22 hits from one sequence of 23 identical frames.
+
+The private full-frame, native-logit and speculation receipts are in
+`codepredictor-full-frame-onnx-v1`, `codepredictor-native-logits-capture-v1`
+and `codepredictor-acoustic-speculation-offline-v1.json` in the same local
+evidence directory. Halogen and the voice services continued serving.

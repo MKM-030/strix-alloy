@@ -1,4 +1,4 @@
-"""Native qwentts.cpp Base 0.6B first-frame dumps and host sampler inputs."""
+"""Native qwentts.cpp Base 0.6B frame dumps and host sampler inputs."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ import numpy as np
 _HIDDEN_SIZE = 1024
 _MAX_PROMPT_ROWS = 4096
 _ACOUSTIC_CODES = 15
+_FRAME_CODES = 1 + _ACOUSTIC_CODES
 _CODEBOOK_SIZE = 2048
 _UINT32_MASK = (1 << 32) - 1
 _INT64_MIN = -(1 << 63)
@@ -18,22 +19,29 @@ _INT64_MAX = (1 << 63) - 1
 _FLOAT_BYTES = 4
 
 
-def _read_dump_last_row(path: Path, width: int, max_rows: int | None = None) -> np.ndarray:
+def _read_dump_rows(
+    path: Path, width: int, max_rows: int | None = None, *, first_rows: int | None = None
+) -> np.ndarray:
+    """Read the last row by default or a bounded prefix of a matrix dump."""
     # debug.h stores rank and shape as int32, followed by row-major binary32.
-    header = struct.Struct("<ii" if max_rows is None else "<iii")
+    matrix = max_rows is not None or first_rows is not None
+    header = struct.Struct("<iii" if matrix else "<ii")
     row_bytes = width * _FLOAT_BYTES
+    read_count = 1 if first_rows is None else first_rows
     with path.open("rb") as stream:
         encoded_shape = stream.read(header.size)
         if len(encoded_shape) != header.size:
             raise ValueError(f"{path.name}: truncated tensor header")
 
         dimensions = header.unpack(encoded_shape)
-        if max_rows is None:
+        if matrix:
+            rank, rows, actual_width = dimensions
+            valid_shape = rank == 2 and rows >= read_count and actual_width == width
+            if max_rows is not None:
+                valid_shape = valid_shape and rows <= max_rows
+        else:
             rows = 1
             valid_shape = dimensions == (1, width)
-        else:
-            rank, rows, actual_width = dimensions
-            valid_shape = rank == 2 and 1 <= rows <= max_rows and actual_width == width
         if not valid_shape:
             raise ValueError(f"{path.name}: unexpected tensor header {dimensions}")
 
@@ -41,23 +49,20 @@ def _read_dump_last_row(path: Path, width: int, max_rows: int | None = None) -> 
         if end != header.size + rows * row_bytes:
             raise ValueError(f"{path.name}: file length does not match tensor shape")
 
-        stream.seek(end - row_bytes)
-        payload = stream.read(row_bytes)
-        if len(payload) != row_bytes:
-            raise ValueError(f"{path.name}: truncated tensor row")
-    return np.frombuffer(payload, dtype="<f4").astype(np.float32, copy=True)
+        stream.seek(end - row_bytes if first_rows is None else header.size)
+        payload = stream.read(read_count * row_bytes)
+        if len(payload) != read_count * row_bytes:
+            raise ValueError(f"{path.name}: truncated tensor data")
+    return np.frombuffer(payload, dtype="<f4").astype(np.float32, copy=True).reshape(read_count, width)
 
 
-def load_first_frame(directory: str | Path) -> tuple[np.ndarray, np.ndarray]:
-    """Read the FP32 bridge row and 16 int32 IDs, starting with semantic c0."""
-    directory = Path(directory)
-    hidden = _read_dump_last_row(
-        directory / "talker-hidden-prefill-final.bin", _HIDDEN_SIZE, _MAX_PROMPT_ROWS
-    )
+def _load_hidden(path: Path, max_rows: int | None = None) -> np.ndarray:
+    hidden = _read_dump_rows(path, _HIDDEN_SIZE, max_rows)[0]
     if not np.isfinite(hidden).all():
-        raise ValueError("talker-hidden-prefill-final.bin: nonfinite bridge value")
+        raise ValueError(f"{path.name}: nonfinite bridge value")
+    return hidden
 
-    codes = _read_dump_last_row(directory / "codes-step0.bin", 1 + _ACOUSTIC_CODES)
+def _code_ids(codes: np.ndarray, name: str) -> np.ndarray:
     # The 3072-entry semantic vocabulary reserves its last 1024 codes.
     # EOS is the sole sampling exception there and ends the frame before this dump.
     if (
@@ -66,8 +71,65 @@ def load_first_frame(directory: str | Path) -> tuple[np.ndarray, np.ndarray]:
         or np.any(codes >= _CODEBOOK_SIZE)
         or np.any(codes != np.trunc(codes))
     ):
-        raise ValueError("codes-step0.bin: expected integer codec IDs in [0, 2048)")
-    return hidden, codes.astype(np.int32)
+        raise ValueError(f"{name}: expected integer codec IDs in [0, 2048)")
+    return codes.astype(np.int32)
+
+
+def load_first_frame(directory: str | Path) -> tuple[np.ndarray, np.ndarray]:
+    """Read the FP32 bridge row and 16 int32 IDs, starting with semantic c0."""
+    directory = Path(directory)
+    hidden = _load_hidden(directory / "talker-hidden-prefill-final.bin", _MAX_PROMPT_ROWS)
+    code_path = directory / "codes-step0.bin"
+    codes = _read_dump_rows(code_path, _FRAME_CODES)[0]
+    return hidden, _code_ids(codes, code_path.name)
+
+
+def load_native_frame(directory: str | Path, index: int) -> tuple[np.ndarray, np.ndarray]:
+    """Read the predictor input and acoustic IDs for native frame zero or one."""
+    index = operator.index(index)
+    if index == 0:
+        return load_first_frame(directory)
+    if index != 1:
+        raise ValueError("native frame index must be 0 or 1")
+
+    directory = Path(directory)
+    hidden = _load_hidden(directory / "talker-hidden-step1.bin")
+    first_path = directory / "codes-step0.bin"
+    first = _code_ids(_read_dump_rows(first_path, _FRAME_CODES)[0], first_path.name)
+    full_path = directory / "codes-full.bin"
+    full_codes = _code_ids(_read_dump_rows(full_path, _FRAME_CODES, first_rows=2), full_path.name)
+    # pipeline-tts.cpp writes all_codes in frame order. The explicit step-0
+    # dump links the matrix to the capture before its second row is selected.
+    if not np.array_equal(full_codes[0], first):
+        raise ValueError("codes-full.bin: first row does not match codes-step0.bin")
+    return hidden, full_codes[1]
+
+
+def load_native_logits(directory: str | Path, index: int, reference: np.ndarray) -> np.ndarray:
+    """Read the private Vulkan tap and confirm it belongs to the expected code row."""
+    directory = Path(directory)
+    code_path = directory / f"codes-step{index}.bin"
+    if index == 0:
+        _, codes = load_first_frame(directory)
+    elif index == 1:
+        codes = _code_ids(_read_dump_rows(code_path, _FRAME_CODES)[0], code_path.name)
+    else:
+        raise ValueError("native logits frame index must be 0 or 1")
+    if not np.array_equal(codes, reference):
+        raise ValueError(f"{code_path.name}: acoustic codes do not match the reference frame")
+
+    path = directory / f"codepred-logits-step{index}.bin"
+    raw = path.read_bytes()
+    header = struct.Struct("<iii")
+    if (
+        len(raw) != header.size + _ACOUSTIC_CODES * _CODEBOOK_SIZE * _FLOAT_BYTES
+        or header.unpack_from(raw) != (2, _CODEBOOK_SIZE, _ACOUSTIC_CODES)
+    ):
+        raise ValueError(f"{path.name}: unexpected native logits shape or size")
+    logits = np.frombuffer(raw, dtype="<f4", offset=header.size).reshape(_ACOUSTIC_CODES, _CODEBOOK_SIZE)
+    if not np.isfinite(logits).all():
+        raise ValueError(f"{path.name}: nonfinite native logits")
+    return logits
 
 
 def _int64(value: int) -> int:
