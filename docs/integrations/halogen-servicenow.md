@@ -262,6 +262,12 @@ gate 0.90 and Flexible cache with Vision On. Every preset selects v2, PLD `3,3`
 and an 18 GiB physical/commit runtime reserve. The explicit two-slot profile also
 checks 22 GiB physical and commit headroom before each request.
 
+The measured 0.20.7 two-slot configuration shares a 32,768-position pool.
+Simultaneously submitted requests completed both outputs sooner on the two
+measured workloads. Each individual request took longer from its own dispatch
+than it did when submitted alone.
+[Two-slot throughput, latency and command](../benchmarks/halogen0207-two-slot-scheduling-20261123.md)
+
 The retained historical **0.17.3** image was pinned as:
 
 ```text

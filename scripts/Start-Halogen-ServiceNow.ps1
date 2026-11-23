@@ -22,9 +22,9 @@ CurrentText32K selects the configured 0.20.7 text preset: 32K context/pool,
 8K chunk/arena, adaptive gate 0.90, Cache Off, Vision Off, Thinking Off/low
 and prefetch off. It uses the existing stable ServiceNow token and rejects
 conflicting explicit settings. Performance qualification is documented separately.
-Opt-in private concurrency tests may add -Slots 1 or 2, -Concurrency 2 and
--KvPoolPositions 32768 or 65536 to CurrentText32K. These selectors do not
-change defaults or establish a measured two-request speed gain.
+Concurrency tests may add -Slots 1 or 2, -Concurrency 2 and
+-KvPoolPositions 32768 or 65536 to CurrentText32K. See the documented 0.20.7
+two-slot scheduling comparison for the measured 32768-position profile.
 CurrentCachedText32K opts into Flexible prefix caching on the same 0.20.7
 text preset with fixed one-slot capacity and paired 2048 prefill settings.
 Use -PrefillTokens 8192 for the measured shared-prefix configuration.
@@ -262,7 +262,7 @@ if ($NativeLookup) {
     Write-Host 'Lookup source: qualified native WSL table.'
 }
 if ($configuration.concurrency -eq 2) {
-    Write-Host ('Opt-in gateway concurrency: 2; native slots: {0}; KV pool: {1}. Aggregate performance is unqualified.' -f $configuration.engine.slots, $configuration.engine.kv_pool_positions)
+    Write-Host ('Opt-in gateway concurrency: 2; native slots: {0}; KV pool: {1}.' -f $configuration.engine.slots, $configuration.engine.kv_pool_positions)
 }
 if ($Profile -in @('FollowupText32K', 'CurrentCachedText32K')) {
     Write-Host 'Opt-in follow-up latency profile: Flexible prefix reuse requires stable repeated context; any benefit must be qualified for that request shape.'

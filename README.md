@@ -79,6 +79,11 @@ averaged 71.21 API decode tok/s across ten short prompts and accepted
 returned identical 95-token extractions in both formats. The strict schema
 took 1.89–2.27% longer over HTTP than the broad JSON format on that fixture.
 
+In the [two-slot scheduling comparison](docs/benchmarks/halogen0207-two-slot-scheduling-20261123.md),
+sending two requests together increased paired throughput by 6.68–7.54%
+for natural 8K+16K inputs and 15.55–15.56% for short code. Every individual
+request took longer than when dispatched alone.
+
 The earlier [22 November deployment-confirmation cohort](docs/benchmarks/halogen0207-performance-natural-8k16k-20261122.md)
 retains its separate 1618.895333/51.575000 and 1534.869667/49.656333 API
 observations. It is not a control for the later bracketed campaign. Separate
