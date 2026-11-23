@@ -151,6 +151,13 @@ The measured fixture reused 8,448 of 8,498 tokens per follow-up
 and shortened each follow-up from 4.30–4.40 s to 0.25–0.27 s.
 [Responses benchmark and request example](../benchmarks/halogen0207-responses-system-cache-20261123.md)
 
+An Exact-cache comparison with 8,498 input tokens and a stable Responses
+system prompt reused 8,192 tokens. Mean follow-up HTTP time was 0.408 s
+versus 4.340–4.408 s across the two Off controls. The current ServiceNow
+transformer uses Chat Completions. Its synthetic caller-context fixture
+shared 2,569 leading tokens after a note change. The regular shared server
+uses Cache Off. [Exact checkpoint benchmark and scope](../benchmarks/halogen0207-exact-system-prefix-20261123.md)
+
 For the native WSL lookup table, start the current 0.20.7 text profile with
 the locally verified extraction receipt.
 
