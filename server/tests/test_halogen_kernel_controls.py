@@ -78,6 +78,20 @@ class ManagedKernelControlsTests(unittest.TestCase):
         self.assertEqual(module.environment(controls),
                          {'HALOGEN_DRAFT_VOCAB_Q8':'1'})
 
+    def test_0207_i4r_two_row_decode_group_is_an_explicit_trial(self):
+        engine = self.profile('0.20.7')['engine']
+        flag = 'HALOGEN_I4R_DEC_GROUP'
+        module = controller.halogen_kernel_module(self.repo / engine['directory'])
+        self.assertNotIn(flag, module.environment({}))
+        engine['kernel_controls'] = {flag: 2}
+        directory = controller.validate_engine(engine, self.repo)
+        args = controller.halogen_kernel_arguments(engine, directory)
+        self.assertEqual(json.loads(args[1]), {flag: 2})
+        self.assertEqual(module.environment({flag: 2}), {flag: '2'})
+        for invalid in (True, '2', 1, 3, 4, 0):
+            with self.subTest(value=invalid), self.assertRaises(ValueError):
+                module.environment({flag: invalid})
+
     def test_tuning_copies_validated_kernel_controls(self):
         source=self.profile(); before=copy.deepcopy(source)
         controls={'HALOGEN_DN_SCAN':0}; result=self.tune(source,kernel_controls=controls)
