@@ -1,0 +1,1875 @@
+{
+  "schema": "strix-alloy.halogen0207.publisher-comparison.v1",
+  "release": "0.20.7",
+  "checkpoint": "v2",
+  "draft_head": "r2-HT4",
+  "host": {
+    "os": "Windows / WSL2",
+    "physical_memory_gib_installed": 64,
+    "power_profile": "Performance"
+  },
+  "publisher": {
+    "performance_source": "https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/performance.md#0207-both-checkpoints",
+    "concurrency_source": "https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/configuration.md#speed-by-concurrency-the-previous-default-mode",
+    "context_positions": 262144,
+    "prefill_chunk": 32768,
+    "bench_native_mtp_tok_s": 74.57,
+    "bench_serial_reported_tok_s": 41.07,
+    "prefill_http_tok_s": {
+      "pp8192": 1983,
+      "pp32768": 1876,
+      "pp131072": 1796
+    },
+    "tg128_http_tok_s": 74.9,
+    "alternating_reference_tg128_http_tok_s": 76.37,
+    "concurrency_configured_slots": 16,
+    "shared_generation_two_stream_tok_s": {
+      "code": 116,
+      "sampled_prose": 89
+    }
+  },
+  "local_configuration": {
+    "bench_context": 32768,
+    "bench_configured_slots": 2,
+    "sweep_context": 163840,
+    "sweep_configured_slots": 1,
+    "pair_context": 32768,
+    "pair_configured_slots": 2,
+    "pair_kv_pool_positions": 32768,
+    "prefill_chunk": 8192,
+    "max_prefill_tokens": 8192,
+    "prompt_cache": "Off",
+    "thinking": "Off"
+  },
+  "aggregation": {
+    "per_request": "Arithmetic mean of rates",
+    "mtp_head": "Pooled native accepted/proposed counts",
+    "http": "Full Windows QPC dispatch-to-EOF",
+    "native": "Uncorrected engine phase-clock observations",
+    "paired_http": "First dispatch through last EOF, including Prefill",
+    "paired_visible": "Client estimate from common visible SSE interval when event counts reconcile"
+  },
+  "bench": {
+    "serial": {
+      "requests": 30,
+      "actual_input_tokens": [
+        22,
+        24,
+        26,
+        27,
+        28,
+        30,
+        31,
+        36,
+        41
+      ],
+      "actual_output_tokens": [
+        143,
+        256
+      ],
+      "total_http_seconds": 203.7092612,
+      "mean_input_tok_per_full_http_second": 4.4194253169335855,
+      "mean_output_tok_per_full_http_second": 36.50480409990587,
+      "pooled_output_tok_per_full_http_second": 36.03665320249073,
+      "native_prefill_mean_tok_s": 223.8519,
+      "native_decode_mean_tok_s": 36.47643333333333,
+      "ledger_mean_tok_s": 36.47633333333333,
+      "phase_sum_above_qpc": 28,
+      "speculation": {
+        "head": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        }
+      },
+      "native_head_acceptance": null,
+      "minimum_reserve_gib": 27.174541473388672
+    },
+    "mtp": {
+      "requests": 30,
+      "actual_input_tokens": [
+        22,
+        24,
+        26,
+        27,
+        28,
+        30,
+        31,
+        36,
+        41
+      ],
+      "actual_output_tokens": [
+        143,
+        256
+      ],
+      "total_http_seconds": 98.7341406,
+      "mean_input_tok_per_full_http_second": 9.012925532899112,
+      "mean_output_tok_per_full_http_second": 75.8864729017321,
+      "pooled_output_tok_per_full_http_second": 74.35118141900351,
+      "native_prefill_mean_tok_s": 258.247,
+      "native_decode_mean_tok_s": 77.23733333333332,
+      "ledger_mean_tok_s": 77.238,
+      "phase_sum_above_qpc": 12,
+      "speculation": {
+        "head": {
+          "rounds": 2418,
+          "drafted": 6021,
+          "accepted": 4887
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        }
+      },
+      "native_head_acceptance": 0.8116591928251121,
+      "minimum_reserve_gib": 27.180164337158203
+    }
+  },
+  "bench_output_parity": {
+    "code_a": true,
+    "code_b": true,
+    "proof_a": true,
+    "proof_b": true,
+    "proc_a": true,
+    "proc_b": true,
+    "chat_a": true,
+    "chat_b": true,
+    "prose_a": true,
+    "prose_b": true
+  },
+  "prefill_sweep": {
+    "pp8192": {
+      "requests": 3,
+      "actual_input_tokens": [
+        8181,
+        8182,
+        8184
+      ],
+      "actual_output_tokens": [
+        1
+      ],
+      "total_http_seconds": 12.6389599,
+      "mean_input_tok_per_full_http_second": 1945.5319194381239,
+      "mean_output_tok_per_full_http_second": 0.23777363706468455,
+      "pooled_output_tok_per_full_http_second": 0.23736130375728148,
+      "native_prefill_mean_tok_s": 1977.782,
+      "native_decode_mean_tok_s": 0.0,
+      "ledger_mean_tok_s": null,
+      "phase_sum_above_qpc": 0,
+      "speculation": {
+        "head": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        }
+      },
+      "native_head_acceptance": null,
+      "minimum_reserve_gib": 23.74843978881836
+    },
+    "pp32768": {
+      "requests": 3,
+      "actual_input_tokens": [
+        32767,
+        32768
+      ],
+      "actual_output_tokens": [
+        1
+      ],
+      "total_http_seconds": 49.9263913,
+      "mean_input_tok_per_full_http_second": 1968.970955627059,
+      "mean_output_tok_per_full_http_second": 0.060089444009891614,
+      "pooled_output_tok_per_full_http_second": 0.060088460669497655,
+      "native_prefill_mean_tok_s": 1974.9676666666667,
+      "native_decode_mean_tok_s": 0.0,
+      "ledger_mean_tok_s": null,
+      "phase_sum_above_qpc": 0,
+      "speculation": {
+        "head": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        }
+      },
+      "native_head_acceptance": null,
+      "minimum_reserve_gib": 23.741104125976562
+    },
+    "pp131072": {
+      "requests": 3,
+      "actual_input_tokens": [
+        131061,
+        131062,
+        131064
+      ],
+      "actual_output_tokens": [
+        1
+      ],
+      "total_http_seconds": 216.11113469999998,
+      "mean_input_tok_per_full_http_second": 1819.5957959601346,
+      "mean_output_tok_per_full_http_second": 0.013883437200146578,
+      "pooled_output_tok_per_full_http_second": 0.013881746556763603,
+      "native_prefill_mean_tok_s": 1792.3280000000002,
+      "native_decode_mean_tok_s": 0.0,
+      "ledger_mean_tok_s": null,
+      "phase_sum_above_qpc": 2,
+      "speculation": {
+        "head": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        }
+      },
+      "native_head_acceptance": null,
+      "minimum_reserve_gib": 23.708080291748047
+    }
+  },
+  "tg128": {
+    "cohort": {
+      "requests": 30,
+      "actual_input_tokens": [
+        22,
+        24,
+        26,
+        27,
+        28,
+        30,
+        31,
+        36,
+        41
+      ],
+      "actual_output_tokens": [
+        128
+      ],
+      "total_http_seconds": 57.4930793,
+      "mean_input_tok_per_full_http_second": 15.644572331850979,
+      "mean_output_tok_per_full_http_second": 68.96405983872933,
+      "pooled_output_tok_per_full_http_second": 66.79064761799948,
+      "native_prefill_mean_tok_s": 239.22406666666666,
+      "native_decode_mean_tok_s": 74.28216666666667,
+      "ledger_mean_tok_s": 74.282,
+      "phase_sum_above_qpc": 0,
+      "speculation": {
+        "head": {
+          "rounds": 1293,
+          "drafted": 3126,
+          "accepted": 2508
+        },
+        "lookup": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        },
+        "grammar": {
+          "rounds": 0,
+          "drafted": 0,
+          "accepted": 0
+        }
+      },
+      "native_head_acceptance": 0.8023032629558541,
+      "minimum_reserve_gib": 22.700942993164062,
+      "http_mean_seconds": 1.9164359766666665,
+      "head_accepted": 2508,
+      "head_drafted": 3126,
+      "head_acceptance_percent": 80.23032629558541
+    },
+    "by_case": {
+      "code_a": {
+        "requests": 3,
+        "actual_input_tokens": [
+          31
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 4.664542,
+        "mean_input_tok_per_full_http_second": 20.21334916796466,
+        "mean_output_tok_per_full_http_second": 83.46157075804764,
+        "pooled_output_tok_per_full_http_second": 82.32319486028854,
+        "native_prefill_mean_tok_s": 256.083,
+        "native_decode_mean_tok_s": 91.21433333333333,
+        "ledger_mean_tok_s": 91.21333333333332,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 84,
+            "drafted": 351,
+            "accepted": 297
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.8461538461538461,
+        "minimum_reserve_gib": 24.465728759765625,
+        "http_mean_seconds": 1.5548473333333332,
+        "head_accepted": 297,
+        "head_drafted": 351,
+        "head_acceptance_percent": 84.61538461538461,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-23": {
+            "requests": 3,
+            "actual_input_tokens": [
+              31
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 4.664542,
+            "mean_input_tok_per_full_http_second": 20.21334916796466,
+            "mean_output_tok_per_full_http_second": 83.46157075804764,
+            "pooled_output_tok_per_full_http_second": 82.32319486028854,
+            "native_prefill_mean_tok_s": 256.083,
+            "native_decode_mean_tok_s": 91.21433333333333,
+            "ledger_mean_tok_s": 91.21333333333332,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 84,
+                "drafted": 351,
+                "accepted": 297
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.8461538461538461,
+            "minimum_reserve_gib": 24.465728759765625,
+            "http_mean_seconds": 1.5548473333333332,
+            "head_accepted": 297,
+            "head_drafted": 351,
+            "head_acceptance_percent": 84.61538461538461
+          }
+        }
+      },
+      "code_b": {
+        "requests": 3,
+        "actual_input_tokens": [
+          41
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 4.7336848,
+        "mean_input_tok_per_full_http_second": 26.153839555364588,
+        "mean_output_tok_per_full_http_second": 81.65101129479676,
+        "pooled_output_tok_per_full_http_second": 81.12073706301696,
+        "native_prefill_mean_tok_s": 287.1673333333333,
+        "native_decode_mean_tok_s": 90.456,
+        "ledger_mean_tok_s": 90.45666666666666,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 87,
+            "drafted": 357,
+            "accepted": 294
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.8235294117647058,
+        "minimum_reserve_gib": 24.516246795654297,
+        "http_mean_seconds": 1.5778949333333332,
+        "head_accepted": 294,
+        "head_drafted": 357,
+        "head_acceptance_percent": 82.3529411764706,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-23": {
+            "requests": 3,
+            "actual_input_tokens": [
+              41
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 4.7336848,
+            "mean_input_tok_per_full_http_second": 26.153839555364588,
+            "mean_output_tok_per_full_http_second": 81.65101129479676,
+            "pooled_output_tok_per_full_http_second": 81.12073706301696,
+            "native_prefill_mean_tok_s": 287.1673333333333,
+            "native_decode_mean_tok_s": 90.456,
+            "ledger_mean_tok_s": 90.45666666666666,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 87,
+                "drafted": 357,
+                "accepted": 294
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.8235294117647058,
+            "minimum_reserve_gib": 24.516246795654297,
+            "http_mean_seconds": 1.5778949333333332,
+            "head_accepted": 294,
+            "head_drafted": 357,
+            "head_acceptance_percent": 82.3529411764706
+          }
+        }
+      },
+      "proof_a": {
+        "requests": 3,
+        "actual_input_tokens": [
+          24
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 5.1456236,
+        "mean_input_tok_per_full_http_second": 14.187288265272963,
+        "mean_output_tok_per_full_http_second": 75.66553741478914,
+        "pooled_output_tok_per_full_http_second": 74.62652340136188,
+        "native_prefill_mean_tok_s": 217.38933333333333,
+        "native_decode_mean_tok_s": 81.31099999999999,
+        "ledger_mean_tok_s": 81.31333333333333,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 93,
+            "drafted": 369,
+            "accepted": 285
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.7723577235772358,
+        "minimum_reserve_gib": 24.129234313964844,
+        "http_mean_seconds": 1.7152078666666668,
+        "head_accepted": 285,
+        "head_drafted": 369,
+        "head_acceptance_percent": 77.23577235772358,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-23": {
+            "requests": 3,
+            "actual_input_tokens": [
+              24
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 5.1456236,
+            "mean_input_tok_per_full_http_second": 14.187288265272963,
+            "mean_output_tok_per_full_http_second": 75.66553741478914,
+            "pooled_output_tok_per_full_http_second": 74.62652340136188,
+            "native_prefill_mean_tok_s": 217.38933333333333,
+            "native_decode_mean_tok_s": 81.31099999999999,
+            "ledger_mean_tok_s": 81.31333333333333,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 93,
+                "drafted": 369,
+                "accepted": 285
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.7723577235772358,
+            "minimum_reserve_gib": 24.129234313964844,
+            "http_mean_seconds": 1.7152078666666668,
+            "head_accepted": 285,
+            "head_drafted": 369,
+            "head_acceptance_percent": 77.23577235772358
+          }
+        }
+      },
+      "proof_b": {
+        "requests": 3,
+        "actual_input_tokens": [
+          22
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 5.0628083,
+        "mean_input_tok_per_full_http_second": 13.148500984552031,
+        "mean_output_tok_per_full_http_second": 76.50036936466637,
+        "pooled_output_tok_per_full_http_second": 75.8472328490099,
+        "native_prefill_mean_tok_s": 206.56433333333334,
+        "native_decode_mean_tok_s": 82.17033333333335,
+        "ledger_mean_tok_s": 82.17,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 102,
+            "drafted": 315,
+            "accepted": 279
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.8857142857142857,
+        "minimum_reserve_gib": 22.700942993164062,
+        "http_mean_seconds": 1.6876027666666669,
+        "head_accepted": 279,
+        "head_drafted": 315,
+        "head_acceptance_percent": 88.57142857142857,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-23": {
+            "requests": 3,
+            "actual_input_tokens": [
+              22
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 5.0628083,
+            "mean_input_tok_per_full_http_second": 13.148500984552031,
+            "mean_output_tok_per_full_http_second": 76.50036936466637,
+            "pooled_output_tok_per_full_http_second": 75.8472328490099,
+            "native_prefill_mean_tok_s": 206.56433333333334,
+            "native_decode_mean_tok_s": 82.17033333333335,
+            "ledger_mean_tok_s": 82.17,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 102,
+                "drafted": 315,
+                "accepted": 279
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.8857142857142857,
+            "minimum_reserve_gib": 22.700942993164062,
+            "http_mean_seconds": 1.6876027666666669,
+            "head_accepted": 279,
+            "head_drafted": 315,
+            "head_acceptance_percent": 88.57142857142857
+          }
+        }
+      },
+      "proc_a": {
+        "requests": 3,
+        "actual_input_tokens": [
+          27
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 6.0777567,
+        "mean_input_tok_per_full_http_second": 13.553157082097078,
+        "mean_output_tok_per_full_http_second": 64.25200394475651,
+        "pooled_output_tok_per_full_http_second": 63.18120631581057,
+        "native_prefill_mean_tok_s": 238.05533333333335,
+        "native_decode_mean_tok_s": 68.557,
+        "ledger_mean_tok_s": 68.56,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 135,
+            "drafted": 306,
+            "accepted": 246
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.803921568627451,
+        "minimum_reserve_gib": 29.217632293701172,
+        "http_mean_seconds": 2.0259189,
+        "head_accepted": 246,
+        "head_drafted": 306,
+        "head_acceptance_percent": 80.3921568627451,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-24": {
+            "requests": 3,
+            "actual_input_tokens": [
+              27
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 6.0777567,
+            "mean_input_tok_per_full_http_second": 13.553157082097078,
+            "mean_output_tok_per_full_http_second": 64.25200394475651,
+            "pooled_output_tok_per_full_http_second": 63.18120631581057,
+            "native_prefill_mean_tok_s": 238.05533333333335,
+            "native_decode_mean_tok_s": 68.557,
+            "ledger_mean_tok_s": 68.56,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 135,
+                "drafted": 306,
+                "accepted": 246
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.803921568627451,
+            "minimum_reserve_gib": 29.217632293701172,
+            "http_mean_seconds": 2.0259189,
+            "head_accepted": 246,
+            "head_drafted": 306,
+            "head_acceptance_percent": 80.3921568627451
+          }
+        }
+      },
+      "proc_b": {
+        "requests": 3,
+        "actual_input_tokens": [
+          30
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 6.1919739,
+        "mean_input_tok_per_full_http_second": 14.954660673394429,
+        "mean_output_tok_per_full_http_second": 63.8065522064829,
+        "pooled_output_tok_per_full_http_second": 62.015765279630784,
+        "native_prefill_mean_tok_s": 243.01200000000003,
+        "native_decode_mean_tok_s": 68.35333333333334,
+        "ledger_mean_tok_s": 68.35666666666667,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 141,
+            "drafted": 297,
+            "accepted": 240
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.8080808080808081,
+        "minimum_reserve_gib": 29.197269439697266,
+        "http_mean_seconds": 2.0639913,
+        "head_accepted": 240,
+        "head_drafted": 297,
+        "head_acceptance_percent": 80.8080808080808,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-24": {
+            "requests": 3,
+            "actual_input_tokens": [
+              30
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 6.1919739,
+            "mean_input_tok_per_full_http_second": 14.954660673394429,
+            "mean_output_tok_per_full_http_second": 63.8065522064829,
+            "pooled_output_tok_per_full_http_second": 62.015765279630784,
+            "native_prefill_mean_tok_s": 243.01200000000003,
+            "native_decode_mean_tok_s": 68.35333333333334,
+            "ledger_mean_tok_s": 68.35666666666667,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 141,
+                "drafted": 297,
+                "accepted": 240
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.8080808080808081,
+            "minimum_reserve_gib": 29.197269439697266,
+            "http_mean_seconds": 2.0639913,
+            "head_accepted": 240,
+            "head_drafted": 297,
+            "head_acceptance_percent": 80.8080808080808
+          }
+        }
+      },
+      "chat_a": {
+        "requests": 3,
+        "actual_input_tokens": [
+          26
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 7.310804900000001,
+        "mean_input_tok_per_full_http_second": 10.78562174151422,
+        "mean_output_tok_per_full_http_second": 53.09844549668539,
+        "pooled_output_tok_per_full_http_second": 52.52499625588421,
+        "native_prefill_mean_tok_s": 237.13866666666664,
+        "native_decode_mean_tok_s": 55.89000000000001,
+        "ledger_mean_tok_s": 55.88666666666666,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 198,
+            "drafted": 288,
+            "accepted": 183
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.6354166666666666,
+        "minimum_reserve_gib": 29.318683624267578,
+        "http_mean_seconds": 2.436934966666667,
+        "head_accepted": 183,
+        "head_drafted": 288,
+        "head_acceptance_percent": 63.541666666666664,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-24": {
+            "requests": 3,
+            "actual_input_tokens": [
+              26
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 7.310804900000001,
+            "mean_input_tok_per_full_http_second": 10.78562174151422,
+            "mean_output_tok_per_full_http_second": 53.09844549668539,
+            "pooled_output_tok_per_full_http_second": 52.52499625588421,
+            "native_prefill_mean_tok_s": 237.13866666666664,
+            "native_decode_mean_tok_s": 55.89000000000001,
+            "ledger_mean_tok_s": 55.88666666666666,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 198,
+                "drafted": 288,
+                "accepted": 183
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.6354166666666666,
+            "minimum_reserve_gib": 29.318683624267578,
+            "http_mean_seconds": 2.436934966666667,
+            "head_accepted": 183,
+            "head_drafted": 288,
+            "head_acceptance_percent": 63.541666666666664
+          }
+        }
+      },
+      "chat_b": {
+        "requests": 3,
+        "actual_input_tokens": [
+          24
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 5.6503246,
+        "mean_input_tok_per_full_http_second": 12.8806629615514,
+        "mean_output_tok_per_full_http_second": 68.69686912827412,
+        "pooled_output_tok_per_full_http_second": 67.96069733763613,
+        "native_prefill_mean_tok_s": 220.01333333333332,
+        "native_decode_mean_tok_s": 73.42366666666666,
+        "ledger_mean_tok_s": 73.42333333333333,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 132,
+            "drafted": 294,
+            "accepted": 246
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.8367346938775511,
+        "minimum_reserve_gib": 29.262840270996094,
+        "http_mean_seconds": 1.8834415333333334,
+        "head_accepted": 246,
+        "head_drafted": 294,
+        "head_acceptance_percent": 83.6734693877551,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-24": {
+            "requests": 3,
+            "actual_input_tokens": [
+              24
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 5.6503246,
+            "mean_input_tok_per_full_http_second": 12.8806629615514,
+            "mean_output_tok_per_full_http_second": 68.69686912827412,
+            "pooled_output_tok_per_full_http_second": 67.96069733763613,
+            "native_prefill_mean_tok_s": 220.01333333333332,
+            "native_decode_mean_tok_s": 73.42366666666666,
+            "ledger_mean_tok_s": 73.42333333333333,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 132,
+                "drafted": 294,
+                "accepted": 246
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.8367346938775511,
+            "minimum_reserve_gib": 29.262840270996094,
+            "http_mean_seconds": 1.8834415333333334,
+            "head_accepted": 246,
+            "head_drafted": 294,
+            "head_acceptance_percent": 83.6734693877551
+          }
+        }
+      },
+      "prose_a": {
+        "requests": 3,
+        "actual_input_tokens": [
+          36
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 6.426134299999999,
+        "mean_input_tok_per_full_http_second": 16.964845442717127,
+        "mean_output_tok_per_full_http_second": 60.31945046299423,
+        "pooled_output_tok_per_full_http_second": 59.755987359305585,
+        "native_prefill_mean_tok_s": 260.849,
+        "native_decode_mean_tok_s": 64.89,
+        "ledger_mean_tok_s": 64.88666666666667,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 168,
+            "drafted": 267,
+            "accepted": 213
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.797752808988764,
+        "minimum_reserve_gib": 29.274967193603516,
+        "http_mean_seconds": 2.1420447666666664,
+        "head_accepted": 213,
+        "head_drafted": 267,
+        "head_acceptance_percent": 79.7752808988764,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-24": {
+            "requests": 3,
+            "actual_input_tokens": [
+              36
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 6.426134299999999,
+            "mean_input_tok_per_full_http_second": 16.964845442717127,
+            "mean_output_tok_per_full_http_second": 60.31945046299423,
+            "pooled_output_tok_per_full_http_second": 59.755987359305585,
+            "native_prefill_mean_tok_s": 260.849,
+            "native_decode_mean_tok_s": 64.89,
+            "ledger_mean_tok_s": 64.88666666666667,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 168,
+                "drafted": 267,
+                "accepted": 213
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.797752808988764,
+            "minimum_reserve_gib": 29.274967193603516,
+            "http_mean_seconds": 2.1420447666666664,
+            "head_accepted": 213,
+            "head_drafted": 267,
+            "head_acceptance_percent": 79.7752808988764
+          }
+        }
+      },
+      "prose_b": {
+        "requests": 3,
+        "actual_input_tokens": [
+          28
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 6.2294262,
+        "mean_input_tok_per_full_http_second": 13.603797444081286,
+        "mean_output_tok_per_full_http_second": 62.18878831580017,
+        "pooled_output_tok_per_full_http_second": 61.642916646159165,
+        "native_prefill_mean_tok_s": 225.96833333333333,
+        "native_decode_mean_tok_s": 66.556,
+        "ledger_mean_tok_s": 66.55333333333333,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 153,
+            "drafted": 282,
+            "accepted": 225
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.7978723404255319,
+        "minimum_reserve_gib": 29.295166015625,
+        "http_mean_seconds": 2.0764754,
+        "head_accepted": 225,
+        "head_drafted": 282,
+        "head_acceptance_percent": 79.7872340425532,
+        "complete": true,
+        "observed_repetitions": [
+          0,
+          1,
+          2
+        ],
+        "exact_output_parity": true,
+        "by_utc_date": {
+          "2026-11-24": {
+            "requests": 3,
+            "actual_input_tokens": [
+              28
+            ],
+            "actual_output_tokens": [
+              128
+            ],
+            "total_http_seconds": 6.2294262,
+            "mean_input_tok_per_full_http_second": 13.603797444081286,
+            "mean_output_tok_per_full_http_second": 62.18878831580017,
+            "pooled_output_tok_per_full_http_second": 61.642916646159165,
+            "native_prefill_mean_tok_s": 225.96833333333333,
+            "native_decode_mean_tok_s": 66.556,
+            "ledger_mean_tok_s": 66.55333333333333,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 153,
+                "drafted": 282,
+                "accepted": 225
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.7978723404255319,
+            "minimum_reserve_gib": 29.295166015625,
+            "http_mean_seconds": 2.0764754,
+            "head_accepted": 225,
+            "head_drafted": 282,
+            "head_acceptance_percent": 79.7872340425532
+          }
+        }
+      }
+    },
+    "by_utc_date": {
+      "2026-11-23": {
+        "requests": 12,
+        "actual_input_tokens": [
+          22,
+          24,
+          31,
+          41
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 19.6066587,
+        "mean_input_tok_per_full_http_second": 18.425744493288562,
+        "mean_output_tok_per_full_http_second": 79.31962220807497,
+        "pooled_output_tok_per_full_http_second": 78.34073227377594,
+        "native_prefill_mean_tok_s": 241.80100000000002,
+        "native_decode_mean_tok_s": 86.28791666666666,
+        "ledger_mean_tok_s": 86.28833333333334,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 366,
+            "drafted": 1392,
+            "accepted": 1155
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.8297413793103449,
+        "minimum_reserve_gib": 22.700942993164062,
+        "http_mean_seconds": 1.633888225,
+        "head_accepted": 1155,
+        "head_drafted": 1392,
+        "head_acceptance_percent": 82.97413793103448
+      },
+      "2026-11-24": {
+        "requests": 18,
+        "actual_input_tokens": [
+          24,
+          26,
+          27,
+          28,
+          30,
+          36
+        ],
+        "actual_output_tokens": [
+          128
+        ],
+        "total_http_seconds": 37.8864206,
+        "mean_input_tok_per_full_http_second": 13.790457557559257,
+        "mean_output_tok_per_full_http_second": 62.06035159249888,
+        "pooled_output_tok_per_full_http_second": 60.81334587728248,
+        "native_prefill_mean_tok_s": 237.5061111111111,
+        "native_decode_mean_tok_s": 66.27833333333334,
+        "ledger_mean_tok_s": 66.27777777777777,
+        "phase_sum_above_qpc": 0,
+        "speculation": {
+          "head": {
+            "rounds": 927,
+            "drafted": 1734,
+            "accepted": 1353
+          },
+          "lookup": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          },
+          "grammar": {
+            "rounds": 0,
+            "drafted": 0,
+            "accepted": 0
+          }
+        },
+        "native_head_acceptance": 0.7802768166089965,
+        "minimum_reserve_gib": 29.197269439697266,
+        "http_mean_seconds": 2.1048011444444445,
+        "head_accepted": 1353,
+        "head_drafted": 1734,
+        "head_acceptance_percent": 78.02768166089966
+      }
+    }
+  },
+  "concurrency": {
+    "requests": 48,
+    "groups": {
+      "code-solo": {
+        "measured_groups": 6,
+        "mean_full_http_seconds": 3.8087313666666667,
+        "mean_aggregate_output_tok_per_full_http_second": 100.60492253168731,
+        "shared_visible_sse_event_estimate": null,
+        "valid_visible_estimates": 3,
+        "native_shared_window_measured": false,
+        "cases": {
+          "code_a": {
+            "requests": 3,
+            "actual_input_tokens": [
+              31
+            ],
+            "actual_output_tokens": [
+              377
+            ],
+            "total_http_seconds": 10.417676799999999,
+            "mean_input_tok_per_full_http_second": 8.927170655147334,
+            "mean_output_tok_per_full_http_second": 108.56591409646917,
+            "pooled_output_tok_per_full_http_second": 108.56547210218694,
+            "native_prefill_mean_tok_s": 295.89633333333336,
+            "native_decode_mean_tok_s": 112.31200000000001,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 192,
+                "drafted": 1005,
+                "accepted": 939
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.9343283582089552,
+            "minimum_reserve_gib": 32.08082580566406,
+            "matches_solo": 3,
+            "request_http_mean_seconds": 3.472558933333333,
+            "first_text_mean_seconds": 0.11452913333333332
+          },
+          "code_b": {
+            "requests": 3,
+            "actual_input_tokens": [
+              41
+            ],
+            "actual_output_tokens": [
+              384
+            ],
+            "total_http_seconds": 12.4347114,
+            "mean_input_tok_per_full_http_second": 9.8916697126123,
+            "mean_output_tok_per_full_http_second": 92.64393096690544,
+            "pooled_output_tok_per_full_http_second": 92.64388717537908,
+            "native_prefill_mean_tok_s": 329.40566666666666,
+            "native_decode_mean_tok_s": 95.76799999999999,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 270,
+                "drafted": 1050,
+                "accepted": 879
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.8371428571428572,
+            "minimum_reserve_gib": 32.078372955322266,
+            "matches_solo": 3,
+            "request_http_mean_seconds": 4.1449038,
+            "first_text_mean_seconds": 0.134201
+          }
+        }
+      },
+      "code-simultaneous": {
+        "measured_groups": 3,
+        "mean_full_http_seconds": 6.666724833333333,
+        "mean_aggregate_output_tok_per_full_http_second": 114.14906374586222,
+        "shared_visible_sse_event_estimate": null,
+        "valid_visible_estimates": 0,
+        "native_shared_window_measured": false,
+        "cases": {
+          "code_a": {
+            "requests": 3,
+            "actual_input_tokens": [
+              31
+            ],
+            "actual_output_tokens": [
+              377
+            ],
+            "total_http_seconds": 18.026511499999998,
+            "mean_input_tok_per_full_http_second": 5.159068509371052,
+            "mean_output_tok_per_full_http_second": 62.74092993654474,
+            "pooled_output_tok_per_full_http_second": 62.74092466531864,
+            "native_prefill_mean_tok_s": 295.5246666666667,
+            "native_decode_mean_tok_s": 63.97,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 297,
+                "drafted": 855,
+                "accepted": 831
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.9719298245614035,
+            "minimum_reserve_gib": 32.06174087524414,
+            "matches_solo": 3,
+            "request_http_mean_seconds": 6.008837166666666,
+            "first_text_mean_seconds": 0.11456106666666667
+          },
+          "code_b": {
+            "requests": 3,
+            "actual_input_tokens": [
+              41
+            ],
+            "actual_output_tokens": [
+              384
+            ],
+            "total_http_seconds": 19.9986539,
+            "mean_input_tok_per_full_http_second": 6.150417211705317,
+            "mean_output_tok_per_full_http_second": 57.60390754377662,
+            "pooled_output_tok_per_full_http_second": 57.60387702894343,
+            "native_prefill_mean_tok_s": 310.07166666666666,
+            "native_decode_mean_tok_s": 60.904333333333334,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 336,
+                "drafted": 906,
+                "accepted": 813
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.8973509933774835,
+            "minimum_reserve_gib": 32.06174087524414,
+            "matches_solo": 3,
+            "request_http_mean_seconds": 6.666217966666667,
+            "first_text_mean_seconds": 0.3604833666666667
+          }
+        },
+        "observed_overlap_groups": 3,
+        "mean_observed_overlap_seconds": 5.644045266666667,
+        "dispatch_spread_seconds_mean": 0.0005068666666666667,
+        "follow_dispatch_after_lead_first_visible_ms_mean": null,
+        "head_accepted": 1644,
+        "head_drafted": 1761,
+        "head_acceptance": 0.9335604770017035
+      },
+      "code-staggered": {
+        "measured_groups": 3,
+        "mean_full_http_seconds": 6.676281366666667,
+        "mean_aggregate_output_tok_per_full_http_second": 113.98587699371815,
+        "shared_visible_sse_event_estimate": null,
+        "valid_visible_estimates": 0,
+        "native_shared_window_measured": false,
+        "cases": {
+          "code_a": {
+            "requests": 3,
+            "actual_input_tokens": [
+              31
+            ],
+            "actual_output_tokens": [
+              377
+            ],
+            "total_http_seconds": 18.0645058,
+            "mean_input_tok_per_full_http_second": 5.1482272410044345,
+            "mean_output_tok_per_full_http_second": 62.609086124473286,
+            "pooled_output_tok_per_full_http_second": 62.60896437033999,
+            "native_prefill_mean_tok_s": 295.52,
+            "native_decode_mean_tok_s": 63.827666666666666,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 297,
+                "drafted": 855,
+                "accepted": 831
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.9719298245614035,
+            "minimum_reserve_gib": 32.07025909423828,
+            "matches_solo": 3,
+            "request_http_mean_seconds": 6.021501933333333,
+            "first_text_mean_seconds": 0.11437716666666668
+          },
+          "code_b": {
+            "requests": 3,
+            "actual_input_tokens": [
+              41
+            ],
+            "actual_output_tokens": [
+              384
+            ],
+            "total_http_seconds": 19.6849026,
+            "mean_input_tok_per_full_http_second": 6.248460557077937,
+            "mean_output_tok_per_full_http_second": 58.52216716872996,
+            "pooled_output_tok_per_full_http_second": 58.52200660622014,
+            "native_prefill_mean_tok_s": 305.16266666666667,
+            "native_decode_mean_tok_s": 60.84233333333333,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 336,
+                "drafted": 906,
+                "accepted": 813
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.8973509933774835,
+            "minimum_reserve_gib": 32.07025909423828,
+            "matches_solo": 3,
+            "request_http_mean_seconds": 6.5616342,
+            "first_text_mean_seconds": 0.24904943333333332
+          }
+        },
+        "observed_overlap_groups": 3,
+        "mean_observed_overlap_seconds": 5.654332166666667,
+        "dispatch_spread_seconds_mean": 0.11464716666666667,
+        "follow_dispatch_after_lead_first_visible_ms_mean": 0.27,
+        "head_accepted": 1644,
+        "head_drafted": 1761,
+        "head_acceptance": 0.9335604770017035
+      },
+      "prose-solo": {
+        "measured_groups": 6,
+        "mean_full_http_seconds": 6.127582783333334,
+        "mean_aggregate_output_tok_per_full_http_second": 55.88593308500588,
+        "shared_visible_sse_event_estimate": null,
+        "valid_visible_estimates": 3,
+        "native_shared_window_measured": false,
+        "cases": {
+          "prose_a": {
+            "requests": 3,
+            "actual_input_tokens": [
+              36
+            ],
+            "actual_output_tokens": [
+              303
+            ],
+            "total_http_seconds": 16.9370098,
+            "mean_input_tok_per_full_http_second": 6.3765766749267785,
+            "mean_output_tok_per_full_http_second": 53.6695203473004,
+            "pooled_output_tok_per_full_http_second": 53.66944996394819,
+            "native_prefill_mean_tok_s": 296.21566666666666,
+            "native_decode_mean_tok_s": 54.965666666666664,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 411,
+                "drafted": 969,
+                "accepted": 498
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.5139318885448917,
+            "minimum_reserve_gib": 32.018798828125,
+            "matches_solo": 3,
+            "request_http_mean_seconds": 5.645669933333333,
+            "first_text_mean_seconds": 0.13158806666666667
+          },
+          "prose_b": {
+            "requests": 3,
+            "actual_input_tokens": [
+              28
+            ],
+            "actual_output_tokens": [
+              384
+            ],
+            "total_http_seconds": 19.8284869,
+            "mean_input_tok_per_full_http_second": 4.236629382906036,
+            "mean_output_tok_per_full_http_second": 58.10234582271136,
+            "pooled_output_tok_per_full_http_second": 58.09823037984809,
+            "native_prefill_mean_tok_s": 200.23466666666664,
+            "native_decode_mean_tok_s": 59.59366666666667,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 471,
+                "drafted": 1161,
+                "accepted": 675
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.5813953488372093,
+            "minimum_reserve_gib": 31.996028900146484,
+            "matches_solo": 3,
+            "request_http_mean_seconds": 6.609495633333334,
+            "first_text_mean_seconds": 0.16534016666666665
+          }
+        }
+      },
+      "prose-simultaneous": {
+        "measured_groups": 3,
+        "mean_full_http_seconds": 9.8185544,
+        "mean_aggregate_output_tok_per_full_http_second": 73.4960771633966,
+        "shared_visible_sse_event_estimate": null,
+        "valid_visible_estimates": 0,
+        "native_shared_window_measured": false,
+        "cases": {
+          "prose_a": {
+            "requests": 3,
+            "actual_input_tokens": [
+              36
+            ],
+            "actual_output_tokens": [
+              337
+            ],
+            "total_http_seconds": 28.2933571,
+            "mean_input_tok_per_full_http_second": 3.8207071230081104,
+            "mean_output_tok_per_full_http_second": 35.76606390149259,
+            "pooled_output_tok_per_full_http_second": 35.7327692301314,
+            "native_prefill_mean_tok_s": 296.625,
+            "native_decode_mean_tok_s": 36.278333333333336,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 480,
+                "drafted": 807,
+                "accepted": 531
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.6579925650557621,
+            "minimum_reserve_gib": 32.042808532714844,
+            "matches_solo": 0,
+            "request_http_mean_seconds": 9.431119033333333,
+            "first_text_mean_seconds": 0.1322127
+          },
+          "prose_b": {
+            "requests": 3,
+            "actual_input_tokens": [
+              28
+            ],
+            "actual_output_tokens": [
+              384
+            ],
+            "total_http_seconds": 29.4540236,
+            "mean_input_tok_per_full_http_second": 2.8543751435485363,
+            "mean_output_tok_per_full_http_second": 39.14571625437993,
+            "pooled_output_tok_per_full_http_second": 39.11180406604957,
+            "native_prefill_mean_tok_s": 236.365,
+            "native_decode_mean_tok_s": 40.469,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 501,
+                "drafted": 912,
+                "accepted": 648
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.7105263157894737,
+            "minimum_reserve_gib": 32.042808532714844,
+            "matches_solo": 0,
+            "request_http_mean_seconds": 9.818007866666667,
+            "first_text_mean_seconds": 0.31979996666666666
+          }
+        },
+        "observed_overlap_groups": 3,
+        "mean_observed_overlap_seconds": 9.0451032,
+        "dispatch_spread_seconds_mean": 0.0005465333333333334,
+        "follow_dispatch_after_lead_first_visible_ms_mean": null,
+        "head_accepted": 1179,
+        "head_drafted": 1719,
+        "head_acceptance": 0.6858638743455497
+      },
+      "prose-staggered": {
+        "measured_groups": 3,
+        "mean_full_http_seconds": 9.788126333333333,
+        "mean_aggregate_output_tok_per_full_http_second": 73.69421412626978,
+        "shared_visible_sse_event_estimate": null,
+        "valid_visible_estimates": 0,
+        "native_shared_window_measured": false,
+        "cases": {
+          "prose_a": {
+            "requests": 3,
+            "actual_input_tokens": [
+              36
+            ],
+            "actual_output_tokens": [
+              337
+            ],
+            "total_http_seconds": 28.2010812,
+            "mean_input_tok_per_full_http_second": 3.8315794858142556,
+            "mean_output_tok_per_full_http_second": 35.867841297761224,
+            "pooled_output_tok_per_full_http_second": 35.84968933744285,
+            "native_prefill_mean_tok_s": 294.532,
+            "native_decode_mean_tok_s": 36.382000000000005,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 480,
+                "drafted": 807,
+                "accepted": 531
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.6579925650557621,
+            "minimum_reserve_gib": 32.04378128051758,
+            "matches_solo": 0,
+            "request_http_mean_seconds": 9.4003604,
+            "first_text_mean_seconds": 0.13225220000000001
+          },
+          "prose_b": {
+            "requests": 3,
+            "actual_input_tokens": [
+              28
+            ],
+            "actual_output_tokens": [
+              384
+            ],
+            "total_http_seconds": 28.966673399999998,
+            "mean_input_tok_per_full_http_second": 2.901236799443554,
+            "mean_output_tok_per_full_http_second": 39.78839039236873,
+            "pooled_output_tok_per_full_http_second": 39.769841158218746,
+            "native_prefill_mean_tok_s": 233.62566666666666,
+            "native_decode_mean_tok_s": 40.58733333333333,
+            "ledger_mean_tok_s": null,
+            "phase_sum_above_qpc": 0,
+            "speculation": {
+              "head": {
+                "rounds": 501,
+                "drafted": 912,
+                "accepted": 648
+              },
+              "lookup": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              },
+              "grammar": {
+                "rounds": 0,
+                "drafted": 0,
+                "accepted": 0
+              }
+            },
+            "native_head_acceptance": 0.7105263157894737,
+            "minimum_reserve_gib": 32.04378128051758,
+            "matches_solo": 0,
+            "request_http_mean_seconds": 9.655557799999999,
+            "first_text_mean_seconds": 0.18908823333333333
+          }
+        },
+        "observed_overlap_groups": 3,
+        "mean_observed_overlap_seconds": 9.0126095,
+        "dispatch_spread_seconds_mean": 0.13256853333333332,
+        "follow_dispatch_after_lead_first_visible_ms_mean": 0.3163333333333333,
+        "head_accepted": 1179,
+        "head_drafted": 1719,
+        "head_acceptance": 0.6858638743455497
+      }
+    },
+    "matched_publisher_concurrency_geometry": false
+  },
+  "server_restored": {
+    "ready": true,
+    "port": 8840,
+    "context": 32768
+  },
+  "private_evidence_sha256": {
+    "bench_and_prefill_audit": "d6c92d45355aa7bd0aea83fbb753d50ac9fff939735f76954d1c425c55686c50",
+    "tg128_audit": "3b414862ac450e4df6e8a5c9a2ee24866082630c09df3f89196094d4dd29b6b0",
+    "concurrency_capture_summary": "3008f1e3c0ac5951ae07af27550ef05739e7ac9b9e2412783a7ea69a600c9f05"
+  }
+}

@@ -11,6 +11,16 @@ Convention: **Endorsed** = we would defend it today. **Conditional** = true only
 
 ## 1. Endorsed — benchmark figures
 
+### Halogen 0.20.7 publisher comparison
+
+The [publisher comparison](halogen0207-publisher-comparison-20261124.md)
+measured 77.24 native MTP Decode tok/s and 4,887/6,021 head acceptance
+on the published short `bench` prompts. The resumed 30-request `tg128`
+sweep reached 68.96 HTTP output tok/s and 2,508/3,126 head acceptance.
+The matched publisher rows are 74.57 native and 74.90 HTTP tok/s,
+respectively. The report records the smaller local context, Prefill and
+slot settings and the two collection dates.
+
 ### Halogen 0.20.7 nested prefill
 
 In a two-slot comparison, nested admission moved first visible text for the

@@ -80,9 +80,15 @@ Trunk comparison stopped before its first request when post-stop memory
 recovery fell short of the saved baseline. Halogen was restored on 8840 and
 the local Responses route through 8831 was verified.
 
-The [publisher benchmark replay](docs/benchmarks/halogen0207-publisher-replay-20261123.md)
-averaged 71.21 API decode tok/s across ten short prompts and accepted
-81.17% of MTP-head drafts. The separate
+The [publisher benchmark comparison](docs/benchmarks/halogen0207-publisher-comparison-20261124.md)
+measured 77.24 native MTP Decode tok/s at 81.17% head acceptance on the ten
+short `bench` prompts, versus the publisher's 74.57. The full `tg128` sweep
+measured 68.96 HTTP output tok/s versus 74.90. Cache Off Prefill was 1,945.53,
+1,968.97 and 1,819.60 HTTP tok/s at 8K, 32K and 128K. The resumed two-slot
+run measured 114.15 simultaneous and 113.99 staggered code output tok/s
+over the full HTTP interval.
+The [earlier publisher replay](docs/benchmarks/halogen0207-publisher-replay-20261123.md)
+measured 71.21 API Decode tok/s. The separate
 [JSON-format comparison](docs/benchmarks/halogen0207-json-format-20261123.md)
 returned identical 95-token extractions in both formats. The strict schema
 took 1.89–2.27% longer over HTTP than the broad JSON format on that fixture.
