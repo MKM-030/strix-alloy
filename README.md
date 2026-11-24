@@ -147,7 +147,9 @@ shutdown. API base: `http://127.0.0.1:8840/v1`; model `halogen-v2`. The existing
 backend token is reused. Stop and confirm cleanup before changing engine/checkpoint.
 Native/GUFO adapter slots do not imply they have passed current qualification.
 
-## Halogen four-session benchmark
+<a id="halogen-four-session-benchmark"></a>
+
+## Halogen concurrency benchmarks
 
 Measured on 24 November 2026 with Halogen 0.20.7 v2, BF16 KV, the default
 concurrency mode and paired 8,192-token prefill settings. The local host was a
@@ -163,6 +165,7 @@ Ryzen AI Max+ 395 running Windows 11 and WSL2, with 63.65 GiB visible to Windows
 | Native Prefill / Decode tok/s per stream, mean | — | 286.67 / 36.52 |
 | Native MTP head accepted/drafted | — | 3,105/3,342 (92.91%) |
 
+Strix Alloy was **4.54% below Halogen** on aggregate common-window Decode.
 Both runs used four greedy code streams with 384 output tokens per stream.
 The local run used 31, 41, 49 and 45 input tokens, Thinking Off, Cache Off
 and a shared 819,200-position BF16 pool. After one warmup, the three measured
@@ -170,30 +173,43 @@ groups ranged from 143.80 to 144.45 tok/s in the common window. Local prompts
 were two public Halogen eval cases and two additional code tasks. The four
 upstream prompts are unpublished. Halogen configured 16 slots with four
 active streams on Ubuntu. The local test configured four slots and ignored
-EOS to reach the 384-token cap. [Halogen concurrency figures](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/configuration.md#speed-by-concurrency-the-previous-default-mode)
+EOS to reach the 384-token cap. [Halogen concurrency figures](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/configuration.md#context-and-memory-one-kv-pool-several-conversations)
 · [Public eval cases](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/tools/eval-prompts.json)
 
-### Mixed long contexts
+### One to four live long contexts
 
-Context totals include input and output. Each row is one completed wave with
-four simultaneously prefilled sessions corroborated by native KV-pool
-counters. The first three requests each generated 4,096 tokens and the fourth
-generated 2,048. The common window counts output events while all four
-streams are generating. The full HTTP window spans first dispatch to last EOF.
+The per-request limit was 262,144 positions. Context totals below are the
+actual input plus output; the shared BF16 pool is listed separately.
 
-| Shared BF16 positions | First three context totals | Fourth context total | Common-window output tok/s | Full HTTP output tok/s | Min. Windows RAM / commit reserve, GiB |
-| ---: | --- | ---: | ---: | ---: | ---: |
-| 655,360 | 196,608 / 196,600 / 196,592 | 32,000 | 96.93 | 27.30 | 6.20 / 99.53 |
-| 655,360 | 196,608 / 196,600 / 196,592 | 49,152 | 95.76 | 28.17 | 6.13 / 99.45 |
-| 524,288 | 131,072 / 131,064 / 131,056 | 65,536 | 81.23 | 31.67 | 10.73 / 104.04 |
-| 524,288 | 131,072 / 131,064 / 131,056 | 131,072 | 96.88 | 32.49 | 9.50 / 102.80 |
+| Active sessions and context totals | Shared pool | Aggregate common Decode, tok/s | Aggregate full HTTP, tok/s | MTP head | Min. Windows RAM / commit, GiB |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 1 × 262,144 | 786,432 | 46.45 | 0.80 | 67.05% | 12.78 / 107.48 |
+| 2 × ~262K | 786,432 | 30.64 | 6.03 | 63.77% | 9.64 / 103.96 |
+| 3 × ~262K | 786,432 | 65.64 | 10.23 | 73.20% | 6.82 / 100.95 |
+| 4 × ~131K | 524,288 | 96.87 | **32.49** | 77.02% | 9.50 / 102.80 |
+| 3 × ~131K + 65,536 | 524,288 | 81.22 | 31.67 | 77.25% | 10.73 / 104.04 |
+| 3 × ~196K + 32,000 | 655,360 | **96.92** | 27.30 | 83.42% | 6.20 / 99.53 |
+| 3 × ~196K + 49,152 | 655,360 | 95.74 | 28.17 | 81.94% | 6.13 / 99.45 |
 
-The 819,200-position startup completed. The test with three near-262K
-contexts crossed the 6 GiB Windows RAM floor before the 32,000-token
-fourth request could start. With three near-196K contexts and a 65,536-token
-fourth, all four were prefilled and the same floor stopped generation before
-completion. The stable near-196K series reached 49,152 in the fourth slot.
-The four near-131K requests completed and used all 524,288 reserved positions.
+Each row is one completed wave. Native KV evidence shows that all listed
+sessions were live together after Prefill. Common Decode measures the
+interval shared by all streams' generation. Full HTTP includes Prefill
+and covers first dispatch through last EOF. The waves used different
+prompts, output budgets and arrival schedules.
+
+Three nearly full 262K contexts completed. The 6 GiB RAM guard then stopped
+a separate attempt before a fourth 32,000-token context could be dispatched.
+The separate 1,048,576-position BF16 profile for four full 262K contexts
+never reached readiness.
+With three near-196K contexts and a 65,536-token fourth, all four were
+prefilled before the guard stopped generation. The largest completed fourth
+context with that 196K workload was 49,152. Four near-131K requests used all
+524,288 shared positions for their reservations and had the highest full-HTTP
+throughput among the long waves.
+
+[Short-prompt controls for 1–4 sessions, exact long-context inputs and phase
+rates](docs/benchmarks/halogen0207-session-occupancy-20261124.md)
+· [Replay results and evidence digests](docs/benchmarks/halogen0207-session-occupancy-20261124.json)
 
 ## Measurements and implementation evidence
 

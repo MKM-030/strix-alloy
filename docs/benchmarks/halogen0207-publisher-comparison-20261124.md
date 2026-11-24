@@ -96,6 +96,10 @@ sampled Windows physical or commit reserve during requests was 20.48 GiB.
 The regular single-slot 32K service was restored on port 8840. [262K results
 and per-stream phase rates](halogen0207-two262k-comparison-20261124.json)
 
+The [one-to-four-session comparison](halogen0207-session-occupancy-20261124.md)
+covers the short-prompt concurrency controls, completed near-262K
+occupancy waves and the four-way short-code publisher comparison.
+
 ## Test conditions
 
 The local Windows/WSL2 host ran Halogen 0.20.7 v2 with r2-HT4, Performance
