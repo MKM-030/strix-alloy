@@ -70,6 +70,32 @@ EOF, including Prefill. SSE event counts differed from completion-token
 counts, so the local capture establishes overlap duration and full HTTP rates.
 [Publisher concurrency results](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/configuration.md#speed-by-concurrency-the-previous-default-mode)
 
+### Two 262K windows on Strix Alloy
+
+The BF16 follow-up used two 262,144-position slots over one verified
+524,288-position KV pool. It replayed the same short requests with byte-for-byte
+identical request bodies. The baseline configured two 32,768-position slots
+over one 32,768-position pool.
+
+| Workload | Arrival | 32K profile HTTP tok/s | 262K profile HTTP tok/s | Observed difference | 262K pooled MTP head |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Code | Simultaneous | 114.15 | 111.75 | −2.10% | 1,644/1,761 = 93.36% |
+| Code | Staggered | 113.99 | 111.96 | −1.78% | 1,644/1,761 = 93.36% |
+| Sampled prose | Simultaneous | 73.50 | 72.94 | −0.75% | 1,179/1,719 = 68.59% |
+| Sampled prose | Staggered | 73.69 | 73.05 | −0.87% | 1,179/1,719 = 68.59% |
+
+All 36 measured responses, including the solo controls, matched the
+corresponding 32K responses byte for byte. The paired MTP acceptance
+counts were identical at both capacities. The requests still used 28–41
+input tokens per stream, and the output cap remained 384. The two profiles
+were measured in separate runtime windows. The pair rates cover the entire
+HTTP interval.
+
+An isolated test profile used an 18 GiB request-entry floor. The lowest
+sampled Windows physical or commit reserve during requests was 20.48 GiB.
+The regular single-slot 32K service was restored on port 8840. [262K results
+and per-stream phase rates](halogen0207-two262k-comparison-20261124.json)
+
 ## Test conditions
 
 The local Windows/WSL2 host ran Halogen 0.20.7 v2 with r2-HT4, Performance
