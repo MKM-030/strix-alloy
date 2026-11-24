@@ -147,6 +147,54 @@ shutdown. API base: `http://127.0.0.1:8840/v1`; model `halogen-v2`. The existing
 backend token is reused. Stop and confirm cleanup before changing engine/checkpoint.
 Native/GUFO adapter slots do not imply they have passed current qualification.
 
+## Halogen four-session benchmark
+
+Measured on 24 November 2026 with Halogen 0.20.7 v2, BF16 KV, the default
+concurrency mode and paired 8,192-token prefill settings. The local host was a
+Ryzen AI Max+ 395 running Windows 11 and WSL2, with 63.65 GiB visible to Windows.
+
+### Four short code streams
+
+| Metric | Halogen published | Strix Alloy on Windows/WSL2 |
+| --- | ---: | ---: |
+| Aggregate output tok/s in the common generation window | 151.00 | **144.15** |
+| Slowest stream in the common window, tok/s | 36.00 | 32.85 |
+| Aggregate full HTTP output tok/s | — | 133.39 |
+| Native Prefill / Decode tok/s per stream, mean | — | 286.67 / 36.52 |
+| Native MTP head accepted/drafted | — | 3,105/3,342 (92.91%) |
+
+Both runs used four greedy code streams with 384 output tokens per stream.
+The local run used 31, 41, 49 and 45 input tokens, Thinking Off, Cache Off
+and a shared 819,200-position BF16 pool. After one warmup, the three measured
+groups ranged from 143.80 to 144.45 tok/s in the common window. Local prompts
+were two public Halogen eval cases and two additional code tasks. The four
+upstream prompts are unpublished. Halogen configured 16 slots with four
+active streams on Ubuntu. The local test configured four slots and ignored
+EOS to reach the 384-token cap. [Halogen concurrency figures](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/docs/configuration.md#speed-by-concurrency-the-previous-default-mode)
+· [Public eval cases](https://github.com/peonist-ai/halogen-flash-server/blob/dea807d22a638c67553abea876344a8192054a94/tools/eval-prompts.json)
+
+### Mixed long contexts
+
+Context totals include input and output. Each row is one completed wave with
+four simultaneously prefilled sessions corroborated by native KV-pool
+counters. The first three requests each generated 4,096 tokens and the fourth
+generated 2,048. The common window counts output events while all four
+streams are generating. The full HTTP window spans first dispatch to last EOF.
+
+| Shared BF16 positions | First three context totals | Fourth context total | Common-window output tok/s | Full HTTP output tok/s | Min. Windows RAM / commit reserve, GiB |
+| ---: | --- | ---: | ---: | ---: | ---: |
+| 655,360 | 196,608 / 196,600 / 196,592 | 32,000 | 96.93 | 27.30 | 6.20 / 99.53 |
+| 655,360 | 196,608 / 196,600 / 196,592 | 49,152 | 95.76 | 28.17 | 6.13 / 99.45 |
+| 524,288 | 131,072 / 131,064 / 131,056 | 65,536 | 81.23 | 31.67 | 10.73 / 104.04 |
+| 524,288 | 131,072 / 131,064 / 131,056 | 131,072 | 96.88 | 32.49 | 9.50 / 102.80 |
+
+The 819,200-position startup completed. The test with three near-262K
+contexts crossed the 6 GiB Windows RAM floor before the 32,000-token
+fourth request could start. With three near-196K contexts and a 65,536-token
+fourth, all four were prefilled and the same floor stopped generation before
+completion. The stable near-196K series reached 49,152 in the fourth slot.
+The four near-131K requests completed and used all 524,288 reserved positions.
+
 ## Measurements and implementation evidence
 
 The frozen 8192-token fixture contains synthetic prose. The 16384-token fixture
